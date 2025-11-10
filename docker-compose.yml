@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  mongo:
+    image: mongo:6
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  backend:
+    build:
+      context: .
+    container_name: template-backend-nestjs
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/template_nestjs
+
+volumes:
+  mongo-data:
