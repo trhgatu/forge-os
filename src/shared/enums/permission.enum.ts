@@ -49,6 +49,12 @@ export enum PermissionEnum {
   DELETE_MEMORY = 'delete_memory',
   RESTORE_MEMORY = 'restore_memory',
 
+  CREATE_QUOTE = 'create_quote',
+  READ_QUOTE = 'read_quote',
+  UPDATE_QUOTE = 'update_quote',
+  DELETE_QUOTE = 'delete_quote',
+  RESTORE_QUOTE = 'restore_quote',
+
   // 🛡️ PERMISSION
   READ_PERMISSION = 'read_permission',
 

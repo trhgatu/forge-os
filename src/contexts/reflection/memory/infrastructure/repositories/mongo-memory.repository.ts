@@ -1,5 +1,3 @@
-// 📁 File: contexts/reflection/memory/infrastructure/repositories/mongo-memory.repository.ts
-
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Model, FilterQuery } from 'mongoose';

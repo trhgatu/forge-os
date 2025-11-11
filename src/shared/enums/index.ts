@@ -8,3 +8,4 @@ export * from './sport-status.enum';
 export * from './user-status.enum';
 export * from './memory-status.enum';
 export * from './mood-type.enum';
+export * from './quote-status.enum';
