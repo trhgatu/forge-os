@@ -32,7 +32,10 @@ export class GetAllMemoriesForPublicHandler
       await this.cacheService.get<PaginatedResult<MemoryResponse>>(cacheKey);
     if (cached) return cached;
 
-    const memories = await this.memoryRepo.findAll(payload);
+    const memories = await this.memoryRepo.findAll({
+      ...payload,
+      isDeleted: false,
+    });
 
     const response = {
       meta: memories.meta,
