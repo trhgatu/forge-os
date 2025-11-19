@@ -55,6 +55,12 @@ export enum PermissionEnum {
   DELETE_QUOTE = 'delete_quote',
   RESTORE_QUOTE = 'restore_quote',
 
+  CREATE_JOURNAL = 'create_journal',
+  READ_JOURNAL = 'read_journal',
+  UPDATE_JOURNAL = 'update_journal',
+  DELETE_JOURNAL = 'delete_journal',
+  RESTORE_JOURNAL = 'restore_journal',
+
   // 🛡️ PERMISSION
   READ_PERMISSION = 'read_permission',
 
