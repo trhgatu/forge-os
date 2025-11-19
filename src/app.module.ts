@@ -19,6 +19,7 @@ import { SportModule } from '@root/contexts/catalog/sport/sport.module';
 import { MemoryModule } from '@root/contexts/reflection/memory/memory.module';
 import { BookingModule } from '@modules/booking';
 import { QuoteModule } from '@root/contexts/reflection/quote/quote.module';
+import { JournalModule } from '@root/contexts/reflection/journal/journal.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { QuoteModule } from '@root/contexts/reflection/quote/quote.module';
 
     MemoryModule,
     QuoteModule,
+    JournalModule,
   ],
   controllers: [AppController],
 })
