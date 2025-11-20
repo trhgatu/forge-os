@@ -49,7 +49,6 @@ export default function ForgeLayout({ children }: { children: React.ReactNode })
             </div>
           </header>
 
-          {/* Content Frame */}
           <div className="flex-1 overflow-hidden relative rounded-3xl border border-white/5 bg-slate-900/20 backdrop-blur-sm shadow-2xl">
             <AnimatePresence mode="wait">
               <motion.div
