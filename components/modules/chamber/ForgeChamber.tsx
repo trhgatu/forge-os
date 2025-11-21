@@ -1,436 +1,344 @@
 "use client";
 
-import { useEffect, useRef, useState, KeyboardEvent } from "react";
-import { motion } from "framer-motion";
+import { useState, useRef, useEffect } from "react";
+import { GlassCard } from "@/components/ui/GlassCard";
+/* import { streamChatResponse } from "@/lib/geminiService"; */
+import { cn } from "@/lib/utils";
 import {
   Send,
-  Bot,
   User,
+  PanelRightOpen,
+  PanelRightClose,
+  ToggleLeft,
+  ToggleRight,
   Sparkles,
-  RefreshCcw,
-  Loader2,
-  Command,
 } from "lucide-react";
-import { AGENTS, COUNCIL_AGENT } from "@/constants/nav";
-import type { Agent, ChatMessage } from "@/types";
-import { GlassCard } from "@/components/ui/GlassCard";
-import type { Content } from "@google/genai";
-
-const bglinear: Record<string, string> = {
-  architect:
-    "radial-gradient(circle at 50% 0%, rgba(6,182,212,0.15) 0%, rgba(2,6,23,0) 70%)",
-  muse: "radial-gradient(circle at 50% 0%, rgba(217,70,239,0.15) 0%, rgba(2,6,23,0) 70%)",
-  sage: "radial-gradient(circle at 50% 0%, rgba(245,158,11,0.15) 0%, rgba(2,6,23,0) 70%)",
-  council:
-    "radial-gradient(circle at 50% 0%, rgba(255,255,255,0.1) 0%, rgba(2,6,23,0) 80%)",
-};
+/* import type { GenerateContentResponse } from "@google/genai"; */
+import { AgentDock, AGENTS } from "@/components/modules/chamber/AgentDock";
+import type { Message, AgentId, Agent } from "@/types";
 
 export const ForgeChamber = () => {
-  const [selectedAgent, setSelectedAgent] = useState<Agent>(COUNCIL_AGENT);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [inputValue, setInputValue] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [input, setInput] = useState("");
+  const [messages, /* setMessages */] = useState<Message[]>([
+    {
+      id: "1",
+      role: "model",
+      agentId: "nexus",
+      text: "Forge Systems Online. I am ready to assist with your cognitive processes.",
+    },
+  ]);
+  const [isStreaming, /* setIsStreaming */] = useState(false);
+  const [isDockOpen, setIsDockOpen] = useState(true);
+  const [isRoundtableMode, setIsRoundtableMode] = useState(false);
+  const [activeAgentIds, /* setActiveAgentIds */] = useState<string[]>([]);
+
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-
-  const selectableAgents = [COUNCIL_AGENT, ...AGENTS];
-
-  useEffect(() => {
-    if (messages.length === 0) {
-      setMessages([
-        {
-          id: "init",
-          role: "system",
-          content:
-            "Hội Đồng đã được kích hoạt. Hãy chọn một Thực Thể hoặc triệu tập toàn bộ Hội Đồng.",
-          timestamp: new Date(),
-        },
-      ]);
-    }
-  }, [messages.length]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  async function generateResponse(
-    agent: Agent,
-    history: Content[],
-    responseId: string
-  ) {
-    try {
-      const res = await fetch("/api/forge/generate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ messages: history, agent }),
-      });
+  const getAgent = (id?: AgentId): Agent =>
+    AGENTS.find((a) => a.id === id) || AGENTS[0];
 
-      if (!res.ok || !res.body) {
-        console.error("Forge API error", res.status);
-        setMessages((prev) =>
-          prev.map((m) =>
-            m.id === responseId
-              ? { ...m, content: "[Hội Đồng bị gián đoạn kết nối]" }
-              : m
-          )
-        );
-        return;
-      }
+  /* const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || isStreaming) return;
 
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let full = "";
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const chunkText = decoder.decode(value, { stream: true });
-        if (!chunkText) continue;
-
-        full += chunkText;
-
-        setMessages((prev) =>
-          prev.map((m) =>
-            m.id === responseId ? { ...m, content: full } : m
-          )
-        );
-      }
-    } catch (err) {
-      console.error(err);
-      setMessages((prev) =>
-        prev.map((m) =>
-          m.id === responseId
-            ? { ...m, content: "[Đã xảy ra lỗi khi triệu hồi thực thể]" }
-            : m
-        )
-      );
-    }
-  }
-
-  async function handleSend() {
-    if (!inputValue.trim() || isLoading) return;
-
-    const userMsg: ChatMessage = {
+    const userMsg: Message = {
       id: Date.now().toString(),
       role: "user",
-      content: inputValue.trim(),
-      timestamp: new Date(),
+      text: input,
     };
 
-    const history = [...messages, userMsg];
+    setMessages((prev) => [...prev, userMsg]);
+    setInput("");
+    setIsStreaming(true);
 
-    setMessages(history);
-    setInputValue("");
-    setIsLoading(true);
-
-    // Chuẩn hóa history sang Content[] cho Gemini
-    const historyForApi: Content[] = [];
-
-    for (const msg of history) {
-      if (!msg.content.trim()) continue;
-      if (msg.role === "system") continue;
-
-      if (msg.role === "user") {
-        historyForApi.push({
-          role: "user",
-          parts: [{ text: msg.content }],
-        });
-      }
-
-      if (msg.role === "model") {
-        historyForApi.push({
-          role: "model",
-          parts: [{ text: msg.content }],
-        });
-      }
-    }
+    const history = messages.map((m) => ({ role: m.role, text: m.text }));
 
     try {
-      if (selectedAgent.id === "council") {
-        const promises = AGENTS.map(async (agent, idx) => {
-          const respId = (Date.now() + idx + 1).toString();
+      if (isRoundtableMode) {
+        // --- Multi-agent roundtable mode ---
+        const roundtableAgents = AGENTS.filter((a) =>
+          ["muse", "socrates", "cipher"].includes(a.id)
+        );
 
-          setMessages((prev) => [
-            ...prev,
-            {
-              id: respId,
-              role: "model",
-              content: "",
-              timestamp: new Date(),
-              agentId: agent.id,
-            },
-          ]);
+        const newIds: Record<string, string> = {};
+        const newMessages: Message[] = [];
 
-          await generateResponse(agent, historyForApi, respId);
+        roundtableAgents.forEach((agent) => {
+          const msgId = `msg-${agent.id}-${Date.now()}`;
+          newIds[agent.id] = msgId;
+          newMessages.push({
+            id: msgId,
+            role: "model",
+            agentId: agent.id as AgentId,
+            text: "",
+          });
+        });
+
+        setMessages((prev) => [...prev, ...newMessages]);
+        setActiveAgentIds(roundtableAgents.map((a) => a.id));
+
+        const promises = roundtableAgents.map(async (agent, index) => {
+          // Stagger để cảm giác như từng agent lần lượt nói
+          await new Promise((r) => setTimeout(r, index * 400));
+
+          const personaPrompt = `${agent.systemPrompt}
+User Query: "${userMsg.text}"
+Respond to the user in your specific persona. Keep it under 100 words.`;
+
+          const result = await streamChatResponse([], personaPrompt);
+          let fullText = "";
+
+          for await (const chunk of result) {
+            const c = chunk as GenerateContentResponse;
+            if (c.text) {
+              fullText += c.text;
+              setMessages((prev) =>
+                prev.map((msg) =>
+                  msg.id === newIds[agent.id]
+                    ? { ...msg, text: fullText }
+                    : msg
+                )
+              );
+            }
+          }
         });
 
         await Promise.all(promises);
       } else {
-        const respId = (Date.now() + 1).toString();
-
+        // --- Single agent (Nexus core) mode ---
+        const modelMsgId = (Date.now() + 1).toString();
         setMessages((prev) => [
           ...prev,
-          {
-            id: respId,
-            role: "model",
-            content: "",
-            timestamp: new Date(),
-            agentId: selectedAgent.id,
-          },
+          { id: modelMsgId, role: "model", agentId: "nexus", text: "" },
         ]);
+        setActiveAgentIds(["nexus"]);
 
-        await generateResponse(selectedAgent, historyForApi, respId);
+        const result = await streamChatResponse(history, userMsg.text);
+        let fullText = "";
+
+        for await (const chunk of result) {
+          const c = chunk as GenerateContentResponse;
+          if (c.text) {
+            fullText += c.text;
+            setMessages((prev) =>
+              prev.map((msg) =>
+                msg.id === modelMsgId ? { ...msg, text: fullText } : msg
+              )
+            );
+          }
+        }
       }
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error("Chat error", error);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now().toString(),
+          role: "model",
+          text: "Error: Neural Core Interrupted.",
+        },
+      ]);
     } finally {
-      setIsLoading(false);
+      setIsStreaming(false);
+      setActiveAgentIds([]);
     }
-  }
-
-  function handleKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  }
-
-  const currentBackground =
-    bglinear[selectedAgent.id] || bglinear["architect"];
+  }; */
 
   return (
-    <div className="flex flex-col h-full relative overflow-hidden -m-6">
-      {/* BG */}
-      <motion.div
-        className="absolute inset-0 z-0 pointer-events-none"
-        animate={{ background: currentBackground }}
-        transition={{ duration: 1.2 }}
-      />
+    <div className="h-full flex relative overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 bg-linear-to-b from-transparent to-black/20">
+        <div className="shrink-0 p-4 border-b border-white/5 flex items-center justify-between bg-white/2 backdrop-blur-md z-20">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+              <div
+                className={cn(
+                  "w-2 h-2 rounded-full shadow-[0_0_10px_currentColor] animate-pulse bg-current",
+                  isRoundtableMode ? "text-fuchsia-500" : "text-forge-cyan"
+                )}
+              />
+              <span className="font-mono text-sm text-gray-300 tracking-wider uppercase">
+                {isRoundtableMode ? "Roundtable Protocol" : "Nexus Core"}
+              </span>
+            </div>
 
-      {/* Agent Selector */}
-      <div className="relative z-10 px-6 pt-6 pb-4 border-b border-white/5 bg-slate-950/40 backdrop-blur-md">
-        <div className="flex items-center justify-center gap-8 overflow-x-auto no-scrollbar pb-2">
-          {selectableAgents.map((agent) => {
-            const active = agent.id === selectedAgent.id;
+            <button
+              type="button"
+              onClick={() => setIsRoundtableMode((prev) => !prev)}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-black/20 hover:bg-white/5 transition-all group"
+            >
+              {isRoundtableMode ? (
+                <ToggleRight className="text-fuchsia-500" />
+              ) : (
+                <ToggleLeft className="text-gray-500" />
+              )}
+              <span
+                className={cn(
+                  "text-xs font-medium",
+                  isRoundtableMode ? "text-white" : "text-gray-500"
+                )}
+              >
+                Multi-Agent
+              </span>
+            </button>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <span className="text-xs text-gray-600 font-mono hidden md:block">
+              Gemini 2.5 Flash // Latency: 12ms
+            </span>
+            <button
+              type="button"
+              onClick={() => setIsDockOpen((prev) => !prev)}
+              className={cn(
+                "p-2 rounded-lg transition-all duration-300",
+                isDockOpen
+                  ? "text-forge-cyan bg-forge-cyan/10"
+                  : "text-gray-500 hover:text-white hover:bg-white/5"
+              )}
+            >
+              {isDockOpen ? (
+                <PanelRightClose size={18} />
+              ) : (
+                <PanelRightOpen size={18} />
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Messages Scroll Area */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-8 relative">
+          {messages.map((msg) => {
+            const isUser = msg.role === "user";
+            const agent = isUser ? null : getAgent(msg.agentId);
+            const Icon = agent?.icon || User;
 
             return (
-              <motion.button
-                key={agent.id}
-                onClick={() => setSelectedAgent(agent)}
-                animate={{
-                  scale: active ? 1 : 0.88,
-                  opacity: active ? 1 : 0.5,
-                  y: active ? 0 : 5,
-                }}
-                className="group flex flex-col items-center gap-3 transition-all shrink-0"
+              <div
+                key={msg.id}
+                className={cn(
+                  "flex gap-4 animate-in slide-in-from-bottom-2 duration-500",
+                  isUser ? "flex-row-reverse" : ""
+                )}
               >
-                <div className="relative">
-                  {active && (
-                    <motion.div
-                      layoutId="glow"
-                      className="absolute inset-0 rounded-full blur-xl"
-                      style={{
-                        background:
-                          agent.id === "council"
-                            ? "rgba(255,255,255,0.6)"
-                            : undefined,
-                      }}
-                      animate={{ opacity: 0.5 }}
-                    />
+                {/* Avatar */}
+                <div
+                  className={cn(
+                    "w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-lg relative group",
+                    isUser
+                      ? "bg-linear-to-br from-gray-700 to-black border border-white/10"
+                      : `bg-linear-to-br ${agent?.gradient} shadow-[0_0_15px_rgba(0,0,0,0.3)]`
+                  )}
+                >
+                  <Icon
+                    size={16}
+                    className={isUser ? "text-gray-300" : "text-white"}
+                  />
+                  {!isUser && (
+                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-black/80 backdrop-blur border border-white/10 rounded text-[10px] text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                      {agent?.name}
+                    </div>
+                  )}
+                </div>
+
+                {/* Message Bubble */}
+                <div
+                  className={cn(
+                    "max-w-[85%] md:max-w-[70%] p-5 rounded-2xl text-sm leading-relaxed shadow-sm relative backdrop-blur-md transition-all duration-300",
+                    isUser
+                      ? "bg-white/10 text-white rounded-tr-none border border-white/5 hover:bg-white/15"
+                      : `${agent?.bg} ${agent?.color.replace(
+                          "text-",
+                          "text-gray-100 "
+                        )} border ${agent?.border} rounded-tl-none hover:shadow-[0_0_20px_rgba(0,0,0,0.1)]`
+                  )}
+                >
+                  {!isUser && isRoundtableMode && (
+                    <div
+                      className={cn(
+                        "text-[10px] font-bold uppercase tracking-wider mb-2 opacity-70",
+                        agent?.color
+                      )}
+                    >
+                      {agent?.name}
+                    </div>
                   )}
 
-                  <div
-                    className={`w-14 h-14 rounded-full flex items-center justify-center bg-slate-900 border border-white/10 shadow-lg ${
-                      active ? "ring-2 ring-white/40" : "grayscale"
-                    }`}
-                  >
-                    <agent.icon
-                      size={22}
-                      className={
-                        agent.id === "council" ? "text-white" : agent.color
-                      }
-                    />
-                  </div>
-                </div>
+                  <div className="whitespace-pre-wrap">{msg.text}</div>
 
-                <p
-                  className={`text-[10px] uppercase tracking-widest ${
-                    active ? "text-white" : "text-slate-500"
-                  }`}
-                >
-                  {agent.name}
-                </p>
-              </motion.button>
+                  {isStreaming &&
+                    !isUser &&
+                    activeAgentIds.includes(agent?.id || "") &&
+                    msg.text.length > 0 && (
+                      <span className="inline-block w-1.5 h-3 ml-1 bg-current animate-pulse align-middle" />
+                    )}
+                </div>
+              </div>
             );
           })}
+          <div ref={messagesEndRef} />
         </div>
-      </div>
 
-      {/* Chat Stream */}
-      <div className="flex-1 overflow-hidden relative z-10">
-        <div className="absolute inset-0 flex flex-col">
-          <div className="flex-1 overflow-y-auto p-6 space-y-8 no-scrollbar">
-            {messages.map((msg) => {
-              const isUser = msg.role === "user";
-              const isSystem = msg.role === "system";
-              const agent = AGENTS.find((a) => a.id === msg.agentId);
-
-              if (isSystem) {
-                return (
-                  <div key={msg.id} className="flex justify-center my-4">
-                    <div className="px-4 py-1.5 rounded-full bg-white/5 border border-white/5 backdrop-blur-sm flex items-center gap-2">
-                      <Sparkles size={12} className="text-slate-500" />
-                      <span className="text-[10px] text-slate-400 uppercase">
-                        {msg.content}
-                      </span>
-                    </div>
-                  </div>
-                );
-              }
-
-              return (
-                <motion.div
-                  key={msg.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={`flex gap-4 ${
-                    isUser ? "flex-row-reverse text-right" : ""
-                  }`}
-                >
-                  {/* Avatar */}
-                  <div className="shrink-0 mt-1">
-                    {isUser ? (
-                      <div className="w-8 h-8 bg-slate-800 border border-white/10 rounded-lg flex items-center justify-center">
-                        <User size={14} className="text-slate-400" />
-                      </div>
-                    ) : agent ? (
-                      <div
-                        className={`w-8 h-8 rounded-lg bg-linear-to-br ${agent.gradient} flex items-center justify-center shadow-md`}
-                      >
-                        <agent.icon size={14} className="text-white" />
-                      </div>
-                    ) : (
-                      <div className="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center">
-                        <Bot size={14} className="text-slate-500" />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Bubble */}
-                  <div className="max-w-[80%] flex flex-col">
-                    {!isUser && agent && (
-                      <span
-                        className={`text-[10px] mb-1 tracking-widest uppercase ${agent.color}`}
-                      >
-                        {agent.name}
-                      </span>
-                    )}
-
-                    <div
-                      className={`p-4 rounded-2xl text-sm leading-relaxed shadow-xl ${
-                        isUser
-                          ? "bg-slate-800 border border-slate-700"
-                          : "bg-slate-900/70 border border-white/5 backdrop-blur-lg"
-                      }`}
-                    >
-                      {msg.role === "model" && msg.content === "" ? (
-                        <div className="flex items-center gap-2 text-slate-500">
-                          <Loader2 size={14} className="animate-spin" />
-                          <span className="text-xs font-mono">
-                            ĐANG SUY NGẪM...
-                          </span>
-                        </div>
-                      ) : (
-                        <div className="whitespace-pre-wrap font-light">
-                          {msg.content}
-                        </div>
-                      )}
-                    </div>
-
-                    <span className="text-[10px] text-slate-600 mt-1 opacity-60">
-                      {msg.timestamp.toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </span>
-                  </div>
-                </motion.div>
-              );
-            })}
-            <div ref={messagesEndRef} />
-          </div>
-
-          {/* Input Area */}
-          <div className="p-6 bg-slate-950/80 border-t border-white/5 backdrop-blur-xl">
-            <div className="max-w-5xl mx-auto flex items-end gap-3">
-              <GlassCard className="flex-1 flex items-start gap-3 px-5 py-4 bg-slate-900/60 hover:bg-slate-900/80 shadow-inner transition-all">
-                <div className="w-6 h-6 bg-slate-800 rounded-md flex items-center justify-center">
-                  <selectedAgent.icon
-                    size={14}
-                    className={
-                      selectedAgent.id === "council"
-                        ? "text-white"
-                        : selectedAgent.color
-                    }
-                  />
-                </div>
-
-                <textarea
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder={
-                    selectedAgent.id === "council"
-                      ? "Hỏi ý kiến toàn bộ Hội Đồng..."
-                      : `Hỏi ${selectedAgent.name}...`
-                  }
-                  className="flex-1 bg-transparent outline-none resize-none text-slate-200 placeholder-slate-600 text-base"
-                  style={{ minHeight: "24px", maxHeight: "150px" }}
-                />
-              </GlassCard>
-
-              <motion.button
-                whileHover={{
-                  scale: inputValue.trim() && !isLoading ? 1.05 : 1,
-                }}
-                whileTap={{
-                  scale: inputValue.trim() && !isLoading ? 0.95 : 1,
-                }}
-                onClick={handleSend}
-                disabled={!inputValue.trim() || isLoading}
-                className={`w-14 h-14 rounded-xl flex items-center justify-center shadow-lg transition-all shrink-0 ${
-                  !inputValue.trim() || isLoading
-                    ? "bg-slate-800 text-slate-600"
-                    : selectedAgent.id === "council"
-                    ? "bg-white text-slate-900 shadow-white/20"
-                    : `bg-linear-to-br ${selectedAgent.gradient} text-white`
-                }`}
+        {/* Input Area */}
+        <div className="shrink-0 p-6 z-20">
+          <GlassCard className="bg-black/60 backdrop-blur-2xl border-white/10 shadow-2xl" noPadding>
+            <form
+              /* onSubmit={handleSubmit} */
+              className="relative flex items-center"
+            >
+              <button
+                type="button"
+                className="p-4 text-gray-500 hover:text-forge-cyan transition-colors group"
               >
-                {isLoading ? (
-                  <Loader2 size={22} className="animate-spin" />
-                ) : (
-                  <Send size={22} />
-                )}
-              </motion.button>
-            </div>
+                <div className="w-6 h-6 rounded-full border border-current flex items-center justify-center text-xs group-hover:scale-110 transition-transform">
+                  <Sparkles size={12} />
+                </div>
+              </button>
 
-            <div className="flex justify-between mt-2 px-1">
-              <span className="text-[10px] text-slate-600 flex items-center gap-1">
-                <Command size={10} /> + Enter để gửi
-              </span>
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder={
+                  isRoundtableMode
+                    ? "Broadcast query to agent cluster..."
+                    : "Input neural query..."
+                }
+                className="flex-1 bg-transparent border-none text-white placeholder-gray-500 focus:ring-0 py-4 text-sm font-medium"
+                disabled={isStreaming}
+              />
 
               <button
-                onClick={() => setMessages([])}
-                className="text-[10px] text-slate-600 hover:text-slate-400 flex items-center gap-1"
+                type="submit"
+                disabled={!input.trim() || isStreaming}
+                className={cn(
+                  "m-2 p-2.5 rounded-xl transition-all duration-300",
+                  input.trim() && !isStreaming
+                    ? "bg-forge-accent text-white shadow-[0_0_15px_rgba(124,58,237,0.4)] hover:scale-105"
+                    : "bg-white/5 text-gray-600 cursor-not-allowed"
+                )}
               >
-                <RefreshCcw size={10} /> Làm mới phiên
+                <Send size={16} />
               </button>
-            </div>
+            </form>
+          </GlassCard>
+
+          <div className="text-center mt-2 flex justify-center gap-4">
+            <p className="text-[10px] text-gray-600 font-mono">
+              {isRoundtableMode
+                ? "Cluster Processing Active • High Token Usage"
+                : "Nexus Core Active"}
+            </p>
           </div>
         </div>
       </div>
+
+      {/* Right Agent Dock */}
+      <AgentDock isOpen={isDockOpen} activeAgentIds={activeAgentIds} />
     </div>
   );
 };
+
