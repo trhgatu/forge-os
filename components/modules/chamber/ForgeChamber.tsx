@@ -18,11 +18,11 @@ import type { Content } from "@google/genai";
 
 const bglinear: Record<string, string> = {
   architect:
-    "radial-linear(circle at 50% 0%, rgba(6,182,212,0.15) 0%, rgba(2,6,23,0) 70%)",
-  muse: "radial-linear(circle at 50% 0%, rgba(217,70,239,0.15) 0%, rgba(2,6,23,0) 70%)",
-  sage: "radial-linear(circle at 50% 0%, rgba(245,158,11,0.15) 0%, rgba(2,6,23,0) 70%)",
+    "radial-gradient(circle at 50% 0%, rgba(6,182,212,0.15) 0%, rgba(2,6,23,0) 70%)",
+  muse: "radial-gradient(circle at 50% 0%, rgba(217,70,239,0.15) 0%, rgba(2,6,23,0) 70%)",
+  sage: "radial-gradient(circle at 50% 0%, rgba(245,158,11,0.15) 0%, rgba(2,6,23,0) 70%)",
   council:
-    "radial-linear(circle at 50% 0%, rgba(255,255,255,0.1) 0%, rgba(2,6,23,0) 80%)",
+    "radial-gradient(circle at 50% 0%, rgba(255,255,255,0.1) 0%, rgba(2,6,23,0) 80%)",
 };
 
 export const ForgeChamber = () => {

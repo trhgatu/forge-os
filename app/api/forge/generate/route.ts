@@ -24,7 +24,6 @@ export async function POST(req: Request) {
   try {
     const { messages, agent }: RequestPayload = await req.json();
 
-    // Convert incoming messages -> Gemini Content[]
     const contents: Content[] = messages.map((m) => ({
       role: m.role,
       parts: m.parts.map((p) => ({ text: p.text })),
@@ -45,7 +44,6 @@ export async function POST(req: Request) {
       async start(controller) {
         try {
           for await (const chunk of streamResult) {
-            // chunk has type GenerateContentResponse
             const response = chunk as GenerateContentResponse;
 
             const text = response.text ?? "";
