@@ -1,4 +1,4 @@
-import {
+/* import {
   LayoutGrid,
   Book,
   BrainCircuit,
@@ -88,3 +88,4 @@ export const SAMPLE_PROJECTS = [
   { id: "2", title: "Thơ Lượng Tử", status: "Draft", progress: 30, lastModified: "1 ngày trước", tags: ["Viết lách", "Trừu tượng"] },
   { id: "3", title: "Giao Diện Thần Kinh", status: "Completed", progress: 100, lastModified: "3 ngày trước", tags: ["Dev", "AI"] },
 ];
+ */
