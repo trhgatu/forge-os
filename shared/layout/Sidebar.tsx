@@ -34,7 +34,7 @@ import {
   Ghost,
   Cpu,
   Languages,
-  Radar
+  Radar,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -43,9 +43,19 @@ const NAV_ITEMS = [
   { href: "/forge/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard, group: "Main" },
   { href: "/forge/chamber", labelKey: "nav.forge_chamber", icon: BrainCircuit, group: "Main" },
 
-  { href: "/forge/timeline", labelKey: "nav.timeline", icon: GitCommitHorizontal, group: "Reflection" },
+  {
+    href: "/forge/timeline",
+    labelKey: "nav.timeline",
+    icon: GitCommitHorizontal,
+    group: "Reflection",
+  },
   { href: "/forge/journal", labelKey: "nav.journal", icon: BookOpen, group: "Reflection" },
-  { href: "/forge/meta-journal", labelKey: "nav.meta_journal", icon: Lightbulb, group: "Reflection" },
+  {
+    href: "/forge/meta-journal",
+    labelKey: "nav.meta_journal",
+    icon: Lightbulb,
+    group: "Reflection",
+  },
   { href: "/forge/memory", labelKey: "nav.memory", icon: History, group: "Reflection" },
   { href: "/forge/shadow-work", labelKey: "nav.shadow_work", icon: Ghost, group: "Reflection" },
   { href: "/forge/mood", labelKey: "nav.mood", icon: Smile, group: "Reflection" },
@@ -64,7 +74,12 @@ const NAV_ITEMS = [
   { href: "/forge/energy", labelKey: "nav.energy", icon: Zap, group: "Evolution" },
 
   { href: "/forge/insights", labelKey: "nav.insights", icon: Telescope, group: "System" },
-  { href: "/forge/weekly-review", labelKey: "nav.weekly_review", icon: CalendarCheck, group: "System" },
+  {
+    href: "/forge/weekly-review",
+    labelKey: "nav.weekly_review",
+    icon: CalendarCheck,
+    group: "System",
+  },
   { href: "/forge/monthly-review", labelKey: "nav.monthly_review", icon: Moon, group: "System" },
   { href: "/forge/yearly-review", labelKey: "nav.yearly_review", icon: Orbit, group: "System" },
 
@@ -74,7 +89,6 @@ const NAV_ITEMS = [
 ];
 
 const GROUPS = ["Meta", "Main", "Reflection", "Creativity", "Evolution", "System"];
-
 
 export function Sidebar() {
   const router = useRouter();
@@ -91,7 +105,7 @@ export function Sidebar() {
         "relative h-full z-50 flex flex-col",
         "border-r border-white/5 bg-black/40 backdrop-blur-2xl",
         "transition-[width] duration-500 ease-spring-out",
-        isExpanded ? "w-72" : "w-20"
+        isExpanded ? "w-64" : "w-20"
       )}
     >
       <div
@@ -125,7 +139,6 @@ export function Sidebar() {
       </div>
 
       <nav className="flex-1 overflow-y-auto overflow-x-hidden px-3 py-2 space-y-6 scrollbar-hide">
-
         {GROUPS.map((group) => (
           <div key={group}>
             <h3
@@ -133,7 +146,6 @@ export function Sidebar() {
                 "px-4 text-[10px] font-mono text-gray-500 uppercase tracking-widest mb-2 transition-all",
                 isExpanded ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-2"
               )}
-
             >
               {t(`group.${group.toLowerCase()}`)}
             </h3>
@@ -167,8 +179,8 @@ export function Sidebar() {
                       size={20}
                       className={cn(
                         "transition-all duration-300 z-10 shrink-0",
-                        isActive ? 'text-forge-cyan' : 'text-gray-400 group-hover:text-gray-200',
-                        !isExpanded && isActive ? 'scale-110' : ''
+                        isActive ? "text-forge-cyan" : "text-gray-400 group-hover:text-gray-200",
+                        !isExpanded && isActive ? "scale-110" : ""
                       )}
                     />
 
@@ -181,7 +193,6 @@ export function Sidebar() {
                       )}
                       style={{ transitionDelay: isExpanded ? `${index * 35}ms` : "0ms" }}
                     >
-
                       {t(item.labelKey)}
                     </span>
 
@@ -218,8 +229,22 @@ export function Sidebar() {
             <div className="flex-1 flex items-center justify-between">
               <span className="text-xs text-gray-400">Language</span>
               <div className="flex bg-black/40 rounded-md p-0.5 border border-white/10">
-                <span className={cn("px-2 py-0.5 text-[10px] font-bold", language === "en" && "bg-white text-black")}>EN</span>
-                <span className={cn("px-2 py-0.5 text-[10px] font-bold", language === "vi" && "bg-white text-black")}>VI</span>
+                <span
+                  className={cn(
+                    "px-2 py-0.5 text-[10px] font-bold",
+                    language === "en" && "bg-white text-black"
+                  )}
+                >
+                  EN
+                </span>
+                <span
+                  className={cn(
+                    "px-2 py-0.5 text-[10px] font-bold",
+                    language === "vi" && "bg-white text-black"
+                  )}
+                >
+                  VI
+                </span>
               </div>
             </div>
           )}
