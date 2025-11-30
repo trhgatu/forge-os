@@ -1,36 +1,123 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🔥 Forge OS — An Operating System for Thought, Growth & Creation
 
-## Getting Started
+“A system that mirrors you, evolves with you,
+and lights up the parts you don’t usually see.”
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## ✨ What is Forge OS?
+
+Forge OS is a **personal operating system** for reflection, creativity, and inner evolution.  
+Not a dashboard.  
+Not a CMS.  
+Not another productivity tool.
+
+It is a **mind mirror** — helping you see deeper.  
+A **creative forge** — where ideas take form.  
+A **knowledge sanctuary** — storing the moments, insights, and truths that shape you.
+
+A system designed to:
+
+- store your **memories**,  
+- carry your **quotes**,  
+- track your **moods**,  
+- map your **timeline**,  
+- and host the **AI agents** that accompany your growth.
+
+Forge OS isn’t just software —  
+it’s a living extension of your inner world.
+
+---
+
+## 🧩 Core Modules
+
+### 📘 Reflection Module
+- journal  
+- memory  
+- quote  
+- insight  
+
+### 🧠 Mind Module
+- mood  
+- presence  
+- pulse  
+
+### 🜁 Creation Module
+- project  
+- template  
+- crafting  
+
+### 🜄 Connection Module
+- forge chamber  
+- presence feed  
+- notification  
+
+### ⚙️ System Module
+- auth  
+- user  
+- role / permission  
+- log  
+- i18n  
+
+---
+
+## 🏗 Architecture
+
+Built using **NestJS** and structured through **Domain-Driven Design**, ensuring clarity, boundary integrity, and long-term scalability.
+
+### Structure Overview
+
+```
+trhgatu-forge-os-backend/
+├── src/
+│   ├── contexts/
+│   │   ├── reflection/
+│   │   ├── creation/
+│   │   ├── mind/
+│   │   └── system/
+│   ├── core/
+│   ├── shared/
+│   └── app.module.ts
+├── docker/
+└── README.md
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Each context behaves like a subsystem —  
+self-contained, expressive, and extendable.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🌐 Forge Chamber — Multi-Agent AI Room
 
-## Learn More
+A dedicated space where multiple AI personas coexist, collaborate, and respond simultaneously.  
+Each agent represents a perspective: logic, creativity, memory, philosophy.
 
-To learn more about Next.js, take a look at the following resources:
+Together, they form a **council of intelligence**  
+designed to expand your thinking and deepen your self-understanding.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🚀 Tech Stack
 
-## Deploy on Vercel
+- **TypeScript**  
+- **NestJS**  
+- **MongoDB**  
+- **Redis**  
+- **Docker**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Stable, scalable, and crafted for long-term evolution.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🌠 Vision
+
+Forge OS is designed as a **lifelong system** —  
+a companion that grows, transforms, and expands alongside you.
+
+Not a project.  
+A living journey.
+
+---
+
+## 📜 License  
+Private • Personal OS • Built for trhgatu
