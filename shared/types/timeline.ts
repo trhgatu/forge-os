@@ -1,12 +1,6 @@
 import { MoodType } from "./journal";
 
-export type TimelineType =
-  | "memory"
-  | "journal"
-  | "quote"
-  | "mood"
-  | "milestone"
-  | "insight";
+export type TimelineType = "memory" | "journal" | "quote" | "mood" | "milestone" | "insight";
 
 export interface TimelineAnalysis {
   significance: string;
@@ -14,7 +8,7 @@ export interface TimelineAnalysis {
   temporalContext: string;
 }
 
-export interface TimelineItem {
+export interface TimelineItem<TMeta = unknown> {
   id: string;
   type: TimelineType;
   date: Date;
@@ -23,6 +17,6 @@ export interface TimelineItem {
   mood: MoodType;
   tags: string[];
   imageUrl?: string;
-  metadata?: any;
+  metadata?: TMeta;
   analysis?: TimelineAnalysis;
 }
