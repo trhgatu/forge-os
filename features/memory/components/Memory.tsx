@@ -16,9 +16,8 @@ type SeasonFilter = InnerSeason | "All";
 
 export function Memory() {
   const [memories, setMemories] = useState<Memory[]>(MOCK_MEMORIES);
-  const [selectedMemoryId, setSelectedMemoryId] = useState<string | null>(
-    MOCK_MEMORIES[0]?.id ?? null
-  );
+  const [selectedMemoryId, setSelectedMemoryId] = useState<string | null>(null);
+
   const [isCreating, setIsCreating] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -163,8 +162,6 @@ export function Memory() {
           );
         })}
       </div>
-
-      {/* grid */}
       <div className="relative z-10 flex-1 overflow-y-auto px-8 pb-32 scrollbar-hide">
         <div className="mx-auto max-w-7xl pt-8">
           {filteredMemories.length > 0 ? (
@@ -185,16 +182,12 @@ export function Memory() {
           )}
         </div>
       </div>
-
-      {/* detail side panel */}
       <MemoryDetailPanel
         memory={selectedMemory}
         onClose={() => setSelectedMemoryId(null)}
         onAnalyze={handleAnalyze}
         isAnalyzing={isAnalyzing}
       />
-
-      {/* create modal */}
       {isCreating && (
         <CreateMemoryModal onClose={() => setIsCreating(false)} onSave={handleSaveNew} />
       )}
