@@ -16,9 +16,8 @@ type SeasonFilter = InnerSeason | "All";
 
 export function Memory() {
   const [memories, setMemories] = useState<Memory[]>(MOCK_MEMORIES);
-  const [selectedMemoryId, setSelectedMemoryId] = useState<string | null>(
-    MOCK_MEMORIES[0]?.id ?? null
-  );
+  const [selectedMemoryId, setSelectedMemoryId] = useState<string | null>(null);
+
   const [isCreating, setIsCreating] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
