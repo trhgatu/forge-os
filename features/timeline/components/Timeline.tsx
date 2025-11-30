@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 import { Plus } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 
-import type { TimelineItem, TimelineType } from "@/types/timeline";
+import type { TimelineItem, TimelineType } from "@/shared/types/timeline";
 
-import { TYPE_CONFIG } from "./config";
+import { TYPE_CONFIG } from "../config";
 import TimelineNode from "./TimelineNode";
 import TimelineCard from "./TimelineCard";
 import ContextPanel from "./ContextPanel";
-import { MOCK_TIMELINE } from "./mockData";
+import { MOCK_TIMELINE } from "../data";
 /* import { analyzeTimelineItem } from "@/services/geminiService"; */
 
 export const Timeline = () => {

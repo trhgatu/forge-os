@@ -7,7 +7,7 @@ import {
   Sparkles,
   LucideIcon,
 } from "lucide-react";
-import type { TimelineType, MoodType } from "@/types";
+import type { TimelineType, MoodType } from "@/shared/types";
 
 export const TYPE_CONFIG: Record<
   TimelineType,

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Sidebar } from "@/components/layout/Sidebar";
+import { Sidebar } from "@/shared/layout/Sidebar";
 import "@/app/globals.css";
 
 export default function ForgeLayout({ children }: { children: React.ReactNode }) {

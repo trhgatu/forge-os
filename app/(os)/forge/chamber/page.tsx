@@ -1,4 +1,4 @@
-import { ForgeChamber } from "@/components/modules/chamber/ForgeChamber";
+import { ForgeChamber } from "@/features/chamber/components/ForgeChamber";
 
 export default function Page() {
   return <ForgeChamber />;

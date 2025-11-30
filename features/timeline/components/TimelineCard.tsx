@@ -1,8 +1,8 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-import { TYPE_CONFIG, MOOD_COLORS } from "./config";
-import type { TimelineItem } from "@/types/timeline";
+import { cn } from "@/shared/lib/utils";
+import { TYPE_CONFIG, MOOD_COLORS } from "../config";
+import type { TimelineItem } from "@/shared/types/timeline";
 import Image from "next/image";
 
 export default function TimelineCard({

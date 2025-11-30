@@ -9,8 +9,8 @@ import {
   MoreHorizontal,
   Activity,
 } from "lucide-react";
-import { Agent } from "@/types";
-import { cn } from "@/lib/utils";
+import { Agent } from "@/shared/types";
+import { cn } from "@/shared/lib/utils";
 
 // =============================================
 // TAILWIND v4 FIX – MAPPING TEXT-COLOR → REAL COLORS

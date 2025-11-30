@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 /* import { getDailyInsight } from "@/services/geminiService"; */
-import { InsightData } from "@/types";
-import { cn } from "@/lib/utils";
+import { InsightData } from "@/shared/types";
+import { cn } from "@/shared/lib/utils";
 
 import {
   Clock,
@@ -27,7 +27,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-import { AGENTS } from "@/components/modules/chamber/AgentDock";
+import { AGENTS } from "@/features/chamber/components/AgentDock";
 
 
 const MOOD_DATA = [
