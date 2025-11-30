@@ -1,13 +1,6 @@
 "use client";
 
-import React, {
-  createContext,
-  useContext,
-  useRef,
-  useState,
-  useEffect,
-  ReactNode,
-} from "react";
+import React, { createContext, useContext, useRef, useState, useEffect, ReactNode } from "react";
 
 type SoundType = "click" | "hover" | "success" | "error" | "on" | "off";
 
@@ -23,12 +16,10 @@ export function SoundProvider({ children }: { children: ReactNode }) {
   const [isEnabled, setIsEnabled] = useState(true);
   const audioCtxRef = useRef<AudioContext | null>(null);
 
-  // Init AudioContext safely (strict typing)
   useEffect(() => {
     if (typeof window !== "undefined") {
       const Ctx =
-        window.AudioContext ??
-        (window.webkitAudioContext ? window.webkitAudioContext : undefined);
+        window.AudioContext ?? (window.webkitAudioContext ? window.webkitAudioContext : undefined);
 
       if (Ctx) {
         audioCtxRef.current = new Ctx();

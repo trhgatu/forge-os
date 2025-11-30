@@ -57,7 +57,7 @@ export const TRANSLATIONS = {
       journal: "Nhật ký",
       meta_journal: "Meta Journal",
       memory: "Ký ức",
-      shadow_work: "Làm việc bóng tối",
+      shadow_work: "Bản ngã",
       mood: "Cảm xúc",
       quotes: "Trích dẫn",
       mantra: "Chân ngôn",
