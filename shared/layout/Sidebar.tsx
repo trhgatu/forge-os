@@ -35,6 +35,7 @@ import {
   Cpu,
   Languages,
   Radar,
+  BookKey,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -42,6 +43,7 @@ const NAV_ITEMS = [
 
   { href: "/forge/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard, group: "Main" },
   { href: "/forge/chamber", labelKey: "nav.forge_chamber", icon: BrainCircuit, group: "Main" },
+  { href: "/forge/knowledge", labelKey: "nav.knowledge", icon: BookKey, group: "Main" },
 
   {
     href: "/forge/timeline",

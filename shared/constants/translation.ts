@@ -11,6 +11,7 @@ export const TRANSLATIONS = {
     nav: {
       presence: "Presence",
       dashboard: "Dashboard",
+      knowledge: "Knowledge",
       forge_chamber: "Forge Chamber",
       timeline: "Timeline",
       journal: "Journal",
@@ -52,6 +53,7 @@ export const TRANSLATIONS = {
     nav: {
       presence: "Hiện diện",
       dashboard: "Bảng điều khiển",
+      knowledge: "Kiến thức",
       forge_chamber: "Forge Chamber",
       timeline: "Dòng thời gian",
       journal: "Nhật ký",
