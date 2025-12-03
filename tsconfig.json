@@ -18,10 +18,19 @@
         "name": "next"
       }
     ],
+
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+
+      "@/store/*": ["store/*"],
+      "@/features/*": ["features/*"],
+      "@/shared/*": ["shared/*"],
+      "@/contexts/*": ["contexts/*"],
+      "@/services/*": ["services/*"]
     }
   },
+
   "include": [
     "next-env.d.ts",
     "**/*.ts",
@@ -30,5 +39,6 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
+
   "exclude": ["node_modules"]
 }
