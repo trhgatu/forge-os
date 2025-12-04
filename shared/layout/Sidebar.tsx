@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 import { cn } from "@/shared/lib/utils";
 
 import { useLanguage, useSound } from "@/contexts";
@@ -93,7 +94,6 @@ const NAV_ITEMS = [
 const GROUPS = ["Meta", "Main", "Reflection", "Creativity", "Evolution", "System"];
 
 export function Sidebar() {
-  const router = useRouter();
   const pathname = usePathname();
 
   const [isExpanded, setIsExpanded] = useState(true);
@@ -158,13 +158,11 @@ export function Sidebar() {
                 const Icon = item.icon;
 
                 return (
-                  <button
+                  <Link
                     key={item.href}
+                    href={item.href}
                     onMouseEnter={() => playSound("hover")}
-                    onClick={() => {
-                      playSound("click");
-                      router.push(item.href);
-                    }}
+                    onClick={() => playSound("click")}
                     className={cn(
                       "group relative w-full flex items-center p-3 rounded-xl text-sm transition-all",
                       isActive
@@ -203,7 +201,7 @@ export function Sidebar() {
                         {t(item.labelKey)}
                       </div>
                     )}
-                  </button>
+                  </Link>
                 );
               })}
             </div>
