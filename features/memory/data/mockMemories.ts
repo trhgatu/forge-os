@@ -4,7 +4,7 @@ export const MOCK_MEMORIES: Memory[] = [
   {
     id: "1",
     title: "The Summit at Dawn",
-    description:
+    content:
       "Reached the peak just as the sun broke the horizon. The physical exhaustion vanished instantly, replaced by a profound sense of smallness and connection. The world below looked like a circuit board.",
     date: new Date("2023-11-15"),
     type: "milestone",
@@ -23,7 +23,7 @@ export const MOCK_MEMORIES: Memory[] = [
   {
     id: "2",
     title: "Deep Code Flow",
-    description:
+    content:
       "3 AM. The bug is fixed. The music is perfect. Flow state achieved. It felt like I was speaking directly to the machine. Silence in the room, loud in the mind.",
     date: new Date("2023-10-22"),
     type: "moment",
@@ -40,7 +40,7 @@ export const MOCK_MEMORIES: Memory[] = [
   {
     id: "3",
     title: "Rainy Cafe Reflection",
-    description:
+    content:
       "Watching the rain hit the window. Realized I have been running too fast. Need to slow down. The coffee was warm, but my hands were cold.",
     date: new Date("2023-09-10"),
     type: "insight",
@@ -53,7 +53,7 @@ export const MOCK_MEMORIES: Memory[] = [
   {
     id: "4",
     title: "Startup Pitch",
-    description:
+    content:
       "The lights were too bright. My heart was racing. But when I started speaking, the fire took over.",
     date: new Date("2023-08-05"),
     type: "challenge",
