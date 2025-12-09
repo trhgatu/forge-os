@@ -24,19 +24,19 @@ const EMOTION_OPTIONS: MoodType[] = [
 
 export function CreateMemoryModal({ onClose, onSave }: CreateMemoryModalProps) {
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [content, setContent] = useState("");
   const [mood, setMood] = useState<MoodType>("neutral");
   const [imageUrl, setImageUrl] = useState("");
 
   const handleSave = () => {
-    if (!title.trim() || !description.trim()) return;
+    if (!title.trim() || !content.trim()) return;
 
     const trimmedImage = imageUrl.trim() || undefined;
 
     const newMemory: Memory = {
       id: Date.now().toString(),
       title: title.trim(),
-      description: description.trim(),
+      content: content.trim(),
       date: new Date(),
       mood,
       type: "moment",
@@ -86,8 +86,8 @@ export function CreateMemoryModal({ onClose, onSave }: CreateMemoryModalProps) {
             <textarea
               className="h-32 w-full resize-none rounded-lg border border-white/10 bgWhite/5 bg-white/5 px-4 py-3 text-white outline-none transition-colors focus:border-white/20 leading-relaxed"
               placeholder="What is the texture of this moment?"
-              value={description}
-              onChange={(event) => setDescription(event.target.value)}
+              value={content}
+              onChange={(event) => setContent(event.target.value)}
             />
           </div>
 

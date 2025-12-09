@@ -107,7 +107,7 @@ export function MemoryDetailPanel({
         {/* description */}
         <div>
           <p className="whitespace-pre-line font-serif text-base leading-relaxed text-gray-200">
-            {memory.description}
+            {memory.content}
           </p>
         </div>
 

@@ -6,7 +6,7 @@ import { Image as ImageIcon, Plus, Search, Wind } from "lucide-react";
 import type { Memory } from "@/shared/types/memory";
 import { cn } from "@/shared/lib/utils";
 import { SEASON_CONFIG, type InnerSeason, getSeasonFromMood } from "../config";
-import { MOCK_MEMORIES } from "../data/mockMemories";
+import { useMemories } from "@/features/memory/hooks";
 import { analyzeMemory } from "../services/analyze";
 import { MemoryCard } from "./MemoryCard";
 import { MemoryDetailPanel } from "./MemoryDetailPanel";
@@ -15,8 +15,12 @@ import { CreateMemoryModal } from "./CreateMemoryModal";
 type SeasonFilter = InnerSeason | "All";
 
 export function Memory() {
-  const [memories, setMemories] = useState<Memory[]>(MOCK_MEMORIES);
+  const { data, isLoading, isError } = useMemories();
+
+  const memories = useMemo(() => data?.data ?? [], [data]);
+
   const [selectedMemoryId, setSelectedMemoryId] = useState<string | null>(null);
+  const [analysisMap, setAnalysisMap] = useState<Record<string, Memory["analysis"]>>({});
 
   const [isCreating, setIsCreating] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -31,8 +35,7 @@ export function Memory() {
     if (query) {
       current = current.filter(
         (memory) =>
-          memory.title.toLowerCase().includes(query) ||
-          memory.description.toLowerCase().includes(query)
+          memory.title.toLowerCase().includes(query) || memory.content.toLowerCase().includes(query)
       );
     }
 
@@ -43,7 +46,12 @@ export function Memory() {
     return current;
   }, [memories, searchTerm, activeFilter]);
 
-  const selectedMemory = memories.find((memory) => memory.id === selectedMemoryId) ?? null;
+  const selectedMemoryBase = memories.find((memory) => memory.id === selectedMemoryId) ?? null;
+
+  const selectedMemory =
+    selectedMemoryBase && analysisMap[selectedMemoryBase.id]
+      ? { ...selectedMemoryBase, analysis: analysisMap[selectedMemoryBase.id] }
+      : selectedMemoryBase;
 
   const handleAnalyze = async (id: string) => {
     const target = memories.find((memory) => memory.id === id);
@@ -51,17 +59,19 @@ export function Memory() {
 
     setIsAnalyzing(true);
     try {
-      const analysis = await analyzeMemory(target.description);
-      setMemories((previous) =>
-        previous.map((memory) => (memory.id === id ? { ...memory, analysis } : memory))
-      );
+      const analysis = await analyzeMemory(target.content);
+      setAnalysisMap((prev) => ({
+        ...prev,
+        [id]: analysis,
+      }));
     } finally {
       setIsAnalyzing(false);
     }
   };
 
   const handleSaveNew = (memory: Memory) => {
-    setMemories((previous) => [memory, ...previous]);
+    // TODO: nối với useCreateMemory khi API ready
+    // createMemory.mutate(payload)
     setSelectedMemoryId(memory.id);
   };
 
@@ -76,6 +86,21 @@ export function Memory() {
             ? "bg-[#02030a]"
             : "bg-[#020204]";
 
+  if (isLoading) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <p className="text-sm text-gray-500">Loading memories...</p>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <p className="text-sm text-red-400">Failed to load memories.</p>
+      </div>
+    );
+  }
   return (
     <div
       className={cn(

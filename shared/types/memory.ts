@@ -12,7 +12,7 @@ export interface MemoryAnalysis {
 export interface Memory {
   id: string;
   title: string;
-  description: string;
+  content: string;
   date: Date;
   type: MemoryType;
   mood: MoodType;

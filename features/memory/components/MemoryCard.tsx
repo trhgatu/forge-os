@@ -88,7 +88,7 @@ export function MemoryCard({ memory, onClick }: MemoryCardProps) {
           <div className="mb-4 h-px w-12 opacity-50 transition-all duration-700 group-hover:w-full bg-white/40" />
 
           <p className="line-clamp-2 font-serif text-sm font-light leading-relaxed text-gray-300 opacity-80 transition-opacity group-hover:opacity-100">
-            {memory.description}
+            {memory.content}
           </p>
         </div>
 

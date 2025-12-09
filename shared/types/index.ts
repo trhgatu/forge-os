@@ -13,3 +13,4 @@ export * from "./memory";
 export * from "./journal";
 export * from "./insight";
 export * from "./knowledge";
+export * from "./api";
