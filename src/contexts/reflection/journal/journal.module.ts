@@ -1,12 +1,16 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
-import { SharedModule } from '@shared/shared.module';
+
 import { JournalSchema } from './infrastructure/journal.schema';
 import { MongoJournalRepository } from './infrastructure/repositories/mongo-journal.repository';
-import { JournalHandlers } from './application/handlers';
+
 import { JournalAdminController } from './presentation/controllers/journal.admin.controller';
 import { JournalPublicController } from './presentation/controllers/journal.public.controller';
+
+import { SharedModule } from '@shared/shared.module';
+
+import { JournalHandlers } from './application/handlers';
 
 @Module({
   imports: [
@@ -23,5 +27,6 @@ import { JournalPublicController } from './presentation/controllers/journal.publ
     MongoJournalRepository,
     ...JournalHandlers,
   ],
+  exports: [],
 })
 export class JournalModule {}

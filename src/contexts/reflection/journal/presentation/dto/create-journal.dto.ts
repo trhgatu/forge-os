@@ -1,19 +1,38 @@
 import {
-  IsArray,
-  IsDateString,
-  IsOptional,
   IsString,
-  MinLength,
+  IsOptional,
+  IsArray,
+  IsEnum,
+  ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
+
+import { MoodType } from '@shared/enums';
+import {
+  JournalStatus,
+  JournalType,
+  JournalRelationType,
+} from '../../domain/enums';
+
+export class JournalRelationDto {
+  @IsEnum(JournalRelationType)
+  type!: JournalRelationType;
+
+  @IsString()
+  id!: string;
+}
 
 export class CreateJournalDto {
+  @IsOptional()
   @IsString()
-  @MinLength(1)
-  title!: string;
+  title?: string;
 
   @IsString()
-  @MinLength(1)
   content!: string;
+
+  @IsOptional()
+  @IsEnum(MoodType)
+  mood?: MoodType;
 
   @IsOptional()
   @IsArray()
@@ -21,10 +40,19 @@ export class CreateJournalDto {
   tags?: string[];
 
   @IsOptional()
-  @IsString()
-  mood?: string;
+  @IsEnum(JournalType)
+  type?: JournalType;
 
   @IsOptional()
-  @IsDateString()
-  date?: string;
+  @IsEnum(JournalStatus)
+  status?: JournalStatus;
+
+  @IsOptional()
+  @IsEnum(['user', 'ai', 'system'])
+  source?: 'user' | 'ai' | 'system';
+
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => JournalRelationDto)
+  relations?: JournalRelationDto[];
 }

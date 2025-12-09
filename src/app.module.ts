@@ -14,8 +14,7 @@ import { CreateAuditLogMiddleware } from '@shared/middlewares';
 
 import { MemoryModule } from '@root/contexts/reflection/memory/memory.module';
 import { QuoteModule } from '@root/contexts/reflection/quote/quote.module';
-import { JournalModule } from './contexts/reflection/journal/journal.module';
-import { MoodModule } from './contexts/reflection/mood/mood.module';
+import { JournalModule } from '@root/contexts/reflection/journal/journal.module';
 
 @Module({
   imports: [
@@ -37,7 +36,6 @@ import { MoodModule } from './contexts/reflection/mood/mood.module';
     MemoryModule,
     QuoteModule,
     JournalModule,
-    MoodModule,
   ],
   controllers: [AppController],
 })

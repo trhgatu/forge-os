@@ -1,7 +1,10 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { UpdateJournalCommand } from '../commands';
+import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 import { Inject, NotFoundException } from '@nestjs/common';
-import { JournalRepository } from '../ports/journal.repository';
+
+import { UpdateJournalCommand } from '../commands/update-journal.command';
+import { JournalRepository } from '../../application/ports/journal.repository';
+import { JournalModifiedEvent } from '../events/journal-modified.event';
+
 import { JournalPresenter } from '../../presentation/journal.presenter';
 import { JournalResponse } from '../../presentation/dto/journal.response';
 
@@ -12,23 +15,24 @@ export class UpdateJournalHandler
   constructor(
     @Inject('JournalRepository')
     private readonly journalRepo: JournalRepository,
+
+    private readonly eventBus: EventBus,
   ) {}
 
   async execute(command: UpdateJournalCommand): Promise<JournalResponse> {
-    const journal = await this.journalRepo.findById(command.id);
-    if (!journal) throw new NotFoundException('Journal not found');
+    const { id, payload } = command;
 
-    journal.update({
-      title: command.payload.title ?? journal.toPrimitives().title,
-      content: command.payload.content ?? journal.toPrimitives().content,
-      tags: command.payload.tags ?? journal.toPrimitives().tags,
-      mood: command.payload.mood ?? journal.toPrimitives().mood,
-      date: command.payload.date
-        ? new Date(command.payload.date)
-        : journal.toPrimitives().date,
-    });
+    const journal = await this.journalRepo.findById(id);
+    if (!journal) {
+      throw new NotFoundException('Journal not found');
+    }
+
+    journal.updateInfo(payload);
 
     await this.journalRepo.save(journal);
+
+    this.eventBus.publish(new JournalModifiedEvent(id, 'update'));
+
     return JournalPresenter.toResponse(journal);
   }
 }

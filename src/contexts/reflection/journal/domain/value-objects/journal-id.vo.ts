@@ -1,19 +1,12 @@
-import { BadRequestException } from '@nestjs/common';
-import { ObjectId } from 'mongodb';
+import { BaseId } from '@shared/value-objects';
+import { Types } from 'mongoose';
 
-export class JournalId {
-  private constructor(private readonly value: ObjectId) {}
-
-  static create(id?: string | ObjectId): JournalId {
-    const objectId =
-      typeof id === 'string' ? new ObjectId(id) : (id ?? new ObjectId());
-    if (!ObjectId.isValid(objectId)) {
-      throw new BadRequestException('Invalid JournalId');
-    }
-    return new JournalId(objectId as ObjectId);
+export class JournalId extends BaseId {
+  private constructor(value: string | Types.ObjectId) {
+    super(value);
   }
 
-  toString() {
-    return this.value.toHexString();
+  public static create(value: string | Types.ObjectId): JournalId {
+    return new JournalId(value);
   }
 }

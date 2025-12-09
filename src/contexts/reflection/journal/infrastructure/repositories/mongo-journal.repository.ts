@@ -1,11 +1,14 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Model, FilterQuery } from 'mongoose';
+
 import { JournalDocument } from '../journal.schema';
 import { JournalRepository } from '../../application/ports/journal.repository';
+
 import { Journal } from '../../domain/journal.entity';
 import { JournalId } from '../../domain/value-objects/journal-id.vo';
 import { JournalFilter } from '../../application/queries/journal-filter';
+
 import { JournalMapper } from './journal.mapper';
 import { paginateDDD } from '@shared/utils/paginateDDD';
 import { PaginatedResult } from '@shared/types/paginated-result';
@@ -42,12 +45,16 @@ export class MongoJournalRepository implements JournalRepository {
           { content: { $regex: query.keyword, $options: 'i' } },
         ],
       }),
+
+      ...(query.status && { status: query.status }),
+      ...(query.type && { type: query.type }),
       ...(query.mood && { mood: query.mood }),
+      ...(query.source && { source: query.source }),
       ...(query.tags && { tags: { $in: query.tags } }),
     };
 
     const result = await paginateDDD(
-      this.model.find(filter).skip(skip).limit(limit).sort({ date: -1 }),
+      this.model.find(filter).skip(skip).limit(limit),
       this.model.countDocuments(filter),
       page,
       limit,
@@ -67,7 +74,10 @@ export class MongoJournalRepository implements JournalRepository {
   async softDelete(id: JournalId): Promise<void> {
     const result = await this.model.findByIdAndUpdate(
       id.toString(),
-      { isDeleted: true, deletedAt: new Date() },
+      {
+        isDeleted: true,
+        deletedAt: new Date(),
+      },
       { new: true },
     );
     if (!result) throw new NotFoundException('Journal not found');
@@ -76,7 +86,10 @@ export class MongoJournalRepository implements JournalRepository {
   async restore(id: JournalId): Promise<void> {
     const result = await this.model.findByIdAndUpdate(
       id.toString(),
-      { isDeleted: false, deletedAt: undefined },
+      {
+        isDeleted: false,
+        deletedAt: undefined,
+      },
       { new: true },
     );
     if (!result) throw new NotFoundException('Journal not found');
