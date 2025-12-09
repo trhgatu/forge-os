@@ -12,13 +12,10 @@ import { PermissionModule } from '@modules/permission';
 import { AuditLogModule } from '@modules/audit-log';
 import { CreateAuditLogMiddleware } from '@shared/middlewares';
 
-import { VenueModule } from '@root/contexts/catalog/venue/venue.module';
-import { CourtModule } from '@root/contexts/catalog/court/court.module';
-import { SportModule } from '@root/contexts/catalog/sport/sport.module';
-
 import { MemoryModule } from '@root/contexts/reflection/memory/memory.module';
-import { BookingModule } from '@modules/booking';
 import { QuoteModule } from '@root/contexts/reflection/quote/quote.module';
+import { JournalModule } from './contexts/reflection/journal/journal.module';
+import { MoodModule } from './contexts/reflection/mood/mood.module';
 
 @Module({
   imports: [
@@ -37,13 +34,10 @@ import { QuoteModule } from '@root/contexts/reflection/quote/quote.module';
     UserModule,
     PermissionModule,
     AuditLogModule,
-    VenueModule,
-    CourtModule,
-    SportModule,
-    BookingModule,
-
     MemoryModule,
     QuoteModule,
+    JournalModule,
+    MoodModule,
   ],
   controllers: [AppController],
 })

@@ -9,9 +9,16 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.setGlobalPrefix('api/v1');
 
+  app.enableCors({
+    origin: ['http://localhost:3001'],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: 'Content-Type, Authorization, X-Requested-With',
+    credentials: true,
+  });
+
   const config = new DocumentBuilder()
-    .setTitle('Sport Booking API')
-    .setDescription('API documentation for the Sport Booking platform')
+    .setTitle('Forge OS API')
+    .setDescription('API documentation for Forge OS')
     .setVersion('1.0')
     .addBearerAuth({
       type: 'http',
