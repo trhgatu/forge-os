@@ -1,0 +1,51 @@
+export enum View {
+  DASHBOARD = "DASHBOARD",
+
+  // Reflection Layer
+  JOURNAL = "JOURNAL",
+  META_JOURNAL = "META_JOURNAL",
+  MEMORY = "MEMORY",
+  MOOD = "MOOD",
+  INSIGHTS = "INSIGHTS",
+  QUOTES = "QUOTES",
+  MANTRA = "MANTRA",
+  SOUNDTRACK = "SOUNDTRACK",
+  EPIC_SCENE_VAULT = "EPIC_SCENE_VAULT",
+
+  // Timeline & Milestones
+  TIMELINE = "TIMELINE",
+  MILESTONES = "MILESTONES",
+  YEARLY_REVIEW = "YEARLY_REVIEW",
+  WEEKLY_REVIEW = "WEEKLY_REVIEW",
+  MONTHLY_REVIEW = "MONTHLY_REVIEW",
+
+  // Personal Systems
+  GOALS = "GOALS",
+  HABITS = "HABITS",
+  ROUTINES = "ROUTINES",
+  COMPASS = "COMPASS",
+  SETTINGS = "SETTINGS",
+  IDENTITY = "IDENTITY",
+  CONNECTION = "CONNECTION",
+  THEMES = "THEMES",
+  ACHIEVEMENTS = "ACHIEVEMENTS",
+  ENERGY = "ENERGY",
+
+  // Deep Work / Inner Mechanics
+  FORGE_CHAMBER = "FORGE_CHAMBER",
+  SHADOW_WORK = "SHADOW_WORK",
+  THOUGHT_STREAM = "THOUGHT_STREAM",
+
+  // Social & Energy Graph
+  PRESENCE = "PRESENCE",
+  ECHOES = "ECHOES",
+  WIKI = "WIKI",
+
+  // Creativity
+  FORGE_LAB = "FORGE_LAB",
+
+  // OS Internal
+  DEFAULT = "DEFAULT",
+}
+
+export type ViewType = `${View}`;
