@@ -2,11 +2,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { Role, RoleDocument } from '@modules/role/role.schema';
+import {
+  Role,
+  RoleDocument,
+} from 'src/contexts/iam/roles/infrastructure/schemas/iam-role.schema';
 import {
   Permission,
   PermissionDocument,
-} from '@modules/permission/permission.schema';
+} from 'src/contexts/iam/permissions/infrastructure/schemas/iam-permission.schema';
 import { RoleEnum } from '@shared/enums';
 
 @Injectable()
