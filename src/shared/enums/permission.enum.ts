@@ -62,10 +62,14 @@ export enum PermissionEnum {
   RESTORE_JOURNAL = 'restore_journal',
 
   // 🛡️ PERMISSION
+  CREATE_PERMISSION = 'create_permission',
   READ_PERMISSION = 'read_permission',
+  UPDATE_PERMISSION = 'update_permission',
+  DELETE_PERMISSION = 'delete_permission',
 
   // 📝 AUDIT LOG
   READ_AUDIT_LOG = 'read_audit_log',
+  DELETE_AUDIT_LOG = 'delete_audit_log', // Audit logs usually read-only or delete-only
 
   // 🧪 TESTING or DEBUG
   ACCESS_TEST_ENDPOINT = 'access_test_endpoint',

@@ -23,7 +23,7 @@ import {
   GetQuoteByIdQuery,
 } from '../../application/queries';
 import { QuoteId } from '../../domain/value-objects/quote-id.vo';
-import { JwtAuthGuard } from '@modules/auth/guards';
+import { JwtAuthGuard } from 'src/contexts/iam/auth/application/guards';
 import { PermissionsGuard } from '@shared/guards/permissions.guard';
 import { Permissions } from '@shared/decorators';
 import { PermissionEnum } from '@shared/enums';

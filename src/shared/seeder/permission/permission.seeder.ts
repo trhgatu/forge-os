@@ -5,7 +5,7 @@ import { Model } from 'mongoose';
 import {
   Permission,
   PermissionDocument,
-} from '@modules/permission/permission.schema';
+} from 'src/contexts/iam/permissions/infrastructure/schemas/iam-permission.schema';
 import { PermissionEnum } from '@shared/enums';
 
 @Injectable()

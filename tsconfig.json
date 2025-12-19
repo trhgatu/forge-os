@@ -12,12 +12,24 @@
     "baseUrl": "./",
     "strict": true,
     "paths": {
-      "@config/*": ["src/config/*"],
-      "@modules/*": ["src/modules/*"],
-      "@shared/*": ["src/shared/*"],
-      "@gateway/*": ["src/gateway/*"],
-      "@scripts/*": ["src/scripts/*"],
-      "@root/*": ["src/*"]
+      "@config/*": [
+        "src/config/*"
+      ],
+      "@contexts/*": [
+        "src/contexts/*"
+      ],
+      "@shared/*": [
+        "src/shared/*"
+      ],
+      "@gateway/*": [
+        "src/gateway/*"
+      ],
+      "@scripts/*": [
+        "src/scripts/*"
+      ],
+      "@root/*": [
+        "src/*"
+      ]
     },
     "incremental": true,
     "skipLibCheck": true,
