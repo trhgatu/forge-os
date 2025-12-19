@@ -1,15 +1,15 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { GetUsersQuery, GetUserByIdQuery } from '../index';
 import { UserRepository } from '../../ports/user.repository';
-import { NotFoundException } from '@nestjs/common';
 import { CacheService } from '@shared/services/cache.service';
+import { UserNotFoundException } from '../../../domain/exceptions/user-not-found.exception';
 
 @QueryHandler(GetUsersQuery)
 export class GetUsersHandler implements IQueryHandler<GetUsersQuery> {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly cacheService: CacheService,
-  ) {}
+  ) { }
 
   async execute(query: GetUsersQuery) {
     const { dto } = query;
@@ -34,12 +34,12 @@ export class GetUsersHandler implements IQueryHandler<GetUsersQuery> {
 
 @QueryHandler(GetUserByIdQuery)
 export class GetUserByIdHandler implements IQueryHandler<GetUserByIdQuery> {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(private readonly userRepository: UserRepository) { }
 
   async execute(query: GetUserByIdQuery) {
     const { id } = query;
     const user = await this.userRepository.findById(id);
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) throw new UserNotFoundException({ id });
     return user;
   }
 }

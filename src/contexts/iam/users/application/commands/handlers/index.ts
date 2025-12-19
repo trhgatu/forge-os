@@ -4,7 +4,7 @@ import { UserRepository } from '../../ports/user.repository';
 
 @CommandHandler(CreateUserCommand)
 export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(private readonly userRepository: UserRepository) { }
 
   async execute(command: CreateUserCommand) {
     const { dto } = command;
@@ -14,17 +14,16 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
 }
 
 import { UpdateUserCommand } from '../index';
-
-import { NotFoundException } from '@nestjs/common';
+import { UserNotFoundException } from '../../../domain/exceptions/user-not-found.exception';
 
 @CommandHandler(UpdateUserCommand)
 export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(private readonly userRepository: UserRepository) { }
 
   async execute(command: UpdateUserCommand) {
     const { id, dto } = command;
     const updated = await this.userRepository.update(id, dto);
-    if (!updated) throw new NotFoundException('User not found');
+    if (!updated) throw new UserNotFoundException({ id });
     return updated;
   }
 }
@@ -33,12 +32,12 @@ import { DeleteUserCommand } from '../index';
 
 @CommandHandler(DeleteUserCommand)
 export class DeleteUserHandler implements ICommandHandler<DeleteUserCommand> {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(private readonly userRepository: UserRepository) { }
 
   async execute(command: DeleteUserCommand) {
     const { id } = command;
     const user = await this.userRepository.findById(id);
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) throw new UserNotFoundException({ id });
     await this.userRepository.delete(id);
     return { deleted: true };
   }

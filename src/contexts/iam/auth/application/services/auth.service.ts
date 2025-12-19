@@ -9,6 +9,11 @@ import { RegisterDto, LoginDto } from '../dtos';
 import { UserRepository } from 'src/contexts/iam/users/application/ports/user.repository';
 import { UserDocument } from 'src/contexts/iam/users/infrastructure/schemas/iam-user.schema';
 import { RoleRepository } from 'src/contexts/iam/roles/application/ports/role.repository';
+import {
+  InvalidCredentialsException,
+  EmailAlreadyInUseException,
+  RoleNotFoundException,
+} from '../../domain/exceptions/iam.exceptions';
 
 @Injectable()
 export class AuthService {
@@ -16,17 +21,17 @@ export class AuthService {
     private readonly userRepository: UserRepository,
     private readonly roleRepository: RoleRepository,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   async register(dto: RegisterDto) {
     const existingUser = await this.userRepository.findByEmail(dto.email);
     if (existingUser) {
-      throw new ForbiddenException('Email is already in use');
+      throw new EmailAlreadyInUseException({ email: dto.email });
     }
 
     const role = await this.roleRepository.findById(dto.roleId);
     if (!role) {
-      throw new ForbiddenException('Role does not exist');
+      throw new RoleNotFoundException({ roleId: dto.roleId });
     }
 
     // Map RegisterDto to CreateUserDto
@@ -57,12 +62,12 @@ export class AuthService {
   async login(dto: LoginDto) {
     const user = await this.userRepository.findByEmail(dto.email);
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new InvalidCredentialsException({ email: dto.email });
     }
 
     const isMatch = await bcrypt.compare(dto.password, user.password);
     if (!isMatch) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new InvalidCredentialsException({ email: dto.email });
     }
 
     const userDoc = user as UserDocument;
