@@ -44,7 +44,12 @@ export class AllExceptionsFilter implements ExceptionFilter {
     let httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
     let errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
     let message: string | object = 'Internal server error';
+
+    // P2: Capture stack trace for all exceptions (if available)
     let stack: string | undefined;
+    if (exception instanceof Error) {
+      stack = exception.stack;
+    }
 
     if (exception instanceof HttpException) {
       httpStatus = exception.getStatus();
@@ -80,8 +85,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       errorCode = exception.errorCode as ErrorCode;
       message = exception.message;
     } else if (exception instanceof Error) {
-      // Init stack for logging
-      stack = exception.stack;
+      // Stack already captured above
 
       // MongoDB Duplicate Key Error (Code 11000)
       const mongoError = exception as MongoError;

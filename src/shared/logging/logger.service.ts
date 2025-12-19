@@ -16,8 +16,17 @@ export class LoggerService implements NestLoggerService {
         : winston.format.combine(
             winston.format.colorize(),
             winston.format.printf(
-              ({ timestamp, level, message, context, traceId }) => {
-                return `${timestamp} [${level}] ${context ? `[${context}] ` : ''}${message}${traceId ? ` [traceId=${traceId}]` : ''}`;
+              ({
+                timestamp,
+                level,
+                message,
+                context,
+                traceId,
+                trace,
+                stack,
+              }) => {
+                const stackTrace = trace || stack;
+                return `${timestamp} [${level}] ${context ? `[${context}] ` : ''}${message}${traceId ? ` [traceId=${traceId}]` : ''}${stackTrace ? `\n${stackTrace}` : ''}`;
               },
             ),
           ),
