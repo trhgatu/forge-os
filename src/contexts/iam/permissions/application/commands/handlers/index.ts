@@ -5,7 +5,7 @@ import {
   DeletePermissionCommand,
 } from '../index';
 import { PermissionRepository } from '../../ports/permission.repository';
-import { NotFoundException } from '@nestjs/common';
+import { PermissionNotFoundException } from 'src/contexts/iam/auth/domain/exceptions/iam.exceptions';
 
 @CommandHandler(CreatePermissionCommand)
 export class CreatePermissionHandler
@@ -27,7 +27,7 @@ export class UpdatePermissionHandler
   async execute(command: UpdatePermissionCommand) {
     const { id, dto } = command;
     const updated = await this.permissionRepository.update(id, dto);
-    if (!updated) throw new NotFoundException('Permission not found');
+    if (!updated) throw new PermissionNotFoundException({ id });
     return updated;
   }
 }

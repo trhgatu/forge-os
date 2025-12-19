@@ -13,7 +13,7 @@ import { CreateAuditLogMiddleware } from '@shared/middlewares';
 
 import { MemoryModule } from '@root/contexts/reflection/memory/memory.module';
 import { QuoteModule } from '@root/contexts/reflection/quote/quote.module';
-
+import { LoggerModule } from '@shared/logging/logger.module';
 import { JournalModule } from '@root/contexts/reflection/journal/journal.module';
 import { CqrsModule } from '@nestjs/cqrs';
 
@@ -37,6 +37,7 @@ import { CqrsModule } from '@nestjs/cqrs';
     MemoryModule,
     QuoteModule,
     JournalModule,
+    LoggerModule,
   ],
   controllers: [AppController],
 })

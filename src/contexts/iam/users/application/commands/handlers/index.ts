@@ -14,8 +14,7 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
 }
 
 import { UpdateUserCommand } from '../index';
-
-import { NotFoundException } from '@nestjs/common';
+import { UserNotFoundException } from '../../../domain/exceptions/user-not-found.exception';
 
 @CommandHandler(UpdateUserCommand)
 export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
@@ -24,7 +23,7 @@ export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
   async execute(command: UpdateUserCommand) {
     const { id, dto } = command;
     const updated = await this.userRepository.update(id, dto);
-    if (!updated) throw new NotFoundException('User not found');
+    if (!updated) throw new UserNotFoundException({ id });
     return updated;
   }
 }
@@ -38,7 +37,7 @@ export class DeleteUserHandler implements ICommandHandler<DeleteUserCommand> {
   async execute(command: DeleteUserCommand) {
     const { id } = command;
     const user = await this.userRepository.findById(id);
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) throw new UserNotFoundException({ id });
     await this.userRepository.delete(id);
     return { deleted: true };
   }
