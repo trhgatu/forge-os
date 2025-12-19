@@ -4,59 +4,63 @@ import 'winston-daily-rotate-file';
 
 @Injectable()
 export class LoggerService implements NestLoggerService {
-    private logger: winston.Logger;
+  private logger: winston.Logger;
 
-    constructor() {
-        const isProduction = process.env.NODE_ENV === 'production';
+  constructor() {
+    const isProduction = process.env.NODE_ENV === 'production';
 
-        const consoleFormat = winston.format.combine(
-            winston.format.timestamp(),
-            isProduction ? winston.format.json() : winston.format.combine(
-                winston.format.colorize(),
-                winston.format.printf(({ timestamp, level, message, context, traceId }) => {
-                    return `${timestamp} [${level}] ${context ? `[${context}] ` : ''}${message}${traceId ? ` [traceId=${traceId}]` : ''}`;
-                })
-            )
-        );
-
-        const fileTransport = new winston.transports.DailyRotateFile({
-            filename: 'logs/application-%DATE%.log',
-            datePattern: 'YYYY-MM-DD',
-            zippedArchive: true,
-            maxSize: '20m',
-            maxFiles: '14d',
-            format: winston.format.combine(
-                winston.format.timestamp(),
-                winston.format.json()
+    const consoleFormat = winston.format.combine(
+      winston.format.timestamp(),
+      isProduction
+        ? winston.format.json()
+        : winston.format.combine(
+            winston.format.colorize(),
+            winston.format.printf(
+              ({ timestamp, level, message, context, traceId }) => {
+                return `${timestamp} [${level}] ${context ? `[${context}] ` : ''}${message}${traceId ? ` [traceId=${traceId}]` : ''}`;
+              },
             ),
-        });
+          ),
+    );
 
-        this.logger = winston.createLogger({
-            level: isProduction ? 'info' : 'debug',
-            transports: [
-                new winston.transports.Console({ format: consoleFormat }),
-                fileTransport,
-            ],
-        });
-    }
+    const fileTransport = new winston.transports.DailyRotateFile({
+      filename: 'logs/application-%DATE%.log',
+      datePattern: 'YYYY-MM-DD',
+      zippedArchive: true,
+      maxSize: '20m',
+      maxFiles: '14d',
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.json(),
+      ),
+    });
 
-    log(message: string, context?: string) {
-        this.logger.info(message, { context });
-    }
+    this.logger = winston.createLogger({
+      level: isProduction ? 'info' : 'debug',
+      transports: [
+        new winston.transports.Console({ format: consoleFormat }),
+        fileTransport,
+      ],
+    });
+  }
 
-    error(message: string, trace?: string, context?: string, traceId?: string) {
-        this.logger.error(message, { trace, context, traceId });
-    }
+  log(message: string, context?: string) {
+    this.logger.info(message, { context });
+  }
 
-    warn(message: string, context?: string) {
-        this.logger.warn(message, { context });
-    }
+  error(message: string, trace?: string, context?: string, traceId?: string) {
+    this.logger.error(message, { trace, context, traceId });
+  }
 
-    debug(message: string, context?: string) {
-        this.logger.debug(message, { context });
-    }
+  warn(message: string, context?: string) {
+    this.logger.warn(message, { context });
+  }
 
-    verbose(message: string, context?: string) {
-        this.logger.verbose(message, { context });
-    }
+  debug(message: string, context?: string) {
+    this.logger.debug(message, { context });
+  }
+
+  verbose(message: string, context?: string) {
+    this.logger.verbose(message, { context });
+  }
 }

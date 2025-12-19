@@ -4,7 +4,7 @@ import { UserRepository } from '../../ports/user.repository';
 
 @CommandHandler(CreateUserCommand)
 export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
-  constructor(private readonly userRepository: UserRepository) { }
+  constructor(private readonly userRepository: UserRepository) {}
 
   async execute(command: CreateUserCommand) {
     const { dto } = command;
@@ -18,7 +18,7 @@ import { UserNotFoundException } from '../../../domain/exceptions/user-not-found
 
 @CommandHandler(UpdateUserCommand)
 export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
-  constructor(private readonly userRepository: UserRepository) { }
+  constructor(private readonly userRepository: UserRepository) {}
 
   async execute(command: UpdateUserCommand) {
     const { id, dto } = command;
@@ -32,7 +32,7 @@ import { DeleteUserCommand } from '../index';
 
 @CommandHandler(DeleteUserCommand)
 export class DeleteUserHandler implements ICommandHandler<DeleteUserCommand> {
-  constructor(private readonly userRepository: UserRepository) { }
+  constructor(private readonly userRepository: UserRepository) {}
 
   async execute(command: DeleteUserCommand) {
     const { id } = command;

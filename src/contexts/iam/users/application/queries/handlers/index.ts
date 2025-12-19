@@ -9,7 +9,7 @@ export class GetUsersHandler implements IQueryHandler<GetUsersQuery> {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly cacheService: CacheService,
-  ) { }
+  ) {}
 
   async execute(query: GetUsersQuery) {
     const { dto } = query;
@@ -34,7 +34,7 @@ export class GetUsersHandler implements IQueryHandler<GetUsersQuery> {
 
 @QueryHandler(GetUserByIdQuery)
 export class GetUserByIdHandler implements IQueryHandler<GetUserByIdQuery> {
-  constructor(private readonly userRepository: UserRepository) { }
+  constructor(private readonly userRepository: UserRepository) {}
 
   async execute(query: GetUserByIdQuery) {
     const { id } = query;

@@ -5,12 +5,11 @@ import {
   DeleteRoleCommand,
 } from '../index';
 import { RoleRepository } from '../../ports/role.repository';
-import { NotFoundException } from '@nestjs/common';
 import { RoleNotFoundException } from 'src/contexts/iam/auth/domain/exceptions/iam.exceptions';
 
 @CommandHandler(CreateRoleCommand)
 export class CreateRoleHandler implements ICommandHandler<CreateRoleCommand> {
-  constructor(private readonly roleRepository: RoleRepository) { }
+  constructor(private readonly roleRepository: RoleRepository) {}
 
   async execute(command: CreateRoleCommand) {
     return this.roleRepository.create(command.dto);
@@ -19,7 +18,7 @@ export class CreateRoleHandler implements ICommandHandler<CreateRoleCommand> {
 
 @CommandHandler(UpdateRoleCommand)
 export class UpdateRoleHandler implements ICommandHandler<UpdateRoleCommand> {
-  constructor(private readonly roleRepository: RoleRepository) { }
+  constructor(private readonly roleRepository: RoleRepository) {}
 
   async execute(command: UpdateRoleCommand) {
     const { id, dto } = command;
@@ -31,7 +30,7 @@ export class UpdateRoleHandler implements ICommandHandler<UpdateRoleCommand> {
 
 @CommandHandler(DeleteRoleCommand)
 export class DeleteRoleHandler implements ICommandHandler<DeleteRoleCommand> {
-  constructor(private readonly roleRepository: RoleRepository) { }
+  constructor(private readonly roleRepository: RoleRepository) {}
 
   async execute(command: DeleteRoleCommand) {
     await this.roleRepository.delete(command.id);
