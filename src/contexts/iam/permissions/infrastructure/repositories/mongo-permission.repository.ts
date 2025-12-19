@@ -6,30 +6,39 @@ import {
   Permission,
   PermissionDocument,
 } from '../../infrastructure/schemas/iam-permission.schema';
-import { CreatePermissionDto, UpdatePermissionDto } from '../../dto';
+import {
+  CreatePermissionDto,
+  UpdatePermissionDto,
+  QueryPermissionDto,
+} from '../../dto';
 import { paginate } from '@shared/utils';
+import { PaginatedResult } from '@shared/interfaces/paginated-result.interface';
 
 @Injectable()
 export class MongoPermissionRepository implements PermissionRepository {
   constructor(
     @InjectModel(Permission.name)
     private readonly permissionModel: Model<PermissionDocument>,
-  ) { }
+  ) {}
 
   async create(dto: CreatePermissionDto): Promise<Permission> {
     return this.permissionModel.create(dto);
   }
 
-  async findAll(query: any): Promise<any> {
+  async findAll(
+    query: QueryPermissionDto,
+  ): Promise<PaginatedResult<Permission>> {
     const { page = 1, limit = 10, keyword } = query;
-    const skip = (page - 1) * limit;
+    const pageNum = Number(page);
+    const limitNum = Number(limit);
+    const skip = (pageNum - 1) * limitNum;
     const search = keyword ? { name: { $regex: keyword, $options: 'i' } } : {};
 
     return paginate(
-      this.permissionModel.find(search).skip(skip).limit(limit),
+      this.permissionModel.find(search).skip(skip).limit(limitNum),
       this.permissionModel.countDocuments(search),
-      Number(page),
-      Number(limit),
+      pageNum,
+      limitNum,
     );
   }
 
