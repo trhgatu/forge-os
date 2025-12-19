@@ -8,25 +8,29 @@ import {
 } from '../../infrastructure/schemas/sys-audit-log.schema';
 import { CreateAuditLogDto } from '../../dto/create-audit-log.dto';
 import { paginate } from '@shared/utils';
+import { AuditLogQueryDto } from '../../dto/audit-log-query.dto';
+import { PaginatedResult } from '@shared/interfaces/paginated-result.interface';
 
 @Injectable()
 export class MongoAuditLogRepository implements AuditLogRepository {
   constructor(
     @InjectModel(AuditLog.name)
     private readonly auditLogModel: Model<AuditLogDocument>,
-  ) { }
+  ) {}
 
   async create(dto: CreateAuditLogDto): Promise<AuditLog> {
     return this.auditLogModel.create(dto);
   }
 
-  async findAll(query: any): Promise<any> {
-    const { page = 1, limit = 10 } = query;
-    const skip = (page - 1) * limit;
+  async findAll(query: AuditLogQueryDto): Promise<PaginatedResult<AuditLog>> {
+    const { page = 1, limit = 10, userId } = query;
+    const pageNum = Number(page);
+    const limitNum = Number(limit);
+    const skip = (pageNum - 1) * limitNum;
 
     const filter: FilterQuery<AuditLogDocument> = {};
-    if (query.userId) {
-      filter.user = query.userId;
+    if (userId) {
+      filter.user = userId;
     }
 
     return paginate(
@@ -34,11 +38,11 @@ export class MongoAuditLogRepository implements AuditLogRepository {
         .find(filter)
         .sort({ createdAt: -1 })
         .skip(skip)
-        .limit(limit)
+        .limit(limitNum)
         .populate('user', 'name email'),
       this.auditLogModel.countDocuments(filter),
-      Number(page),
-      Number(limit),
+      pageNum,
+      limitNum,
     );
   }
 }

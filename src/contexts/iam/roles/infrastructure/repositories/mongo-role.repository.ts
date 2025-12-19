@@ -6,33 +6,36 @@ import {
   Role,
   RoleDocument,
 } from '../../infrastructure/schemas/iam-role.schema';
-import { CreateRoleDto, UpdateRoleDto } from '../../dto';
+import { CreateRoleDto, UpdateRoleDto, QueryRoleDto } from '../../dto';
 import { paginate } from '@shared/utils';
+import { PaginatedResult } from '@shared/interfaces/paginated-result.interface';
 
 @Injectable()
 export class MongoRoleRepository implements RoleRepository {
   constructor(
     @InjectModel(Role.name) private readonly roleModel: Model<RoleDocument>,
-  ) { }
+  ) {}
 
   async create(dto: CreateRoleDto): Promise<Role> {
     return this.roleModel.create(dto);
   }
 
-  async findAll(query: any): Promise<any> {
+  async findAll(query: QueryRoleDto): Promise<PaginatedResult<Role>> {
     const { page = 1, limit = 10, keyword } = query;
-    const skip = (page - 1) * limit;
+    const pageNum = Number(page);
+    const limitNum = Number(limit);
+    const skip = (pageNum - 1) * limitNum;
     const search = keyword ? { name: { $regex: keyword, $options: 'i' } } : {};
 
     return paginate(
       this.roleModel
         .find(search)
         .skip(skip)
-        .limit(limit)
+        .limit(limitNum)
         .populate('permissions'),
       this.roleModel.countDocuments(search),
-      Number(page),
-      Number(limit),
+      pageNum,
+      limitNum,
     );
   }
 
