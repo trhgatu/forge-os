@@ -9,10 +9,10 @@ export class RoleMapper {
       id: RoleId.create(doc._id as Types.ObjectId),
       name: doc.name,
       description: doc.description,
-      permissions: doc.permissions.map((p) => p.toString()), // Assuming populated logic handled elsewhere or IDs
+      permissions: doc.permissions.map((p) => p.toString()),
       isSystem: doc.isSystem,
-      createdAt: (doc as any).createdAt,
-      updatedAt: (doc as any).updatedAt,
+      createdAt: doc.createdAt,
+      updatedAt: doc.updatedAt,
     });
   }
 

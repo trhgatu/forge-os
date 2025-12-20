@@ -16,14 +16,15 @@ export class UserMapper {
           ? {
               id: (doc.roleId as any)._id.toString(),
               name: (doc.roleId as any).name,
-              permissions: (doc.roleId as any).permissions.map(
-                (p: any) => p.slug || p.toString(),
-              ), // Assuming Permission has slug or is string
+              permissions:
+                (doc.roleId as any).permissions?.map(
+                  (p: any) => p.slug || p.toString(),
+                ) || [],
             }
           : undefined,
       refreshToken: doc.refreshToken,
-      createdAt: (doc as any).createdAt, // Mongoose timestamps
-      updatedAt: (doc as any).updatedAt,
+      createdAt: doc.createdAt,
+      updatedAt: doc.updatedAt,
     });
   }
 

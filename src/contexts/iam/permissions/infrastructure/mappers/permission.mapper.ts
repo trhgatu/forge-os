@@ -11,8 +11,8 @@ export class PermissionMapper {
       description: doc.description,
       resource: doc.resource,
       action: doc.action,
-      createdAt: (doc as any).createdAt,
-      updatedAt: (doc as any).updatedAt,
+      createdAt: doc.createdAt,
+      updatedAt: doc.updatedAt,
     });
   }
 
