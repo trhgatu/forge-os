@@ -1,4 +1,4 @@
-import { User } from '../../infrastructure/schemas/iam-user.schema';
+import { User } from '../../domain/user.entity';
 import { CreateUserDto, UpdateUserDto } from '../../dto';
 
 import { QueryUserDto } from '../../dto';

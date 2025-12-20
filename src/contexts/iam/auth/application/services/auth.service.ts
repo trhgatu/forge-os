@@ -3,7 +3,6 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { RegisterDto, LoginDto } from '../dtos';
 import { UserRepository } from 'src/contexts/iam/users/application/ports/user.repository';
-import { UserDocument } from 'src/contexts/iam/users/infrastructure/schemas/iam-user.schema';
 import { RoleRepository } from 'src/contexts/iam/roles/application/ports/role.repository';
 import {
   InvalidCredentialsException,
@@ -16,7 +15,7 @@ export class AuthService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly roleRepository: RoleRepository,
-    private jwtService: JwtService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async register(dto: RegisterDto) {
@@ -30,27 +29,27 @@ export class AuthService {
       throw new RoleNotFoundException({ roleId: dto.roleId });
     }
 
-    // Map RegisterDto to CreateUserDto
+    // Create User via Repository (which returns Entity)
     const newUser = await this.userRepository.create({
       name: dto.name,
       email: dto.email,
       password: dto.password,
       roleId: dto.roleId,
     });
-    const userDoc = newUser as UserDocument;
 
-    const userId = userDoc._id.toString();
-    const tokens = await this.getTokens(userId, userDoc.email);
+    // Use Entity properties directly
+    const userId = newUser.id.toString();
+    const tokens = await this.getTokens(userId, newUser.email);
     await this.updateRefreshToken(userId, tokens.refreshToken);
 
     return {
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
       user: {
-        id: userDoc._id,
-        name: userDoc.name,
-        email: userDoc.email,
-        role: userDoc.roleId,
+        id: newUser.id.toString(), // Entity ID
+        name: newUser.name,
+        email: newUser.email,
+        role: newUser.roleId,
       },
     };
   }
@@ -61,14 +60,20 @@ export class AuthService {
       throw new InvalidCredentialsException({ email: dto.email });
     }
 
+    if (!user.password) {
+      throw new InvalidCredentialsException({
+        email: dto.email,
+        reason: 'No password set',
+      });
+    }
+
     const isMatch = await bcrypt.compare(dto.password, user.password);
     if (!isMatch) {
       throw new InvalidCredentialsException({ email: dto.email });
     }
 
-    const userDoc = user as UserDocument;
-    const userId = userDoc._id.toString();
-    const tokens = await this.getTokens(userId, userDoc.email);
+    const userId = user.id.toString();
+    const tokens = await this.getTokens(userId, user.email);
     await this.updateRefreshToken(userId, tokens.refreshToken);
 
     return {
@@ -108,8 +113,7 @@ export class AuthService {
     const isMatch = await bcrypt.compare(refreshToken, user.refreshToken);
     if (!isMatch) throw new ForbiddenException('Invalid Refresh Token');
 
-    const userDoc = user as UserDocument;
-    const newTokens = await this.getTokens(userDoc._id.toString(), user.email);
+    const newTokens = await this.getTokens(user.id.toString(), user.email);
     await this.updateRefreshToken(userId, newTokens.refreshToken);
 
     return newTokens;
