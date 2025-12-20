@@ -10,6 +10,12 @@ export class Permission {
 
   @Prop()
   description?: string;
+
+  @Prop({ required: true })
+  resource!: string;
+
+  @Prop({ required: true })
+  action!: string;
 }
 
 export const PermissionSchema = SchemaFactory.createForClass(Permission);

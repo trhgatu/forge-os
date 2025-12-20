@@ -10,11 +10,9 @@ import {
   CreateRoleHandler,
   UpdateRoleHandler,
   DeleteRoleHandler,
-} from './application/commands/handlers';
-import {
   GetRolesHandler,
   GetRoleByIdHandler,
-} from './application/queries/handlers';
+} from './application/handlers';
 
 const CommandHandlers = [
   CreateRoleHandler,

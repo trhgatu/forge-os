@@ -10,11 +10,9 @@ import {
   CreateUserHandler,
   UpdateUserHandler,
   DeleteUserHandler,
-} from './application/commands/handlers';
-import {
   GetUsersHandler,
   GetUserByIdHandler,
-} from './application/queries/handlers';
+} from './application/handlers';
 
 const CommandHandlers = [
   CreateUserHandler,

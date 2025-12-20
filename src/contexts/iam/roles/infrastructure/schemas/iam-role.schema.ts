@@ -13,6 +13,9 @@ export class Role {
 
   @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Permission' }] })
   permissions!: Types.ObjectId[];
+
+  @Prop({ default: false })
+  isSystem!: boolean;
 }
 
 export const RoleSchema = SchemaFactory.createForClass(Role);

@@ -13,11 +13,9 @@ import {
   CreatePermissionHandler,
   UpdatePermissionHandler,
   DeletePermissionHandler,
-} from './application/commands/handlers';
-import {
   GetPermissionsHandler,
   GetPermissionByIdHandler,
-} from './application/queries/handlers';
+} from './application/handlers';
 
 const CommandHandlers = [
   CreatePermissionHandler,
