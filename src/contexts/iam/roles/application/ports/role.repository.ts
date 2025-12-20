@@ -1,4 +1,4 @@
-import { Role } from '../../infrastructure/schemas/iam-role.schema';
+import { Role } from '../../domain/role.entity';
 import { CreateRoleDto, UpdateRoleDto } from '../../dto';
 
 import { QueryRoleDto } from '../../dto';

@@ -2,9 +2,12 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document, Types } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 
-export type UserDocument = Document & {
-  _id: Types.ObjectId;
-} & User;
+export type UserDocument = Document &
+  User & {
+    _id: Types.ObjectId;
+    createdAt: Date;
+    updatedAt: Date;
+  };
 
 @Schema({ timestamps: true })
 export class User {
@@ -27,7 +30,7 @@ export class User {
 export const UserSchema = SchemaFactory.createForClass(User);
 
 UserSchema.pre('save', async function (next) {
-  const user = this as UserDocument;
+  const user = this as unknown as UserDocument;
 
   if (!user.isModified('password')) return next();
 

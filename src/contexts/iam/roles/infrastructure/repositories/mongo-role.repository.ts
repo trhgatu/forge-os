@@ -9,6 +9,8 @@ import {
 import { CreateRoleDto, UpdateRoleDto, QueryRoleDto } from '../../dto';
 import { paginate } from '@shared/utils';
 import { PaginatedResult } from '@shared/interfaces/paginated-result.interface';
+import { Role as RoleEntity } from '../../domain/role.entity';
+import { RoleMapper } from '../mappers/role.mapper';
 
 @Injectable()
 export class MongoRoleRepository implements RoleRepository {
@@ -16,18 +18,19 @@ export class MongoRoleRepository implements RoleRepository {
     @InjectModel(Role.name) private readonly roleModel: Model<RoleDocument>,
   ) {}
 
-  async create(dto: CreateRoleDto): Promise<Role> {
-    return this.roleModel.create(dto);
+  async create(dto: CreateRoleDto): Promise<RoleEntity> {
+    const createdRole = await this.roleModel.create(dto);
+    return RoleMapper.toDomain(createdRole);
   }
 
-  async findAll(query: QueryRoleDto): Promise<PaginatedResult<Role>> {
+  async findAll(query: QueryRoleDto): Promise<PaginatedResult<RoleEntity>> {
     const { page = 1, limit = 10, keyword } = query;
     const pageNum = Number(page);
     const limitNum = Number(limit);
     const skip = (pageNum - 1) * limitNum;
     const search = keyword ? { name: { $regex: keyword, $options: 'i' } } : {};
 
-    return paginate(
+    const result = await paginate(
       this.roleModel
         .find(search)
         .skip(skip)
@@ -37,14 +40,27 @@ export class MongoRoleRepository implements RoleRepository {
       pageNum,
       limitNum,
     );
+
+    return {
+      ...result,
+      data: result.data.map((doc) => RoleMapper.toDomain(doc as RoleDocument)),
+    };
   }
 
-  async findById(id: string): Promise<Role | null> {
-    return this.roleModel.findById(id).populate('permissions').exec();
+  async findById(id: string): Promise<RoleEntity | null> {
+    const role = await this.roleModel
+      .findById(id)
+      .populate('permissions')
+      .exec();
+    return role ? RoleMapper.toDomain(role) : null;
   }
 
-  async update(id: string, dto: UpdateRoleDto): Promise<Role | null> {
-    return this.roleModel.findByIdAndUpdate(id, dto, { new: true }).exec();
+  async update(id: string, dto: UpdateRoleDto): Promise<RoleEntity | null> {
+    const updated = await this.roleModel
+      .findByIdAndUpdate(id, dto, { new: true })
+      .populate('permissions')
+      .exec();
+    return updated ? RoleMapper.toDomain(updated) : null;
   }
 
   async delete(id: string): Promise<void> {
