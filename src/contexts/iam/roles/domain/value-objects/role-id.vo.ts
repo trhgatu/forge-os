@@ -7,6 +7,6 @@ export class RoleId extends BaseId {
   }
 
   static create(id?: string | Types.ObjectId): RoleId {
-    return new RoleId(id || new Types.ObjectId());
+    return new RoleId(id ?? new Types.ObjectId());
   }
 }

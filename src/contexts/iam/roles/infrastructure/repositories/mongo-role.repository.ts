@@ -58,6 +58,7 @@ export class MongoRoleRepository implements RoleRepository {
   async update(id: string, dto: UpdateRoleDto): Promise<RoleEntity | null> {
     const updated = await this.roleModel
       .findByIdAndUpdate(id, dto, { new: true })
+      .populate('permissions')
       .exec();
     return updated ? RoleMapper.toDomain(updated) : null;
   }

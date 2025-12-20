@@ -34,7 +34,7 @@ export class Role {
   }
 
   get permissions(): string[] {
-    return this.props.permissions;
+    return [...this.props.permissions];
   }
 
   get isSystem(): boolean {
@@ -54,7 +54,7 @@ export class Role {
     if (props.description !== undefined)
       this.props.description = props.description;
     if (props.permissions !== undefined)
-      this.props.permissions = props.permissions;
+      this.props.permissions = [...props.permissions];
     // isSystem typically shouldn't change
     this.props.updatedAt = new Date();
   }

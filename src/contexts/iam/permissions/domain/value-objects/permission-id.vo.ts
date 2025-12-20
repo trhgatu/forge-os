@@ -7,6 +7,6 @@ export class PermissionId extends BaseId {
   }
 
   static create(id?: string | Types.ObjectId): PermissionId {
-    return new PermissionId(id || new Types.ObjectId());
+    return new PermissionId(id ?? new Types.ObjectId());
   }
 }

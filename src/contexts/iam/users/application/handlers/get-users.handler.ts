@@ -12,8 +12,8 @@ export class GetUsersHandler implements IQueryHandler<GetUsersQuery> {
 
   async execute(query: GetUsersQuery) {
     const { dto } = query;
-    const { page = 1, limit = 10, keyword } = dto;
-    const cacheKey = `users:all:${keyword || 'all'}:p${page}:l${limit}`;
+    const { page = 1, limit = 10, keyword, status } = dto;
+    const cacheKey = `users:all:${keyword || 'all'}:${status || 'all'}:p${page}:l${limit}`;
 
     const cached = await this.cacheService.get(cacheKey);
     if (cached) return cached;
