@@ -1,6 +1,6 @@
 # Forge OS Backend
 
-This is the backend service for **Forge OS**, built with **NestJS** and following strict **Domain-Driven Design (DDD)** principles.
+This is the backend service for **Forge OS**, a personal project built with **NestJS** and following strict **Domain-Driven Design (DDD)** principles.
 
 ## 🏗 Architecture
 
@@ -45,67 +45,14 @@ Fully refactored to strict DDD standards.
 - **AuditLog**:
   - Tracks all system activities.
   - Implements **Strict DDD** with `AuditLogId` and `AuditLog` Entity.
-  - Uses `AuditLogMapper` to safely handle MongoDB population (fixing `[object Object]` issues).
-  - separate `Create` and `Get` handlers following CQRS.
+  - Uses `AuditLogMapper` to safely handle MongoDB population.
+  - Separate `Create` and `Get` handlers following CQRS.
 
-### 4. Reflection Context
+### 3. Reflection Context
 
 - The reference implementation for high-standard DDD patterns in this codebase.
 
 ---
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- **Node.js**: v18+
-- **MongoDB**: Local or Atlas URI
-- **Redis** (Optional): For caching
-
-### Installation
-
-```bash
-# Clone the repository
-git clone <repo-url>
-
-# Navigate to backend directory
-cd forge-os-backend
-
-# Install dependencies
-npm install
-```
-
-### Configuration
-
-Create a `.env` file in the root directory (copy from `.env.example`):
-
-```env
-PORT=3000
-MONGODB_URI=mongodb://localhost:27017/forge-os
-JWT_SECRET=your_secret_key
-# ... other config
-```
-
-### Running the App
-
-```bash
-# Development mode
-npm run start:dev
-
-# Production build
-npm run build
-npm run start:prod
-```
-
-### Running Tests
-
-```bash
-# Unit tests
-npm run test
-
-# E2E tests
-npm run test:e2e
-```
 
 ## 🛠 Tech Stack
 
@@ -113,9 +60,9 @@ npm run test:e2e
 - **Database**: MongoDB (Mongoose)
 - **Language**: TypeScript
 - **Architecture**: DDD, CQRS
-- ** Validation**: class-validator, class-transformer
+- **Validation**: class-validator, class-transformer
 - **Linting**: ESLint, Prettier
 
 ---
 
-**Forge OS Team** - 2025
+**Forge OS** - Personal Project (2025)
