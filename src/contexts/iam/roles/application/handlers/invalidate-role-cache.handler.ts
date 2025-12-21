@@ -29,7 +29,7 @@ export class InvalidateRoleCacheHandler
       );
     } catch (error: any) {
       this.logger.error(
-        `Failed to invalidate cookies for role ${event.roleId}: ${error.message}`,
+        `Failed to invalidate cache for role ${event.roleId}: ${error.message}`,
         error.stack ? String(error.stack) : undefined,
         InvalidateRoleCacheHandler.name,
       );
