@@ -103,7 +103,7 @@ designed to expand your thinking and deepen your self-understanding.
 ---
 
 ## � Tech Stack
-
+## 🛠️ Tech Stack
 - **TypeScript**
 - **NestJS**
 - **MongoDB**
