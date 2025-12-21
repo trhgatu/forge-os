@@ -10,7 +10,7 @@ export const MEMORY_QUERY_KEY = ["memories"];
 
 export function useMemories() {
   return useQuery<PaginatedResponse<Memory>>({
-    queryKey: ["memories"],
+    queryKey: MEMORY_QUERY_KEY,
     queryFn: getMemories,
   });
 }

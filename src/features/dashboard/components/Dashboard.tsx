@@ -151,12 +151,9 @@ export const Dashboard: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    // Pick a random quote for now, using setTimeout to avoid synchronous state update warning
-    const timer = setTimeout(() => {
-      const randomInsight = MOCK_INSIGHTS[Math.floor(Math.random() * MOCK_INSIGHTS.length)];
-      setInsight(randomInsight);
-    }, 0);
-    return () => clearTimeout(timer);
+    // Pick a random quote
+    const randomInsight = MOCK_INSIGHTS[Math.floor(Math.random() * MOCK_INSIGHTS.length)];
+    setInsight(randomInsight);
   }, []);
 
   const timeString = time.toLocaleTimeString([], {
