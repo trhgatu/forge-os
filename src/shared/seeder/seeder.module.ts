@@ -12,9 +12,15 @@ import {
 import {
   Permission,
   PermissionSchema,
-} from '@modules/permission/permission.schema';
-import { Role, RoleSchema } from '@modules/role/role.schema';
-import { User, UserSchema } from '@modules/user/user.schema';
+} from 'src/contexts/iam/permissions/infrastructure/schemas/iam-permission.schema';
+import {
+  Role,
+  RoleSchema,
+} from 'src/contexts/iam/roles/infrastructure/schemas/iam-role.schema';
+import {
+  User,
+  UserSchema,
+} from 'src/contexts/iam/users/infrastructure/schemas/iam-user.schema';
 
 @Module({
   imports: [

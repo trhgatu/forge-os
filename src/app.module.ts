@@ -4,25 +4,22 @@ import { ConfigModule } from '@nestjs/config';
 import databaseConfig from '@config/database.config';
 import { AppController } from './app.controller';
 
-import { TestModule } from '@modules/test';
-import { AuthModule } from '@modules/auth';
-import { RoleModule } from '@modules/role';
-import { UserModule } from '@modules/user';
-import { PermissionModule } from '@modules/permission';
-import { AuditLogModule } from '@modules/audit-log';
+import { AuthModule } from 'src/contexts/iam/auth';
+import { RoleModule } from 'src/contexts/iam/roles';
+import { UserModule } from 'src/contexts/iam/users';
+import { PermissionModule } from 'src/contexts/iam/permissions';
+import { AuditLogModule } from 'src/contexts/system/audit-log';
 import { CreateAuditLogMiddleware } from '@shared/middlewares';
 
-import { VenueModule } from '@root/contexts/catalog/venue/venue.module';
-import { CourtModule } from '@root/contexts/catalog/court/court.module';
-import { SportModule } from '@root/contexts/catalog/sport/sport.module';
-
 import { MemoryModule } from '@root/contexts/reflection/memory/memory.module';
-import { BookingModule } from '@modules/booking';
 import { QuoteModule } from '@root/contexts/reflection/quote/quote.module';
+import { LoggerModule } from '@shared/logging/logger.module';
 import { JournalModule } from '@root/contexts/reflection/journal/journal.module';
+import { CqrsModule } from '@nestjs/cqrs';
 
 @Module({
   imports: [
+    CqrsModule,
     ConfigModule.forRoot({ isGlobal: true, load: [databaseConfig] }),
     MongooseModule.forRootAsync({
       useFactory: () => {
@@ -32,20 +29,15 @@ import { JournalModule } from '@root/contexts/reflection/journal/journal.module'
         };
       },
     }),
-    TestModule,
     AuthModule,
     RoleModule,
     UserModule,
     PermissionModule,
     AuditLogModule,
-    VenueModule,
-    CourtModule,
-    SportModule,
-    BookingModule,
-
     MemoryModule,
     QuoteModule,
     JournalModule,
+    LoggerModule,
   ],
   controllers: [AppController],
 })

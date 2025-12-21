@@ -21,7 +21,6 @@ export class MongoJournalRepository implements JournalRepository {
 
   async save(journal: Journal): Promise<void> {
     const doc = JournalMapper.toPersistence(journal);
-
     await this.model.updateOne(
       { _id: doc._id },
       { $set: doc },
@@ -40,7 +39,6 @@ export class MongoJournalRepository implements JournalRepository {
 
     const filter: FilterQuery<JournalDocument> = {
       isDeleted: query.isDeleted ?? false,
-
       ...(query.keyword && {
         $or: [
           { title: { $regex: query.keyword, $options: 'i' } },
