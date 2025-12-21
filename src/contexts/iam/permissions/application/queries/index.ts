@@ -1,9 +1,2 @@
-import { QueryPermissionDto } from '../../dto';
-
-export class GetPermissionsQuery {
-  constructor(public readonly dto: QueryPermissionDto) {}
-}
-
-export class GetPermissionByIdQuery {
-  constructor(public readonly id: string) {}
-}
+export * from './get-permissions.query';
+export * from './get-permission-by-id.query';

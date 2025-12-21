@@ -1,10 +1,2 @@
-// GetUsersQuery
-import { QueryUserDto } from '../../dto';
-export class GetUsersQuery {
-  constructor(public readonly dto: QueryUserDto) {}
-}
-
-// GetUserByIdQuery
-export class GetUserByIdQuery {
-  constructor(public readonly id: string) {}
-}
+export * from './get-users.query';
+export * from './get-user-by-id.query';
