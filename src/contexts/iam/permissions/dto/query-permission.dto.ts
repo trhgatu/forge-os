@@ -5,4 +5,7 @@ export class QueryPermissionDto extends QueryPaginationDto {
   @IsOptional()
   @IsString()
   keyword?: string;
+
+  @IsOptional()
+  isDeleted?: boolean;
 }

@@ -10,4 +10,6 @@ export abstract class RoleRepository {
   abstract findById(id: string): Promise<Role | null>;
   abstract update(id: string, dto: UpdateRoleDto): Promise<Role | null>;
   abstract delete(id: string): Promise<void>;
+  abstract softDelete(id: string): Promise<void>;
+  abstract restore(id: string): Promise<void>;
 }

@@ -1,4 +1,4 @@
-import { Permission } from '../../infrastructure/schemas/iam-permission.schema';
+import { Permission } from '../../domain/permission.entity';
 import { CreatePermissionDto, UpdatePermissionDto } from '../../dto';
 
 import { QueryPermissionDto } from '../../dto';
@@ -15,4 +15,6 @@ export abstract class PermissionRepository {
     dto: UpdatePermissionDto,
   ): Promise<Permission | null>;
   abstract delete(id: string): Promise<void>;
+  abstract softDelete(id: string): Promise<void>;
+  abstract restore(id: string): Promise<void>;
 }

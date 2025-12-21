@@ -5,14 +5,15 @@ export interface UserProps {
   name: string;
   email: string;
   password?: string;
-  // Simplified Role interface for Domain traversal
   role?: {
     id: string;
     name: string;
-    permissions: string[]; // or Permission objects
+    permissions: string[];
   };
-  roleId: string; // Foreign Key
+  roleId: string;
   refreshToken?: string;
+  isDeleted: boolean;
+  deletedAt?: Date;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -20,11 +21,13 @@ export interface UserProps {
 export class User {
   private constructor(private readonly props: UserProps) {}
 
-  static create(props: UserProps): User {
-    return new User(props);
+  static create(props: Omit<UserProps, 'isDeleted' | 'deletedAt'>): User {
+    return new User({
+      ...props,
+      isDeleted: false,
+    });
   }
 
-  // Reconstitute from persistence (allows hydration without validation logic if needed)
   static reconstitute(props: UserProps): User {
     return new User(props);
   }
@@ -57,6 +60,14 @@ export class User {
     return this.props.refreshToken;
   }
 
+  get isDeleted(): boolean {
+    return this.props.isDeleted;
+  }
+
+  get deletedAt(): Date | undefined {
+    return this.props.deletedAt;
+  }
+
   get createdAt(): Date | undefined {
     return this.props.createdAt;
   }
@@ -65,7 +76,9 @@ export class User {
     return this.props.updatedAt;
   }
 
-  update(props: Partial<Omit<UserProps, 'id'>>): void {
+  update(
+    props: Partial<Omit<UserProps, 'id' | 'isDeleted' | 'deletedAt'>>,
+  ): void {
     if (props.name !== undefined) this.props.name = props.name;
     if (props.email !== undefined) this.props.email = props.email;
     if (props.password !== undefined) this.props.password = props.password;
@@ -75,9 +88,20 @@ export class User {
     this.props.updatedAt = new Date();
   }
 
-  // ================
-  //   SERIALIZATION
-  // ================
+  delete(): void {
+    if (this.props.isDeleted) return;
+    this.props.isDeleted = true;
+    this.props.deletedAt = new Date();
+    this.props.updatedAt = new Date();
+  }
+
+  restore(): void {
+    if (!this.props.isDeleted) return;
+    this.props.isDeleted = false;
+    this.props.deletedAt = undefined;
+    this.props.updatedAt = new Date();
+  }
+
   toPrimitives() {
     return {
       id: this.id.toString(),
@@ -85,6 +109,9 @@ export class User {
       email: this.props.email,
       roleId: this.props.roleId,
       role: this.props.role,
+      refreshToken: this.props.refreshToken,
+      isDeleted: this.props.isDeleted,
+      deletedAt: this.props.deletedAt,
       createdAt: this.props.createdAt,
       updatedAt: this.props.updatedAt,
     };

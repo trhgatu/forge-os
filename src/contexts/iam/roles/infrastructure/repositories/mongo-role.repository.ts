@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, FilterQuery } from 'mongoose';
 import { RoleRepository } from '../../application/ports/role.repository';
 import {
   Role,
@@ -28,7 +28,16 @@ export class MongoRoleRepository implements RoleRepository {
     const pageNum = Number(page);
     const limitNum = Number(limit);
     const skip = (pageNum - 1) * limitNum;
-    const search = keyword ? { name: { $regex: keyword, $options: 'i' } } : {};
+
+    // Default to isDeleted: false if not specified
+    const isDeleted = query.isDeleted
+      ? String(query.isDeleted) === 'true'
+      : false;
+
+    const search: FilterQuery<RoleDocument> = { isDeleted };
+    if (keyword) {
+      search.name = { $regex: keyword, $options: 'i' };
+    }
 
     const result = await paginate(
       this.roleModel
@@ -65,5 +74,23 @@ export class MongoRoleRepository implements RoleRepository {
 
   async delete(id: string): Promise<void> {
     await this.roleModel.findByIdAndDelete(id).exec();
+  }
+
+  async softDelete(id: string): Promise<void> {
+    await this.roleModel
+      .findByIdAndUpdate(id, {
+        isDeleted: true,
+        deletedAt: new Date(),
+      })
+      .exec();
+  }
+
+  async restore(id: string): Promise<void> {
+    await this.roleModel
+      .findByIdAndUpdate(id, {
+        isDeleted: false,
+        deletedAt: null,
+      })
+      .exec();
   }
 }

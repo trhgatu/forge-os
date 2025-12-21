@@ -6,4 +6,7 @@ export class QueryRoleDto extends QueryPaginationDto {
   @IsOptional()
   @IsString()
   keyword?: string;
+
+  @IsOptional()
+  isDeleted?: boolean;
 }

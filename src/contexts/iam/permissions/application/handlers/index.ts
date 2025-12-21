@@ -3,3 +3,5 @@ export * from './update-permission.handler';
 export * from './delete-permission.handler';
 export * from './get-permissions.handler';
 export * from './get-permission-by-id.handler';
+export * from './invalidate-permission-cache.handler';
+export * from './restore-permission.handler';
