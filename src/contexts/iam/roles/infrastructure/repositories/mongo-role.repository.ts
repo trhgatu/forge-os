@@ -36,7 +36,8 @@ export class MongoRoleRepository implements RoleRepository {
 
     const search: FilterQuery<RoleDocument> = { isDeleted };
     if (keyword) {
-      search.name = { $regex: keyword, $options: 'i' };
+      const escapedKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      search.name = { $regex: escapedKeyword, $options: 'i' };
     }
 
     const result = await paginate(

@@ -20,6 +20,7 @@ export class RestoreRoleHandler implements ICommandHandler<RestoreRoleCommand> {
       return { restored: false };
     }
 
+    role.restore();
     await this.roleRepository.restore(id);
     this.eventBus.publish(new RoleModifiedEvent(role.id, 'restore'));
     return { restored: true };

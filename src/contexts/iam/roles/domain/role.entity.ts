@@ -94,7 +94,7 @@ export class Role {
       id: this.id.toString(),
       name: this.props.name,
       description: this.props.description,
-      permissions: this.props.permissions,
+      permissions: [...this.props.permissions],
       isSystem: this.props.isSystem,
       isDeleted: this.props.isDeleted,
       deletedAt: this.props.deletedAt,

@@ -43,7 +43,8 @@ export class MongoPermissionRepository implements PermissionRepository {
 
     const search: FilterQuery<PermissionDocument> = { isDeleted };
     if (keyword) {
-      search.name = { $regex: keyword, $options: 'i' };
+      const escapedKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      search.name = { $regex: escapedKeyword, $options: 'i' };
     }
 
     const result = await paginate(
