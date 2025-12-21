@@ -1,5 +1,6 @@
 // src/modules/role/dtos/query-role.dto.ts
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, IsBoolean } from 'class-validator';
+import { Transform } from 'class-transformer';
 import { QueryPaginationDto } from '@shared/dtos';
 
 export class QueryRoleDto extends QueryPaginationDto {
@@ -8,5 +9,7 @@ export class QueryRoleDto extends QueryPaginationDto {
   keyword?: string;
 
   @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => value === 'true')
   isDeleted?: boolean;
 }

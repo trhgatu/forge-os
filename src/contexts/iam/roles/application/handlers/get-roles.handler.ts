@@ -12,8 +12,8 @@ export class GetRolesHandler implements IQueryHandler<GetRolesQuery> {
 
   async execute(query: GetRolesQuery) {
     const { dto } = query;
-    const { page = 1, limit = 10, keyword } = dto;
-    const cacheKey = `roles:all:${keyword || 'all'}:p${page}:l${limit}`;
+    const { page = 1, limit = 10, keyword, isDeleted } = dto;
+    const cacheKey = `roles:all:${keyword || 'all'}:p${page}:l${limit}:${isDeleted || 'false'}`;
 
     const cached = await this.cacheService.get(cacheKey);
     if (cached) return cached;

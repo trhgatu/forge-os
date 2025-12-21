@@ -18,6 +18,10 @@ export class RestorePermissionHandler
     const permission = await this.permissionRepository.findById(id);
     if (!permission) throw new PermissionNotFoundException({ id });
 
+    if (!permission.isDeleted) {
+      return { restored: false };
+    }
+
     await this.permissionRepository.restore(id);
     this.eventBus.publish(
       new PermissionModifiedEvent(permission.id, 'restore'),

@@ -16,6 +16,10 @@ export class RestoreRoleHandler implements ICommandHandler<RestoreRoleCommand> {
     const role = await this.roleRepository.findById(id);
     if (!role) throw new RoleNotFoundException({ id });
 
+    if (!role.isDeleted) {
+      return { restored: false };
+    }
+
     await this.roleRepository.restore(id);
     this.eventBus.publish(new RoleModifiedEvent(role.id, 'restore'));
     return { restored: true };

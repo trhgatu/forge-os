@@ -13,18 +13,26 @@ export class InvalidateRoleCacheHandler
   ) {}
 
   async handle(event: RoleModifiedEvent): Promise<void> {
-    this.logger.log(
-      `Invalidating cache for role ${event.roleId.toString()} due to ${event.action}`,
-      InvalidateRoleCacheHandler.name,
-    );
+    try {
+      this.logger.log(
+        `Invalidating cache for role ${event.roleId.toString()} due to ${event.action}`,
+        InvalidateRoleCacheHandler.name,
+      );
 
-    // Invalidate list caches
-    await this.cacheService.deleteByPattern('roles:all:*');
+      // Invalidate list caches
+      await this.cacheService.deleteByPattern('roles:all:*');
 
-    // Invalidate specific role cache
-    // Assuming we will cache by ID with pattern roles:id:{id}
-    await this.cacheService.deleteByPattern(
-      `roles:id:${event.roleId.toString()}`,
-    );
+      // Invalidate specific role cache
+      // Assuming we will cache by ID with pattern roles:id:{id}
+      await this.cacheService.deleteByPattern(
+        `roles:id:${event.roleId.toString()}`,
+      );
+    } catch (error: any) {
+      this.logger.error(
+        `Failed to invalidate cookies for role ${event.roleId}: ${error.message}`,
+        error.stack ? String(error.stack) : undefined,
+        InvalidateRoleCacheHandler.name,
+      );
+    }
   }
 }

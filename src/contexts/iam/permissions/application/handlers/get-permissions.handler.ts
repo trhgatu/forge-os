@@ -14,8 +14,8 @@ export class GetPermissionsHandler
 
   async execute(query: GetPermissionsQuery) {
     const { dto } = query;
-    const { page = 1, limit = 10, keyword } = dto;
-    const cacheKey = `permissions:all:${keyword || 'all'}:p${page}:l${limit}`;
+    const { page = 1, limit = 10, keyword, isDeleted } = dto;
+    const cacheKey = `permissions:all:${keyword || 'all'}:p${page}:l${limit}:${isDeleted || 'false'}`;
 
     const cached = await this.cacheService.get(cacheKey);
     if (cached) return cached;
