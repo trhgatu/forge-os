@@ -132,12 +132,6 @@ export default function LoginPage() {
           </Button>
         </form>
 
-        <div className="mt-6 text-center text-xs text-gray-500">
-          New entity?{" "}
-          <Link href="/register" className="text-forge-cyan hover:underline underline-offset-4">
-            Initialize Sequence
-          </Link>
-        </div>
       </GlassCard>
     </div>
   );

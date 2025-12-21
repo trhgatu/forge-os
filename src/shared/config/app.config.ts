@@ -1,5 +1,13 @@
+const getEnv = (key: string): string => {
+    const value = process.env[key];
+    if (!value) {
+        throw new Error(`Missing required environment variable: ${key}`);
+    }
+    return value;
+};
+
 export const APP_CONFIG = {
     auth: {
-        defaultRoleId: process.env.NEXT_PUBLIC_DEFAULT_ROLE_ID || "676170d2cd1ce673905c879d", // Fallback to current hardcoded, but strictly config-driven
+        // Auth config placeholders
     },
 };
