@@ -10,7 +10,10 @@ export class AuditLogMapper {
       action: doc.action,
       method: doc.method,
       statusCode: doc.statusCode,
-      userId: doc.user?.toString(), // Handle potential populated user object if not careful, but schema defines it as ObjectId usually
+      userId:
+        doc.user && (doc.user as any)._id
+          ? (doc.user as any)._id.toString()
+          : doc.user?.toString(),
       path: doc.path,
       params: doc.params,
       query: doc.query,
