@@ -2,15 +2,8 @@
 
 import React, { useCallback } from "react";
 import type { KnowledgeConcept } from "@/shared/types";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import {
-  searchKnowledge,
-  selectConcept as reduxSelect,
-  clearActive as reduxClearActive,
-  clearHistory as reduxClearHistory,
-  clearResults as reduxClearResults,
-} from "@/store/slices/knowledgeSlice";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useKnowledgeStore } from "@/store/knowledge.store";
 
 interface KnowledgeProviderProps {
   children: React.ReactNode;
@@ -21,44 +14,43 @@ export const KnowledgeProvider: React.FC<KnowledgeProviderProps> = ({ children }
 );
 
 export const useKnowledge = () => {
-  const { searchResults, activeConcept, history, isLoading } = useAppSelector(
-    (state) => state.knowledge
-  );
+  const searchResults = useKnowledgeStore((state) => state.searchResults);
+  const activeConcept = useKnowledgeStore((state) => state.activeConcept);
+  const history = useKnowledgeStore((state) => state.history);
+  const isLoading = useKnowledgeStore((state) => state.isLoading);
+  const clearActive = useKnowledgeStore((state) => state.clearActive);
+  const clearHistory = useKnowledgeStore((state) => state.clearHistory);
+  const clearResults = useKnowledgeStore((state) => state.clearResults);
 
-  const dispatch = useAppDispatch();
+  // Actions that need dynamic arguments (language)
   const { language } = useLanguage();
 
-  /** -----------------------------
-   *  Stable Functions (NO RECREATION)
-   *  -----------------------------
-   */
+  // We access the raw methods to avoid subscription if we only need to call them
+  // But since they are on the store, we can use useKnowledgeStore.getState() inside callback
+  // OR just use the bound functions if we selected them.
+  // Wait, the store methods defined in create() are stable.
+  const searchAction = useKnowledgeStore((state) => state.search);
+  const selectAction = useKnowledgeStore((state) => state.selectConcept);
 
   const search = useCallback(
     async (query: string) => {
-      await dispatch(searchKnowledge({ query, lang: language }));
+      await searchAction(query, language);
     },
-    [dispatch, language]
+    [searchAction, language]
   );
 
   const selectConcept = useCallback(
     async (concept: KnowledgeConcept) => {
-      await dispatch(reduxSelect({ concept, systemLang: language }));
+      await selectAction(concept, language);
     },
-    [dispatch, language]
+    [selectAction, language]
   );
-
-  const clearActive = useCallback(() => dispatch(reduxClearActive()), [dispatch]);
-
-  const clearHistory = useCallback(() => dispatch(reduxClearHistory()), [dispatch]);
-
-  const clearResults = useCallback(() => dispatch(reduxClearResults()), [dispatch]);
 
   return {
     searchResults,
     activeConcept,
     history,
     isLoading,
-
     search,
     selectConcept,
     clearActive,
