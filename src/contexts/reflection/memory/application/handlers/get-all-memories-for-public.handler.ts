@@ -40,7 +40,7 @@ export class GetAllMemoriesForPublicHandler
     const response = {
       meta: memories.meta,
       data: memories.data.map((memory) =>
-        MemoryPresenter.toResponse(memory, 'en'),
+        MemoryPresenter.toResponse(memory, payload.lang || 'en'),
       ),
     };
 
