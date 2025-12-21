@@ -142,7 +142,10 @@ const MOCK_INSIGHTS: InsightData[] = [
 
 export const Dashboard: React.FC = () => {
   const [time, setTime] = useState(new Date());
-  const [insight, setInsight] = useState<InsightData | null>(null);
+  // Initialize with random quote directly to avoid effect/cascading render
+  const [insight] = useState<InsightData | null>(
+    () => MOCK_INSIGHTS[Math.floor(Math.random() * MOCK_INSIGHTS.length)]
+  );
   const [focusScore] = useState(85);
 
   useEffect(() => {
@@ -150,11 +153,7 @@ export const Dashboard: React.FC = () => {
     return () => clearInterval(timer);
   }, []);
 
-  useEffect(() => {
-    // Pick a random quote
-    const randomInsight = MOCK_INSIGHTS[Math.floor(Math.random() * MOCK_INSIGHTS.length)];
-    setInsight(randomInsight);
-  }, []);
+  // Removed insight useEffect as state is now lazy-initialized
 
   const timeString = time.toLocaleTimeString([], {
     hour: "2-digit",
