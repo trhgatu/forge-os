@@ -109,7 +109,7 @@ export class User {
       email: this.props.email,
       roleId: this.props.roleId,
       role: this.props.role,
-      refreshToken: this.props.refreshToken,
+      // refreshToken: this.props.refreshToken, // Excluded for security
       isDeleted: this.props.isDeleted,
       deletedAt: this.props.deletedAt,
       createdAt: this.props.createdAt,
