@@ -43,8 +43,7 @@ export class MongoAuditLogRepository implements AuditLogRepository {
         .find(filter)
         .sort({ createdAt: -1 })
         .skip(skip)
-        .limit(limitNum)
-        .populate('user', 'name email'),
+        .limit(limitNum),
       this.auditLogModel.countDocuments(filter),
       pageNum,
       limitNum,
