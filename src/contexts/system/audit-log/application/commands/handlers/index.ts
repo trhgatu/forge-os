@@ -1,14 +1,4 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { CreateAuditLogCommand } from '../index';
-import { AuditLogRepository } from '../../ports/audit-log.repository';
+import { CreateAuditLogHandler } from './create-audit-log.handler';
 
-@CommandHandler(CreateAuditLogCommand)
-export class CreateAuditLogHandler
-  implements ICommandHandler<CreateAuditLogCommand>
-{
-  constructor(private readonly auditLogRepository: AuditLogRepository) {}
-
-  async execute(command: CreateAuditLogCommand) {
-    return this.auditLogRepository.create(command.dto);
-  }
-}
+export { CreateAuditLogHandler };
+export const CommandHandlers = [CreateAuditLogHandler];

@@ -1,4 +1,4 @@
-import { AuditLog } from '../../infrastructure/schemas/sys-audit-log.schema';
+import { AuditLog } from '../../domain/audit-log.entity';
 import { CreateAuditLogDto } from '../../dto/create-audit-log.dto';
 
 import { AuditLogQueryDto } from '../../dto/audit-log-query.dto';

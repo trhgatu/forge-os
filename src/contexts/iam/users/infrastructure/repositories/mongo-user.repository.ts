@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, FilterQuery } from 'mongoose';
 import { UserRepository } from '../../application/ports/user.repository';
 import { User, UserDocument } from '../schemas/iam-user.schema';
 import { CreateUserDto, UpdateUserDto } from '../../dto';
@@ -27,7 +27,16 @@ export class MongoUserRepository implements UserRepository {
     const pageNum = Number(page);
     const limitNum = Number(limit);
     const skip = (pageNum - 1) * limitNum;
-    const search = keyword ? { name: { $regex: keyword, $options: 'i' } } : {};
+
+    // Default to isDeleted: false if not specified
+    const isDeleted = query.isDeleted
+      ? String(query.isDeleted) === 'true'
+      : false;
+
+    const search: FilterQuery<UserDocument> = { isDeleted };
+    if (keyword) {
+      search.name = { $regex: keyword, $options: 'i' };
+    }
 
     const result = await paginate(
       this.userModel
@@ -74,6 +83,20 @@ export class MongoUserRepository implements UserRepository {
 
   async delete(id: string): Promise<void> {
     await this.userModel.findByIdAndDelete(id);
+  }
+
+  async softDelete(id: string): Promise<void> {
+    await this.userModel.findByIdAndUpdate(id, {
+      isDeleted: true,
+      deletedAt: new Date(),
+    });
+  }
+
+  async restore(id: string): Promise<void> {
+    await this.userModel.findByIdAndUpdate(id, {
+      isDeleted: false,
+      deletedAt: null,
+    });
   }
 
   async updateRefreshToken(id: string, refreshToken: string): Promise<void> {

@@ -12,14 +12,18 @@ import {
   DeleteRoleHandler,
   GetRolesHandler,
   GetRoleByIdHandler,
+  InvalidateRoleCacheHandler,
+  RestoreRoleHandler,
 } from './application/handlers';
 
 const CommandHandlers = [
   CreateRoleHandler,
   UpdateRoleHandler,
   DeleteRoleHandler,
+  RestoreRoleHandler,
 ];
 const QueryHandlers = [GetRolesHandler, GetRoleByIdHandler];
+const EventHandlers = [InvalidateRoleCacheHandler];
 
 @Module({
   imports: [
@@ -35,6 +39,7 @@ const QueryHandlers = [GetRolesHandler, GetRoleByIdHandler];
     },
     ...CommandHandlers,
     ...QueryHandlers,
+    ...EventHandlers,
   ],
   exports: [RoleRepository],
 })

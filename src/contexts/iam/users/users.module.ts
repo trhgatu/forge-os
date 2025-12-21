@@ -12,14 +12,18 @@ import {
   DeleteUserHandler,
   GetUsersHandler,
   GetUserByIdHandler,
+  InvalidateUserCacheHandler,
+  RestoreUserHandler,
 } from './application/handlers';
 
 const CommandHandlers = [
   CreateUserHandler,
   UpdateUserHandler,
   DeleteUserHandler,
+  RestoreUserHandler,
 ];
 const QueryHandlers = [GetUsersHandler, GetUserByIdHandler];
+const EventHandlers = [InvalidateUserCacheHandler];
 
 @Module({
   imports: [
@@ -35,6 +39,7 @@ const QueryHandlers = [GetUsersHandler, GetUserByIdHandler];
     },
     ...CommandHandlers,
     ...QueryHandlers,
+    ...EventHandlers,
   ],
   exports: [UserRepository],
 })

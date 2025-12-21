@@ -16,4 +16,6 @@ export abstract class UserRepository {
     refreshToken: string | null,
   ): Promise<void>;
   abstract delete(id: string): Promise<void>;
+  abstract softDelete(id: string): Promise<void>;
+  abstract restore(id: string): Promise<void>;
 }

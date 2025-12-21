@@ -4,8 +4,10 @@ export interface RoleProps {
   id: RoleId;
   name: string;
   description?: string;
-  permissions: string[]; // Typically permission IDs or Slugs
+  permissions: string[];
   isSystem: boolean;
+  isDeleted: boolean;
+  deletedAt?: Date;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -13,8 +15,8 @@ export interface RoleProps {
 export class Role {
   private constructor(private readonly props: RoleProps) {}
 
-  static create(props: RoleProps): Role {
-    return new Role(props);
+  static create(props: Omit<RoleProps, 'isDeleted' | 'deletedAt'>): Role {
+    return new Role({ ...props, isDeleted: false });
   }
 
   static reconstitute(props: RoleProps): Role {
@@ -41,6 +43,14 @@ export class Role {
     return this.props.isSystem;
   }
 
+  get isDeleted(): boolean {
+    return this.props.isDeleted;
+  }
+
+  get deletedAt(): Date | undefined {
+    return this.props.deletedAt;
+  }
+
   get createdAt(): Date | undefined {
     return this.props.createdAt;
   }
@@ -49,13 +59,30 @@ export class Role {
     return this.props.updatedAt;
   }
 
-  update(props: Partial<Omit<RoleProps, 'id'>>): void {
+  update(
+    props: Partial<Omit<RoleProps, 'id' | 'isDeleted' | 'deletedAt'>>,
+  ): void {
     if (props.name !== undefined) this.props.name = props.name;
     if (props.description !== undefined)
       this.props.description = props.description;
     if (props.permissions !== undefined)
       this.props.permissions = [...props.permissions];
     // isSystem typically shouldn't change
+    this.props.updatedAt = new Date();
+  }
+
+  delete(): void {
+    if (this.props.isDeleted) return;
+    this.props.isDeleted = true;
+    this.props.deletedAt = new Date();
+    this.props.updatedAt = new Date();
+  }
+
+  restore(): void {
+    if (!this.props.isDeleted) return;
+    this.props.isDeleted = false;
+    this.props.deletedAt = undefined;
+
     this.props.updatedAt = new Date();
   }
 
@@ -69,6 +96,8 @@ export class Role {
       description: this.props.description,
       permissions: this.props.permissions,
       isSystem: this.props.isSystem,
+      isDeleted: this.props.isDeleted,
+      deletedAt: this.props.deletedAt,
       createdAt: this.props.createdAt,
       updatedAt: this.props.updatedAt,
     };

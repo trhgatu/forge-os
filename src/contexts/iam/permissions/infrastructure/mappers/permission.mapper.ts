@@ -11,18 +11,22 @@ export class PermissionMapper {
       description: doc.description,
       resource: doc.resource,
       action: doc.action,
+      isDeleted: doc.isDeleted,
+      deletedAt: doc.deletedAt,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     });
   }
 
-  static toPersistence(entity: Permission): any {
+  static toPersistence(entity: Permission): Partial<PermissionDocument> {
     return {
       _id: new Types.ObjectId(entity.id.toString()),
       name: entity.name,
       description: entity.description,
       resource: entity.resource,
       action: entity.action,
+      isDeleted: entity.isDeleted,
+      deletedAt: entity.deletedAt,
       updatedAt: entity.updatedAt,
     };
   }

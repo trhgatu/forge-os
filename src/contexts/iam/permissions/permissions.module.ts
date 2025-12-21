@@ -15,14 +15,18 @@ import {
   DeletePermissionHandler,
   GetPermissionsHandler,
   GetPermissionByIdHandler,
+  InvalidatePermissionCacheHandler,
+  RestorePermissionHandler,
 } from './application/handlers';
 
 const CommandHandlers = [
   CreatePermissionHandler,
   UpdatePermissionHandler,
   DeletePermissionHandler,
+  RestorePermissionHandler,
 ];
 const QueryHandlers = [GetPermissionsHandler, GetPermissionByIdHandler];
+const EventHandlers = [InvalidatePermissionCacheHandler];
 
 @Module({
   imports: [
@@ -40,6 +44,7 @@ const QueryHandlers = [GetPermissionsHandler, GetPermissionByIdHandler];
     },
     ...CommandHandlers,
     ...QueryHandlers,
+    ...EventHandlers,
   ],
   exports: [PermissionRepository],
 })

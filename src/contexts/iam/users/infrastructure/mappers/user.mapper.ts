@@ -23,6 +23,8 @@ export class UserMapper {
             }
           : undefined,
       refreshToken: doc.refreshToken,
+      isDeleted: doc.isDeleted,
+      deletedAt: doc.deletedAt,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     });
@@ -36,6 +38,8 @@ export class UserMapper {
       password: entity.password,
       roleId: new Types.ObjectId(entity.roleId),
       refreshToken: entity.refreshToken,
+      isDeleted: entity.isDeleted,
+      deletedAt: entity.deletedAt,
     };
   }
 }

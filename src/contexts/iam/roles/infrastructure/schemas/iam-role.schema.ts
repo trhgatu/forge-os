@@ -6,6 +6,8 @@ export type RoleDocument = Role &
     _id: Types.ObjectId;
     createdAt: Date;
     updatedAt: Date;
+    isDeleted: boolean;
+    deletedAt?: Date;
   };
 
 @Schema({ timestamps: true })
@@ -21,6 +23,12 @@ export class Role {
 
   @Prop({ default: false })
   isSystem!: boolean;
+
+  @Prop({ default: false })
+  isDeleted!: boolean;
+
+  @Prop()
+  deletedAt?: Date;
 }
 
 export const RoleSchema = SchemaFactory.createForClass(Role);
