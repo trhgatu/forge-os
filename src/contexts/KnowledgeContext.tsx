@@ -14,34 +14,47 @@ export const KnowledgeProvider: React.FC<KnowledgeProviderProps> = ({ children }
 );
 
 export const useKnowledge = () => {
-  const store = useKnowledgeStore();
+  const searchResults = useKnowledgeStore((state) => state.searchResults);
+  const activeConcept = useKnowledgeStore((state) => state.activeConcept);
+  const history = useKnowledgeStore((state) => state.history);
+  const isLoading = useKnowledgeStore((state) => state.isLoading);
+  const clearActive = useKnowledgeStore((state) => state.clearActive);
+  const clearHistory = useKnowledgeStore((state) => state.clearHistory);
+  const clearResults = useKnowledgeStore((state) => state.clearResults);
+
+  // Actions that need dynamic arguments (language)
   const { language } = useLanguage();
+
+  // We access the raw methods to avoid subscription if we only need to call them
+  // But since they are on the store, we can use useKnowledgeStore.getState() inside callback
+  // OR just use the bound functions if we selected them.
+  // Wait, the store methods defined in create() are stable.
+  const searchAction = useKnowledgeStore((state) => state.search);
+  const selectAction = useKnowledgeStore((state) => state.selectConcept);
 
   const search = useCallback(
     async (query: string) => {
-      await store.search(query, language);
+      await searchAction(query, language);
     },
-    [store, language]
+    [searchAction, language]
   );
 
   const selectConcept = useCallback(
     async (concept: KnowledgeConcept) => {
-      await store.selectConcept(concept, language);
+      await selectAction(concept, language);
     },
-    [store, language]
+    [selectAction, language]
   );
 
   return {
-    searchResults: store.searchResults,
-    activeConcept: store.activeConcept,
-    history: store.history,
-    isLoading: store.isLoading,
-
+    searchResults,
+    activeConcept,
+    history,
+    isLoading,
     search,
     selectConcept,
-
-    clearActive: store.clearActive,
-    clearHistory: store.clearHistory,
-    clearResults: store.clearResults,
+    clearActive,
+    clearHistory,
+    clearResults,
   };
 };
