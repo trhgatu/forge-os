@@ -6,7 +6,7 @@ import { Image as ImageIcon, Plus, Search, Wind } from "lucide-react";
 import type { Memory } from "@/shared/types/memory";
 import { cn } from "@/shared/lib/utils";
 import { SEASON_CONFIG, type InnerSeason, getSeasonFromMood } from "../config";
-import { useMemories } from "@/features/memory/hooks";
+import { useMemories, useCreateMemory } from "@/features/memory/hooks";
 import { analyzeMemory } from "../services/analyze";
 import { MemoryCard } from "./MemoryCard";
 import { MemoryDetailPanel } from "./MemoryDetailPanel";
@@ -69,10 +69,28 @@ export function Memory() {
     }
   };
 
+  const createMemory = useCreateMemory();
+
   const handleSaveNew = (memory: Memory) => {
-    // TODO: nối với useCreateMemory khi API ready
-    // createMemory.mutate(payload)
-    setSelectedMemoryId(memory.id);
+    const payload = {
+      title: memory.title,
+      content: memory.content,
+      mood: memory.mood,
+      tags: memory.tags,
+      type: memory.type,
+      imageUrl: memory.imageUrl,
+    };
+
+    createMemory.mutate(payload, {
+      onSuccess: (newMemory) => {
+        setSelectedMemoryId(newMemory.id);
+        setIsCreating(false);
+      },
+      onError: (error) => {
+        console.error("Failed to create memory:", error);
+        // Could add toast here
+      },
+    });
   };
 
   const bgClass =

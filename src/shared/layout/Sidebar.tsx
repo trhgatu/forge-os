@@ -159,7 +159,7 @@ export const Sidebar: React.FC = () => {
       className={cn(
         "relative h-full z-50 flex flex-col",
         "border-r border-white/5 bg-black/40 backdrop-blur-2xl",
-        "transition-[width] duration-500 ease-spring-out will-change-[width, transform]",
+        "transition-[width] duration-500 ease-spring-out will-change-[width,transform]",
         isExpanded ? "w-72" : "w-20"
       )}
     >
@@ -286,7 +286,7 @@ export const Sidebar: React.FC = () => {
           </div>
           {isExpanded && (
             <div className="flex-1 flex items-center justify-between">
-              <span className="text-xs font-medium text-gray-400">Language</span>
+              <span className="text-xs font-medium text-gray-400">{t("settings.language")}</span>
               <div className="flex bg-black/40 rounded-md p-0.5 border border-white/10">
                 <span
                   className={cn(

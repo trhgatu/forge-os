@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -66,7 +65,9 @@ export default function LoginPage() {
       console.error(error);
       const apiError = error as ApiError;
       // If error came from login (401), use specific message. Otherwise standard fallback.
-      const msg = apiError.response?.data?.message || "Authentication failed. Please check your network or credentials.";
+      const msg =
+        apiError.response?.data?.message ||
+        "Authentication failed. Please check your network or credentials.";
       toast.error(msg);
     } finally {
       setIsLoading(false);
@@ -131,7 +132,6 @@ export default function LoginPage() {
             Authenticate <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </form>
-
       </GlassCard>
     </div>
   );

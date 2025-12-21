@@ -59,6 +59,10 @@ export const useKnowledgeStore = create<KnowledgeState>()(
             } else {
               set({ searchResults: [] });
             }
+          } else {
+            console.warn("Concept details not found for:", concept.title);
+            // Optionally set an error state or keeping the current state but stopping loading
+            set({ searchResults: [] });
           }
         } catch (error) {
           console.error("Select concept failed:", error);

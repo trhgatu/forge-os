@@ -22,13 +22,24 @@ export type CreateMemoryPayload = Omit<Memory, "id" | "date" | "analysis" | "ref
 
 export function useCreateMemory() {
   const queryClient = useQueryClient();
+  const { language } = useLanguage();
 
   return useMutation({
     mutationFn: async (payload: CreateMemoryPayload) => {
-      const res = await apiClient.post<Memory>("/memories", payload);
+      // Backend expects { title: { en: "..." }, content: { en: "..." } } for i18n fields
+      const formattedPayload = {
+        ...payload,
+        title: { [language]: payload.title },
+        content: { [language]: payload.content },
+      };
+
+      const res = await apiClient.post<Memory>("/memories", formattedPayload);
       return res.data;
     },
     onSuccess: () => {
+      // Invalidate specific language query
+      queryClient.invalidateQueries({ queryKey: [...MEMORY_QUERY_KEY, language] });
+      // Also invalidate general queries if necessary, but specificity is better
       queryClient.invalidateQueries({ queryKey: MEMORY_QUERY_KEY });
     },
   });
