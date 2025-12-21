@@ -130,6 +130,8 @@ const getPathForView = (view: View): string => {
       return "/forge/presence";
     case View.FORGE_LAB:
       return "/forge/ideas";
+    case View.WIKI:
+      return "/forge/knowledge";
     default:
       return `/forge/${view.toLowerCase().replace(/_/g, "-")}`;
   }
