@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useLanguage } from "@/contexts/LanguageContext";
 import type { Memory } from "@/shared/types/memory";
 import { getMemories } from "../services/memoryService";
 import { apiClient } from "@/services/apiClient";
@@ -9,9 +10,11 @@ import type { PaginatedResponse } from "@/shared/types";
 export const MEMORY_QUERY_KEY = ["memories"];
 
 export function useMemories() {
+  const { language } = useLanguage();
+
   return useQuery<PaginatedResponse<Memory>>({
-    queryKey: ["memories"],
-    queryFn: getMemories,
+    queryKey: [...MEMORY_QUERY_KEY, language],
+    queryFn: () => getMemories(language),
   });
 }
 

@@ -10,7 +10,16 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    { className, variant = "default", size = "default", isLoading, children, disabled, ...props },
+    {
+      className,
+      variant = "default",
+      size = "default",
+      isLoading,
+      children,
+      disabled,
+      type = "button",
+      ...props
+    },
     ref
   ) => {
     return (
@@ -39,6 +48,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         )}
         ref={ref}
         disabled={disabled || isLoading}
+        type={type}
         {...props}
       >
         {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

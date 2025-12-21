@@ -12,7 +12,7 @@ export function GlassCard({ className, children, gradient = false, ...props }: G
       className={cn(
         "relative overflow-hidden rounded-xl border border-white/10 bg-[#0A0A0F]/60 backdrop-blur-xl shadow-2xl",
         gradient &&
-          "before:absolute before:inset-0 before:bg-linear-to-br before:from-white/5 before:to-transparent before:pointer-events-none",
+        "before:absolute before:inset-0 before:bg-linear-to-br before:from-white/5 before:to-transparent before:pointer-events-none",
         className
       )}
       {...props}
@@ -20,7 +20,7 @@ export function GlassCard({ className, children, gradient = false, ...props }: G
       <div className="relative z-10">{children}</div>
 
       {/* Decorative Grid/Noise (optional subtle texture) */}
-      <div className="absolute inset-0 bg-[url('https://grainy-linears.vercel.app/noise.svg')] opacity-[0.03] mix-blend-overlay pointer-events-none" />
+      <div className="absolute inset-0 bg-[url('/assets/noise.svg')] opacity-[0.03] mix-blend-overlay pointer-events-none" />
     </div>
   );
 }

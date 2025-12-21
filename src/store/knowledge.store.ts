@@ -45,7 +45,6 @@ export const useKnowledgeStore = create<KnowledgeState>()(
           const fullConcept = await getConceptDetails(concept.title, lang);
 
           if (fullConcept) {
-            fullConcept.language = lang;
             set({ activeConcept: fullConcept });
 
             // Update History

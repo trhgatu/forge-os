@@ -30,6 +30,8 @@ export const Timeline = () => {
     setIsAnalyzing(true);
 
     try {
+      // TODO: Implement actual analysis logic
+      console.log("Analyzing item:", id);
       /* const analysis = await analyzeTimelineItem(item.type, item.content);
 
             setItems((prev) =>
@@ -96,7 +98,10 @@ export const Timeline = () => {
             <p className="text-xs text-gray-500 mt-1 font-mono">{sortedItems.length} Artifacts</p>
           </div>
 
-          <button className="pointer-events-auto p-3 rounded-full bg-forge-accent text-white shadow-lg hover:scale-110 transition-transform">
+          <button
+            onClick={() => console.log("Add item clicked (Not implemented)")}
+            className="pointer-events-auto p-3 rounded-full bg-forge-accent text-white shadow-lg hover:scale-110 transition-transform"
+          >
             <Plus size={20} />
           </button>
         </div>
