@@ -14,6 +14,7 @@ import { Button } from "@/shared/components/ui/Button";
 import { Input } from "@/shared/components/ui/Input";
 import { useAuthStore } from "@/store/auth.store";
 import { apiClient } from "@/shared/lib/api-client";
+import { APP_CONFIG } from "@/shared/config/app.config";
 
 // Schema
 const registerSchema = z.object({
@@ -51,7 +52,7 @@ export default function RegisterPage() {
     try {
       const payload = {
         ...data,
-        roleId: "676170d2cd1ce673905c879d", // Example User Role ID (Need to be real)
+        roleId: APP_CONFIG.auth.defaultRoleId,
       };
 
       const response = await apiClient.post("/auth/register", payload);

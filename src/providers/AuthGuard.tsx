@@ -12,17 +12,17 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
-    // Small delay to allow Zustand persist to rehydrate (if async) and avoid flash
+    // Small delay to prevent flash during rehydration
     const timer = setTimeout(() => {
+      // Strict check: Must have both auth flag AND user data
       if (!isAuthenticated || !user) {
-        // Redirect to login if not authenticated
         router.push("/login");
       }
       setIsChecking(false);
-    }, 100); // 100ms buffer
+    }, 100);
 
     return () => clearTimeout(timer);
-  }, [isAuthenticated, user, router, pathname]);
+  }, [isAuthenticated, user, router]); // Removed pathname as it was unnecessary for this check
 
   if (isChecking) {
     return (
@@ -37,9 +37,8 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // If not checking and not authenticated, we already triggered redirect.
-  // But to be safe, render null if not authenticated to prevent flash of content.
-  if (!isAuthenticated) return null;
+  // Ensure we don't render children until we're sure
+  if (!isAuthenticated || !user) return null;
 
   return <>{children}</>;
 }

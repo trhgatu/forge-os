@@ -50,7 +50,9 @@ export const useKnowledgeStore = create<KnowledgeState>()(
 
             // Update History
             const currentHistory = get().history;
-            const exists = currentHistory.some((h) => h.title === fullConcept.title);
+            const exists = currentHistory.some(
+              (h) => h.title === fullConcept.title && h.language === fullConcept.language
+            );
 
             if (!exists) {
               const newHistory = [fullConcept, ...currentHistory].slice(0, 10);

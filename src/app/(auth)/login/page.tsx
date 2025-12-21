@@ -64,7 +64,9 @@ export default function LoginPage() {
       router.push("/forge/dashboard");
     } catch (error: unknown) {
       console.error(error);
-      const msg = (error as ApiError).response?.data?.message || "Invalid credentials";
+      const apiError = error as ApiError;
+      // If error came from login (401), use specific message. Otherwise standard fallback.
+      const msg = apiError.response?.data?.message || "Authentication failed. Please check your network or credentials.";
       toast.error(msg);
     } finally {
       setIsLoading(false);

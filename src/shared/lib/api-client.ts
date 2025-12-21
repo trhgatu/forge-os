@@ -19,26 +19,58 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// Refresh Token Logic
+let isRefreshing = false;
+let failedQueue: Array<{ resolve: (token: string) => void; reject: (err: any) => void }> = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token!); // Token is guaranteed if no error
+    }
+  });
+
+  failedQueue = [];
+};
+
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    // Prevent infinite loop
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Reject if no response (network error) or handled
+    if (!error.response) return Promise.reject(error);
+
+    // Handle 401
+    if (error.response.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        // If already refreshing, queue this request
+        return new Promise<string>((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return apiClient(originalRequest);
+          })
+          .catch((err) => Promise.reject(err));
+      }
+
       originalRequest._retry = true;
+      isRefreshing = true;
 
       try {
         const { refreshToken, setTokens, logout, user } = useAuthStore.getState();
 
         if (!refreshToken || !user) {
-          logout();
-          return Promise.reject(error);
+          throw new Error("No refresh token available");
         }
 
         // Call backend refresh endpoint
+        // Use apiClient.defaults.baseURL for consistency
         const { data } = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"}/auth/refresh`,
+          `${apiClient.defaults.baseURL}/auth/refresh`,
           {},
           {
             headers: { Authorization: `Bearer ${refreshToken}` },
@@ -46,16 +78,24 @@ apiClient.interceptors.response.use(
         );
 
         if (data && data.accessToken) {
-          // Update store with new tokens
+          // Update store
           setTokens(data.accessToken, data.refreshToken || refreshToken);
 
-          // Retry original request with new token
+          // Process queue
+          processQueue(null, data.accessToken);
+
+          // Retry original
           originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
           return apiClient(originalRequest);
+        } else {
+          throw new Error("Invalid refresh response");
         }
       } catch (refreshError) {
+        processQueue(refreshError, null);
         useAuthStore.getState().logout();
         return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
       }
     }
 

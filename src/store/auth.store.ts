@@ -56,7 +56,7 @@ export const useAuthStore = create<AuthState>()(
       name: "forge-auth-storage",
       partialize: (state) => ({
         accessToken: state.accessToken,
-        refreshToken: state.refreshToken,
+        refreshToken: state.refreshToken, // SECURITY NOTE: Storing refresh token in localStorage is vulnerable to XSS. Recommended: Use HttpOnly cookies.
         user: state.user,
         isAuthenticated: state.isAuthenticated,
       }),
