@@ -1,68 +1,129 @@
-# Forge OS Backend
+# 🔥 Forge OS — An Operating System for Thought, Growth & Creation
 
-This is the backend service for **Forge OS**, a personal project built with **NestJS** and following strict **Domain-Driven Design (DDD)** principles.
+“A system that mirrors you, evolves with you,
+and lights up the parts you don’t usually see.”
+
+---
+
+## ✨ What is Forge OS?
+
+Forge OS is a **personal operating system** for reflection, creativity, and inner evolution.
+Not a dashboard.
+Not a CMS.
+Not another productivity tool.
+
+It is a **mind mirror** — helping you see deeper.
+A **creative forge** — where ideas take form.
+A **knowledge sanctuary** — storing the moments, insights, and truths that shape you.
+
+A system designed to:
+
+- store your **memories**,
+- carry your **quotes**,
+- track your **moods**,
+- map your **timeline**,
+- and host the **AI agents** that accompany your growth.
+
+Forge OS isn’t just software —
+it’s a living extension of your inner world.
+
+---
+
+## 🧩 Core Modules
+
+### 📘 Reflection Module
+
+- journal
+- memory
+- quote
+- insight
+
+### 🧠 Mind Module
+
+- mood
+- presence
+- pulse
+
+### 🜁 Creation Module
+
+- project
+- template
+- crafting
+
+### 🜄 Connection Module
+
+- forge chamber
+- presence feed
+- notification
+
+### ⚙️ System Module
+
+- auth
+- user
+- role / permission
+- log
+- i18n
+
+---
 
 ## 🏗 Architecture
 
-The project adopts a robust architectural style combining **Hexagonal Architecture (Ports & Adapters)** and **CQRS (Command Query Responsibility Segregation)** to ensure scalability, maintainability, and strict separation of concerns.
+Built using **NestJS** and structured through **Domain-Driven Design**, ensuring clarity, boundary integrity, and long-term scalability.
 
-### Core Principles
+### Structure Overview
 
-- **Domain-Driven Design (DDD)**:
-  - **Entities**: Rich domain models with encapsulated logic (e.g., `User`, `Role`, `AuditLog`).
-  - **Value Objects**: Immutable objects ensuring type safety and validation (e.g., `UserId`, `Email`).
-  - **Aggregates**: Clusters of domain objects treated as a single unit.
+```
+trhgatu-forge-os-backend/
+├── src/
+│   ├── contexts/
+│   │   ├── reflection/
+│   │   ├── creation/
+│   │   ├── mind/
+│   │   └── system/
+│   ├── core/
+│   ├── shared/
+│   └── app.module.ts
+├── docker/
+└── README.md
+```
 
-- **CQRS**:
-  - **Commands**: Write operations (Create, Update, Delete) handled by specific Command Handlers.
-  - **Queries**: Read operations handled by Query Handlers.
-  - **Events**: Domain events used for side effects (e.g., Cache Invalidation) via Event Bus.
-
-- **Hexagonal Architecture**:
-  - **Domain Layer**: Pure business logic, no external dependencies.
-  - **Application Layer**: Use cases (Handlers), Ports (Interfaces).
-  - **Infrastructure Layer**: Adapters for Databases (Mongoose), External Services, and Framework implementations.
-  - **Presentation Layer**: HTTP Controllers (REST API).
-
----
-
-## 📦 Modules Overview
-
-### 1. IAM Context (Identity & Access Management)
-
-Fully refactored to strict DDD standards.
-
-- **Users**: User management with soft-delete, restore, and caching.
-- **Roles**: Role-based access control (RBAC).
-- **Permissions**: Granular permission management.
-- **Features**:
-  - **Strict Encapsulation**: Primitives are only exposed via DTOs/Mappers.
-  - **Reactive Caching**: Cache invalidation triggered by Domain Events (`UserModifiedEvent`, etc.).
-  - **Soft Delete**: Built-in support for `isDeleted`, `deletedAt`, and `restore()` functionality.
-
-### 2. System Context
-
-- **AuditLog**:
-  - Tracks all system activities.
-  - Implements **Strict DDD** with `AuditLogId` and `AuditLog` Entity.
-  - Uses `AuditLogMapper` to safely handle MongoDB population.
-  - Separate `Create` and `Get` handlers following CQRS.
-
-### 3. Reflection Context
-
-- The reference implementation for high-standard DDD patterns in this codebase.
+Each context behaves like a subsystem —
+self-contained, expressive, and extendable.
 
 ---
 
-## 🛠 Tech Stack
+## 🌐 Forge Chamber — Multi-Agent AI Room
 
-- **Framework**: NestJS
-- **Database**: MongoDB (Mongoose)
-- **Language**: TypeScript
-- **Architecture**: DDD, CQRS
-- **Validation**: class-validator, class-transformer
-- **Linting**: ESLint, Prettier
+A dedicated space where multiple AI personas coexist, collaborate, and respond simultaneously.
+Each agent represents a perspective: logic, creativity, memory, philosophy.
+
+Together, they form a **council of intelligence**
+designed to expand your thinking and deepen your self-understanding.
 
 ---
 
-**Forge OS** - Personal Project (2025)
+## � Tech Stack
+
+- **TypeScript**
+- **NestJS**
+- **MongoDB**
+- **Redis**
+- **Docker**
+
+Stable, scalable, and crafted for long-term evolution.
+
+---
+
+## 🌠 Vision
+
+Forge OS is designed as a **lifelong system** —
+a companion that grows, transforms, and expands alongside you.
+
+Not a project.
+A living journey.
+
+---
+
+## 📜 License
+
+Private • Personal OS • Built for trhgatu
