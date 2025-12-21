@@ -2,15 +2,8 @@
 
 import React, { useCallback } from "react";
 import type { KnowledgeConcept } from "@/shared/types";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import {
-  searchKnowledge,
-  selectConcept as reduxSelect,
-  clearActive as reduxClearActive,
-  clearHistory as reduxClearHistory,
-  clearResults as reduxClearResults,
-} from "@/store/slices/knowledgeSlice";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useKnowledgeStore } from "@/store/knowledge.store";
 
 interface KnowledgeProviderProps {
   children: React.ReactNode;
@@ -21,48 +14,34 @@ export const KnowledgeProvider: React.FC<KnowledgeProviderProps> = ({ children }
 );
 
 export const useKnowledge = () => {
-  const { searchResults, activeConcept, history, isLoading } = useAppSelector(
-    (state) => state.knowledge
-  );
-
-  const dispatch = useAppDispatch();
+  const store = useKnowledgeStore();
   const { language } = useLanguage();
-
-  /** -----------------------------
-   *  Stable Functions (NO RECREATION)
-   *  -----------------------------
-   */
 
   const search = useCallback(
     async (query: string) => {
-      await dispatch(searchKnowledge({ query, lang: language }));
+      await store.search(query, language);
     },
-    [dispatch, language]
+    [store, language]
   );
 
   const selectConcept = useCallback(
     async (concept: KnowledgeConcept) => {
-      await dispatch(reduxSelect({ concept, systemLang: language }));
+      await store.selectConcept(concept, language);
     },
-    [dispatch, language]
+    [store, language]
   );
 
-  const clearActive = useCallback(() => dispatch(reduxClearActive()), [dispatch]);
-
-  const clearHistory = useCallback(() => dispatch(reduxClearHistory()), [dispatch]);
-
-  const clearResults = useCallback(() => dispatch(reduxClearResults()), [dispatch]);
-
   return {
-    searchResults,
-    activeConcept,
-    history,
-    isLoading,
+    searchResults: store.searchResults,
+    activeConcept: store.activeConcept,
+    history: store.history,
+    isLoading: store.isLoading,
 
     search,
     selectConcept,
-    clearActive,
-    clearHistory,
-    clearResults,
+
+    clearActive: store.clearActive,
+    clearHistory: store.clearHistory,
+    clearResults: store.clearResults,
   };
 };

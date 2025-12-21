@@ -5,12 +5,12 @@ import { Sidebar } from "@/shared/layout/Sidebar";
 import "@/app/globals.css";
 import { LanguageProvider, SoundProvider, NovaViewProvider } from "@/contexts";
 import { NovaGuideWrapper } from "@/features/nova/components/NovaGuideWrapper";
-import { ReduxProvider } from "@/store/provider/Provider";
-import { QueryProvider } from "@/store/provider/QueryProvider";
+import { QueryProvider } from "@/providers/QueryProvider";
+import { AuthGuard } from "@/providers/AuthGuard";
 
 export default function ForgeLayout({ children }: { children: React.ReactNode }) {
   return (
-    <ReduxProvider>
+    <AuthGuard>
       <LanguageProvider>
         <SoundProvider>
           <NovaViewProvider>
@@ -31,6 +31,6 @@ export default function ForgeLayout({ children }: { children: React.ReactNode })
           </NovaViewProvider>
         </SoundProvider>
       </LanguageProvider>
-    </ReduxProvider>
+    </AuthGuard>
   );
 }
