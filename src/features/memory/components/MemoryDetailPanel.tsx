@@ -28,7 +28,7 @@ export function MemoryDetailPanel({
   return (
     <div
       className={cn(
-        "fixed inset-y-0 right-0 z-100 flex w-full flex-col border-l bg-black/90 shadow-2xl backdrop-blur-2xl md:w-[500px] animate-in slide-in-from-right duration-500",
+        "fixed inset-y-0 right-0 z-100 flex w-full flex-col border-l bg-black/90 shadow-2xl backdrop-blur-2xl md:w-[500px] slide-in-panel",
         config.border
       )}
     >

@@ -125,3 +125,19 @@
 @utility slide-in-from-bottom-4 {
   animation: slide-in-from-bottom 1.1s var(--ease-spring-out) both;
 }
+
+/* Slide In Right (Panel) */
+@keyframes slide-in-from-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@utility slide-in-panel {
+  animation: slide-in-from-right 0.8s var(--ease-spring-out) both;
+}

@@ -2,11 +2,12 @@
 
 import { useMemo, useState } from "react";
 import { Image as ImageIcon, Plus, Search, Wind } from "lucide-react";
+import { toast } from "sonner";
 
 import type { Memory } from "@/shared/types/memory";
 import { cn } from "@/shared/lib/utils";
 import { SEASON_CONFIG, type InnerSeason, getSeasonFromMood } from "../config";
-import { useMemories } from "@/features/memory/hooks";
+import { useMemories, useCreateMemory } from "@/features/memory/hooks";
 import { analyzeMemory } from "../services/analyze";
 import { MemoryCard } from "./MemoryCard";
 import { MemoryDetailPanel } from "./MemoryDetailPanel";
@@ -69,10 +70,30 @@ export function Memory() {
     }
   };
 
+  const createMemory = useCreateMemory();
+
   const handleSaveNew = (memory: Memory) => {
-    // TODO: nối với useCreateMemory khi API ready
-    // createMemory.mutate(payload)
-    setSelectedMemoryId(memory.id);
+    const payload = {
+      title: memory.title,
+      content: memory.content,
+      mood: memory.mood,
+      tags: memory.tags,
+      type: memory.type,
+      imageUrl: memory.imageUrl,
+    };
+
+    createMemory.mutate(payload, {
+      onSuccess: (newMemory) => {
+        toast.success("Memory crystallized successfully");
+        setIsCreating(false);
+        // Small delay to allow modal to close gracefully before panel slides in
+        setTimeout(() => setSelectedMemoryId(newMemory.id), 300);
+      },
+      onError: (error) => {
+        console.error("Failed to create memory:", error);
+        toast.error("Failed to preserve memory");
+      },
+    });
   };
 
   const bgClass =
