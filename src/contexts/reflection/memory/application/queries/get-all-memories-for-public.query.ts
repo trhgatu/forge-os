@@ -7,6 +7,7 @@ export interface GetAllMemoriesForPublicPayload {
   status?: MemoryStatus;
   tags?: string[];
   mood?: string;
+  lang?: string;
 }
 
 export class GetAllMemoriesForPublicQuery {

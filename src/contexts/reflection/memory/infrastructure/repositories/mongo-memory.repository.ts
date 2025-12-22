@@ -34,12 +34,19 @@ export class MongoMemoryRepository implements MemoryRepository {
     const { page = 1, limit = 10 } = query;
     const skip = (page - 1) * limit;
 
+    const lang = query.lang || 'en';
+
+    // Helper to escape regex special characters
+    const escapeRegex = (str: string) =>
+      str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const safeKeyword = query.keyword ? escapeRegex(query.keyword) : undefined;
+
     const filter: FilterQuery<MemoryDocument> = {
       isDeleted: query.isDeleted ?? false,
-      ...(query.keyword && {
+      ...(safeKeyword && {
         $or: [
-          { 'title.en': { $regex: query.keyword, $options: 'i' } },
-          { 'content.en': { $regex: query.keyword, $options: 'i' } },
+          { [`title.${lang}`]: { $regex: safeKeyword, $options: 'i' } },
+          { [`content.${lang}`]: { $regex: safeKeyword, $options: 'i' } },
         ],
       }),
       ...(query.status && { status: query.status }),

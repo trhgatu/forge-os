@@ -8,4 +8,5 @@ export interface MemoryFilter {
   mood?: string;
   page?: number;
   limit?: number;
+  lang?: string;
 }
