@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Image as ImageIcon, Plus, Search, Wind } from "lucide-react";
+import { toast } from "sonner";
 
 import type { Memory } from "@/shared/types/memory";
 import { cn } from "@/shared/lib/utils";
@@ -83,12 +84,13 @@ export function Memory() {
 
     createMemory.mutate(payload, {
       onSuccess: (newMemory) => {
+        toast.success("Memory crystallized successfully");
         setSelectedMemoryId(newMemory.id);
         setIsCreating(false);
       },
       onError: (error) => {
         console.error("Failed to create memory:", error);
-        // Could add toast here
+        toast.error("Failed to preserve memory");
       },
     });
   };
