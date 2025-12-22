@@ -50,8 +50,8 @@ export function CreateMemoryModal({ onClose, onSave }: CreateMemoryModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md">
-      <div className="w-full max-w-lg overflow-hidden rounded-2xl border border-white/10 bg-forge-bg shadow-2xl animate-in zoom-in-95 duration-300">
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md animate-in fade-in duration-300">
+      <div className="w-full max-w-lg overflow-hidden rounded-2xl border border-white/10 bg-forge-bg shadow-2xl animate-in zoom-in-95 slide-in-from-bottom-4 duration-500 ease-spring-out">
         <div className="flex items-center justify-between border-b border-white/5 p-6">
           <h3 className="font-display text-lg font-bold tracking-wide text-white">
             Preserve Moment

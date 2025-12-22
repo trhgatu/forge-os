@@ -85,8 +85,9 @@ export function Memory() {
     createMemory.mutate(payload, {
       onSuccess: (newMemory) => {
         toast.success("Memory crystallized successfully");
-        setSelectedMemoryId(newMemory.id);
         setIsCreating(false);
+        // Small delay to allow modal to close gracefully before panel slides in
+        setTimeout(() => setSelectedMemoryId(newMemory.id), 300);
       },
       onError: (error) => {
         console.error("Failed to create memory:", error);
