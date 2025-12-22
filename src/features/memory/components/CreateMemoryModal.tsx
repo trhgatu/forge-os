@@ -29,10 +29,17 @@ export function CreateMemoryModal({ onClose, onSave }: CreateMemoryModalProps) {
   const [mood, setMood] = useState<MoodType>("neutral");
   const [imageUrl, setImageUrl] = useState("");
 
+  const [imgError, setImgError] = useState(false);
+
+  // Reset error when URL changes
+  if (imageUrl && imgError && imageUrl !== imageUrl) {
+    setImgError(false);
+  }
+
   const handleSave = () => {
     if (!title.trim() || !content.trim()) return;
 
-    const trimmedImage = imageUrl.trim() || undefined;
+    const trimmedImage = !imgError && imageUrl.trim() ? imageUrl.trim() : undefined;
 
     const newMemory: Memory = {
       id: Date.now().toString(),
@@ -131,11 +138,21 @@ export function CreateMemoryModal({ onClose, onSave }: CreateMemoryModalProps) {
                   className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs text-white outline-none transition-colors focus:border-white/20"
                   placeholder="https://..."
                   value={imageUrl}
-                  onChange={(event) => setImageUrl(event.target.value)}
+                  onChange={(event) => {
+                    setImageUrl(event.target.value);
+                    setImgError(false);
+                  }}
                 />
-                {imageUrl && (
+                {imageUrl && !imgError && (
                   <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-white/10">
-                    <Image src={imageUrl} alt="Preview" fill className="object-cover" />
+                    <Image
+                      src={imageUrl}
+                      alt="Preview"
+                      fill
+                      className="object-cover"
+                      unoptimized
+                      onError={() => setImgError(true)}
+                    />
                   </div>
                 )}
               </div>
