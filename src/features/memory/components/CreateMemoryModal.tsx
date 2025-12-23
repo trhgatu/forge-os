@@ -10,7 +10,8 @@ import { cn } from "@/shared/lib/utils";
 
 interface CreateMemoryModalProps {
   onClose: () => void;
-  onSave: (memory: Memory) => void;
+  onSave: (memory: Partial<Memory>) => void;
+  initialData?: Memory | null;
 }
 
 const EMOTION_OPTIONS: MoodType[] = [
@@ -21,15 +22,19 @@ const EMOTION_OPTIONS: MoodType[] = [
   "sad",
   "anxious",
   "focused",
+  "nostalgic",
 ];
 
-export function CreateMemoryModal({ onClose, onSave }: CreateMemoryModalProps) {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [mood, setMood] = useState<MoodType>("neutral");
-  const [imageUrl, setImageUrl] = useState("");
+export function CreateMemoryModal({ onClose, onSave, initialData }: CreateMemoryModalProps) {
+  const [title, setTitle] = useState(initialData?.title || "");
+  const [content, setContent] = useState(initialData?.content || "");
+  const [mood, setMood] = useState<MoodType>(initialData?.mood || "neutral");
+  const [imageUrl, setImageUrl] = useState(initialData?.imageUrl || "");
 
   const [imgError, setImgError] = useState(false);
+
+  // No useEffect needed if we rely on mounting.
+  // If we need to react to props change while mounted, we should use a key on the component instance in the parent.
 
   // Reset error when URL changes
   if (imageUrl && imgError && imageUrl !== imageUrl) {
@@ -41,19 +46,15 @@ export function CreateMemoryModal({ onClose, onSave }: CreateMemoryModalProps) {
 
     const trimmedImage = !imgError && imageUrl.trim() ? imageUrl.trim() : undefined;
 
-    const newMemory: Memory = {
-      id: Date.now().toString(),
+    const memoryPayload: Partial<Memory> = {
+      ...(initialData && { id: initialData.id }),
       title: title.trim(),
       content: content.trim(),
-      date: new Date(),
       mood,
-      type: "moment",
-      tags: [],
-      reflectionDepth: 5,
       imageUrl: trimmedImage,
     };
 
-    onSave(newMemory);
+    onSave(memoryPayload);
     onClose();
   };
 
@@ -63,7 +64,7 @@ export function CreateMemoryModal({ onClose, onSave }: CreateMemoryModalProps) {
         {/* Header */}
         <div className="flex items-center justify-between border-b border-white/5 px-6 py-4">
           <h3 className="font-display text-lg font-bold tracking-wide text-white">
-            Preserve Moment
+            {initialData ? "Refine Moment" : "Preserve Moment"}
           </h3>
           <div className="flex items-center gap-2">
             <button
@@ -78,7 +79,7 @@ export function CreateMemoryModal({ onClose, onSave }: CreateMemoryModalProps) {
               onClick={handleSave}
               className="rounded-lg bg-white px-4 py-1.5 text-xs font-bold text-black transition-all hover:bg-gray-200 hover:shadow-[0_0_15px_rgba(255,255,255,0.2)]"
             >
-              Crystallize
+              {initialData ? "Update" : "Crystallize"}
             </button>
           </div>
         </div>

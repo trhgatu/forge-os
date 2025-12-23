@@ -2,8 +2,8 @@
 
 import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { Memory } from "@/shared/types/memory";
-import { getMemories, deleteMemory } from "../services/memoryService";
+import type { Memory, CreateMemoryPayload } from "@/shared/types/memory";
+import { getMemories, deleteMemory, updateMemory } from "../services/memoryService";
 import { apiClient } from "@/services/apiClient";
 import type { PaginatedResponse } from "@/shared/types";
 
@@ -24,8 +24,6 @@ export function useMemories() {
     initialPageParam: 1,
   });
 }
-
-export type CreateMemoryPayload = Omit<Memory, "id" | "date" | "analysis" | "reflectionDepth">;
 
 export function useCreateMemory() {
   const queryClient = useQueryClient();
@@ -62,6 +60,20 @@ export function useDeleteMemory() {
       // Invalidate specific language query
       queryClient.invalidateQueries({ queryKey: [...MEMORY_QUERY_KEY, language] });
       // Invalidate general queries
+      queryClient.invalidateQueries({ queryKey: MEMORY_QUERY_KEY });
+    },
+  });
+}
+
+export function useUpdateMemory() {
+  const queryClient = useQueryClient();
+  const { language } = useLanguage();
+
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: Partial<CreateMemoryPayload> }) =>
+      updateMemory(id, payload, language),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [...MEMORY_QUERY_KEY, language] });
       queryClient.invalidateQueries({ queryKey: MEMORY_QUERY_KEY });
     },
   });

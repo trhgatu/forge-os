@@ -21,3 +21,5 @@ export interface Memory {
   analysis?: MemoryAnalysis;
   reflectionDepth: number;
 }
+
+export type CreateMemoryPayload = Omit<Memory, "id" | "date" | "analysis" | "reflectionDepth">;

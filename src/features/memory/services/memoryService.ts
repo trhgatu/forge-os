@@ -1,4 +1,4 @@
-import type { Memory } from "@/shared/types/memory";
+import type { Memory, CreateMemoryPayload } from "@/shared/types/memory";
 import { apiClient } from "@/services/apiClient";
 import type { PaginatedResponse } from "@/shared/types";
 import { MemoryDto } from "@/shared/types/dto/memory.dto";
@@ -32,4 +32,22 @@ export const getMemories = async (
 
 export const deleteMemory = async (id: string): Promise<void> => {
   await apiClient.delete(`/memories/${id}`);
+};
+
+export const updateMemory = async (
+  id: string,
+  payload: Partial<CreateMemoryPayload>,
+  language: string
+): Promise<Memory> => {
+  // Backend expects i18n structure for updates too, similar to create
+  const formattedPayload = {
+    ...payload,
+    // If title is being updated, wrap it in i18n object
+    ...(payload.title && { title: { [language]: payload.title } }),
+    // If content is being updated
+    ...(payload.content && { content: { [language]: payload.content } }),
+  };
+
+  const res = await apiClient.put<Memory>(`/memories/${id}`, formattedPayload);
+  return res.data;
 };

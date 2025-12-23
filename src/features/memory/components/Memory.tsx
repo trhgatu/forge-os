@@ -95,13 +95,14 @@ export function Memory() {
 
   const createMemory = useCreateMemory();
 
-  const handleSaveNew = (memory: Memory) => {
+  const handleSaveNew = (memory: Partial<Memory>) => {
+    // We can safely cast because CreateModal validation ensures these fields exist for new memories
     const payload = {
-      title: memory.title,
-      content: memory.content,
-      mood: memory.mood,
-      tags: memory.tags,
-      type: memory.type,
+      title: memory.title!,
+      content: memory.content!,
+      mood: memory.mood!,
+      tags: memory.tags || [],
+      type: memory.type || "moment",
       imageUrl: memory.imageUrl,
     };
 
@@ -245,14 +246,10 @@ export function Memory() {
             </div>
           ) : (
             <div className="py-32 text-center opacity-40">
-              {isLoading ? (
-                <p className="font-mono text-sm text-gray-500">Loading...</p>
-              ) : (
-                <>
-                  <ImageIcon size={32} className="mx-auto mb-4 text-white" />
-                  <p className="font-mono text-sm text-gray-500">The landscape is silent.</p>
-                </>
-              )}
+              <>
+                <ImageIcon size={32} className="mx-auto mb-4 text-white" />
+                <p className="font-mono text-sm text-gray-500">The landscape is silent.</p>
+              </>
             </div>
           )}
 
