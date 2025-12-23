@@ -12,6 +12,7 @@ import {
   Sparkles,
   Sun,
   Wind,
+  History as HistoryIcon,
 } from "lucide-react";
 import type { MoodType } from "@/shared/types";
 
@@ -114,6 +115,13 @@ export const MOOD_CONFIG: Record<MoodType, MoodConfigItem> = {
     bg: "bg-slate-500",
     icon: Moon,
     weight: 2,
+  },
+  nostalgic: {
+    label: "Nostalgic",
+    color: "text-amber-400",
+    bg: "bg-amber-500",
+    icon: HistoryIcon,
+    weight: 4,
   },
 };
 
