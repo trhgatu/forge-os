@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from "sonner";
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
@@ -31,7 +32,6 @@ export const Timeline = () => {
 
     try {
       // TODO: Implement actual analysis logic
-      console.log("Analyzing item:", id);
       /* const analysis = await analyzeTimelineItem(item.type, item.content);
 
             setItems((prev) =>
@@ -42,7 +42,8 @@ export const Timeline = () => {
               )
             ); */
     } catch (e) {
-      console.error(e);
+      console.error("Timeline analysis failed:", e);
+      toast.error("Failed to analyze timeline item");
     } finally {
       setIsAnalyzing(false);
     }
@@ -99,7 +100,7 @@ export const Timeline = () => {
           </div>
 
           <button
-            onClick={() => console.log("Add item clicked (Not implemented)")}
+            onClick={() => toast.info("New timeline entry coming soon")}
             className="pointer-events-auto p-3 rounded-full bg-forge-accent text-white shadow-lg hover:scale-110 transition-transform"
           >
             <Plus size={20} />

@@ -85,6 +85,7 @@ export function getSeasonFromMood(mood: MoodType): InnerSeason {
 
     case "inspired":
     case "anxious":
+    case "nostalgic":
       return "Autumn";
 
     case "neutral":

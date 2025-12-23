@@ -1,12 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
 import { Image as ImageIcon, Plus, Search, Wind } from "lucide-react";
+import { toast } from "sonner";
 
 import type { Memory } from "@/shared/types/memory";
 import { cn } from "@/shared/lib/utils";
 import { SEASON_CONFIG, type InnerSeason, getSeasonFromMood } from "../config";
-import { useMemories } from "@/features/memory/hooks";
+import { useMemories, useCreateMemory } from "@/features/memory/hooks";
 import { analyzeMemory } from "../services/analyze";
 import { MemoryCard } from "./MemoryCard";
 import { MemoryDetailPanel } from "./MemoryDetailPanel";
@@ -15,9 +16,12 @@ import { CreateMemoryModal } from "./CreateMemoryModal";
 type SeasonFilter = InnerSeason | "All";
 
 export function Memory() {
-  const { data, isLoading, isError } = useMemories();
+  const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useMemories();
 
-  const memories = useMemo(() => data?.data ?? [], [data]);
+  const memories = useMemo(() => {
+    return data?.pages.flatMap((page) => page.data) ?? [];
+  }, [data]);
 
   const [selectedMemoryId, setSelectedMemoryId] = useState<string | null>(null);
   const [analysisMap, setAnalysisMap] = useState<Record<string, Memory["analysis"]>>({});
@@ -26,6 +30,26 @@ export function Memory() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeFilter, setActiveFilter] = useState<SeasonFilter>("All");
+
+  // Infinite Scroll Trigger
+  const observerTarget = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const filteredMemories = useMemo(() => {
     const query = searchTerm.toLowerCase().trim();
@@ -69,10 +93,31 @@ export function Memory() {
     }
   };
 
-  const handleSaveNew = (memory: Memory) => {
-    // TODO: nối với useCreateMemory khi API ready
-    // createMemory.mutate(payload)
-    setSelectedMemoryId(memory.id);
+  const createMemory = useCreateMemory();
+
+  const handleSaveNew = (memory: Partial<Memory>) => {
+    // We can safely cast because CreateModal validation ensures these fields exist for new memories
+    const payload = {
+      title: memory.title!,
+      content: memory.content!,
+      mood: memory.mood!,
+      tags: memory.tags || [],
+      type: memory.type || "moment",
+      imageUrl: memory.imageUrl,
+    };
+
+    createMemory.mutate(payload, {
+      onSuccess: (newMemory) => {
+        toast.success("Memory crystallized successfully");
+        setIsCreating(false);
+        // Small delay to allow modal to close gracefully before panel slides in
+        setTimeout(() => setSelectedMemoryId(newMemory.id), 300);
+      },
+      onError: (error) => {
+        console.error("Failed to create memory:", error);
+        toast.error("Failed to preserve memory");
+      },
+    });
   };
 
   const bgClass =
@@ -201,8 +246,21 @@ export function Memory() {
             </div>
           ) : (
             <div className="py-32 text-center opacity-40">
-              <ImageIcon size={32} className="mx-auto mb-4 text-white" />
-              <p className="font-mono text-sm text-gray-500">The landscape is silent.</p>
+              <>
+                <ImageIcon size={32} className="mx-auto mb-4 text-white" />
+                <p className="font-mono text-sm text-gray-500">The landscape is silent.</p>
+              </>
+            </div>
+          )}
+
+          {/* Infinite Scroll Sentinel */}
+          {hasNextPage && (
+            <div ref={observerTarget} className="mt-8 flex justify-center py-4">
+              {isFetchingNextPage ? (
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" />
+              ) : (
+                <div className="h-4" />
+              )}
             </div>
           )}
         </div>

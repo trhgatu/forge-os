@@ -11,6 +11,7 @@ export type MoodType =
   | "empty"
   | "focused"
   | "anxious"
+  | "nostalgic"
   | "tired";
 
 export interface JournalAnalysis {
