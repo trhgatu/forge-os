@@ -16,7 +16,7 @@ export function useMemories() {
     queryKey: [...MEMORY_QUERY_KEY, language],
     queryFn: ({ pageParam = 1 }) => getMemories(language, pageParam as number),
     getNextPageParam: (lastPage) => {
-      if (lastPage.meta.page < lastPage.meta.lastPage) {
+      if (lastPage.meta.page < lastPage.meta.totalPages) {
         return lastPage.meta.page + 1;
       }
       return undefined;
