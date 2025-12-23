@@ -3,9 +3,13 @@ import { apiClient } from "@/services/apiClient";
 import type { PaginatedResponse } from "@/shared/types";
 import { MemoryDto } from "@/shared/types/dto/memory.dto";
 
-export const getMemories = async (lang?: string): Promise<PaginatedResponse<Memory>> => {
+export const getMemories = async (
+  lang?: string,
+  page = 1,
+  limit = 12
+): Promise<PaginatedResponse<Memory>> => {
   const res = await apiClient.get<PaginatedResponse<MemoryDto>>("/memories", {
-    params: { lang },
+    params: { lang, page, limit },
   });
   const payload = res.data;
 
