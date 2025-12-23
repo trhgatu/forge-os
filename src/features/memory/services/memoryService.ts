@@ -29,3 +29,7 @@ export const getMemories = async (
     })),
   };
 };
+
+export const deleteMemory = async (id: string): Promise<void> => {
+  await apiClient.delete(`/memories/${id}`);
+};

@@ -3,7 +3,7 @@
 import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { Memory } from "@/shared/types/memory";
-import { getMemories } from "../services/memoryService";
+import { getMemories, deleteMemory } from "../services/memoryService";
 import { apiClient } from "@/services/apiClient";
 import type { PaginatedResponse } from "@/shared/types";
 
@@ -47,6 +47,21 @@ export function useCreateMemory() {
       // Invalidate specific language query
       queryClient.invalidateQueries({ queryKey: [...MEMORY_QUERY_KEY, language] });
       // Also invalidate general queries if necessary, but specificity is better
+      queryClient.invalidateQueries({ queryKey: MEMORY_QUERY_KEY });
+    },
+  });
+}
+
+export function useDeleteMemory() {
+  const queryClient = useQueryClient();
+  const { language } = useLanguage();
+
+  return useMutation({
+    mutationFn: (id: string) => deleteMemory(id),
+    onSuccess: () => {
+      // Invalidate specific language query
+      queryClient.invalidateQueries({ queryKey: [...MEMORY_QUERY_KEY, language] });
+      // Invalidate general queries
       queryClient.invalidateQueries({ queryKey: MEMORY_QUERY_KEY });
     },
   });

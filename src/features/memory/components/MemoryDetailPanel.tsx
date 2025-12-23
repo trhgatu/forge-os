@@ -1,12 +1,14 @@
 "use client";
 
-import { X, Sparkles, Calendar, Tag, Mic, Heart, ChevronRight } from "lucide-react";
+import { X, Sparkles, Calendar, Tag, Mic, Heart, ChevronRight, Trash2 } from "lucide-react";
 import Image from "next/image";
 
 import type { Memory } from "@/shared/types/memory";
 import { cn } from "@/shared/lib/utils";
 import { SEASON_CONFIG, getSeasonFromMood } from "../config";
 import { ParticleCanvas } from "@/shared/components/effects/ParticleCanvas";
+import { useDeleteMemory } from "../hooks/useMemories";
+import { toast } from "sonner";
 
 interface MemoryDetailPanelProps {
   memory: Memory | null;
@@ -25,6 +27,41 @@ export function MemoryDetailPanel({
 
   const currentSeason = getSeasonFromMood(memory.mood);
   const seasonConfig = SEASON_CONFIG[currentSeason];
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const deleteMemory = useDeleteMemory();
+
+  const handleDelete = () => {
+    toast.custom((t) => (
+      <div className="flex flex-col gap-2 rounded-xl border border-red-500/20 bg-black/90 p-4 text-sm text-white shadow-xl backdrop-blur-md">
+        <p className="font-bold">Dissolve this memory?</p>
+        <p className="text-gray-400">It will fade into the void (soft delete).</p>
+        <div className="mt-2 flex gap-2">
+          <button
+            onClick={() => {
+              deleteMemory.mutate(memory.id, {
+                onSuccess: () => {
+                  toast.success("Memory faded away...");
+                  toast.dismiss(t);
+                  onClose();
+                },
+                onError: () => toast.error("Could not dissolve memory."),
+              });
+            }}
+            className="rounded-md bg-red-500/20 px-3 py-1.5 text-red-200 transition-colors hover:bg-red-500/30"
+          >
+            Confirm
+          </button>
+          <button
+            onClick={() => toast.dismiss(t)}
+            className="rounded-md bg-white/10 px-3 py-1.5 text-gray-300 transition-colors hover:bg-white/20"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    ));
+  };
 
   return (
     <div className="fixed inset-y-0 right-0 z-50 w-full max-w-2xl border-l border-white/10 bg-black/95 shadow-2xl backdrop-blur-xl slide-in-panel">
@@ -61,13 +98,23 @@ export function MemoryDetailPanel({
               {memory.title}
             </h2>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-full p-2 text-gray-400 transition-colors hover:bg-white/10 hover:text-white"
-          >
-            <X size={20} />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="rounded-full p-2 text-gray-400 transition-colors hover:bg-red-500/10 hover:text-red-400"
+              title="Delete Memory"
+            >
+              <Trash2 size={20} />
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-full p-2 text-gray-400 transition-colors hover:bg-white/10 hover:text-white"
+            >
+              <X size={20} />
+            </button>
+          </div>
         </div>
 
         {/* Content */}
