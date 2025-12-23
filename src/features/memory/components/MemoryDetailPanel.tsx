@@ -42,10 +42,10 @@ export function MemoryDetailPanel({
         <div className="mt-2 flex gap-2">
           <button
             onClick={() => {
+              toast.dismiss(t);
               deleteMemory.mutate(memory.id, {
                 onSuccess: () => {
                   toast.success("Memory faded away...");
-                  toast.dismiss(t);
                   onClose();
                 },
                 onError: () => toast.error("Could not dissolve memory."),
