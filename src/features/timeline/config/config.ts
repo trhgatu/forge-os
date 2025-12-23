@@ -33,4 +33,5 @@ export const MOOD_COLORS: Record<MoodType, string> = {
   angry: "shadow-rose-500/40 border-rose-500/30",
   energetic: "shadow-lime-500/40 border-lime-500/30",
   empty: "shadow-stone-500/40 border-stone-500/30",
+  nostalgic: "shadow-amber-500/40 border-amber-500/30",
 };

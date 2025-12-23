@@ -1,9 +1,9 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { Memory } from "@/shared/types/memory";
-import { getMemories } from "../services/memoryService";
+import type { Memory, CreateMemoryPayload } from "@/shared/types/memory";
+import { getMemories, deleteMemory, updateMemory } from "../services/memoryService";
 import { apiClient } from "@/services/apiClient";
 import type { PaginatedResponse } from "@/shared/types";
 
@@ -12,13 +12,18 @@ export const MEMORY_QUERY_KEY = ["memories"];
 export function useMemories() {
   const { language } = useLanguage();
 
-  return useQuery<PaginatedResponse<Memory>>({
+  return useInfiniteQuery<PaginatedResponse<Memory>>({
     queryKey: [...MEMORY_QUERY_KEY, language],
-    queryFn: () => getMemories(language),
+    queryFn: ({ pageParam = 1 }) => getMemories(language, pageParam as number),
+    getNextPageParam: (lastPage) => {
+      if (lastPage.meta.page < lastPage.meta.totalPages) {
+        return lastPage.meta.page + 1;
+      }
+      return undefined;
+    },
+    initialPageParam: 1,
   });
 }
-
-export type CreateMemoryPayload = Omit<Memory, "id" | "date" | "analysis" | "reflectionDepth">;
 
 export function useCreateMemory() {
   const queryClient = useQueryClient();
@@ -40,6 +45,35 @@ export function useCreateMemory() {
       // Invalidate specific language query
       queryClient.invalidateQueries({ queryKey: [...MEMORY_QUERY_KEY, language] });
       // Also invalidate general queries if necessary, but specificity is better
+      queryClient.invalidateQueries({ queryKey: MEMORY_QUERY_KEY });
+    },
+  });
+}
+
+export function useDeleteMemory() {
+  const queryClient = useQueryClient();
+  const { language } = useLanguage();
+
+  return useMutation({
+    mutationFn: (id: string) => deleteMemory(id),
+    onSuccess: () => {
+      // Invalidate specific language query
+      queryClient.invalidateQueries({ queryKey: [...MEMORY_QUERY_KEY, language] });
+      // Invalidate general queries
+      queryClient.invalidateQueries({ queryKey: MEMORY_QUERY_KEY });
+    },
+  });
+}
+
+export function useUpdateMemory() {
+  const queryClient = useQueryClient();
+  const { language } = useLanguage();
+
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: Partial<CreateMemoryPayload> }) =>
+      updateMemory(id, payload, language),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [...MEMORY_QUERY_KEY, language] });
       queryClient.invalidateQueries({ queryKey: MEMORY_QUERY_KEY });
     },
   });
