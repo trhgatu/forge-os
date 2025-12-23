@@ -3,6 +3,19 @@ import { apiClient } from "@/services/apiClient";
 import type { PaginatedResponse } from "@/shared/types";
 import { MemoryDto } from "@/shared/types/dto/memory.dto";
 
+const mapDtoToMemory = (dto: MemoryDto): Memory => ({
+  id: dto.id,
+  title: dto.title,
+  content: dto.content,
+  mood: dto.mood,
+  tags: dto.tags,
+  date: new Date(dto.createdAt),
+  type: "moment",
+  reflectionDepth: 0,
+  analysis: undefined, // Analysis is not part of DTO yet
+  imageUrl: undefined, // Image URL is not part of DTO yet
+});
+
 export const getMemories = async (
   lang?: string,
   page = 1,
@@ -15,18 +28,7 @@ export const getMemories = async (
 
   return {
     meta: payload.meta,
-    data: payload.data.map((dto) => ({
-      id: dto.id,
-      title: dto.title,
-      content: dto.content,
-      mood: dto.mood,
-      tags: dto.tags,
-      date: new Date(dto.createdAt),
-      type: "moment",
-      reflectionDepth: 0,
-      analysis: undefined,
-      imageUrl: undefined,
-    })),
+    data: payload.data.map(mapDtoToMemory),
   };
 };
 
@@ -48,6 +50,6 @@ export const updateMemory = async (
     ...(payload.content !== undefined && { content: { [language]: payload.content } }),
   };
 
-  const res = await apiClient.put<Memory>(`/memories/${id}`, formattedPayload);
-  return res.data;
+  const res = await apiClient.put<MemoryDto>(`/memories/${id}`, formattedPayload);
+  return mapDtoToMemory(res.data);
 };

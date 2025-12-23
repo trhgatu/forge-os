@@ -36,11 +36,6 @@ export function CreateMemoryModal({ onClose, onSave, initialData }: CreateMemory
   // No useEffect needed if we rely on mounting.
   // If we need to react to props change while mounted, we should use a key on the component instance in the parent.
 
-  // Reset error when URL changes
-  if (imageUrl && imgError && imageUrl !== imageUrl) {
-    setImgError(false);
-  }
-
   const handleSave = () => {
     if (!title.trim() || !content.trim()) return;
 
