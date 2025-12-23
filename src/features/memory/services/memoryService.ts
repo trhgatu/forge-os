@@ -43,9 +43,9 @@ export const updateMemory = async (
   const formattedPayload = {
     ...payload,
     // If title is being updated, wrap it in i18n object
-    ...(payload.title && { title: { [language]: payload.title } }),
+    ...(payload.title !== undefined && { title: { [language]: payload.title } }),
     // If content is being updated
-    ...(payload.content && { content: { [language]: payload.content } }),
+    ...(payload.content !== undefined && { content: { [language]: payload.content } }),
   };
 
   const res = await apiClient.put<Memory>(`/memories/${id}`, formattedPayload);
