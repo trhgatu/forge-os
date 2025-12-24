@@ -58,7 +58,7 @@ export const getTimeline = async (
     } else if (item.type === "mood") {
       return {
         ...base,
-        title: `Mood Log: ${item.mood}`,
+        title: `Mood Log: ${item.mood || "neutral"}`,
         content: item.note || "No note provided.",
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         mood: (item.mood as any) || "neutral",

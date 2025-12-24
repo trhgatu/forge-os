@@ -34,6 +34,7 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: "forge-auth-storage", // unique name
+      // TODO(security): Currently using localStorage for MVP. Plan to migrate to HttpOnly cookies for better XSS protection in Phase 2.
       storage: createJSONStorage(() => localStorage),
     }
   )
