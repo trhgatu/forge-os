@@ -32,15 +32,17 @@ export function Mood() {
 
   // Handle Save (Create or Update)
   const handleSave = async (data: CreateMoodDto) => {
-    if (editingMood) {
-      await updateMood.mutateAsync({ id: editingMood.id, data });
-    } else {
-      await createMood.mutateAsync(data);
+    try {
+      if (editingMood) {
+        await updateMood.mutateAsync({ id: editingMood.id, data });
+      } else {
+        await createMood.mutateAsync(data);
+      }
+      setEditingMood(undefined); // Reset
+    } catch (error) {
+      console.error("Failed to save mood:", error);
+      // Toast is handled by hook onError, so just catching prevents crash
     }
-    setEditingMood(undefined); // Reset
-    // Modal closes itself via onClose prop usually, but here MoodModal calls onSave then onClose.
-    // Actually in MoodModal I see it calls onSave() then onClose().
-    // And onClose calls setIsModalOpen(false). So we don't need to close it here manually if we pass the right handler.
   };
 
   const handleEdit = (entry: MoodEntry) => {

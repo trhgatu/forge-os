@@ -38,7 +38,7 @@ export const moodService = {
     const mappedData: MoodEntry[] = res.data.data.map((item) => ({
       id: item.id,
       mood: item.mood as MoodEntry["mood"], // Cast to MoodType
-      intensity: item.intensity || 5, // Default if missing
+      intensity: item.intensity ?? 5, // Default if missing
       note: item.note || "",
       tags: item.tags || [],
       date: new Date(item.loggedAt), // Map loggedAt -> date
@@ -55,7 +55,7 @@ export const moodService = {
     return {
       id: res.data.id,
       mood: res.data.mood as MoodEntry["mood"],
-      intensity: res.data.intensity || 5,
+      intensity: res.data.intensity ?? 5,
       note: res.data.note || "",
       tags: res.data.tags || [],
       date: new Date(res.data.loggedAt),

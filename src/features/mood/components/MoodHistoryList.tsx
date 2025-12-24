@@ -28,6 +28,7 @@ export function MoodHistoryList({ history, onEdit, onDelete }: MoodHistoryListPr
             {/* Actions (visible on hover) */}
             <div className="absolute right-4 top-4 flex gap-2 opacity-0 transition-opacity group-hover:opacity-100">
               <button
+                type="button"
                 onClick={(e) => {
                   e.stopPropagation();
                   onEdit(entry);
@@ -38,6 +39,7 @@ export function MoodHistoryList({ history, onEdit, onDelete }: MoodHistoryListPr
                 <Edit2 size={14} />
               </button>
               <button
+                type="button"
                 onClick={(e) => {
                   e.stopPropagation();
                   onDelete(entry.id);

@@ -46,7 +46,8 @@ export default function LoginPage() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error(error);
-      toast.error("Login failed. Check your credentials.");
+      const message = error.response?.data?.message || "Login failed. Check your credentials.";
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }
