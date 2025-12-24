@@ -16,6 +16,7 @@ import { QuoteModule } from '@root/contexts/reflection/quote/quote.module';
 import { LoggerModule } from '@shared/logging/logger.module';
 import { JournalModule } from '@root/contexts/reflection/journal/journal.module';
 import { TimelineModule } from '@root/contexts/reflection/timeline/timeline.module';
+import { MoodModule } from '@root/contexts/reflection/mood/mood.module';
 import { CqrsModule } from '@nestjs/cqrs';
 
 @Module({
@@ -39,6 +40,7 @@ import { CqrsModule } from '@nestjs/cqrs';
     QuoteModule,
     JournalModule,
     TimelineModule,
+    MoodModule,
     LoggerModule,
   ],
   controllers: [AppController],
