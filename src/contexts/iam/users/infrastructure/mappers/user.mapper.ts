@@ -18,7 +18,7 @@ export class UserMapper {
               name: (doc.roleId as any).name,
               permissions:
                 (doc.roleId as any).permissions?.map(
-                  (p: any) => p.slug || p.toString(),
+                  (p: any) => p.name || p.toString(),
                 ) || [],
             }
           : undefined,
