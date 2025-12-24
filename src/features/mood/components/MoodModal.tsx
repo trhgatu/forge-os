@@ -3,31 +3,33 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 
-import type { MoodEntry, MoodType } from "@/shared/types";
+import type { MoodType } from "@/shared/types";
+import type { MoodEntry } from "@/shared/types/mood";
+import { CreateMoodDto } from "../services/moodService";
 import { MOOD_CONFIG } from "../config";
 import { cn } from "@/shared/lib/utils";
 
-interface AddMoodModalProps {
+interface MoodModalProps {
+  initialData?: MoodEntry;
   onClose: () => void;
-  onSave: (entry: MoodEntry) => void;
+  onSave: (entry: CreateMoodDto) => void;
 }
 
-export function AddMoodModal({ onClose, onSave }: AddMoodModalProps) {
-  const [selectedMood, setSelectedMood] = useState<MoodType | null>(null);
-  const [intensity, setIntensity] = useState<number>(5);
-  const [note, setNote] = useState("");
-  const [step, setStep] = useState<1 | 2>(1);
+export function MoodModal({ initialData, onClose, onSave }: MoodModalProps) {
+  const [selectedMood, setSelectedMood] = useState<MoodType | null>(initialData?.mood || null);
+  const [intensity, setIntensity] = useState<number>(initialData?.intensity || 5);
+  const [note, setNote] = useState(initialData?.note || "");
+  // If editing, start at step 2 (Detail). If creating, step 1 (Selection)
+  const [step, setStep] = useState<1 | 2>(initialData ? 2 : 1);
 
   const handleSave = () => {
     if (!selectedMood) return;
 
-    const newEntry: MoodEntry = {
-      id: Date.now().toString(),
+    const newEntry: CreateMoodDto = {
       mood: selectedMood,
       intensity,
       note,
-      tags: [],
-      date: new Date(),
+      tags: initialData?.tags || [],
     };
 
     onSave(newEntry);
@@ -56,8 +58,14 @@ export function AddMoodModal({ onClose, onSave }: AddMoodModalProps) {
           {/* Header */}
           <div className="mb-8 flex items-start justify-between">
             <div>
-              <h2 className="font-display text-2xl font-bold text-white">Emotional Log</h2>
-              <p className="mt-1 text-sm text-gray-400">How does the inner world feel right now?</p>
+              <h2 className="font-display text-2xl font-bold text-white">
+                {initialData ? "Reflect & Edit" : "Emotional Log"}
+              </h2>
+              <p className="mt-1 text-sm text-gray-400">
+                {initialData
+                  ? "Update your emotional record"
+                  : "How does the inner world feel right now?"}
+              </p>
             </div>
             <button
               type="button"
@@ -157,7 +165,7 @@ export function AddMoodModal({ onClose, onSave }: AddMoodModalProps) {
                   disabled={!selectedMood}
                   className="w-full rounded-xl bg-forge-accent px-6 py-3 text-sm font-medium text-white shadow-lg shadow-forge-accent/20 transition-colors hover:bg-forge-accent/80 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                 >
-                  Log Emotion
+                  {initialData ? "Update Record" : "Log Emotion"}
                 </button>
               </div>
             </div>
