@@ -10,17 +10,25 @@ export class AuditLogMapper {
       action: doc.action,
       method: doc.method,
       statusCode: doc.statusCode,
-      userId:
-        doc.user && (doc.user as any)._id
-          ? (doc.user as any)._id.toString()
-          : doc.user?.toString(),
+      userId: AuditLogMapper.extractUserId(doc.user),
       path: doc.path,
       params: doc.params,
       query: doc.query,
       body: doc.body,
-      createdAt: doc.createdAt as any, // Mongoose timestamps
-      updatedAt: doc.updatedAt as any,
+      createdAt: doc.createdAt,
+      updatedAt: doc.updatedAt,
     });
+  }
+
+  private static extractUserId(
+    user: Types.ObjectId | { _id: Types.ObjectId } | undefined | null,
+  ): string {
+    if (!user) return ''; // Should not happen if required in schema
+    if (user instanceof Types.ObjectId) return user.toString();
+    if ('_id' in user && user._id instanceof Types.ObjectId) {
+      return user._id.toString();
+    }
+    return user.toString();
   }
 
   static toPersistence(entity: AuditLog): Partial<AuditLogDocument> {
