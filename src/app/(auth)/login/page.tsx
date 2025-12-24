@@ -11,8 +11,8 @@ import { ArrowRight, Lock, Mail } from "lucide-react";
 import { GlassCard } from "@/shared/components/ui/GlassCard";
 import { Button } from "@/shared/components/ui/Button";
 import { Input } from "@/shared/components/ui/Input";
-import { useAuthStore } from "@/store/auth.store";
-import { apiClient } from "@/shared/lib/api-client";
+import { useAuthStore } from "@/shared/store/authStore";
+import { authService } from "@/features/auth/services/authService";
 
 // Schema
 const loginSchema = z.object({
@@ -21,15 +21,6 @@ const loginSchema = z.object({
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
-
-// Types
-interface ApiError {
-  response?: {
-    data?: {
-      message?: string;
-    };
-  };
-}
 
 export default function LoginPage() {
   const router = useRouter();
@@ -47,28 +38,16 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     try {
-      const response = await apiClient.post("/auth/login", data);
+      const { user, token, refreshToken } = await authService.login(data.email, data.password);
 
-      const { accessToken, refreshToken } = response.data;
-
-      // Fetch User Profile immediately
-      const profileResponse = await apiClient.get("/auth/me", {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
-
-      const userData = profileResponse.data.data; // Wrapper: { status, message, data: { ... } }
-
-      login(accessToken, refreshToken, userData);
-      toast.success("Welcome back to Forge OS");
+      login(user, token, refreshToken);
+      toast.success("Welcome back, " + (user.name || "Traveller"));
       router.push("/forge/dashboard");
-    } catch (error: unknown) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
       console.error(error);
-      const apiError = error as ApiError;
-      // If error came from login (401), use specific message. Otherwise standard fallback.
-      const msg =
-        apiError.response?.data?.message ||
-        "Authentication failed. Please check your network or credentials.";
-      toast.error(msg);
+      const message = error.response?.data?.message || "Login failed. Check your credentials.";
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }
