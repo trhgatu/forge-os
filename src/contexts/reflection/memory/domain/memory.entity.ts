@@ -97,11 +97,17 @@ export class Memory {
   }
 
   localizedTitle(lang: string): string {
-    return this.props.title.get(lang) ?? this.props.title.get('en') ?? '';
+    const val = this.props.title.get(lang) ?? this.props.title.get('en');
+    if (val) return val;
+    // Fallback to any available language
+    return this.props.title.values().next().value ?? '';
   }
 
   localizedContent(lang: string): string {
-    return this.props.content.get(lang) ?? this.props.content.get('en') ?? '';
+    const val = this.props.content.get(lang) ?? this.props.content.get('en');
+    if (val) return val;
+    // Fallback to any available language
+    return this.props.content.values().next().value ?? '';
   }
 
   get title() {

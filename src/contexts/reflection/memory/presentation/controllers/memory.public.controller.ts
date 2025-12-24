@@ -1,10 +1,23 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
-import { QueryMemoryDto, CreateMemoryDto } from '../dto';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
+import { QueryMemoryDto, CreateMemoryDto, UpdateMemoryDto } from '../dto';
 import {
   GetAllMemoriesForPublicQuery,
   GetMemoryByIdForPublicQuery,
 } from '../../application/queries';
-import { CreateMemoryCommand } from '../../application/commands';
+import {
+  CreateMemoryCommand,
+  SoftDeleteMemoryCommand,
+  UpdateMemoryCommand,
+} from '../../application/commands';
 import { MemoryId } from '../../domain/value-objects/memory-id.vo';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 
@@ -32,5 +45,21 @@ export class MemoryPublicController {
   create(@Body() dto: CreateMemoryDto) {
     const lang = 'en';
     return this.commandBus.execute(new CreateMemoryCommand(dto, lang));
+  }
+
+  @Put(':id')
+  update(@Param('id') id: string, @Body() dto: UpdateMemoryDto) {
+    const lang = 'en';
+    return this.commandBus.execute(
+      new UpdateMemoryCommand(MemoryId.create(id), dto, lang),
+    );
+  }
+
+  @Delete(':id')
+  delete(@Param('id') id: string) {
+    const lang = 'en';
+    return this.commandBus.execute(
+      new SoftDeleteMemoryCommand(MemoryId.create(id), lang),
+    );
   }
 }
