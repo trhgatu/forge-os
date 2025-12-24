@@ -18,10 +18,10 @@ export class Permission {
   @Prop()
   description?: string;
 
-  @Prop({ required: true })
+  @Prop()
   resource!: string;
 
-  @Prop({ required: true })
+  @Prop()
   action!: string;
 
   @Prop({ default: false })
