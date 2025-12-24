@@ -67,7 +67,7 @@ export const moodService = {
     return {
       id: res.data.id,
       mood: res.data.mood as MoodEntry["mood"],
-      intensity: res.data.intensity || 5,
+      intensity: res.data.intensity ?? 5,
       note: res.data.note || "",
       tags: res.data.tags || [],
       date: new Date(res.data.loggedAt),

@@ -38,9 +38,9 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     try {
-      const { user, token } = await authService.login(data.email, data.password);
+      const { user, token, refreshToken } = await authService.login(data.email, data.password);
 
-      login(user, token);
+      login(user, token, refreshToken);
       toast.success("Welcome back, " + (user.name || "Traveller"));
       router.push("/forge/dashboard");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
