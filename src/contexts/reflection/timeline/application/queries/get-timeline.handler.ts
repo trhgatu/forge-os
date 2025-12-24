@@ -66,13 +66,15 @@ export class GetTimelineHandler implements IQueryHandler<GetTimelineQuery> {
     const endIndex = startIndex + limit;
     const paginatedItems = allItems.slice(startIndex, endIndex);
 
+    const total = memories.meta.total + journals.meta.total + moods.meta.total; // Approx
+
     return {
       data: paginatedItems,
       meta: {
-        total: memories.meta.total + journals.meta.total + moods.meta.total, // Approx
+        total,
         page,
         limit,
-        totalPages: Math.ceil(allItems.length / limit), // Rough calc based on fetched
+        totalPages: Math.ceil(total / limit),
       },
     };
   }

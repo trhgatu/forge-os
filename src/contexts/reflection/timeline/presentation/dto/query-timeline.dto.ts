@@ -1,4 +1,4 @@
-import { IsOptional, IsInt, Min, IsString } from 'class-validator';
+import { IsOptional, IsInt, Min, IsString, Max } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class QueryTimelineDto {
@@ -11,6 +11,7 @@ export class QueryTimelineDto {
   @IsOptional()
   @IsInt()
   @Min(1)
+  @Max(100)
   @Type(() => Number)
   limit?: number = 20;
 
