@@ -21,6 +21,9 @@ export class Mood {
   @Prop()
   note?: string;
 
+  @Prop({ required: false, min: 1, max: 10 })
+  intensity?: number;
+
   @Prop({ type: [String], default: [] })
   tags!: string[];
 

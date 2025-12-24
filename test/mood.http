@@ -1,0 +1,33 @@
+### Authenticate (Get Token)
+# @name login
+POST http://localhost:3000/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "password123"
+}
+
+### Store Token
+@token = {{login.response.body.accessToken}}
+
+### Create Mood (Admin)
+POST http://localhost:3000/api/v1/admin/moods
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "mood": "joy",
+  "intensity": 8,
+  "note": "Testing backend integration",
+  "tags": ["Dev", "Test"],
+  "loggedAt": "2023-10-27T10:00:00Z"
+}
+
+### Get All Moods (Public)
+GET http://localhost:3000/api/v1/moods
+Authorization: Bearer {{token}}
+
+### Get Mood Stats/Analysis (If implemented)
+# GET http://localhost:3000/api/v1/moods/stats
+# Authorization: Bearer {{token}}
