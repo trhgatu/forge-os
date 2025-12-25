@@ -18,6 +18,9 @@ export class CreateQuoteDto {
   source?: string;
 
   @IsOptional()
+  mood?: string;
+
+  @IsOptional()
   @IsEnum(QuoteStatus)
   status?: QuoteStatus;
 }
