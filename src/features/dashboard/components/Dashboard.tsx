@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 /* import { getDailyInsight } from "@/services/geminiService"; */
-import { InsightData } from "@/shared/types";
+/* import { getDailyInsight } from "@/services/geminiService"; */
 import { cn } from "@/shared/lib/utils";
 
 import {
@@ -13,7 +13,6 @@ import {
   Sparkles,
   BrainCircuit,
   TrendingUp,
-  Quote,
   Activity,
   ChevronRight,
   Maximize2,
@@ -23,6 +22,7 @@ import {
 import { AreaChart, Area, Tooltip, ResponsiveContainer } from "recharts";
 
 import { AGENTS } from "@/features/chamber/components/AgentDock";
+import { QuoteOfTheDayWidget } from "./QuoteOfTheDayWidget";
 
 const MOOD_DATA = [
   { day: "Mon", value: 6, mood: "Neutral" },
@@ -66,7 +66,7 @@ const TIMELINE_SNAPSHOT = [
 
 // -------------------- WIDGET SHELL --------------------
 
-interface WidgetProps {
+export interface WidgetProps {
   children: React.ReactNode;
   className?: string;
   title?: React.ReactNode;
@@ -74,7 +74,7 @@ interface WidgetProps {
   noPadding?: boolean;
 }
 
-const WidgetShell: React.FC<WidgetProps> = ({
+export const WidgetShell: React.FC<WidgetProps> = ({
   children,
   className,
   title,
@@ -112,40 +112,8 @@ const WidgetShell: React.FC<WidgetProps> = ({
 
 // -------------------- MAIN DASHBOARD --------------------
 
-const MOCK_INSIGHTS: InsightData[] = [
-  {
-    quote: "The best way to predict the future is to invent it.",
-    author: "Alan Kay",
-    theme: "Innovation",
-  },
-  {
-    quote: "Simplicity is the ultimate sophistication.",
-    author: "Leonardo da Vinci",
-    theme: "Design",
-  },
-  {
-    quote: "Code is poetry.",
-    author: "Automattic",
-    theme: "Coding",
-  },
-  {
-    quote: "Talk is cheap. Show me the code.",
-    author: "Linus Torvalds",
-    theme: "Execution",
-  },
-  {
-    quote: "The only way to do great work is to love what you do.",
-    author: "Steve Jobs",
-    theme: "Passion",
-  },
-];
-
 export const Dashboard: React.FC = () => {
   const [time, setTime] = useState(new Date());
-  // Initialize with random quote directly to avoid effect/cascading render
-  const [insight] = useState<InsightData | null>(
-    () => MOCK_INSIGHTS[Math.floor(Math.random() * MOCK_INSIGHTS.length)]
-  );
   const [focusScore] = useState(85);
 
   useEffect(() => {
@@ -234,47 +202,8 @@ export const Dashboard: React.FC = () => {
           </WidgetShell>
 
           {/* WISDOM WIDGET */}
-          <WidgetShell
-            className="col-span-1 md:col-span-2 lg:col-span-2 row-span-1 bg-linear-to-br from-forge-accent/5 to-transparent"
-            delay={100}
-            title={
-              <>
-                <Quote size={12} /> Wisdom
-              </>
-            }
-          >
-            <div className="h-full flex flex-col justify-center">
-              {insight ? (
-                <>
-                  <blockquote className="text-xl font-display font-medium text-white leading-relaxed mb-4">
-                    &quot;{insight.quote}&quot;
-                  </blockquote>
-
-                  <div className="flex items-center justify-between">
-                    <cite className="text-sm text-forge-cyan font-mono not-italic">
-                      — {insight.author}
-                    </cite>
-
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 border border-white/5 text-gray-400">
-                      {insight.theme}
-                    </span>
-                  </div>
-
-                  <div className="mt-4 pt-3 border-t border-white/5">
-                    <p className="text-xs text-gray-500 italic flex items-center gap-2">
-                      <Sparkles size={10} className="text-forge-accent" />
-                      AI: This resonates with your recent focus on mindfulness.
-                    </p>
-                  </div>
-                </>
-              ) : (
-                <div className="animate-pulse space-y-2">
-                  <div className="h-4 bg-white/10 rounded w-3/4" />
-                  <div className="h-4 bg-white/10 rounded w-1/2" />
-                </div>
-              )}
-            </div>
-          </WidgetShell>
+          {/* WISDOM WIDGET */}
+          <QuoteOfTheDayWidget />
 
           {/* MOOD CHART */}
           <WidgetShell
