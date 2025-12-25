@@ -7,6 +7,7 @@ import { JournalModifiedEvent } from '../events/journal-modified.event';
 
 import { JournalPresenter } from '../../presentation/journal.presenter';
 import { JournalResponse } from '../../presentation/dto/journal.response';
+import { CacheService } from '@shared/services';
 
 @CommandHandler(UpdateJournalCommand)
 export class UpdateJournalHandler
@@ -17,6 +18,7 @@ export class UpdateJournalHandler
     private readonly journalRepo: JournalRepository,
 
     private readonly eventBus: EventBus,
+    private readonly cacheService: CacheService,
   ) {}
 
   async execute(command: UpdateJournalCommand): Promise<JournalResponse> {
@@ -30,6 +32,9 @@ export class UpdateJournalHandler
     journal.updateInfo(payload);
 
     await this.journalRepo.save(journal);
+
+    // Invalidate all journal public cache
+    await this.cacheService.deleteByPattern('journals:public:*');
 
     this.eventBus.publish(new JournalModifiedEvent(id, 'update'));
 

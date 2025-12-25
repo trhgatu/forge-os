@@ -54,7 +54,7 @@ export class MongoJournalRepository implements JournalRepository {
     };
 
     const result = await paginateDDD(
-      this.model.find(filter).skip(skip).limit(limit),
+      this.model.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit),
       this.model.countDocuments(filter),
       page,
       limit,
