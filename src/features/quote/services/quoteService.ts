@@ -62,3 +62,14 @@ export const createQuote = async (
   const res = await apiClient.post<QuoteDto>("/admin/quotes", payload);
   return mapDtoToQuote(res.data);
 };
+
+export const getRandomQuote = async (): Promise<Quote | null> => {
+  try {
+    const res = await apiClient.get<QuoteDto>("/quotes/random");
+    if (!res.data) return null;
+    return mapDtoToQuote(res.data);
+  } catch (error) {
+    console.error("Failed to fetch random quote", error);
+    return null;
+  }
+};
