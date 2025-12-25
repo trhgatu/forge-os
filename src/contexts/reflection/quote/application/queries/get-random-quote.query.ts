@@ -1,1 +1,3 @@
-export class GetRandomQuoteQuery {}
+export class GetRandomQuoteQuery {
+  constructor(public readonly lang: string = 'en') {}
+}

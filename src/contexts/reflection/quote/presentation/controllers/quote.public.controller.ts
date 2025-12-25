@@ -13,8 +13,8 @@ export class QuotePublicController {
   constructor(private readonly queryBus: QueryBus) {}
 
   @Get('random')
-  getRandom() {
-    return this.queryBus.execute(new GetRandomQuoteQuery());
+  getRandom(@Query('lang') lang?: string) {
+    return this.queryBus.execute(new GetRandomQuoteQuery(lang));
   }
 
   @Get()

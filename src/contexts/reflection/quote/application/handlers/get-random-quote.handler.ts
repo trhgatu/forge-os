@@ -13,11 +13,11 @@ export class GetRandomQuoteHandler
     private readonly repository: QuoteRepository,
   ) {}
 
-  async execute() {
+  async execute(query: GetRandomQuoteQuery) {
     const quote = await this.repository.findRandom();
     if (!quote) {
       return null;
     }
-    return QuotePresenter.toResponse(quote, 'en');
+    return QuotePresenter.toResponse(quote, query.lang);
   }
 }
