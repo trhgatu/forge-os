@@ -1,11 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { journalService } from "../services/journalService";
-import type { CreateJournalDto, JournalFilter } from "../types";
+import type { CreateJournalDto, JournalFilter, JournalEntry } from "../types";
+import type { PaginatedResponse } from "@/shared/types/api";
 import { toast } from "sonner";
 
 export const useJournals = (filter?: JournalFilter) => {
   return useQuery({
-    queryKey: ["journals"], // Remove filter from key to fix cache invalidation
+    queryKey: ["journals", filter], // Add filter back for cache isolation
     queryFn: async () => {
       console.log("🔍 FETCH: Fetching journals with filter:", filter);
       const result = await journalService.getAll(filter);
@@ -30,12 +31,22 @@ export const useCreateJournal = () => {
 
   return useMutation({
     mutationFn: (data: CreateJournalDto) => journalService.create(data),
-    onSuccess: async () => {
+    onSuccess: async (newEntry) => {
       toast.success("Journal entry created successfully");
 
-      // Small delay to allow MongoDB to sync
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      // Manually update cache to prevent flicker
+      queryClient.setQueryData<PaginatedResponse<JournalEntry>>(
+        ["journals", { page: 1, limit: 100 }],
+        (old: PaginatedResponse<JournalEntry> | undefined) => {
+          if (!old) return old;
+          return {
+            ...old,
+            data: [newEntry, ...old.data],
+          };
+        }
+      );
 
+      // Also invalidate to ensure potential order/filter correctness eventually
       queryClient.invalidateQueries({ queryKey: ["journals"] });
       queryClient.invalidateQueries({ queryKey: ["timeline"] });
     },

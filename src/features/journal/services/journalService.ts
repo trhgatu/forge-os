@@ -52,7 +52,7 @@ export const journalService = {
   create: async (data: CreateJournalDto): Promise<JournalEntry> => {
     try {
       const res = await apiClient.post<RawJournalItem>("/admin/journals", data);
-      console.log("Create Journal Response:", res); // DEBUG
+
       const item = res.data;
 
       if (!item) {

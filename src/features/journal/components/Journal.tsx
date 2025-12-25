@@ -124,13 +124,14 @@ export function Journal() {
             onClick={async () => {
               toast.dismiss(t);
               try {
-                // Clear selection immediately if deleting current item
+                await deleteMutation.mutateAsync(id);
+
+                // Clear selection only after successful deletion
                 if (selectedId === id) {
                   setSelectedId(null);
                   setLocalEntry(null);
                 }
 
-                await deleteMutation.mutateAsync(id);
                 toast.success("Entry deleted");
               } catch (error) {
                 console.error("Failed to delete entry", error);
