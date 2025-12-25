@@ -11,6 +11,7 @@ export class QuotePresenter {
       author: props.author,
       source: props.source,
       tags: props.tags ?? [],
+      mood: props.mood,
       status: props.status,
       createdAt: props.createdAt?.toISOString() ?? '',
       updatedAt: props.updatedAt?.toISOString() ?? '',
