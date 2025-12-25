@@ -18,6 +18,7 @@ import { JournalModule } from '@root/contexts/reflection/journal/journal.module'
 import { TimelineModule } from '@root/contexts/reflection/timeline/timeline.module';
 import { MoodModule } from '@root/contexts/reflection/mood/mood.module';
 import { CqrsModule } from '@nestjs/cqrs';
+import { PresenceModule } from '@root/contexts/nova/presence/presence.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { CqrsModule } from '@nestjs/cqrs';
     TimelineModule,
     MoodModule,
     LoggerModule,
+    PresenceModule,
   ],
   controllers: [AppController],
 })
