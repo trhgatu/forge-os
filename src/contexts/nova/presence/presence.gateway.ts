@@ -28,7 +28,7 @@ export class PresenceGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
   @WebSocketServer()
-  server: Server;
+  server!: Server;
 
   private logger: Logger = new Logger('PresenceGateway');
   private activeVisitors: Map<string, VisitorEcho> = new Map();
