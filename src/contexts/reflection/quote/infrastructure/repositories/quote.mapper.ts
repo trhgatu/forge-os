@@ -7,7 +7,10 @@ export class QuoteMapper {
   static toDomain(doc: QuoteDocument): Quote {
     return Quote.createFromPersistence({
       id: doc._id.toString(),
-      content: new Map(doc.content),
+      content:
+        doc.content instanceof Map
+          ? new Map(doc.content)
+          : new Map(Object.entries(doc.content)),
       author: doc.author,
       source: doc.source,
       tags: doc.tags,
