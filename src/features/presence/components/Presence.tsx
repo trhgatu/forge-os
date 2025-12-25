@@ -3,10 +3,10 @@
 import React from "react";
 import { Radar, Eye } from "lucide-react";
 import { CosmicRadar } from "./CosmicRadar";
-import { usePresenceSimulation } from "../hooks/usePresenceSimulation";
+import { usePresence } from "../hooks/usePresence";
 
 export const Presence: React.FC = () => {
-  const { echoes, stars } = usePresenceSimulation();
+  const { echoes, stars } = usePresence();
 
   return (
     <div className="h-full flex flex-col bg-[#010103] text-white relative overflow-hidden animate-in fade-in duration-1000 selection:bg-cyan-500/30">

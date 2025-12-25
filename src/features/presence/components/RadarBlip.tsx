@@ -1,20 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { VisitorEcho } from "../types";
 import { ECHO_COLORS, ROLE_COLORS } from "../constants/colors";
 import { cn } from "@/shared/lib/utils";
 
 export const RadarBlip: React.FC<{ echo: VisitorEcho }> = ({ echo }) => {
-  const [opacity, setOpacity] = useState(1);
-
-  useEffect(() => {
-    // Fade out over time to simulate "echo" decaying
-    const timer = setTimeout(() => setOpacity(0), 5000); // Disappear after 5s
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (opacity === 0) return null;
+  // Removed auto-fade logic to keep active users visible
 
   let colorClass = ECHO_COLORS[echo.type];
   if (echo.type === "connection" && echo.connectionRole) {
@@ -33,7 +25,6 @@ export const RadarBlip: React.FC<{ echo: VisitorEcho }> = ({ echo }) => {
       style={{
         left: `${x}%`,
         top: `${y}%`,
-        opacity: opacity,
       }}
     >
       <div
