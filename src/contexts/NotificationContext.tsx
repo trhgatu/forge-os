@@ -2,6 +2,7 @@
 
 import React, { useEffect } from "react";
 import { useNotificationStore } from "@/store/notification.store";
+import { toast } from "sonner";
 
 // Mock messages
 const AMBIENT_WHISPERS = [
@@ -24,6 +25,34 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     }, 30000);
     return () => clearInterval(interval);
   }, [notify]);
+
+  // Subscriber to store changes to trigger UI toasts (Effect-based)
+  useEffect(() => {
+    // This is a simple implementation. In production, we might want a proper subscription
+    // to avoid effect dependencies or duplicate toasts.
+    // For now, we rely on the component using the store to trigger side effects
+    // OR we can bake the toast call directly into the store action if we import toast there (but that couples logic to UI).
+    // A better approach in React context:
+    const unsubscribe = useNotificationStore.subscribe((state, prevState) => {
+      const newItems = state.items;
+      const prevItems = prevState.items;
+
+      if (newItems.length > prevItems.length) {
+        const latest = newItems[0];
+        if (latest && !latest.read) {
+          // Only toast new unread items
+          toast(latest.message, {
+            description: latest.source.toUpperCase(),
+            action: {
+              label: "View",
+              onClick: () => console.log("View notification", latest.id),
+            },
+          });
+        }
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   return <>{children}</>;
 };
