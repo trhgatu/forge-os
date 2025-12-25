@@ -18,6 +18,7 @@ export class CreateQuoteDto {
   source?: string;
 
   @IsOptional()
+  @IsString()
   mood?: string;
 
   @IsOptional()
