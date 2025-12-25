@@ -1,7 +1,7 @@
 "use client";
 
-import { Search, Plus } from "lucide-react";
-import { JournalEntry } from "@/shared/types";
+import { Search, Plus, Trash2 } from "lucide-react";
+import { JournalEntry } from "@/features/journal/types";
 import { cn } from "@/shared/lib/utils";
 import { MOOD_COLORS } from "@/shared/constants";
 export function JournalSidebar({
@@ -9,11 +9,13 @@ export function JournalSidebar({
   selectedId,
   onSelect,
   onNew,
+  onDelete,
 }: {
   entries: JournalEntry[];
   selectedId: string | null;
   onSelect: (id: string) => void;
   onNew: () => void;
+  onDelete: (id: string) => void;
 }) {
   return (
     <div className="w-80 flex flex-col border-r border-white/5 bg-black/20 backdrop-blur-xl h-full">
@@ -48,13 +50,25 @@ export function JournalSidebar({
                 key={entry.id}
                 onClick={() => onSelect(entry.id)}
                 className={cn(
-                  "group p-3 rounded-xl cursor-pointer border transition-all duration-200",
+                  "group relative p-3 rounded-xl cursor-pointer border transition-all duration-200",
                   selectedId === entry.id
                     ? "bg-white/10 border-white/10 shadow-lg"
                     : "bg-transparent border-transparent hover:bg-white/5 hover:border-white/5"
                 )}
               >
-                <div className="flex justify-between items-start mb-1">
+                {/* Delete Button - Visible on Hover */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(entry.id);
+                  }}
+                  className="absolute top-2 right-2 p-1.5 rounded-lg bg-red-500/10 text-red-500 opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500/20"
+                  title="Delete"
+                >
+                  <Trash2 size={12} />
+                </button>
+
+                <div className="flex justify-between items-start mb-1 pr-6">
                   <h4
                     className={cn(
                       "font-medium text-sm truncate pr-2",
@@ -68,18 +82,21 @@ export function JournalSidebar({
                   {entry.analysis && (
                     <div
                       className={cn(
-                        "w-1.5 h-1.5 rounded-full",
-                        MOOD_COLORS[entry.mood].split(" ")[0].replace("text-", "bg-")
+                        "w-1.5 h-1.5 rounded-full flex-shrink-0 mt-1.5",
+                        MOOD_COLORS[entry.mood || "neutral"].split(" ")[0].replace("text-", "bg-")
                       )}
                     />
                   )}
                 </div>
                 <p className="text-xs text-gray-500 line-clamp-2 mb-2 leading-relaxed">
-                  {entry.content}
+                  {entry.content || "Empty content"}
                 </p>
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] text-gray-600 font-mono">
-                    {entry.date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                    {new Date(entry.createdAt).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
                   </span>
                   {entry.tags.slice(0, 1).map((tag) => (
                     <span

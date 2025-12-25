@@ -1,29 +1,34 @@
 import { MoodType } from "@/shared/types/journal";
 
 export enum JournalStatus {
-  DRAFT = "draft",
-  PUBLISHED = "published",
-  ARCHIVED = "archived",
+  PRIVATE = "private",
+  INTERNAL = "internal",
+  SHARED = "shared",
 }
 
 export enum JournalType {
-  NOTE = "note",
-  REFLECTION = "reflection",
-  GRATITUDE = "gratitude",
+  DAILY = "daily",
+  THOUGHT = "thought",
+  INSIGHT = "insight",
+  CONVERSATION_LOG = "conversation_log",
+  EVENT = "event",
   DREAM = "dream",
 }
 
-// Frontend-facing entity (what useJournal returns)
+// Frontend-facing entity
 export interface JournalEntry {
   id: string;
   title?: string;
   content: string;
-  mood?: MoodType; // Can be string or enum depending on backend
+  mood?: MoodType;
   tags: string[];
   type: JournalType;
   status: JournalStatus;
-  createdAt: string; // ISO String
+  createdAt: string; // ISO String for display
   updatedAt: string;
+  date: Date; // Converted Date object for Calendar/UI
+  isDraft?: boolean; // For UI state
+  analysis?: import("@/shared/types/journal").JournalAnalysis; // Placeholder for AI result
 }
 
 // DTO for Create
@@ -37,7 +42,7 @@ export interface CreateJournalDto {
   source?: "user" | "ai" | "system";
 }
 
-// Response from Backend (matches backend DTO + ID + timestamps)
+// Response from Backend
 export interface RawJournalItem {
   id: string;
   title?: string;

@@ -1,12 +1,13 @@
 import { apiClient } from "@/services/apiClient";
-import type { BackendResponse, PaginatedResponse } from "@/shared/types/api";
+import type { PaginatedResponse } from "@/shared/types/api";
 import { MoodType } from "@/shared/types/journal";
 import type { CreateJournalDto, JournalEntry, JournalFilter, RawJournalItem } from "../types";
 import { JournalStatus, JournalType } from "../types";
 
 export const journalService = {
+  // Public endpoints for reading
   getAll: async (filter?: JournalFilter): Promise<PaginatedResponse<JournalEntry>> => {
-    const res = await apiClient.get<PaginatedResponse<RawJournalItem>>("/admin/journals", {
+    const res = await apiClient.get<PaginatedResponse<RawJournalItem>>("/journals", {
       params: filter,
     });
 
@@ -17,10 +18,11 @@ export const journalService = {
       content: item.content,
       mood: (item.mood as MoodType) || undefined,
       tags: item.tags || [],
-      type: (item.type as JournalType) || JournalType.NOTE,
-      status: (item.status as JournalStatus) || JournalStatus.PUBLISHED,
+      type: (item.type as JournalType) || JournalType.THOUGHT,
+      status: (item.status as JournalStatus) || JournalStatus.PRIVATE,
       createdAt: item.createdAt,
       updatedAt: item.updatedAt,
+      date: new Date(item.createdAt),
     }));
 
     return {
@@ -30,57 +32,65 @@ export const journalService = {
   },
 
   getById: async (id: string): Promise<JournalEntry> => {
-    const res = await apiClient.get<BackendResponse<RawJournalItem>>(`/admin/journals/${id}`);
-    const item = res.data.data;
+    const res = await apiClient.get<RawJournalItem>(`/journals/${id}`);
+    const item = res.data;
     return {
       id: item.id,
       title: item.title,
       content: item.content,
       mood: (item.mood as MoodType) || undefined,
       tags: item.tags || [],
-      type: (item.type as JournalType) || JournalType.NOTE,
-      status: (item.status as JournalStatus) || JournalStatus.PUBLISHED,
+      type: (item.type as JournalType) || JournalType.THOUGHT,
+      status: (item.status as JournalStatus) || JournalStatus.PRIVATE,
       createdAt: item.createdAt,
       updatedAt: item.updatedAt,
+      date: new Date(item.createdAt),
     };
   },
 
+  // Admin endpoints for mutations (require auth)
   create: async (data: CreateJournalDto): Promise<JournalEntry> => {
-    const res = await apiClient.post<BackendResponse<RawJournalItem>>("/admin/journals", data);
-    // Backend creates it via CQRS handler, returns result.
-    // Usually NestJS CommandBus returns the created ID or Entity.
-    // Assuming standard ForgeOS backend response wrapper.
-    const item = res.data.data;
+    try {
+      const res = await apiClient.post<RawJournalItem>("/admin/journals", data);
+      console.log("Create Journal Response:", res); // DEBUG
+      const item = res.data;
 
-    return {
-      id: item.id,
-      title: item.title,
-      content: item.content,
-      mood: (item.mood as MoodType) || undefined,
-      tags: item.tags || [],
-      type: (item.type as JournalType) || JournalType.NOTE,
-      status: (item.status as JournalStatus) || JournalStatus.PUBLISHED,
-      createdAt: item.createdAt,
-      updatedAt: item.updatedAt,
-    };
+      if (!item) {
+        throw new Error("Backend returned no data");
+      }
+
+      return {
+        id: item.id,
+        title: item.title,
+        content: item.content,
+        mood: (item.mood as MoodType) || undefined,
+        tags: item.tags || [],
+        type: (item.type as JournalType) || JournalType.THOUGHT,
+        status: (item.status as JournalStatus) || JournalStatus.PRIVATE,
+        createdAt: item.createdAt,
+        updatedAt: item.updatedAt,
+        date: new Date(item.createdAt),
+      };
+    } catch (error) {
+      console.error("Create Journal Error:", error);
+      throw error;
+    }
   },
 
   update: async (id: string, data: Partial<CreateJournalDto>): Promise<JournalEntry> => {
-    const res = await apiClient.patch<BackendResponse<RawJournalItem>>(
-      `/admin/journals/${id}`,
-      data
-    );
-    const item = res.data.data;
+    const res = await apiClient.patch<RawJournalItem>(`/admin/journals/${id}`, data);
+    const item = res.data;
     return {
       id: item.id,
       title: item.title,
       content: item.content,
       mood: (item.mood as MoodType) || undefined,
       tags: item.tags || [],
-      type: (item.type as JournalType) || JournalType.NOTE,
-      status: (item.status as JournalStatus) || JournalStatus.PUBLISHED,
+      type: (item.type as JournalType) || JournalType.THOUGHT,
+      status: (item.status as JournalStatus) || JournalStatus.PRIVATE,
       createdAt: item.createdAt,
       updatedAt: item.updatedAt,
+      date: new Date(item.createdAt),
     };
   },
 

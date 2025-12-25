@@ -5,8 +5,15 @@ import { toast } from "sonner";
 
 export const useJournals = (filter?: JournalFilter) => {
   return useQuery({
-    queryKey: ["journals", filter],
-    queryFn: () => journalService.getAll(filter),
+    queryKey: ["journals"], // Remove filter from key to fix cache invalidation
+    queryFn: async () => {
+      console.log("🔍 FETCH: Fetching journals with filter:", filter);
+      const result = await journalService.getAll(filter);
+      console.log("📥 FETCH: Received", result.data.length, "journals");
+      return result;
+    },
+    staleTime: 0, // Always consider data stale
+    refetchOnMount: "always", // Always refetch when component mounts
   });
 };
 
@@ -23,8 +30,12 @@ export const useCreateJournal = () => {
 
   return useMutation({
     mutationFn: (data: CreateJournalDto) => journalService.create(data),
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success("Journal entry created successfully");
+
+      // Small delay to allow MongoDB to sync
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
       queryClient.invalidateQueries({ queryKey: ["journals"] });
       queryClient.invalidateQueries({ queryKey: ["timeline"] });
     },
@@ -42,7 +53,7 @@ export const useUpdateJournal = () => {
     mutationFn: ({ id, data }: { id: string; data: Partial<CreateJournalDto> }) =>
       journalService.update(id, data),
     onSuccess: () => {
-      toast.success("Journal entry updated successfully");
+      // toast.success("Journal entry updated successfully"); // Too noisy for auto-save
       queryClient.invalidateQueries({ queryKey: ["journals"] });
       queryClient.invalidateQueries({ queryKey: ["journal"] });
       queryClient.invalidateQueries({ queryKey: ["timeline"] });
@@ -58,15 +69,24 @@ export const useDeleteJournal = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) => journalService.delete(id),
+    mutationFn: (id: string) => {
+      console.log("🗑️ DELETE: Starting deletion for ID:", id);
+      return journalService.delete(id);
+    },
     onSuccess: () => {
-      // Handled in UI component for custom message if needed, or default here
-      // toast.success("Journal deleted");
+      console.log("✅ DELETE: Success, invalidating queries...");
+
+      // Log current cache state before invalidation
+      const cacheData = queryClient.getQueriesData({ queryKey: ["journals"] });
+      console.log("📦 CACHE BEFORE INVALIDATE:", cacheData);
+
       queryClient.invalidateQueries({ queryKey: ["journals"] });
       queryClient.invalidateQueries({ queryKey: ["timeline"] });
+
+      console.log("🔄 DELETE: Invalidation triggered");
     },
     onError: (error) => {
-      console.error(error);
+      console.error("❌ DELETE ERROR:", error);
       toast.error("Failed to delete journal entry");
     },
   });
