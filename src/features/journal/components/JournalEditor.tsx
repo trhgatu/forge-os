@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { Calendar, Maximize2, Minimize2, Save, Sparkles } from "lucide-react";
 
-import { JournalEntry } from "@/shared/types";
+import { JournalEntry } from "@/features/journal/types";
 import { cn } from "@/shared/lib/utils";
 import { JournalToolbar } from "./JournalToolbar";
 import { MoodSelector } from "./MoodSelector";
@@ -16,6 +16,7 @@ export function JournalEditor({
   isAnalyzing,
   isFocusMode,
   toggleFocusMode,
+  saveStatus = "saved",
 }: {
   entry: JournalEntry;
   onChange: (v: Partial<JournalEntry>) => void;
@@ -23,6 +24,7 @@ export function JournalEditor({
   isAnalyzing: boolean;
   isFocusMode: boolean;
   toggleFocusMode: () => void;
+  saveStatus?: "saved" | "saving" | "error";
 }) {
   const [mode, setMode] = useState<"write" | "preview">("write");
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -87,11 +89,21 @@ export function JournalEditor({
       >
         <div className="flex items-center gap-4 text-xs text-gray-500 font-mono">
           <span className="flex items-center gap-2">
-            <Calendar size={12} /> {entry.date.toLocaleDateString()}
+            <Calendar size={12} /> {new Date(entry.createdAt).toLocaleDateString()}
           </span>
           <span className="w-px h-3 bg-white/10" />
-          <span className="flex items-center gap-1 text-green-500">
-            <Save size={12} /> Saved
+          <span
+            className={cn(
+              "flex items-center gap-1 transition-colors",
+              saveStatus === "saved" && "text-green-500",
+              saveStatus === "saving" && "text-yellow-500",
+              saveStatus === "error" && "text-red-500"
+            )}
+          >
+            <Save size={12} className={cn(saveStatus === "saving" && "animate-pulse")} />
+            {saveStatus === "saved" && "Saved"}
+            {saveStatus === "saving" && "Saving..."}
+            {saveStatus === "error" && "Error"}
           </span>
         </div>
 
@@ -129,7 +141,7 @@ export function JournalEditor({
               isFocusMode ? "opacity-0 hover:opacity-100" : "opacity-100"
             )}
           >
-            <MoodSelector mood={entry.mood} onSelect={(m) => onChange({ mood: m })} />
+            <MoodSelector mood={entry.mood || "neutral"} onSelect={(m) => onChange({ mood: m })} />
           </div>
 
           {/* Toolbar */}
@@ -138,7 +150,7 @@ export function JournalEditor({
           {/* Title */}
           <input
             type="text"
-            value={entry.title}
+            value={entry.title || ""}
             onChange={(e) => onChange({ title: e.target.value })}
             placeholder="Title your thought..."
             className="w-full bg-transparent border-none text-4xl font-display font-bold text-white placeholder-gray-700 focus:ring-0 px-0 py-4 mb-4"

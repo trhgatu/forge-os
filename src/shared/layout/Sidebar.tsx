@@ -98,6 +98,8 @@ const getPathForView = (view: View): string => {
       return "/forge/memory";
     case View.MOOD:
       return "/forge/mood";
+    case View.QUOTES:
+      return "/forge/quote";
     case View.INSIGHTS:
       return "/forge/insights";
     case View.TIMELINE:
