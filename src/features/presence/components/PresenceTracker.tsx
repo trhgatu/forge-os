@@ -33,31 +33,29 @@ export const PresenceTracker: React.FC = () => {
     };
   }, []); // Empty dependency array = run once
 
-  // Report location changes
-  useEffect(() => {
-    const socket = socketService.getSocket();
-    if (socket && socket.connected) {
-      socket.emit("updateLocation", { path: pathname });
-    }
-  }, [pathname]); // Run only when pathname changes
-
   // Handle identification logic using Auth Token
   useEffect(() => {
     const socket = socketService.getSocket();
     const token = useAuthStore.getState().token;
 
-    if (token && socket) {
+    if (socket) {
+      const handleConnect = () => {
+        // console.log('🔑 Socket connected, identifying...');
+        if (token) socket.emit("identify", { token });
+        socket.emit("updateLocation", { path: pathname });
+      };
+
       if (socket.connected) {
-        // console.log('🔑 Authenticated user detected, identifying...');
-        socket.emit("identify", { token });
+        handleConnect();
       } else {
-        socket.on("connect", () => {
-          //  console.log('🔑 Socket connected, identifying...');
-          socket.emit("identify", { token });
-        });
+        socket.on("connect", handleConnect);
       }
+
+      return () => {
+        socket.off("connect", handleConnect);
+      };
     }
-  }, []); // Run check on mount (store access via getState is instant)
+  }, [pathname]); // Re-run on pathname change to update location, but identify is idempotent-ish
 
   return null; // Headless component
 };

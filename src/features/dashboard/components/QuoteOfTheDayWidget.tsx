@@ -49,7 +49,7 @@ export const QuoteOfTheDayWidget = () => {
             <div className="mt-4 pt-3 border-t border-white/5">
               <p className="text-xs text-gray-500 italic flex items-center gap-2">
                 <Sparkles size={10} className="text-forge-accent" />
-                AI: This resonates with your recent focus.
+                Daily Wisdom
               </p>
             </div>
           </>
