@@ -9,6 +9,8 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
+import { CommandBus } from '@nestjs/cqrs';
+import { CreateAuditLogCommand } from 'src/contexts/system/audit-log/application/commands/create-audit-log.command';
 import { AuthService } from 'src/contexts/iam/auth/application/services/auth.service';
 
 interface VisitorEcho {
@@ -31,13 +33,21 @@ export class PresenceGateway
   @WebSocketServer()
   server!: Server;
 
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly commandBus: CommandBus,
+  ) {}
 
   private logger: Logger = new Logger('PresenceGateway');
   private activeVisitors: Map<string, VisitorEcho> = new Map();
 
-  handleConnection(client: Socket) {
-    this.logger.log(`Client connected: ${client.id}`);
+  async handleConnection(client: Socket) {
+    const ip =
+      (client.handshake.headers['x-forwarded-for'] as string) ||
+      client.handshake.address;
+    const userAgent = client.handshake.headers['user-agent'] as string;
+
+    this.logger.log(`Client connected: ${client.id} [${ip}]`);
 
     // Create ephemeral visitor
     const newVisitor: VisitorEcho = {
@@ -50,6 +60,18 @@ export class PresenceGateway
 
     this.activeVisitors.set(client.id, newVisitor);
     this.broadcastPresence();
+
+    // Log connection
+    await this.commandBus.execute(
+      new CreateAuditLogCommand({
+        action: 'WS_CONNECT',
+        method: 'SOCKET',
+        statusCode: 101,
+        path: '/presence',
+        body: { ip, userAgent, socketId: client.id },
+        user: null,
+      }),
+    );
   }
 
   handleDisconnect(client: Socket) {
@@ -63,6 +85,7 @@ export class PresenceGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { path: string },
   ) {
+    if (!data?.path) return;
     const visitor = this.activeVisitors.get(client.id);
     if (visitor) {
       visitor.pageVisited = data.path;
@@ -86,6 +109,18 @@ export class PresenceGateway
           visitor.type = 'known';
           this.activeVisitors.set(client.id, visitor);
           this.broadcastPresence();
+
+          // Log identification
+          await this.commandBus.execute(
+            new CreateAuditLogCommand({
+              action: 'WS_IDENTIFY',
+              method: 'SOCKET',
+              statusCode: 200,
+              path: '/presence/identify',
+              body: { socketId: client.id, userId: payload.sub },
+              user: payload.sub,
+            }),
+          );
         }
       }
     } catch (error: any) {
