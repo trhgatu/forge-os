@@ -53,16 +53,36 @@ export class PresenceGateway
   private activeVisitors: Map<string, VisitorEcho> = new Map();
 
   async handleConnection(client: Socket) {
-    const ip =
-      (client.handshake.headers['x-forwarded-for'] as string) ||
-      client.handshake.address;
+    // Reliable IP Extraction
+    const forwarded = client.handshake.headers['x-forwarded-for'];
+    const ipList = Array.isArray(forwarded)
+      ? forwarded
+      : (forwarded as string)?.split(',');
+    // Take the first IP (client IP) and strip whitespace
+    let ip = ipList?.[0]?.trim() || client.handshake.address;
+
+    // Handle IPv6 loopback
+    if (ip === '::1') ip = '127.0.0.1';
+    // Handle IPv6 mapped IPv4
+    if (ip.startsWith('::ffff:')) ip = ip.replace('::ffff:', '');
+
     const userAgentString = client.handshake.headers['user-agent'] as string;
     const referer = client.handshake.headers['referer'] as string;
 
     // Deep Tracking Analysis
     // 1. Geolocation
     const geo = geoip.lookup(ip);
-    const location = geo ? `${geo.city}, ${geo.country}` : 'Unknown Location';
+    let location = 'Unknown Location';
+
+    if (geo) {
+      location = `${geo.city}, ${geo.country}`;
+    } else if (
+      ip === '127.0.0.1' ||
+      ip.startsWith('192.168.') ||
+      ip.startsWith('10.')
+    ) {
+      location = 'Local Dev Environment';
+    }
 
     // 2. User Agent Parsing
     const uaParser = new UAParser(userAgentString);
