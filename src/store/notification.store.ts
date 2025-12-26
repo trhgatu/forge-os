@@ -9,7 +9,7 @@ export interface NotificationItem {
   message: string;
   title?: string;
   linkTo?: unknown;
-  timestamp: Date;
+  timestamp: number;
   read: boolean;
   season?: string;
 }
@@ -49,7 +49,7 @@ export const useNotificationStore = create<NotificationState>()(
           title,
           linkTo,
           season,
-          timestamp: new Date(),
+          timestamp: Date.now(),
           read: false,
         };
 

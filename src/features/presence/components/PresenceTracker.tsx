@@ -22,19 +22,14 @@ export const PresenceTracker: React.FC = () => {
   const pathname = usePathname();
 
   useEffect(() => {
-    // Connect to 'presence' namespace
-    const socket = socketService.connect(`${SOCKET_URL}/presence`);
-
-    if (socket) {
-      // Report initial location
-      socket.emit("updateLocation", { path: pathname });
-    }
+    // Connect to 'presence' namespace ONCE on mount
+    socketService.connect(`${SOCKET_URL}/presence`);
 
     return () => {
-      // Optional: disconnect on unmount if we want strict session management
+      // Optional: disconnect on unmount
       // socketService.disconnect();
     };
-  }, [pathname]);
+  }, []); // Empty dependency array = run once
 
   // Report location changes
   useEffect(() => {
@@ -42,7 +37,7 @@ export const PresenceTracker: React.FC = () => {
     if (socket && socket.connected) {
       socket.emit("updateLocation", { path: pathname });
     }
-  }, [pathname]);
+  }, [pathname]); // Run only when pathname changes
 
   return null; // Headless component
 };

@@ -26,7 +26,7 @@ export const CosmicRadar: React.FC<{ echoes: VisitorEcho[] }> = ({ echoes }) => 
       </div>
 
       {/* Center (The Self) */}
-      <div className="absolute w-4 h-4 bg-white rounded-full shadow-[0_0_20px_white] z-30 animate-pulse-slow">
+      <div className="absolute w-4 h-4 bg-white rounded-full shadow-[0_0_20px_white] z-30 animate-pulse">
         <div className="absolute inset-0 bg-forge-cyan blur-md opacity-50" />
       </div>
 
