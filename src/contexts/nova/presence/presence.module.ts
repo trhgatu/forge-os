@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { PresenceGateway } from './presence.gateway';
 import { AuthModule } from 'src/contexts/iam/auth/auth.module';
+import { PresenceGateway } from './presence.gateway';
 
 @Module({
   imports: [AuthModule],
