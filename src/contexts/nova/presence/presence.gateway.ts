@@ -9,6 +9,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 
 interface VisitorEcho {
   id: string;
@@ -20,7 +21,14 @@ interface VisitorEcho {
 
 @WebSocketGateway({
   cors: {
-    origin: '*', // Allow all origins for now (adjust for production)
+    origin: process.env.CORS_ALLOW_ORIGIN
+      ? process.env.CORS_ALLOW_ORIGIN.split(',')
+      : [
+          'http://localhost:3000',
+          'http://localhost:3001',
+          'https://forge-os.vercel.app',
+        ],
+    credentials: true,
   },
   namespace: 'presence',
 })
@@ -32,6 +40,8 @@ export class PresenceGateway
 
   private logger: Logger = new Logger('PresenceGateway');
   private activeVisitors: Map<string, VisitorEcho> = new Map();
+
+  constructor(private readonly jwtService: JwtService) {}
 
   handleConnection(client: Socket) {
     this.logger.log(`Client connected: ${client.id}`);
@@ -69,16 +79,27 @@ export class PresenceGateway
   }
 
   @SubscribeMessage('identify')
-  handleIdentify(
+  async handleIdentify(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { role: 'known' | 'connection' },
+    @MessageBody() data: { token: string },
   ) {
-    // Logic to upgrade visitor type (e.g. after login)
-    const visitor = this.activeVisitors.get(client.id);
-    if (visitor) {
-      visitor.type = data.role; // Simplified security for now
-      this.activeVisitors.set(client.id, visitor);
-      this.broadcastPresence();
+    try {
+      if (!data.token) return;
+
+      const payload = this.jwtService.verify(data.token);
+      if (!payload) return;
+
+      // Update visitor to known
+      const visitor = this.activeVisitors.get(client.id);
+      if (visitor) {
+        visitor.type = 'known';
+        // Optionally map payload.sub to user ID if we want to track specific users
+        // visitor.id = payload.sub;
+        this.activeVisitors.set(client.id, visitor);
+        this.broadcastPresence();
+      }
+    } catch {
+      this.logger.warn(`Failed to identify client ${client.id}: Invalid token`);
     }
   }
 

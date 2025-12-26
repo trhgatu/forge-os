@@ -17,5 +17,6 @@ import { RoleModule } from '../roles/roles.module';
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, JwtRefreshStrategy],
+  exports: [JwtModule, AuthService],
 })
 export class AuthModule {}
