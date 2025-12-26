@@ -22,6 +22,13 @@ import {
   UserSchema,
 } from 'src/contexts/iam/users/infrastructure/schemas/iam-user.schema';
 
+import {
+  ProjectSchema,
+  Project,
+} from 'src/contexts/engineering/project/infrastructure/project.schema';
+
+import { ProjectSeeder } from './project/project.seeder';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [databaseConfig] }),
@@ -35,6 +42,7 @@ import {
       { name: Permission.name, schema: PermissionSchema },
       { name: Role.name, schema: RoleSchema },
       { name: User.name, schema: UserSchema },
+      { name: Project.name, schema: ProjectSchema },
     ]),
   ],
   providers: [
@@ -42,6 +50,7 @@ import {
     RoleSeeder,
     AssignRolePermissionsSeeder,
     UserSeeder,
+    ProjectSeeder,
   ],
 })
 export class SeederModule {}
