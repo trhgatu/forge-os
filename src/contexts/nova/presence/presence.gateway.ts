@@ -106,11 +106,9 @@ export class PresenceGateway
           user: undefined, // undefined is safer than null for Mongoose optional ObjectId
         }),
       );
-    } catch (error: any) {
-      this.logger.error(
-        `Failed to log WS_CONNECT: ${error.message}`,
-        error.stack as string,
-      );
+    } catch (error) {
+      const err = error as Error;
+      this.logger.error(`Failed to log WS_CONNECT: ${err.message}`, err.stack);
     }
   }
 
@@ -180,16 +178,18 @@ export class PresenceGateway
                 user: payload.sub,
               }),
             );
-          } catch (error: any) {
+          } catch (error) {
+            const err = error as Error;
             this.logger.error(
-              `Failed to log WS_IDENTIFY: ${error.message}`,
-              error.stack as string,
+              `Failed to log WS_IDENTIFY: ${err.message}`,
+              err.stack,
             );
           }
         }
       }
-    } catch (error: any) {
-      this.logger.warn(`Identify failed for ${client.id}: ${error.message}`);
+    } catch (error) {
+      const err = error as Error;
+      this.logger.warn(`Identify failed for ${client.id}: ${err.message}`);
     }
   }
 
