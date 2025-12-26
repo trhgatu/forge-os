@@ -82,6 +82,11 @@ export class PresenceGateway
       type: 'anonymous', // Default to anonymous
       pageVisited: '/',
       timestamp: new Date(),
+      connectionDetails: {
+        ip,
+        location,
+        device: deviceInfo,
+      },
     };
 
     this.activeVisitors.set(client.id, newVisitor);
@@ -194,7 +199,24 @@ export class PresenceGateway
   }
 
   private broadcastPresence() {
-    const visitorsList = Array.from(this.activeVisitors.values());
+    const visitorsList = Array.from(this.activeVisitors.values()).map(
+      (visitor) => {
+        // Security: Sanitize PII before broadcasting
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { email, ...safeVisitor } = visitor;
+
+        // Also ensure connectionDetails does not leak IP if we don't want it to
+        // But for now, just removing email is the critical request.
+        // Let's also mask IP in connectionDetails if it exists
+        if (safeVisitor.connectionDetails) {
+          safeVisitor.connectionDetails = {
+            ...safeVisitor.connectionDetails,
+            ip: '***.***.***.***', // Mask IP
+          };
+        }
+        return safeVisitor;
+      },
+    );
     this.server.emit('presence_update', visitorsList);
   }
 }
