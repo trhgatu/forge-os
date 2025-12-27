@@ -1,3 +1,10 @@
+export interface GithubContributor {
+  login: string;
+  avatar_url: string;
+  contributions: number;
+  html_url: string;
+}
+
 export interface GithubRepoDetails {
   stars: number;
   forks: number;
@@ -6,6 +13,7 @@ export interface GithubRepoDetails {
   languages: Record<string, number>;
   commitActivity: { date: string; count: number }[]; // For Heatmap
   recentCommits: GithubCommitActivity[]; // For Activity Feed
+  contributors: GithubContributor[];
   updatedAt: Date;
   description: string | null;
 }
