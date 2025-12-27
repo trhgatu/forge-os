@@ -1,6 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Octokit } from '@octokit/rest';
+import type { Octokit } from '@octokit/rest';
 import { GithubRepository } from '../../application/ports/github.repository';
 import {
   GithubRepoDetails,
@@ -8,19 +8,32 @@ import {
 } from '../../domain/project.interfaces';
 
 @Injectable()
-export class HttpGithubRepository implements GithubRepository {
-  private readonly octokit: Octokit;
+export class HttpGithubRepository implements GithubRepository, OnModuleInit {
+  private octokit!: Octokit;
   private readonly logger = new Logger(HttpGithubRepository.name);
 
-  constructor(private readonly configService: ConfigService) {
+  constructor(private readonly configService: ConfigService) {}
+
+  async onModuleInit() {
     const token = this.configService.get<string>('GITHUB_TOKEN');
     if (!token) {
       this.logger.warn('GITHUB_TOKEN not found in configuration');
     }
 
-    this.octokit = new Octokit({
-      auth: token,
-    });
+    try {
+      // Dynamic import to handle ESM module in CommonJS environment
+      // Using eval to bypass TypeScript transpilation of dynamic imports to require()
+      const { Octokit } = await (eval('import("@octokit/rest")') as Promise<
+        typeof import('@octokit/rest')
+      >);
+
+      this.octokit = new Octokit({
+        auth: token,
+      });
+    } catch (error) {
+      this.logger.error('Failed to load @octokit/rest module', error);
+      throw error;
+    }
   }
 
   async getRepoDetails(
