@@ -6,6 +6,8 @@ export interface HybridStats {
   forks?: number;
   issues?: number;
   language?: string;
+  languages?: Record<string, number>;
+  commitActivity?: Array<{ date: string; count: number }>;
   lastCommit?: Date;
   health?: number; // 0-100
 }

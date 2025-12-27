@@ -349,11 +349,68 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
                 </div>
               </GlassCard>
 
-              {/* Tech Stack */}
+              {/* Tech Stack & Languages */}
               <GlassCard>
                 <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 flex items-center gap-2">
                   <Cpu size={14} /> Technologies
                 </h3>
+
+                {/* GitHub Languages Distribution */}
+                {project.githubStats?.languages &&
+                  Object.keys(project.githubStats.languages).length > 0 && (
+                    <div className="mb-6 space-y-2">
+                      <div className="flex h-2 w-full rounded-full overflow-hidden bg-white/5">
+                        {(() => {
+                          const total = Object.values(project.githubStats!.languages!).reduce(
+                            (a, b) => a + b,
+                            0
+                          );
+                          const colors = [
+                            "bg-blue-500",
+                            "bg-yellow-400",
+                            "bg-red-500",
+                            "bg-purple-500",
+                            "bg-green-500",
+                            "bg-gray-500",
+                          ];
+                          return Object.entries(project.githubStats!.languages!).map(
+                            ([lang, bytes], i) => (
+                              <div
+                                key={lang}
+                                style={{ width: `${(bytes / total) * 100}%` }}
+                                className={colors[i % colors.length]}
+                                title={`${lang}: ${Math.round((bytes / total) * 100)}%`}
+                              />
+                            )
+                          );
+                        })()}
+                      </div>
+                      <div className="flex flex-wrap gap-x-4 gap-y-1">
+                        {(() => {
+                          const colors = [
+                            "bg-blue-500",
+                            "bg-yellow-400",
+                            "bg-red-500",
+                            "bg-purple-500",
+                            "bg-green-500",
+                            "bg-gray-500",
+                          ];
+                          return Object.keys(project.githubStats!.languages!).map((lang, i) => (
+                            <div
+                              key={lang}
+                              className="flex items-center gap-1.5 text-[10px] text-gray-400"
+                            >
+                              <div
+                                className={`w-2 h-2 rounded-full ${colors[i % colors.length]}`}
+                              />
+                              {lang}
+                            </div>
+                          ));
+                        })()}
+                      </div>
+                    </div>
+                  )}
+
                 <div className="flex flex-wrap gap-2">
                   {project.technologies?.map((tech) => (
                     <div
@@ -372,7 +429,7 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
 
             {/* MIDDLE: Heatmap & Activity */}
             <div className="lg:col-span-8 space-y-6">
-              {/* Contribution Heatmap (New) */}
+              {/* Contribution Heatmap (Real) */}
               <GlassCard className="relative overflow-hidden">
                 <div className="relative z-10">
                   <div className="flex items-center justify-between mb-4">
@@ -380,37 +437,71 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
                       <Activity size={16} /> Activity Heatmap
                     </h3>
                     <select className="bg-black/20 border border-white/10 rounded-lg text-[10px] text-gray-400 px-2 py-1 outline-none">
-                      <option>Last 30 Days</option>
+                      <option>Last 6 Months</option>
                       <option>All Time</option>
                     </select>
                   </div>
 
-                  {/* Mock Heatmap Grid */}
+                  {/* Real Heatmap Grid */}
                   <div className="flex gap-1 justify-between overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-white/10">
-                    {Array.from({ length: 28 }).map((_, colIndex) => (
-                      <div key={colIndex} className="flex flex-col gap-1">
-                        {Array.from({ length: 7 }).map((_, rowIndex) => {
-                          const intensity = Math.random();
-                          const color =
-                            intensity > 0.8
-                              ? "bg-emerald-400"
-                              : intensity > 0.6
-                                ? "bg-emerald-500/80"
-                                : intensity > 0.4
-                                  ? "bg-emerald-600/60"
-                                  : intensity > 0.2
+                    {(() => {
+                      // Prepare Data Map
+                      const commitMap = new Map<string, number>();
+                      project.githubStats?.commitActivity?.forEach((c) => {
+                        commitMap.set(new Date(c.date).toDateString(), c.count);
+                      });
+
+                      // Generate last 28 weeks
+                      const today = new Date();
+                      // Find the Sunday of 28 weeks ago to start correct grid?
+                      // Simplified: Just 28 columns ending today.
+                      return Array.from({ length: 28 }).map((_, colIndex) => {
+                        // colIndex 27 is current week
+                        const weekOffset = 27 - colIndex;
+
+                        return (
+                          <div key={colIndex} className="flex flex-col gap-1">
+                            {Array.from({ length: 7 }).map((_, rowIndex) => {
+                              // Calculate exact date for this cell
+                              // We want the grid to end at "Today" (or end of this week)
+                              // Let's assume today is the last cell of the last column for simplicity or verify date?
+                              // Standard GitHub graph: Columns are weeks (Sun-Sat).
+                              // Let's say Col 27 is "This Week".
+
+                              const cellDate = new Date();
+                              cellDate.setDate(
+                                today.getDate() - weekOffset * 7 + (rowIndex - today.getDay())
+                              );
+                              // Adjustment: Calendar usually aligns rows as Sun(0)-Sat(6).
+                              // rowIndex 0-6.
+                              // We basically iterate days backwards.
+
+                              const dateStr = cellDate.toDateString();
+                              const count = commitMap.get(dateStr) || 0;
+
+                              const color =
+                                count === 0
+                                  ? "bg-white/5"
+                                  : count <= 2
                                     ? "bg-emerald-900/40"
-                                    : "bg-white/5";
-                          return (
-                            <div
-                              key={rowIndex}
-                              className={cn("w-3 h-3 rounded-[2px]", color)}
-                              title={`${Math.floor(intensity * 10)} commits`}
-                            />
-                          );
-                        })}
-                      </div>
-                    ))}
+                                    : count <= 5
+                                      ? "bg-emerald-600/60"
+                                      : count <= 10
+                                        ? "bg-emerald-500/80"
+                                        : "bg-emerald-400";
+
+                              return (
+                                <div
+                                  key={rowIndex}
+                                  className={cn("w-3 h-3 rounded-[2px] transition-all", color)}
+                                  title={`${dateStr}: ${count} commits`}
+                                />
+                              );
+                            })}
+                          </div>
+                        );
+                      });
+                    })()}
                   </div>
                   <div className="flex justify-end items-center gap-2 mt-2 text-[10px] text-gray-500">
                     <span>Less</span>
