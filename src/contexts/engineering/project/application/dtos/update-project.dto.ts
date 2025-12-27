@@ -5,8 +5,50 @@ import {
   IsBoolean,
   IsNumber,
   IsObject,
+  ValidateNested,
+  IsEnum,
 } from 'class-validator';
-import { ProjectLink, ProjectTaskBoard } from '../../domain/project.interfaces';
+import { Type } from 'class-transformer';
+
+export class ProjectLinkDto {
+  @IsString()
+  title!: string;
+
+  @IsString()
+  url!: string;
+
+  @IsOptional()
+  @IsEnum(['github', 'figma', 'doc', 'link'])
+  icon?: 'github' | 'figma' | 'doc' | 'link';
+}
+
+export class ProjectTaskDto {
+  @IsString()
+  id!: string;
+
+  @IsString()
+  title!: string;
+
+  @IsEnum(['low', 'medium', 'high'])
+  priority!: 'low' | 'medium' | 'high';
+}
+
+export class ProjectTaskBoardDto {
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ProjectTaskDto)
+  todo!: ProjectTaskDto[];
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ProjectTaskDto)
+  inProgress!: ProjectTaskDto[];
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ProjectTaskDto)
+  done!: ProjectTaskDto[];
+}
 
 export class UpdateProjectDto {
   @IsOptional()
@@ -23,6 +65,7 @@ export class UpdateProjectDto {
 
   @IsOptional()
   @IsArray()
+  @IsString({ each: true })
   tags?: string[];
 
   @IsOptional()
@@ -35,9 +78,13 @@ export class UpdateProjectDto {
 
   @IsOptional()
   @IsArray()
-  links?: ProjectLink[];
+  @ValidateNested({ each: true })
+  @Type(() => ProjectLinkDto)
+  links?: ProjectLinkDto[];
 
   @IsOptional()
   @IsObject()
-  taskBoard?: ProjectTaskBoard;
+  @ValidateNested()
+  @Type(() => ProjectTaskBoardDto)
+  taskBoard?: ProjectTaskBoardDto;
 }

@@ -44,10 +44,7 @@ import { EngineeringModule } from '@root/contexts/engineering/engineering.module
     TimelineModule,
     MoodModule,
     LoggerModule,
-    JournalModule,
-    TimelineModule,
-    MoodModule,
-    LoggerModule,
+
     PresenceModule,
     EngineeringModule,
   ],

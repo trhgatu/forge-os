@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { ProjectTask, ProjectLink } from '../domain/project.interfaces';
+import { ProjectTask } from '../domain/project.interfaces';
 
 export type ProjectDocument = Project & Document;
 
@@ -46,6 +46,19 @@ class HybridStats {
   health?: number;
 }
 
+@Schema()
+export class ProjectLink {
+  @Prop({ required: true })
+  title!: string;
+
+  @Prop({ required: true })
+  url!: string;
+
+  @Prop({ enum: ['github', 'figma', 'doc', 'link'] })
+  icon?: string;
+}
+export const ProjectLinkSchema = SchemaFactory.createForClass(ProjectLink);
+
 @Schema({ timestamps: true })
 export class Project {
   @Prop({ required: true })
@@ -83,8 +96,9 @@ export class Project {
     inProgress: ProjectTask[];
     done: ProjectTask[];
   };
-  @Prop()
-  links!: ProjectLink[]; // Array of links
+
+  @Prop({ type: [ProjectLinkSchema], default: [] })
+  links!: ProjectLink[];
 }
 
 export const ProjectSchema = SchemaFactory.createForClass(Project);

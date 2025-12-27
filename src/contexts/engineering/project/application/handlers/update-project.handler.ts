@@ -22,12 +22,12 @@ export class UpdateProjectHandler
       throw new NotFoundException(`Project with ID ${id} not found`);
     }
 
-    // Merge updates
+    // Merge updates securely
     this.logger.log(
       `Updating project ${id} with data: ${JSON.stringify(data)}`,
     );
-    Object.assign(project, data);
-    project.updatedAt = new Date();
+
+    project.update(data);
 
     const updatedProject = await this.projectRepository.update(project);
     this.logger.log(

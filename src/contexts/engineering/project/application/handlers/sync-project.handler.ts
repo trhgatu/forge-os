@@ -92,7 +92,7 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
       this.logger.log(`Project ${id} synced successfully`);
       return project;
     } catch (error: any) {
-      this.logger.error(`Failed to sync project ${id}`, error);
+      this.logger.error(`Failed to sync project ${id}`, error.stack);
 
       if (error.status === 404) {
         this.logger.warn(

@@ -14,8 +14,8 @@ export class MongoProjectRepository implements ProjectRepository {
   ) {}
 
   async create(project: ProjectEntity): Promise<ProjectEntity> {
-    const pestenceModel = ProjectMapper.toPersistence(project);
-    const newProject = new this.projectModel(pestenceModel);
+    const persistenceModel = ProjectMapper.toPersistence(project);
+    const newProject = new this.projectModel(persistenceModel);
     await newProject.save();
     return ProjectMapper.toDomain(newProject);
   }
