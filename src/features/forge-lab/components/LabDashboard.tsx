@@ -255,33 +255,40 @@ export const LabDashboard: React.FC<LabDashboardProps> = ({
                 <span>Wed</span>
                 <span>Fri</span>
               </div>
-              {Array.from({ length: 42 }).map((_, colIndex) => (
-                <div key={colIndex} className="flex flex-col gap-1.5">
-                  {Array.from({ length: 7 }).map((_, rowIndex) => {
-                    const intensity = Math.random();
-                    // Forge/GitHub Hybrid Palette: Darker base, brighter neons
-                    const color =
-                      intensity > 0.9
-                        ? "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]" // Neon
-                        : intensity > 0.7
-                          ? "bg-emerald-500"
-                          : intensity > 0.5
-                            ? "bg-emerald-700/60"
-                            : intensity > 0.3
-                              ? "bg-emerald-900/40"
-                              : "bg-white/[0.03]";
-                    return (
-                      <div
-                        key={rowIndex}
-                        className={cn(
-                          "w-3 h-3 rounded-sm transition-all duration-500 hover:scale-125",
-                          color
-                        )}
-                      />
-                    );
-                  })}
-                </div>
-              ))}
+              {React.useMemo(
+                () =>
+                  Array.from({ length: 42 }).map((_, colIndex) => (
+                    <div key={colIndex} className="flex flex-col gap-1.5">
+                      {Array.from({ length: 7 }).map((_, rowIndex) => {
+                        // Deterministic pseudo-random for stable SSR/CSR
+                        const seed = colIndex * 7 + rowIndex;
+                        const intensity = (Math.sin(seed) + 1) / 2;
+
+                        // Forge/GitHub Hybrid Palette: Darker base, brighter neons
+                        const color =
+                          intensity > 0.9
+                            ? "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]" // Neon
+                            : intensity > 0.7
+                              ? "bg-emerald-500"
+                              : intensity > 0.5
+                                ? "bg-emerald-700/60"
+                                : intensity > 0.3
+                                  ? "bg-emerald-900/40"
+                                  : "bg-white/[0.03]";
+                        return (
+                          <div
+                            key={rowIndex}
+                            className={cn(
+                              "w-3 h-3 rounded-sm transition-all duration-500 hover:scale-125",
+                              color
+                            )}
+                          />
+                        );
+                      })}
+                    </div>
+                  )),
+                []
+              )}
             </div>
           </GlassCard>
 
@@ -302,7 +309,7 @@ export const LabDashboard: React.FC<LabDashboardProps> = ({
                 .slice(0, 5)
                 .map((log, index) => (
                   <div
-                    key={index}
+                    key={`${log.projectTitle}-${log.date.getTime()}-${index}`}
                     className="relative group animate-in fade-in slide-in-from-left-4 duration-500"
                     style={{ animationDelay: `${index * 100}ms` }}
                   >

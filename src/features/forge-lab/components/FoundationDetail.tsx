@@ -189,7 +189,7 @@ export const FoundationDetail: React.FC<FoundationDetailProps> = ({ foundation, 
                 >
                   <span className="text-sm text-gray-300">{node.title}</span>
                   <div
-                    className={`w - 2 h - 2 rounded - full ${node.type === "project" ? "bg-cyan-500" : "bg-fuchsia-500"} `}
+                    className={`w-2 h-2 rounded-full ${node.type === "project" ? "bg-cyan-500" : "bg-fuchsia-500"} `}
                   />
                 </div>
               ))}
