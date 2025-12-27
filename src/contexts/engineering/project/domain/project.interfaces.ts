@@ -5,6 +5,17 @@ export interface GithubContributor {
   html_url: string;
 }
 
+export interface GithubContributionStats {
+  totalContributions: number;
+  weeks: {
+    contributionDays: {
+      contributionCount: number;
+      date: string;
+      color: string;
+    }[];
+  }[];
+}
+
 export interface GithubRepoDetails {
   stars: number;
   forks: number;

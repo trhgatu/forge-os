@@ -14,6 +14,7 @@ import {
   GetUserByIdHandler,
   InvalidateUserCacheHandler,
   RestoreUserHandler,
+  ConnectAccountHandler,
 } from './application/handlers';
 
 const CommandHandlers = [
@@ -21,6 +22,7 @@ const CommandHandlers = [
   UpdateUserHandler,
   DeleteUserHandler,
   RestoreUserHandler,
+  ConnectAccountHandler,
 ];
 const QueryHandlers = [GetUsersHandler, GetUserByIdHandler];
 const EventHandlers = [InvalidateUserCacheHandler];

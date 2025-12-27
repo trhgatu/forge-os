@@ -4,6 +4,7 @@ import type { Octokit } from '@octokit/rest';
 import { GithubRepository } from '../../application/ports/github.repository';
 import {
   GithubCommitActivity,
+  GithubContributionStats,
   GithubIssue,
   GithubPullRequest,
   GithubRepoDetails,
@@ -239,6 +240,69 @@ export class HttpGithubRepository implements GithubRepository, OnModuleInit {
         `Could not fetch contributors for ${owner} / ${repo}: ${error.message} `,
       );
       return [];
+    }
+  }
+
+  async getUserContributionStats(
+    username: string,
+  ): Promise<GithubContributionStats> {
+    try {
+      const query = `
+        query($login: String!) {
+          user(login: $login) {
+            contributionsCollection {
+              contributionCalendar {
+                totalContributions
+                weeks {
+                  contributionDays {
+                    contributionCount
+                    date
+                    color
+                  }
+                }
+              }
+            }
+          }
+        }
+      `;
+
+      const response: any = await this.octokit.request('POST /graphql', {
+        query,
+        variables: {
+          login: username,
+        },
+      });
+
+      // Octokit response structure for GraphQL usually puts the payload in `data` (if successful), or `data.data`?
+      // Actually `octokit.request` returns `{ status, url, headers, data }`.
+      // The GraphQL response body is in `response.data`.
+      // If GraphQL succeeded, `response.data` has `{ data: { user: ... } }`.
+
+      this.logger.log(
+        `GraphQL Response for ${username}: ${JSON.stringify(response.data)}`,
+      );
+
+      if (!response.data?.data?.user) {
+        throw new Error('User not found in GraphQL response');
+      }
+
+      const calendar =
+        response.data.data.user.contributionsCollection.contributionCalendar;
+
+      return {
+        totalContributions: calendar.totalContributions,
+        weeks: calendar.weeks,
+      };
+    } catch (error: any) {
+      this.logger.error(
+        `Failed to fetch contribution stats for user ${username}: ${error.message}`,
+        error,
+      );
+      // Return empty stats on error
+      return {
+        totalContributions: 0,
+        weeks: [],
+      };
     }
   }
 }

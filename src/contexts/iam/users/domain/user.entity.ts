@@ -16,6 +16,14 @@ export interface UserProps {
   deletedAt?: Date;
   createdAt?: Date;
   updatedAt?: Date;
+  connections?: UserConnection[];
+}
+
+export interface UserConnection {
+  provider: string; // e.g., 'github', 'google'
+  identifier: string; // e.g., 'thuyencode', '10238129'
+  metadata?: Record<string, any>;
+  connectedAt: Date;
 }
 
 export class User {
@@ -109,12 +117,33 @@ export class User {
       email: this.props.email,
       roleId: this.props.roleId,
       role: this.props.role,
+      connections: this.props.connections || [],
       // refreshToken: this.props.refreshToken, // Excluded for security
       isDeleted: this.props.isDeleted,
       deletedAt: this.props.deletedAt,
       createdAt: this.props.createdAt,
       updatedAt: this.props.updatedAt,
     };
+  }
+
+  get connections(): UserConnection[] {
+    return this.props.connections || [];
+  }
+
+  addConnection(connection: UserConnection): void {
+    if (!this.props.connections) {
+      this.props.connections = [];
+    }
+    // Prevent duplicates
+    const exists = this.props.connections.some(
+      (c) =>
+        c.provider === connection.provider &&
+        c.identifier === connection.identifier,
+    );
+    if (!exists) {
+      this.props.connections.push(connection);
+      this.props.updatedAt = new Date();
+    }
   }
 
   toJSON() {

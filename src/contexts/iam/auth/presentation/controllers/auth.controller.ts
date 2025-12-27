@@ -39,7 +39,7 @@ export class AuthController {
       status: 'success',
       message: 'Get current user successfully',
       data: {
-        id: user.id,
+        id: user.id.toString(),
         name: user.name,
         email: user.email,
         role: user.role, // Use the populated role object

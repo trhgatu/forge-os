@@ -17,6 +17,7 @@ export class UserMapper {
       deletedAt: doc.deletedAt,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
+      connections: doc.connections || [],
     });
   }
 
@@ -65,6 +66,10 @@ export class UserMapper {
       refreshToken: entity.refreshToken,
       isDeleted: entity.isDeleted,
       deletedAt: entity.deletedAt,
+      connections: entity.connections.map((c) => ({
+        ...c,
+        metadata: c.metadata || {},
+      })),
     };
   }
 }

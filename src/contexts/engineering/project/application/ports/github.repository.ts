@@ -1,6 +1,7 @@
 import {
   GithubRepoDetails,
   GithubCommitActivity,
+  GithubContributionStats,
 } from '../../domain/project.interfaces';
 
 export interface GithubRepository {
@@ -9,4 +10,5 @@ export interface GithubRepository {
     owner: string,
     repo: string,
   ): Promise<GithubCommitActivity[]>;
+  getUserContributionStats(username: string): Promise<GithubContributionStats>;
 }
