@@ -82,7 +82,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: View.WEEKLY_REVIEW, labelKey: "nav.weekly_review", icon: CalendarCheck, group: "System" },
   { id: View.MONTHLY_REVIEW, labelKey: "nav.monthly_review", icon: Moon, group: "System" },
   { id: View.YEARLY_REVIEW, labelKey: "nav.yearly_review", icon: Orbit, group: "System" },
-  { id: View.FORGE_LAB, labelKey: "nav.ideas", icon: Hammer, group: "Creativity" },
+  { id: View.FORGE_LAB, labelKey: "nav.forge_lab", icon: Hammer, group: "Creativity" },
   { id: View.SETTINGS, labelKey: "nav.settings", icon: Settings, group: "System" },
 ];
 
@@ -131,7 +131,7 @@ const getPathForView = (view: View): string => {
     case View.PRESENCE:
       return "/forge/presence";
     case View.FORGE_LAB:
-      return "/forge/ideas";
+      return "/forge/lab";
     case View.WIKI:
       return "/forge/knowledge";
     default:
