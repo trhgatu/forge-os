@@ -1,0 +1,104 @@
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
+import { ProjectTask } from '../domain/project.interfaces';
+
+export type ProjectDocument = Project & Document;
+
+class HybridStats {
+  @Prop()
+  stars?: number;
+
+  @Prop()
+  forks?: number;
+
+  @Prop()
+  issues?: number;
+
+  @Prop()
+  language?: string;
+
+  @Prop({ type: Object })
+  languages?: Record<string, number>;
+
+  @Prop({ type: [Object] })
+  commitActivity?: { date: string; count: number }[];
+
+  @Prop({ type: [Object] })
+  recentCommits?: {
+    date: Date;
+    message: string;
+    author: string;
+    url: string;
+  }[];
+
+  @Prop({ type: [Object] })
+  contributors?: {
+    login: string;
+    avatar_url: string;
+    contributions: number;
+    html_url: string;
+  }[];
+
+  @Prop()
+  lastCommit?: Date;
+
+  @Prop()
+  health?: number;
+}
+
+@Schema()
+export class ProjectLink {
+  @Prop({ required: true })
+  title!: string;
+
+  @Prop({ required: true })
+  url!: string;
+
+  @Prop({ enum: ['github', 'figma', 'doc', 'link'] })
+  icon?: string;
+}
+export const ProjectLinkSchema = SchemaFactory.createForClass(ProjectLink);
+
+@Schema({ timestamps: true })
+export class Project {
+  @Prop({ required: true })
+  title!: string;
+
+  @Prop()
+  description!: string;
+
+  @Prop({ default: 'active', enum: ['active', 'archived', 'draft'] })
+  status!: string;
+
+  @Prop([String])
+  tags!: string[];
+
+  // --- HYBRID DATA ---
+
+  @Prop({ default: false })
+  isPinned!: boolean;
+
+  @Prop({ type: HybridStats })
+  githubStats!: HybridStats;
+
+  // Store raw GitHub response or other metadata
+  @Prop({ type: Object })
+  metadata!: Record<string, any>;
+
+  // --- INTERNAL MANAGEMENT ---
+
+  @Prop()
+  progress!: number;
+
+  @Prop({ type: Object })
+  taskBoard!: {
+    todo: ProjectTask[];
+    inProgress: ProjectTask[];
+    done: ProjectTask[];
+  };
+
+  @Prop({ type: [ProjectLinkSchema], default: [] })
+  links!: ProjectLink[];
+}
+
+export const ProjectSchema = SchemaFactory.createForClass(Project);
