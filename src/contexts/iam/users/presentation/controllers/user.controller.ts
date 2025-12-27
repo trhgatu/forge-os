@@ -63,6 +63,7 @@ export class UserController {
     return this.commandBus.execute(new DeleteUserCommand(id));
   }
 
+  @Permissions(PermissionEnum.UPDATE_USER)
   @Post('connect')
   connectAccount(@User() user: any, @Body() dto: ConnectAccountDto) {
     // Requires User Decorator to retrieve logged-in user ID
