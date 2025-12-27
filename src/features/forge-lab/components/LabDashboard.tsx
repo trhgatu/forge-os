@@ -12,8 +12,19 @@ import {
   Cpu,
 } from "lucide-react";
 import { GlassCard } from "./GlassCard";
-import { Project, Foundation, ResearchTrail, ForgeTab } from "../types";
+import {
+  Project,
+  Foundation,
+  ResearchTrail,
+  ForgeTab,
+  ContributionStats,
+  UserConnection,
+} from "../types";
 import { cn } from "@/shared/lib/utils";
+import { forgeApi } from "../api";
+import { SYSTEM_CONFIG } from "@/shared/config/system.config";
+import { ConnectGithubWidget } from "./ConnectGithubWidget";
+import { useAuthStore } from "@/shared/store/authStore";
 
 interface LabDashboardProps {
   projects: Project[];
@@ -30,14 +41,61 @@ export const LabDashboard: React.FC<LabDashboardProps> = ({
   setActiveTab,
   setActiveProject,
 }) => {
+  const [contributionStats, setContributionStats] = React.useState<ContributionStats | null>(null);
+  const [loadingStats, setLoadingStats] = React.useState(true);
+  const authUser = useAuthStore((state) => state.user);
+
+  React.useEffect(() => {
+    console.log("LabDashboard: Auth User Identity:", authUser);
+    const initIdentity = async () => {
+      // If no user is logged in (or yet to hydrate), we can't fetch profile.
+      // But we should stop loading to avoid "Eternal Skeleton" if user is null.
+      if (!authUser?.id) {
+        console.warn("LabDashboard: No Auth User ID found. Stopping load.");
+        setLoadingStats(false);
+        return;
+      }
+
+      try {
+        console.log("LabDashboard: Fetching profile for", authUser.id);
+        // 1. Fetch full profile to check connections
+        const profile = await forgeApi.getUser(authUser.id);
+        console.log("LabDashboard: Profile loaded", profile);
+        const githubConnection = profile.connections?.find(
+          (c: UserConnection) => c.provider === "github"
+        );
+
+        if (githubConnection) {
+          console.log("LabDashboard: Found GitHub connection", githubConnection);
+          const username = githubConnection.identifier;
+          const stats = await forgeApi.getGithubStats(username);
+          setContributionStats(stats);
+        } else {
+          console.log("LabDashboard: No GitHub connection found. Show Connect Widget.");
+          // Force widget view
+          setContributionStats(null);
+        }
+      } catch (e) {
+        console.error("LabDashboard: Error loading identity", e);
+        // On error (e.g. 401), stop loading so we might see something (or empty state)
+      } finally {
+        setLoadingStats(false);
+      }
+    };
+
+    initIdentity();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authUser?.id]);
+
   return (
     <div className="max-w-[1600px] mx-auto p-6 md:p-10 pb-32 space-y-10 animate-in fade-in zoom-in-95 duration-700">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-xs font-mono text-gray-400 mb-4 hover:bg-white/10 transition-colors cursor-default">
-            <Sparkles size={12} className="text-forge-cyan animate-pulse-slow" /> System Architect
-            Level 9
+            <Sparkles size={12} className="text-forge-cyan animate-pulse-slow" />{" "}
+            {SYSTEM_CONFIG.identity.role}
+            <span className="ml-1 opacity-50">{SYSTEM_CONFIG.identity.level}</span>
           </div>
           <h1 className="text-5xl md:text-7xl font-display font-bold text-white tracking-tight mb-2">
             Forge Lab
@@ -237,59 +295,91 @@ export const LabDashboard: React.FC<LabDashboardProps> = ({
             <div className="absolute top-0 right-0 p-4 opacity-50">
               <Activity size={20} className="text-emerald-500/50" />
             </div>
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h3 className="text-sm font-bold text-white mb-0.5">Mission Graph</h3>
-                <p className="text-xs text-gray-500">3,982 contributions in the last year</p>
-              </div>
-              <select className="bg-black/20 border border-white/10 rounded-lg text-[10px] text-gray-400 px-2 py-1 outline-none">
-                <option>2025</option>
-                <option>2024</option>
-              </select>
-            </div>
 
-            {/* Styled Heatmap */}
-            <div className="flex gap-1.5 justify-between overflow-x-auto pb-2 scrollbar-hide mask-linear-fade">
-              <div className="flex flex-col justify-between text-[9px] text-gray-600 pr-2 pt-1.5">
-                <span>Mon</span>
-                <span>Wed</span>
-                <span>Fri</span>
+            {/* Conditional Rendering: Heatmap or Connect Widget */}
+            {!contributionStats && !loadingStats ? (
+              <div className="flex flex-col items-center justify-center py-10">
+                {/* Determine if we need to connect or just loading */}
+                <ConnectGithubWidget
+                  onConnected={(username) => {
+                    // Refresh stats
+                    setLoadingStats(true);
+                    forgeApi
+                      .getGithubStats(username)
+                      .then(setContributionStats)
+                      .finally(() => setLoadingStats(false));
+                  }}
+                />
               </div>
-              {React.useMemo(
-                () =>
-                  Array.from({ length: 42 }).map((_, colIndex) => (
-                    <div key={colIndex} className="flex flex-col gap-1.5">
-                      {Array.from({ length: 7 }).map((_, rowIndex) => {
-                        // Deterministic pseudo-random for stable SSR/CSR
-                        const seed = colIndex * 7 + rowIndex;
-                        const intensity = (Math.sin(seed) + 1) / 2;
+            ) : (
+              <>
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h3 className="text-sm font-bold text-white mb-0.5">Mission Graph</h3>
+                    <p className="text-xs text-gray-500">
+                      {contributionStats?.totalContributions
+                        ? `${contributionStats.totalContributions} contributions in the last year`
+                        : "Loading contributions..."}
+                    </p>
+                  </div>
+                  <select className="bg-black/20 border border-white/10 rounded-lg text-[10px] text-gray-400 px-2 py-1 outline-none">
+                    <option>2025</option>
+                    <option>2024</option>
+                  </select>
+                </div>
 
-                        // Forge/GitHub Hybrid Palette: Darker base, brighter neons
-                        const color =
-                          intensity > 0.9
-                            ? "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]" // Neon
-                            : intensity > 0.7
-                              ? "bg-emerald-500"
-                              : intensity > 0.5
-                                ? "bg-emerald-700/60"
-                                : intensity > 0.3
-                                  ? "bg-emerald-900/40"
-                                  : "bg-white/[0.03]";
-                        return (
-                          <div
-                            key={rowIndex}
-                            className={cn(
-                              "w-3 h-3 rounded-sm transition-all duration-500 hover:scale-125",
-                              color
-                            )}
-                          />
-                        );
-                      })}
-                    </div>
-                  )),
-                []
-              )}
-            </div>
+                {/* Styled Heatmap */}
+                <div className="flex gap-1.5 justify-between overflow-x-auto pb-2 scrollbar-hide mask-linear-fade">
+                  <div className="flex flex-col justify-between text-[9px] text-gray-600 pr-2 pt-1.5">
+                    <span>Mon</span>
+                    <span>Wed</span>
+                    <span>Fri</span>
+                  </div>
+                  {contributionStats?.weeks
+                    ? contributionStats.weeks
+                        .slice(contributionStats.weeks.length - 28)
+                        .map((week, colIndex) => (
+                          <div key={colIndex} className="flex flex-col gap-1.5">
+                            {week.contributionDays.map((day, rowIndex) => {
+                              const count = day.contributionCount;
+                              const color =
+                                count > 10
+                                  ? "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]"
+                                  : count > 5
+                                    ? "bg-emerald-500"
+                                    : count > 2
+                                      ? "bg-emerald-700/60"
+                                      : count > 0
+                                        ? "bg-emerald-900/40"
+                                        : "bg-white/[0.03]";
+
+                              return (
+                                <div
+                                  key={rowIndex}
+                                  className={cn(
+                                    "w-3 h-3 rounded-sm transition-all duration-500 hover:scale-125",
+                                    color
+                                  )}
+                                  title={`${day.date}: ${count} contributions`}
+                                />
+                              );
+                            })}
+                          </div>
+                        ))
+                    : // Skeleton Loader
+                      Array.from({ length: 28 }).map((_, colIndex) => (
+                        <div key={colIndex} className="flex flex-col gap-1.5">
+                          {Array.from({ length: 7 }).map((_, rowIndex) => (
+                            <div
+                              key={rowIndex}
+                              className="w-3 h-3 rounded-sm bg-white/5 animate-pulse"
+                            />
+                          ))}
+                        </div>
+                      ))}
+                </div>
+              </>
+            )}
           </GlassCard>
 
           {/* Activity Stream */}

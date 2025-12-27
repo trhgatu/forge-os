@@ -111,6 +111,36 @@ export interface ResearchTrail {
   updatedAt: Date;
 }
 
+export interface ContributionStats {
+  totalContributions: number;
+  weeks: Array<{
+    contributionDays: Array<{
+      contributionCount: number;
+      date: string;
+      color: string;
+    }>;
+  }>;
+}
+
+export interface UserConnection {
+  provider: string;
+  identifier: string;
+  metadata?: Record<string, unknown>;
+  connectedAt?: Date;
+}
+
+export interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  role: {
+    id: string;
+    name: string;
+    permissions: string[];
+  };
+  connections: UserConnection[];
+}
+
 export interface ForgeLabContextType {
   activeTab: ForgeTab;
   setActiveTab: (tab: ForgeTab) => void;
