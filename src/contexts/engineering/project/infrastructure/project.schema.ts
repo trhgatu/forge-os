@@ -17,6 +17,12 @@ class HybridStats {
   @Prop()
   language?: string;
 
+  @Prop({ type: Object })
+  languages?: Record<string, number>;
+
+  @Prop({ type: [Object] })
+  commitActivity?: { date: string; count: number }[];
+
   @Prop()
   lastCommit?: Date;
 

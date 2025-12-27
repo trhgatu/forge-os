@@ -38,12 +38,41 @@ export class HttpGithubRepository implements GithubRepository {
         repo,
       });
 
+      let commitActivity: { date: string; count: number }[] = [];
+      try {
+        const stats = await this.octokit.repos.getCommitActivityStats({
+          owner,
+          repo,
+        });
+
+        if (Array.isArray(stats.data)) {
+          commitActivity = stats.data.flatMap((week: any) =>
+            week.days
+              .map((count: number, i: number) => {
+                if (count === 0) return null;
+                const date = new Date(week.week * 1000);
+                date.setDate(date.getDate() + i);
+                return { date: date.toISOString(), count };
+              })
+              .filter(
+                (item: any): item is { date: string; count: number } =>
+                  item !== null,
+              ),
+          );
+        }
+      } catch (e: any) {
+        this.logger.warn(
+          `Failed to fetch commit activity for ${owner}/${repo}: ${e.message}`,
+        );
+      }
+
       return {
         stars: data.stargazers_count,
         forks: data.forks_count,
         issues: data.open_issues_count,
         language: data.language,
         languages: languages as Record<string, number>,
+        commitActivity,
         updatedAt: new Date(data.updated_at),
         description: data.description,
       };

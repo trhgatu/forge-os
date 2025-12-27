@@ -72,6 +72,8 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
         forks: repoDetails.forks,
         issues: repoDetails.issues,
         language: repoDetails.language,
+        languages: repoDetails.languages,
+        commitActivity: repoDetails.commitActivity,
         updatedAt: repoDetails.updatedAt,
       };
 
