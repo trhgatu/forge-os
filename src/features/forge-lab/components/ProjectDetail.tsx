@@ -309,7 +309,7 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
                       </div>
                     </div>
                     <div className="p-3 rounded-lg bg-white/5 border border-white/5">
-                      <div className="text-[9px] text-gray-500 uppercase mb-1">Time Remaing</div>
+                      <div className="text-[9px] text-gray-500 uppercase mb-1">Time Remaining</div>
                       <div className="text-sm text-white font-mono flex items-center gap-1">
                         <Clock size={12} /> 14 Days
                       </div>

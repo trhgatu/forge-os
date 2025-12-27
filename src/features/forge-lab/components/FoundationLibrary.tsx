@@ -16,6 +16,16 @@ export const FoundationLibrary: React.FC<FoundationLibraryProps> = ({
   activeFoundation,
   setActiveFoundation,
 }) => {
+  const [searchTerm, setSearchTerm] = React.useState("");
+
+  const filteredFoundations = React.useMemo(() => {
+    return foundations.filter(
+      (doc) =>
+        doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (doc.description || "").toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [foundations, searchTerm]);
+
   if (activeFoundation) {
     return (
       <FoundationDetail foundation={activeFoundation} onBack={() => setActiveFoundation(null)} />
@@ -37,6 +47,8 @@ export const FoundationLibrary: React.FC<FoundationLibraryProps> = ({
             <input
               type="text"
               placeholder="Search foundations..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="bg-white/5 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-sm text-white focus:outline-none focus:border-white/20 w-full md:w-64 transition-colors"
             />
           </div>
@@ -72,60 +84,64 @@ export const FoundationLibrary: React.FC<FoundationLibraryProps> = ({
 
         {/* Content Grid */}
         <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-4">
-          {foundations.map((doc) => (
-            <GlassCard
-              key={doc.id}
-              className="group hover:border-white/20 cursor-pointer flex flex-col"
-              noPadding
-              onClick={() => setActiveFoundation(doc)}
-            >
-              <div className="p-5 flex-1">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-fuchsia-500/10 text-fuchsia-400 group-hover:text-fuchsia-300 transition-colors">
-                      <Book size={18} />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-white group-hover:text-fuchsia-300 transition-colors line-clamp-1">
-                        {doc.title}
-                      </h3>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] text-gray-500 font-mono uppercase">
-                          {doc.type}
-                        </span>
-                        {doc.status && (
-                          <span
-                            className={cn(
-                              "w-1.5 h-1.5 rounded-full",
-                              doc.status === "stable" ? "bg-emerald-500" : "bg-amber-500"
-                            )}
-                          />
-                        )}
+          {filteredFoundations.length > 0 ? (
+            filteredFoundations.map((doc) => (
+              <GlassCard
+                key={doc.id}
+                className="group hover:border-white/20 cursor-pointer flex flex-col"
+                noPadding
+                onClick={() => setActiveFoundation(doc)}
+              >
+                <div className="p-5 flex-1">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-lg bg-fuchsia-500/10 text-fuchsia-400 group-hover:text-fuchsia-300 transition-colors">
+                        <Book size={18} />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-white group-hover:text-fuchsia-300 transition-colors line-clamp-1">
+                          {doc.title}
+                        </h3>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] text-gray-500 font-mono uppercase">
+                            {doc.type}
+                          </span>
+                          {doc.status && (
+                            <span
+                              className={cn(
+                                "w-1.5 h-1.5 rounded-full",
+                                doc.status === "stable" ? "bg-emerald-500" : "bg-amber-500"
+                              )}
+                            />
+                          )}
+                        </div>
                       </div>
                     </div>
+                    <Bookmark
+                      size={16}
+                      className="text-gray-600 hover:text-white transition-colors"
+                    />
                   </div>
-                  <Bookmark
-                    size={16}
-                    className="text-gray-600 hover:text-white transition-colors"
-                  />
+
+                  <p className="text-sm text-gray-400 line-clamp-2 mb-4 h-10">{doc.description}</p>
+
+                  <div className="flex items-center justify-between pt-4 border-t border-white/5 mt-auto">
+                    <span className="text-xs text-gray-500 flex items-center gap-1">
+                      {doc.metrics?.usageCount && <Users size={10} />}
+                      {doc.updatedAt.toLocaleDateString()}
+                    </span>
+                    <button className="flex items-center gap-1 text-xs text-fuchsia-400 hover:text-white transition-colors">
+                      Read <ArrowRight size={12} />
+                    </button>
+                  </div>
                 </div>
-
-                <p className="text-sm text-gray-400 line-clamp-2 mb-4 h-10">{doc.description}</p>
-
-                <div className="flex items-center justify-between pt-4 border-t border-white/5 mt-auto">
-                  <span className="text-xs text-gray-500 flex items-center gap-1">
-                    {doc.metrics?.usageCount && <Users size={10} />}
-                    {doc.updatedAt.toLocaleDateString()}
-                  </span>
-                  <button className="flex items-center gap-1 text-xs text-fuchsia-400 hover:text-white transition-colors">
-                    Read <ArrowRight size={12} />
-                  </button>
-                </div>
-              </div>
-            </GlassCard>
-          ))}
-
-          {/* Add New Placeholders */}
+              </GlassCard>
+            ))
+          ) : (
+            <div className="col-span-2 text-center py-12 text-gray-500">
+              No foundations found matching &quot;{searchTerm}&quot;
+            </div>
+          )}
           <button className="border border-dashed border-white/10 rounded-2xl flex items-center justify-center p-6 hover:bg-white/5 hover:border-white/20 transition-all text-gray-500 hover:text-white group gap-2 min-h-[180px]">
             <Plus size={20} />
             <span className="font-medium">Add New Foundation</span>
