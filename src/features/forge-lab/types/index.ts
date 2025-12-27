@@ -8,6 +8,18 @@ export interface HybridStats {
   language?: string;
   languages?: Record<string, number>;
   commitActivity?: Array<{ date: string; count: number }>;
+  recentCommits?: Array<{
+    date: string;
+    message: string;
+    author: string;
+    url: string;
+  }>;
+  contributors?: Array<{
+    login: string;
+    avatar_url: string;
+    contributions: number;
+    html_url: string;
+  }>;
   lastCommit?: Date;
   health?: number; // 0-100
 }

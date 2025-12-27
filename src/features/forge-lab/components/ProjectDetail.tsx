@@ -22,6 +22,7 @@ import { cn } from "@/shared/lib/utils";
 import { forgeApi } from "../api";
 import { Loader2, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
+import Image from "next/image";
 
 interface ProjectDetailProps {
   project: Project;
@@ -521,23 +522,41 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
                     <History size={16} /> Recent Updates
                   </h3>
                   <div className="space-y-4">
-                    {[1, 2, 3].map((_, i) => (
-                      <div key={i} className="flex gap-3">
-                        <div className="mt-1">
-                          <div className="w-2 h-2 rounded-full bg-forge-cyan shadow-[0_0_8px_rgba(6,182,212,0.8)]" />
-                          <div className="w-px h-full bg-white/5 mx-auto mt-1" />
-                        </div>
-                        <div className="pb-4">
-                          <div className="text-sm text-gray-200">
-                            Merged PR <span className="text-forge-cyan font-mono">#342</span>: Fix
-                            login race condition
+                    {project.githubStats?.recentCommits ? (
+                      project.githubStats.recentCommits.slice(0, 5).map((commit, i) => (
+                        <div key={i} className="flex gap-3 h-full group">
+                          <div className="mt-1 flex flex-col items-center">
+                            <div className="w-2 h-2 rounded-full bg-forge-cyan shadow-[0_0_8px_rgba(6,182,212,0.8)]" />
+                            <div className="w-px h-full bg-white/5 mt-1 group-last:hidden" />
                           </div>
-                          <div className="text-[10px] text-gray-500 mt-1">
-                            2 hours ago by @trungadmin
+                          <div className="pb-4 w-full">
+                            <a
+                              href={commit.url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-xs text-gray-300 hover:text-forge-cyan transition-colors line-clamp-2 font-medium mb-1"
+                              title={commit.message}
+                            >
+                              {commit.message}
+                            </a>
+                            <div className="flex items-center gap-2 text-[10px] text-gray-500">
+                              <span className="font-mono text-xs text-emerald-500/80">
+                                {new Date(commit.date).toLocaleDateString(undefined, {
+                                  month: "short",
+                                  day: "numeric",
+                                })}
+                              </span>
+                              <span>by</span>
+                              <span className="text-gray-400 font-medium">{commit.author}</span>
+                            </div>
                           </div>
                         </div>
+                      ))
+                    ) : (
+                      <div className="text-xs text-gray-500 italic py-4 text-center">
+                        No recent activity fetched.
                       </div>
-                    ))}
+                    )}
                   </div>
                 </GlassCard>
 
@@ -547,20 +566,52 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
                     <Users size={16} /> Top Contributors
                   </h3>
                   <div className="space-y-3">
-                    {project.team?.slice(0, 4).map((member, i) => (
-                      <div key={i} className="flex items-center justify-between group">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-gray-400 border border-white/5 group-hover:border-white/20 transition-colors">
-                            {member.name[0]}
+                    {project.githubStats?.contributors &&
+                    project.githubStats.contributors.length > 0 ? (
+                      project.githubStats.contributors.slice(0, 4).map((contributor, i) => (
+                        <a
+                          key={i}
+                          href={contributor.html_url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="flex items-center justify-between group p-1 -mx-1 rounded-lg hover:bg-white/5 transition-colors"
+                        >
+                          <div className="flex items-center gap-3">
+                            {contributor.avatar_url ? (
+                              <Image
+                                src={contributor.avatar_url}
+                                alt={contributor.login}
+                                width={32}
+                                height={32}
+                                className="w-8 h-8 rounded-full border border-white/5 group-hover:border-white/20 transition-colors"
+                              />
+                            ) : (
+                              <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-gray-400 border border-white/5 group-hover:border-white/20 transition-colors">
+                                {contributor.login[0].toUpperCase()}
+                              </div>
+                            )}
+
+                            <div>
+                              <div className="text-sm text-gray-300 font-medium group-hover:text-forge-cyan transition-colors">
+                                {contributor.login}
+                              </div>
+                              <div className="text-[10px] text-gray-500">
+                                {contributor.contributions} commits
+                              </div>
+                            </div>
                           </div>
-                          <div>
-                            <div className="text-sm text-gray-300 font-medium">{member.name}</div>
-                            <div className="text-[10px] text-gray-500">32 commits</div>
-                          </div>
-                        </div>
-                        <div className="text-xs font-mono text-emerald-400">+1245</div>
+                          {i === 0 && (
+                            <div className="text-[10px] font-mono text-yellow-400/80 bg-yellow-400/10 px-1.5 py-0.5 rounded border border-yellow-400/20">
+                              #1
+                            </div>
+                          )}
+                        </a>
+                      ))
+                    ) : (
+                      <div className="text-xs text-gray-500 italic py-4 text-center">
+                        No contributors fetched.
                       </div>
-                    ))}
+                    )}
                   </div>
                 </GlassCard>
               </div>
