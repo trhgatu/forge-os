@@ -433,12 +433,35 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
               <GlassCard className="relative overflow-hidden">
                 <div className="relative z-10">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                      <Activity size={16} /> Activity Heatmap
-                    </h3>
+                    <div>
+                      <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                        <Activity size={16} /> Activity Heatmap
+                      </h3>
+                      {project.githubStats && (
+                        <div className="text-[10px] text-gray-500 mt-1 font-mono">
+                          {(() => {
+                            const activityCount =
+                              project.githubStats.commitActivity?.reduce(
+                                (acc, curr) => acc + curr.count,
+                                0
+                              ) || 0;
+                            const recentCount = project.githubStats.recentCommits?.length || 0;
+                            const displayCount = activityCount > 0 ? activityCount : recentCount;
+                            const isEstimate = activityCount === 0 && recentCount > 0;
+
+                            return (
+                              <>
+                                {displayCount}
+                                {isEstimate ? "+" : ""} commits{" "}
+                                {isEstimate ? "recently" : "in the last year"}
+                              </>
+                            );
+                          })()}
+                        </div>
+                      )}
+                    </div>
                     <select className="bg-black/20 border border-white/10 rounded-lg text-[10px] text-gray-400 px-2 py-1 outline-none">
-                      <option>Last 6 Months</option>
-                      <option>All Time</option>
+                      <option>Last 1 Year</option>
                     </select>
                   </div>
 
@@ -447,9 +470,22 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
                     {(() => {
                       // Prepare Data Map
                       const commitMap = new Map<string, number>();
-                      project.githubStats?.commitActivity?.forEach((c) => {
-                        commitMap.set(new Date(c.date).toDateString(), c.count);
-                      });
+
+                      // 1. Try to load from official stats
+                      if (
+                        project.githubStats?.commitActivity &&
+                        project.githubStats.commitActivity.length > 0
+                      ) {
+                        project.githubStats.commitActivity.forEach((c) => {
+                          commitMap.set(new Date(c.date).toDateString(), c.count);
+                        });
+                      } else if (project.githubStats?.recentCommits) {
+                        // 2. Fallback: Reconstruct from recentCommits if official stats are empty (e.g. 202 status)
+                        project.githubStats.recentCommits.forEach((c) => {
+                          const dateStr = new Date(c.date).toDateString();
+                          commitMap.set(dateStr, (commitMap.get(dateStr) || 0) + 1);
+                        });
+                      }
 
                       // Generate last 28 weeks
                       const today = new Date();
