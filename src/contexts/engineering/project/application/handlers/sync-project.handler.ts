@@ -4,6 +4,7 @@ import { SyncProjectCommand } from '../commands/sync-project.command';
 import { ProjectRepository } from '../ports/project.repository';
 import { GithubRepository } from '../ports/github.repository';
 import { ProjectLink } from '../../domain/project.interfaces';
+import { Project } from '../../domain/project.entity';
 
 @CommandHandler(SyncProjectCommand)
 export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
@@ -16,7 +17,7 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
     private readonly githubRepository: GithubRepository,
   ) {}
 
-  async execute(command: SyncProjectCommand): Promise<void> {
+  async execute(command: SyncProjectCommand): Promise<Project> {
     const { id } = command;
     const project = await this.projectRepository.findById(id);
 
@@ -53,7 +54,8 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
 
     if (!owner || !repo) {
       this.logger.warn(`Project ${id} has no GitHub info to sync`);
-      return;
+      // Since we promise to return a Project, we should return it even if unchanged/warning
+      return project;
     }
 
     this.logger.log(`Syncing project ${id} with GitHub ${owner}/${repo}`);
@@ -64,8 +66,6 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
         repo,
       );
 
-      // ... (rest of success logic)
-
       // Update Project Entity
       project.githubStats = {
         stars: repoDetails.stars,
@@ -74,6 +74,8 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
         language: repoDetails.language,
         languages: repoDetails.languages,
         commitActivity: repoDetails.commitActivity,
+        recentCommits: repoDetails.recentCommits,
+        contributors: repoDetails.contributors,
         updatedAt: repoDetails.updatedAt,
       };
 
@@ -88,6 +90,7 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
       // Save
       await this.projectRepository.update(project);
       this.logger.log(`Project ${id} synced successfully`);
+      return project;
     } catch (error: any) {
       this.logger.error(`Failed to sync project ${id}`, error);
 

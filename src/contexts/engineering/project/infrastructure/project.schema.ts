@@ -23,6 +23,22 @@ class HybridStats {
   @Prop({ type: [Object] })
   commitActivity?: { date: string; count: number }[];
 
+  @Prop({ type: [Object] })
+  recentCommits?: {
+    date: Date;
+    message: string;
+    author: string;
+    url: string;
+  }[];
+
+  @Prop({ type: [Object] })
+  contributors?: {
+    login: string;
+    avatar_url: string;
+    contributions: number;
+    html_url: string;
+  }[];
+
   @Prop()
   lastCommit?: Date;
 

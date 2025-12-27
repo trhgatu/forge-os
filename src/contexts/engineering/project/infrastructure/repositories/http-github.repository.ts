@@ -66,6 +66,9 @@ export class HttpGithubRepository implements GithubRepository {
         );
       }
 
+      const recentCommits = await this.getCommitActivity(owner, repo);
+      const contributors = await this.getContributors(owner, repo);
+
       return {
         stars: data.stargazers_count,
         forks: data.forks_count,
@@ -73,6 +76,8 @@ export class HttpGithubRepository implements GithubRepository {
         language: data.language,
         languages: languages as Record<string, number>,
         commitActivity,
+        recentCommits,
+        contributors,
         updatedAt: new Date(data.updated_at),
         description: data.description,
       };
@@ -105,6 +110,38 @@ export class HttpGithubRepository implements GithubRepository {
     } catch (error: any) {
       this.logger.warn(
         `Could not fetch commits for ${owner}/${repo}: ${error.message}`,
+      );
+      return [];
+    }
+  }
+
+  async getContributors(
+    owner: string,
+    repo: string,
+  ): Promise<
+    {
+      login: string;
+      avatar_url: string;
+      contributions: number;
+      html_url: string;
+    }[]
+  > {
+    try {
+      const { data } = await this.octokit.repos.listContributors({
+        owner,
+        repo,
+        per_page: 10,
+      });
+
+      return data.map((c) => ({
+        login: c.login || 'Unknown',
+        avatar_url: c.avatar_url || '',
+        contributions: c.contributions,
+        html_url: c.html_url || '',
+      }));
+    } catch (error: any) {
+      this.logger.warn(
+        `Could not fetch contributors for ${owner}/${repo}: ${error.message}`,
       );
       return [];
     }

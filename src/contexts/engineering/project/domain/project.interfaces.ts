@@ -4,7 +4,8 @@ export interface GithubRepoDetails {
   issues: number;
   language: string | null;
   languages: Record<string, number>;
-  commitActivity: { date: string; count: number }[];
+  commitActivity: { date: string; count: number }[]; // For Heatmap
+  recentCommits: GithubCommitActivity[]; // For Activity Feed
   updatedAt: Date;
   description: string | null;
 }
