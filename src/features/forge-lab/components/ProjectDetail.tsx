@@ -108,10 +108,9 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
   const handleSync = async () => {
     setIsSyncing(true);
     try {
-      await forgeApi.syncProject(project.id);
+      const updated = await forgeApi.syncProject(project.id);
       toast.success("Sync started");
-      // Refresh data
-      const updated = await forgeApi.getProject(project.id);
+
       if (updated) {
         setProject({
           ...updated,

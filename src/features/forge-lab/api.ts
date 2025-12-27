@@ -8,5 +8,6 @@ export const forgeApi = {
   createProject: (data: Partial<Project>) => apiClient.post<void>("/engineering/projects", data),
   updateProject: (id: string, data: Partial<Project>) =>
     apiClient.patch<Project>(`/engineering/projects/${id}`, data).then((res) => res.data),
-  syncProject: (id: string) => apiClient.post<void>(`/engineering/projects/${id}/sync`),
+  syncProject: (id: string) =>
+    apiClient.post<Project>(`/engineering/projects/${id}/sync`).then((res) => res.data),
 };
