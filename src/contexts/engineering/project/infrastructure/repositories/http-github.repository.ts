@@ -3,8 +3,10 @@ import { ConfigService } from '@nestjs/config';
 import type { Octokit } from '@octokit/rest';
 import { GithubRepository } from '../../application/ports/github.repository';
 import {
-  GithubRepoDetails,
   GithubCommitActivity,
+  GithubIssue,
+  GithubPullRequest,
+  GithubRepoDetails,
 } from '../../domain/project.interfaces';
 
 @Injectable()
@@ -75,12 +77,89 @@ export class HttpGithubRepository implements GithubRepository, OnModuleInit {
         }
       } catch (e: any) {
         this.logger.warn(
-          `Failed to fetch commit activity for ${owner}/${repo}: ${e.message}`,
+          `Failed to fetch commit activity for ${owner} / ${repo}: ${e.message} `,
         );
       }
 
       const recentCommits = await this.getCommitActivity(owner, repo);
       const contributors = await this.getContributors(owner, repo);
+
+      // Fetch Issues (open)
+      let issuesList: GithubIssue[] = [];
+      try {
+        const { data: issuesData } = await this.octokit.issues.listForRepo({
+          owner,
+          repo,
+          state: 'open',
+          per_page: 20,
+        });
+        // Filter out PRs (GitHub API returns PRs as issues)
+        issuesList = issuesData
+          .filter((issue) => !issue.pull_request)
+          .map((issue) => ({
+            id: issue.id,
+            number: issue.number,
+            title: issue.title,
+            state: issue.state,
+            html_url: issue.html_url,
+            labels: issue.labels.map((l) => {
+              if (typeof l === 'string') {
+                return { name: l, color: 'bdd2e1' };
+              }
+              return {
+                name: l.name || 'unknown',
+                color: l.color || 'bdd2e1',
+              };
+            }),
+            assignee: issue.assignee
+              ? {
+                  login: issue.assignee.login,
+                  avatar_url: issue.assignee.avatar_url,
+                }
+              : null,
+            created_at: issue.created_at,
+          }));
+      } catch (error) {
+        this.logger.warn(`Failed to fetch issues for ${owner}/${repo}`, error);
+      }
+
+      // Fetch Pull Requests (open)
+      let pullRequests: GithubPullRequest[] = [];
+      try {
+        const { data: prsData } = await this.octokit.pulls.list({
+          owner,
+          repo,
+          state: 'open',
+          per_page: 10,
+        });
+        pullRequests = prsData.map((pr: any) => ({
+          id: pr.id,
+          number: pr.number,
+          title: pr.title,
+          state: pr.state,
+          html_url: pr.html_url,
+          user: {
+            login: pr.user?.login || 'unknown',
+            avatar_url: pr.user?.avatar_url || '',
+          },
+          created_at: pr.created_at,
+        }));
+      } catch (error) {
+        this.logger.warn(`Failed to fetch PRs for ${owner}/${repo}`, error);
+      }
+
+      let readme: string | null = null;
+      try {
+        const { data: readmeData } = await this.octokit.repos.getReadme({
+          owner,
+          repo,
+        });
+        if (readmeData.content) {
+          readme = Buffer.from(readmeData.content, 'base64').toString('utf-8');
+        }
+      } catch (error) {
+        this.logger.warn(`No README found for ${owner}/${repo}`, error);
+      }
 
       return {
         stars: data.stargazers_count,
@@ -93,10 +172,13 @@ export class HttpGithubRepository implements GithubRepository, OnModuleInit {
         contributors,
         updatedAt: new Date(data.updated_at),
         description: data.description,
+        readme,
+        issuesList,
+        pullRequests,
       };
     } catch (error) {
       this.logger.error(
-        `Failed to fetch repo details for ${owner}/${repo}`,
+        `Failed to fetch repo details for ${owner} / ${repo}`,
         error,
       );
       throw error;
@@ -122,7 +204,7 @@ export class HttpGithubRepository implements GithubRepository, OnModuleInit {
       }));
     } catch (error: any) {
       this.logger.warn(
-        `Could not fetch commits for ${owner}/${repo}: ${error.message}`,
+        `Could not fetch commits for ${owner} / ${repo}: ${error.message} `,
       );
       return [];
     }
@@ -154,7 +236,7 @@ export class HttpGithubRepository implements GithubRepository, OnModuleInit {
       }));
     } catch (error: any) {
       this.logger.warn(
-        `Could not fetch contributors for ${owner}/${repo}: ${error.message}`,
+        `Could not fetch contributors for ${owner} / ${repo}: ${error.message} `,
       );
       return [];
     }

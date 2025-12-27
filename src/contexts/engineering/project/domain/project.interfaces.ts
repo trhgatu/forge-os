@@ -16,6 +16,30 @@ export interface GithubRepoDetails {
   contributors: GithubContributor[];
   updatedAt: Date;
   description: string | null;
+  readme: string | null;
+  issuesList: GithubIssue[];
+  pullRequests: GithubPullRequest[];
+}
+
+export interface GithubIssue {
+  id: number;
+  number: number;
+  title: string;
+  state: string;
+  html_url: string;
+  labels: { name: string; color: string }[];
+  assignee: { login: string; avatar_url: string } | null;
+  created_at: string;
+}
+
+export interface GithubPullRequest {
+  id: number;
+  number: number;
+  title: string;
+  state: string;
+  html_url: string;
+  user: { login: string; avatar_url: string };
+  created_at: string;
 }
 
 export interface GithubCommitActivity {

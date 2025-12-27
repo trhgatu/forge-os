@@ -44,6 +44,35 @@ class HybridStats {
 
   @Prop()
   health?: number;
+
+  @Prop()
+  readme?: string;
+
+  @Prop()
+  updatedAt?: Date;
+
+  @Prop({ type: [Object] })
+  issuesList?: {
+    id: number;
+    number: number;
+    title: string;
+    state: string;
+    html_url: string;
+    labels: { name: string; color: string }[];
+    assignee: { login: string; avatar_url: string } | null;
+    created_at: string;
+  }[];
+
+  @Prop({ type: [Object] })
+  pullRequests?: {
+    id: number;
+    number: number;
+    title: string;
+    state: string;
+    html_url: string;
+    user: { login: string; avatar_url: string };
+    created_at: string;
+  }[];
 }
 
 @Schema()
