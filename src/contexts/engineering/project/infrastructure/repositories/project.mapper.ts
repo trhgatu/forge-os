@@ -4,6 +4,7 @@ import {
   GithubRepoDetails,
   ProjectTaskBoard,
   ProjectLink,
+  ProjectLog,
 } from '../../domain/project.interfaces';
 
 export class ProjectMapper {
@@ -20,6 +21,7 @@ export class ProjectMapper {
       progress: number;
       taskBoard: ProjectTaskBoard;
       links: ProjectLink[];
+      logs: ProjectLog[];
       createdAt: Date;
       updatedAt: Date;
     };
@@ -35,6 +37,7 @@ export class ProjectMapper {
       doc.progress,
       doc.taskBoard,
       doc.links,
+      doc.logs,
       doc.createdAt,
       doc.updatedAt,
     );
@@ -52,6 +55,7 @@ export class ProjectMapper {
       progress: entity.progress,
       taskBoard: entity.taskBoard,
       links: entity.links,
+      logs: entity.logs,
     } as unknown as Partial<ProjectDocument>;
   }
 }

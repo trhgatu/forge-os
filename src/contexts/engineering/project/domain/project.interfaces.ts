@@ -88,3 +88,9 @@ export interface ProjectLink {
   url: string;
   icon?: 'github' | 'figma' | 'doc' | 'link';
 }
+
+export interface ProjectLog {
+  date: Date;
+  type: 'update' | 'alert' | 'info';
+  content: string;
+}

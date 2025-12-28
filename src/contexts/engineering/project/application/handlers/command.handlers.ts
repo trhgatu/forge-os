@@ -27,6 +27,7 @@ export class CreateProjectHandler
       0,
       { todo: [], inProgress: [], done: [] },
       [],
+      [], // logs
       new Date(),
       new Date(),
     );

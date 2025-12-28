@@ -90,6 +90,17 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
         syncedAt: new Date(),
       };
 
+      // Add System Log
+      const newCommitCount = repoDetails.recentCommits?.length || 0;
+      project.logs = [
+        {
+          date: new Date(),
+          type: 'update',
+          content: `Synced with GitHub. Fetched ${newCommitCount} new commits and updated stats.`,
+        },
+        ...(project.logs || []),
+      ];
+
       // Save
       await this.projectRepository.update(project);
       this.logger.log(`Project ${id} synced successfully`);

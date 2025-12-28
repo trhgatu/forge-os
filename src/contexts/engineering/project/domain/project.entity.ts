@@ -3,6 +3,7 @@ import {
   ProjectLink,
   ProjectTaskBoard,
   GithubRepoDetails,
+  ProjectLog,
 } from './project.interfaces';
 
 export class Project extends AggregateRoot {
@@ -18,6 +19,7 @@ export class Project extends AggregateRoot {
     public progress: number,
     public taskBoard: ProjectTaskBoard,
     public links: ProjectLink[],
+    public logs: ProjectLog[],
     public createdAt: Date,
     public updatedAt: Date,
   ) {
