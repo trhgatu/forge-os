@@ -8,15 +8,23 @@ interface ProjectForgeProps {
   projects: Project[];
   activeProject: Project | null;
   setActiveProject: (project: Project | null) => void;
+  githubUsername?: string;
 }
 
 export const ProjectForge: React.FC<ProjectForgeProps> = ({
   projects,
   activeProject,
   setActiveProject,
+  githubUsername,
 }) => {
   if (activeProject) {
-    return <ProjectDetail project={activeProject} onBack={() => setActiveProject(null)} />;
+    return (
+      <ProjectDetail
+        project={activeProject}
+        onBack={() => setActiveProject(null)}
+        githubUsername={githubUsername}
+      />
+    );
   }
 
   return (

@@ -14,6 +14,10 @@ export const forgeApi = {
     apiClient
       .get<ContributionStats>(`/engineering/projects/github/stats/${username}`)
       .then((res) => res.data),
+  getGithubRepos: (username: string) =>
+    apiClient
+      .get<import("./types").GithubRepo[]>(`/engineering/projects/github/repos/${username}`)
+      .then((res) => res.data),
   connectAccount: (data: {
     provider: string;
     identifier: string;

@@ -15,9 +15,10 @@ import {
   Clock,
   FileText,
 } from "lucide-react";
-import { Project } from "../types";
+import { Project, GithubRepo } from "../types";
 import { GlassCard } from "./GlassCard";
 import { cn } from "@/shared/lib/utils";
+import { RepoPicker } from "./RepoPicker";
 
 import { forgeApi } from "../api";
 import { Loader2, RefreshCw } from "lucide-react";
@@ -29,6 +30,7 @@ import Image from "next/image";
 interface ProjectDetailProps {
   project: Project;
   onBack: () => void;
+  githubUsername?: string;
 }
 
 type Tab = "overview" | "tasks" | "resources" | "logs" | "readme";
@@ -36,14 +38,30 @@ type Tab = "overview" | "tasks" | "resources" | "logs" | "readme";
 export const ProjectDetail: React.FC<ProjectDetailProps> = ({
   project: initialProject,
   onBack,
+  githubUsername,
 }) => {
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [project, setProject] = useState<Project>(initialProject);
   const [isSyncing, setIsSyncing] = useState(false);
   const [showResourceModal, setShowResourceModal] = useState(false);
+  const [showRepoPicker, setShowRepoPicker] = useState(false);
   const [newLink, setNewLink] = useState({ title: "", url: "" });
   const [editingResourceIndex, setEditingResourceIndex] = useState<number | null>(null);
   const [taskViewMode, setTaskViewMode] = useState<"board" | "issues">("board");
+
+  const handleRepoSelect = (repo: GithubRepo) => {
+    setNewLink({
+      title: repo.full_name,
+      url: repo.html_url,
+    });
+    setShowRepoPicker(false);
+    // Directly open resource modal to confirm or just save?
+    // Let's set the link state and let the user click save in the modal,
+    // OR if the modal handles input change, we just updated the state it uses.
+    // If the modal is already open, this will populate the fields.
+    // If we want to open the modal populated:
+    // setShowResourceModal(true); // Ensure modal is open
+  };
 
   const handleSaveResource = async () => {
     try {
@@ -113,7 +131,6 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
     setIsSyncing(true);
     try {
       const updated = await forgeApi.syncProject(project.id);
-      toast.success("Sync started");
 
       if (updated) {
         setProject({
@@ -995,6 +1012,16 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
                 {editingResourceIndex !== null ? "Edit Resource" : "Add Resource Link"}
               </h3>
               <div className="space-y-3">
+                <div className="flex justify-end -mb-2">
+                  <button
+                    onClick={() => setShowRepoPicker(true)}
+                    className="text-xs text-forge-cyan hover:underline flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={!githubUsername}
+                    title={!githubUsername ? "Connect GitHub to import" : "Import repository"}
+                  >
+                    <Github size={12} /> Import from GitHub
+                  </button>
+                </div>
                 <div>
                   <label className="text-xs text-gray-400 uppercase font-bold block mb-1">
                     Title
@@ -1056,6 +1083,12 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
           </div>
         )}
       </div>
+      <RepoPicker
+        isOpen={showRepoPicker}
+        onClose={() => setShowRepoPicker(false)}
+        onSelect={handleRepoSelect}
+        username={githubUsername}
+      />
     </div>
   );
 };

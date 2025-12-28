@@ -5,6 +5,7 @@ import { LayoutDashboard, Layers, Book, Network, Plus } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 import { ForgeTab, Project, Foundation, ResearchTrail } from "../types";
 import { forgeApi } from "../api";
+import { useAuthStore } from "@/shared/store/authStore";
 
 // Components
 import { LabDashboard } from "./LabDashboard";
@@ -112,6 +113,22 @@ export const ForgeLab: React.FC = () => {
     }
   }, [activeTab]);
 
+  // --- Identity State ---
+  const authUser = useAuthStore((state) => state.user);
+  const [githubUsername, setGithubUsername] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (authUser?.id) {
+      forgeApi
+        .getUser(authUser.id)
+        .then((profile) => {
+          const gh = profile.connections?.find((c) => c.provider === "github");
+          if (gh) setGithubUsername(gh.identifier);
+        })
+        .catch((err) => console.error("Failed to load user profile", err));
+    }
+  }, [authUser?.id]);
+
   // Constants
   const NAV_ITEMS = [
     { id: "dashboard", label: "Overview", icon: LayoutDashboard },
@@ -146,6 +163,7 @@ export const ForgeLab: React.FC = () => {
               projects={projects}
               activeProject={activeProject}
               setActiveProject={setActiveProject}
+              githubUsername={githubUsername}
             />
           )}
           {activeTab === "foundations" && (
