@@ -14,15 +14,16 @@ export const ConnectGithubWidget: React.FC<ConnectGithubProps> = ({ onConnected 
   const [error, setError] = useState<string | null>(null);
 
   const handleConnect = async () => {
-    if (!username) return;
+    const trimmedUsername = username.trim();
+    if (!trimmedUsername) return;
     setLoading(true);
     setError(null);
     try {
       await forgeApi.connectAccount({
         provider: "github",
-        identifier: username,
+        identifier: trimmedUsername,
       });
-      onConnected(username);
+      onConnected(trimmedUsername);
     } catch (err) {
       console.error(err);
       setError("Failed to connect GitHub. Please try again.");

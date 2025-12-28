@@ -46,32 +46,26 @@ export const LabDashboard: React.FC<LabDashboardProps> = ({
   const authUser = useAuthStore((state) => state.user);
 
   React.useEffect(() => {
-    console.log("LabDashboard: Auth User Identity:", authUser);
     const initIdentity = async () => {
       // If no user is logged in (or yet to hydrate), we can't fetch profile.
       // But we should stop loading to avoid "Eternal Skeleton" if user is null.
       if (!authUser?.id) {
-        console.warn("LabDashboard: No Auth User ID found. Stopping load.");
         setLoadingStats(false);
         return;
       }
 
       try {
-        console.log("LabDashboard: Fetching profile for", authUser.id);
         // 1. Fetch full profile to check connections
         const profile = await forgeApi.getUser(authUser.id);
-        console.log("LabDashboard: Profile loaded", profile);
         const githubConnection = profile.connections?.find(
           (c: UserConnection) => c.provider === "github"
         );
 
         if (githubConnection) {
-          console.log("LabDashboard: Found GitHub connection", githubConnection);
           const username = githubConnection.identifier;
           const stats = await forgeApi.getGithubStats(username);
           setContributionStats(stats);
         } else {
-          console.log("LabDashboard: No GitHub connection found. Show Connect Widget.");
           // Force widget view
           setContributionStats(null);
         }
@@ -84,7 +78,6 @@ export const LabDashboard: React.FC<LabDashboardProps> = ({
     };
 
     initIdentity();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authUser?.id]);
 
   return (
@@ -307,6 +300,7 @@ export const LabDashboard: React.FC<LabDashboardProps> = ({
                     forgeApi
                       .getGithubStats(username)
                       .then(setContributionStats)
+                      .catch((err) => console.error("Failed to load freshly connected stats", err))
                       .finally(() => setLoadingStats(false));
                   }}
                 />
