@@ -1,3 +1,14 @@
+export interface GithubRepo {
+  id: number;
+  name: string;
+  full_name: string;
+  description: string | null;
+  html_url: string;
+  stars: number;
+  language: string | null;
+  updated_at: string;
+}
+
 export interface GithubContributor {
   login: string;
   avatar_url: string;

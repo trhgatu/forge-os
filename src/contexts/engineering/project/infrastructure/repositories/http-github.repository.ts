@@ -7,6 +7,7 @@ import {
   GithubContributionStats,
   GithubIssue,
   GithubPullRequest,
+  GithubRepo,
   GithubRepoDetails,
 } from '../../domain/project.interfaces';
 
@@ -303,6 +304,32 @@ export class HttpGithubRepository implements GithubRepository, OnModuleInit {
         totalContributions: 0,
         weeks: [],
       };
+    }
+  }
+
+  async getUserRepos(username: string): Promise<GithubRepo[]> {
+    try {
+      const { data } = await this.octokit.repos.listForUser({
+        username,
+        sort: 'updated',
+        per_page: 50,
+      });
+
+      return data.map((repo) => ({
+        id: repo.id,
+        name: repo.name,
+        full_name: repo.full_name,
+        description: repo.description,
+        html_url: repo.html_url,
+        stars: repo.stargazers_count || 0,
+        language: repo.language || null,
+        updated_at: repo.updated_at || new Date().toISOString(),
+      }));
+    } catch (error: any) {
+      this.logger.warn(
+        `Failed to fetch repos for user ${username}: ${error.message}`,
+      );
+      return [];
     }
   }
 }

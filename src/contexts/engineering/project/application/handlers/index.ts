@@ -4,6 +4,7 @@ import { SyncProjectHandler } from './sync-project.handler';
 import { UpdateProjectHandler } from './update-project.handler';
 
 import { GetGithubStatsHandler } from './get-github-stats.handler';
+import { GetGithubReposHandler } from './get-github-repos.handler';
 
 export const CommandHandlers = [
   CreateProjectHandler,
@@ -14,4 +15,5 @@ export const QueryHandlers = [
   GetProjectsHandler,
   GetProjectHandler,
   GetGithubStatsHandler,
+  GetGithubReposHandler,
 ];
