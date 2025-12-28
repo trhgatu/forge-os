@@ -20,6 +20,26 @@ export interface HybridStats {
     contributions: number;
     html_url: string;
   }>;
+  readme?: string; // Markdown content
+  issuesList?: {
+    id: number;
+    number: number;
+    title: string;
+    state: string;
+    html_url: string;
+    labels: { name: string; color: string }[];
+    assignee: { login: string; avatar_url: string } | null;
+    created_at: string;
+  }[];
+  pullRequests?: {
+    id: number;
+    number: number;
+    title: string;
+    state: string;
+    html_url: string;
+    user: { login: string; avatar_url: string };
+    created_at: string;
+  }[];
   lastCommit?: Date;
   health?: number; // 0-100
 }
@@ -89,6 +109,36 @@ export interface ResearchTrail {
   title: string;
   nodes: number;
   updatedAt: Date;
+}
+
+export interface ContributionStats {
+  totalContributions: number;
+  weeks: Array<{
+    contributionDays: Array<{
+      contributionCount: number;
+      date: string;
+      color: string;
+    }>;
+  }>;
+}
+
+export interface UserConnection {
+  provider: string;
+  identifier: string;
+  metadata?: Record<string, unknown>;
+  connectedAt?: Date;
+}
+
+export interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  role: {
+    id: string;
+    name: string;
+    permissions: string[];
+  };
+  connections: UserConnection[];
 }
 
 export interface ForgeLabContextType {
