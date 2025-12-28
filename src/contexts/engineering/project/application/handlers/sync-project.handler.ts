@@ -77,6 +77,9 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
         recentCommits: repoDetails.recentCommits,
         contributors: repoDetails.contributors,
         updatedAt: repoDetails.updatedAt,
+        readme: repoDetails.readme,
+        issuesList: repoDetails.issuesList,
+        pullRequests: repoDetails.pullRequests,
       };
 
       // Update metadata to ensure we have the owner/repo saved if we parsed it

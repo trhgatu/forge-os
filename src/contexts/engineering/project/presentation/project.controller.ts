@@ -4,6 +4,7 @@ import {
   GetProjectsQuery,
   GetProjectQuery,
 } from '../application/queries/get-projects.query';
+import { GetGithubStatsQuery } from '../application/queries/get-github-stats.query';
 import { CreateProjectCommand } from '../application/commands/create-project.command';
 import { SyncProjectCommand } from '../application/commands/sync-project.command';
 import { UpdateProjectCommand } from '../application/commands/update-project.command';
@@ -43,5 +44,10 @@ export class ProjectController {
   @Post(':id/sync')
   async sync(@Param('id') id: string) {
     return this.commandBus.execute(new SyncProjectCommand(id));
+  }
+
+  @Get('github/stats/:username')
+  async getGithubStats(@Param('username') username: string) {
+    return this.queryBus.execute(new GetGithubStatsQuery(username));
   }
 }

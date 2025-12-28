@@ -3,9 +3,15 @@ import { CreateProjectHandler } from './command.handlers';
 import { SyncProjectHandler } from './sync-project.handler';
 import { UpdateProjectHandler } from './update-project.handler';
 
+import { GetGithubStatsHandler } from './get-github-stats.handler';
+
 export const CommandHandlers = [
   CreateProjectHandler,
   SyncProjectHandler,
   UpdateProjectHandler,
 ];
-export const QueryHandlers = [GetProjectsHandler, GetProjectHandler];
+export const QueryHandlers = [
+  GetProjectsHandler,
+  GetProjectHandler,
+  GetGithubStatsHandler,
+];
