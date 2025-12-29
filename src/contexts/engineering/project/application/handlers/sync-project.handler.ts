@@ -96,7 +96,7 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
         {
           date: new Date(),
           type: 'update',
-          content: `Synced with GitHub. Fetched ${newCommitCount} new commits and updated stats.`,
+          content: `Synced with GitHub. Fetched ${newCommitCount} recent commits and updated stats.`,
         },
         ...(project.logs || []),
       ];
