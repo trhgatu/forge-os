@@ -49,7 +49,7 @@ export interface Project {
   title: string;
   description?: string;
   updatedAt: Date;
-  status: "active" | "archived" | "draft";
+  status: "active" | "archived" | "draft" | "completed";
   tags?: string[];
   // Hybrid Data
   isPinned?: boolean;

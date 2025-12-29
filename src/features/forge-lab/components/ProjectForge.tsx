@@ -9,6 +9,9 @@ interface ProjectForgeProps {
   activeProject: Project | null;
   setActiveProject: (project: Project | null) => void;
   githubUsername?: string;
+  onUpdateProject?: (id: string, data: Partial<Project>) => void;
+  onDeleteProject?: (id: string) => void;
+  onRequestCreate?: () => void;
 }
 
 export const ProjectForge: React.FC<ProjectForgeProps> = ({
@@ -16,6 +19,9 @@ export const ProjectForge: React.FC<ProjectForgeProps> = ({
   activeProject,
   setActiveProject,
   githubUsername,
+  onUpdateProject,
+  onDeleteProject,
+  onRequestCreate,
 }) => {
   if (activeProject) {
     return (
@@ -23,6 +29,8 @@ export const ProjectForge: React.FC<ProjectForgeProps> = ({
         project={activeProject}
         onBack={() => setActiveProject(null)}
         githubUsername={githubUsername}
+        onUpdate={onUpdateProject}
+        onDelete={onDeleteProject}
       />
     );
   }
@@ -50,7 +58,10 @@ export const ProjectForge: React.FC<ProjectForgeProps> = ({
           <button className="p-2 rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
             <Filter size={18} />
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-forge-cyan/10 border border-forge-cyan/20 text-forge-cyan hover:bg-forge-cyan/20 transition-colors font-medium text-sm">
+          <button
+            onClick={onRequestCreate}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-forge-cyan/10 border border-forge-cyan/20 text-forge-cyan hover:bg-forge-cyan/20 transition-colors font-medium text-sm"
+          >
             <Plus size={16} /> New Project
           </button>
         </div>
@@ -107,8 +118,10 @@ export const ProjectForge: React.FC<ProjectForgeProps> = ({
           </GlassCard>
         ))}
 
-        {/* Create New Card */}
-        <button className="group border border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center p-6 min-h-[250px] hover:bg-white/5 hover:border-white/20 transition-all">
+        <button
+          onClick={onRequestCreate}
+          className="group border border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center p-6 min-h-[250px] hover:bg-white/5 hover:border-white/20 transition-all"
+        >
           <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
             <Plus size={24} className="text-gray-500 group-hover:text-white" />
           </div>

@@ -14,11 +14,14 @@ import {
   Activity,
   Clock,
   FileText,
+  Settings,
+  Trash2,
 } from "lucide-react";
 import { Project, GithubRepo } from "../types";
 import { GlassCard } from "./GlassCard";
 import { cn } from "@/shared/lib/utils";
 import { RepoPicker } from "./RepoPicker";
+import { EditProjectModal, DeleteConfirmModal } from "./ProjectModals";
 
 import { forgeApi } from "../api";
 import { Loader2, RefreshCw } from "lucide-react";
@@ -31,6 +34,8 @@ interface ProjectDetailProps {
   project: Project;
   onBack: () => void;
   githubUsername?: string;
+  onUpdate?: (id: string, data: Partial<Project>) => void;
+  onDelete?: (id: string) => void;
 }
 
 type Tab = "overview" | "tasks" | "resources" | "logs" | "readme";
@@ -39,12 +44,16 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
   project: initialProject,
   onBack,
   githubUsername,
+  onUpdate,
+  onDelete,
 }) => {
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [project, setProject] = useState<Project>(initialProject);
   const [isSyncing, setIsSyncing] = useState(false);
   const [showResourceModal, setShowResourceModal] = useState(false);
   const [showRepoPicker, setShowRepoPicker] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [newLink, setNewLink] = useState({ title: "", url: "" });
   const [editingResourceIndex, setEditingResourceIndex] = useState<number | null>(null);
   const [taskViewMode, setTaskViewMode] = useState<"board" | "issues">("board");
@@ -150,6 +159,23 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
     }
   };
 
+  const handleUpdate = async (id: string, data: Partial<Project>) => {
+    if (onUpdate) {
+      await onUpdate(id, data);
+      setProject((prev) => ({ ...prev, ...data }));
+      setShowEditModal(false);
+      toast.success("Project updated");
+    }
+  };
+
+  const handleDelete = async () => {
+    if (onDelete) {
+      await onDelete(project.id);
+      setShowDeleteModal(false);
+      toast.success("Project deleted");
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto p-4 md:p-8 pb-32 animate-in fade-in slide-in-from-bottom-2 duration-700 ease-spring-out relative">
       {/* Ambient Background */}
@@ -228,9 +254,31 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
         )}
       >
         <div className="pl-6 border-l-2 border-forge-cyan/30">
-          <h1 className="text-4xl md:text-5xl font-display font-bold text-white leading-none tracking-tight mb-2">
-            {project.title}
-          </h1>
+          <div className="flex items-start justify-between gap-4">
+            <h1 className="text-4xl md:text-5xl font-display font-bold text-white leading-none tracking-tight mb-2">
+              {project.title}
+            </h1>
+            <div className="flex items-center gap-2 shrink-0">
+              {onUpdate && (
+                <button
+                  onClick={() => setShowEditModal(true)}
+                  className="p-2 rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:border-white/20 transition-all"
+                  title="Edit Project"
+                >
+                  <Settings size={20} />
+                </button>
+              )}
+              {onDelete && (
+                <button
+                  onClick={() => setShowDeleteModal(true)}
+                  className="p-2 rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-red-400 hover:border-red-400/30 transition-all"
+                  title="Delete Project"
+                >
+                  <Trash2 size={20} />
+                </button>
+              )}
+            </div>
+          </div>
           {activeTab === "overview" && (
             <p className="text-lg text-gray-400 font-light max-w-2xl animate-in fade-in slide-in-from-bottom-1 duration-500 border-l border-white/10 pl-4 mt-4 italic">
               &quot;{project.description}&quot;
@@ -1083,11 +1131,26 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
           </div>
         )}
       </div>
+      {/* Modals */}
       <RepoPicker
         isOpen={showRepoPicker}
         onClose={() => setShowRepoPicker(false)}
         onSelect={handleRepoSelect}
         username={githubUsername}
+      />
+
+      <EditProjectModal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        onUpdate={handleUpdate}
+        project={project}
+      />
+
+      <DeleteConfirmModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleDelete}
+        projectTitle={project.title}
       />
     </div>
   );
