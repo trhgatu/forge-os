@@ -23,8 +23,12 @@ import { UpdateProjectDto } from '../application/dtos/update-project.dto';
 import { DeleteProjectCommand } from '../application/commands/delete-project.command';
 import { Permissions } from '@shared/decorators';
 import { PermissionEnum } from '@shared/enums/permission.enum';
+import { JwtAuthGuard } from '../../../iam/auth/application/guards/jwt-auth.guard';
+import { PermissionsGuard } from '@shared/guards/permissions.guard';
+import { UseGuards } from '@nestjs/common';
 
 @Controller('engineering/projects')
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class ProjectController {
   constructor(
     private readonly commandBus: CommandBus,
