@@ -14,10 +14,14 @@ import {
   Activity,
   Clock,
   FileText,
+  Settings,
+  Trash2,
 } from "lucide-react";
-import { Project } from "../types";
+import { Project, GithubRepo } from "../types";
 import { GlassCard } from "./GlassCard";
 import { cn } from "@/shared/lib/utils";
+import { RepoPicker } from "./RepoPicker";
+import { EditProjectModal, DeleteConfirmModal } from "./ProjectModals";
 
 import { forgeApi } from "../api";
 import { Loader2, RefreshCw } from "lucide-react";
@@ -29,6 +33,9 @@ import Image from "next/image";
 interface ProjectDetailProps {
   project: Project;
   onBack: () => void;
+  githubUsername?: string;
+  onUpdate?: (id: string, data: Partial<Project>) => void;
+  onDelete?: (id: string) => void;
 }
 
 type Tab = "overview" | "tasks" | "resources" | "logs" | "readme";
@@ -36,14 +43,34 @@ type Tab = "overview" | "tasks" | "resources" | "logs" | "readme";
 export const ProjectDetail: React.FC<ProjectDetailProps> = ({
   project: initialProject,
   onBack,
+  githubUsername,
+  onUpdate,
+  onDelete,
 }) => {
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [project, setProject] = useState<Project>(initialProject);
   const [isSyncing, setIsSyncing] = useState(false);
   const [showResourceModal, setShowResourceModal] = useState(false);
+  const [showRepoPicker, setShowRepoPicker] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [newLink, setNewLink] = useState({ title: "", url: "" });
   const [editingResourceIndex, setEditingResourceIndex] = useState<number | null>(null);
   const [taskViewMode, setTaskViewMode] = useState<"board" | "issues">("board");
+
+  const handleRepoSelect = (repo: GithubRepo) => {
+    setNewLink({
+      title: repo.full_name,
+      url: repo.html_url,
+    });
+    setShowRepoPicker(false);
+    // Directly open resource modal to confirm or just save?
+    // Let's set the link state and let the user click save in the modal,
+    // OR if the modal handles input change, we just updated the state it uses.
+    // If the modal is already open, this will populate the fields.
+    // If we want to open the modal populated:
+    // setShowResourceModal(true); // Ensure modal is open
+  };
 
   const handleSaveResource = async () => {
     try {
@@ -113,7 +140,6 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
     setIsSyncing(true);
     try {
       const updated = await forgeApi.syncProject(project.id);
-      toast.success("Sync started");
 
       if (updated) {
         setProject({
@@ -130,6 +156,34 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
       toast.error("Failed to sync project");
     } finally {
       setIsSyncing(false);
+    }
+  };
+
+  const handleUpdate = async (id: string, data: Partial<Project>) => {
+    if (onUpdate) {
+      try {
+        await onUpdate(id, data);
+        setProject((prev) => ({ ...prev, ...data }));
+        setShowEditModal(false);
+        toast.success("Project updated");
+      } catch (error) {
+        console.error("Failed to update project", error);
+        toast.error("Failed to update project");
+      }
+    }
+  };
+
+  const handleDelete = async () => {
+    if (onDelete) {
+      try {
+        await onDelete(project.id);
+        setShowDeleteModal(false);
+        toast.success("Project deleted");
+        onBack();
+      } catch (error) {
+        console.error("Failed to delete project", error);
+        toast.error("Failed to delete project");
+      }
     }
   };
 
@@ -211,9 +265,31 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
         )}
       >
         <div className="pl-6 border-l-2 border-forge-cyan/30">
-          <h1 className="text-4xl md:text-5xl font-display font-bold text-white leading-none tracking-tight mb-2">
-            {project.title}
-          </h1>
+          <div className="flex items-start justify-between gap-4">
+            <h1 className="text-4xl md:text-5xl font-display font-bold text-white leading-none tracking-tight mb-2">
+              {project.title}
+            </h1>
+            <div className="flex items-center gap-2 shrink-0">
+              {onUpdate && (
+                <button
+                  onClick={() => setShowEditModal(true)}
+                  className="p-2 rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:border-white/20 transition-all"
+                  title="Edit Project"
+                >
+                  <Settings size={20} />
+                </button>
+              )}
+              {onDelete && (
+                <button
+                  onClick={() => setShowDeleteModal(true)}
+                  className="p-2 rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-red-400 hover:border-red-400/30 transition-all"
+                  title="Delete Project"
+                >
+                  <Trash2 size={20} />
+                </button>
+              )}
+            </div>
+          </div>
           {activeTab === "overview" && (
             <p className="text-lg text-gray-400 font-light max-w-2xl animate-in fade-in slide-in-from-bottom-1 duration-500 border-l border-white/10 pl-4 mt-4 italic">
               &quot;{project.description}&quot;
@@ -995,6 +1071,16 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
                 {editingResourceIndex !== null ? "Edit Resource" : "Add Resource Link"}
               </h3>
               <div className="space-y-3">
+                <div className="flex justify-end -mb-2">
+                  <button
+                    onClick={() => setShowRepoPicker(true)}
+                    className="text-xs text-forge-cyan hover:underline flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={!githubUsername}
+                    title={!githubUsername ? "Connect GitHub to import" : "Import repository"}
+                  >
+                    <Github size={12} /> Import from GitHub
+                  </button>
+                </div>
                 <div>
                   <label className="text-xs text-gray-400 uppercase font-bold block mb-1">
                     Title
@@ -1056,6 +1142,27 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
           </div>
         )}
       </div>
+      {/* Modals */}
+      <RepoPicker
+        isOpen={showRepoPicker}
+        onClose={() => setShowRepoPicker(false)}
+        onSelect={handleRepoSelect}
+        username={githubUsername}
+      />
+
+      <EditProjectModal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        onUpdate={handleUpdate}
+        project={project}
+      />
+
+      <DeleteConfirmModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleDelete}
+        projectTitle={project.title}
+      />
     </div>
   );
 };

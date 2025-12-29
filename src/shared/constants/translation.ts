@@ -44,6 +44,17 @@ export const TRANSLATIONS = {
       forge_lab: "Forge Lab",
       settings: "Settings",
     },
+    settings: {
+      language: "Language",
+    },
+    gamification: {
+      level: "Level",
+      operator_stats: "Operator Stats",
+      rank_designation: "Rank Designation",
+      experience_log: "Experience Log",
+      day_streak: "Day Streak",
+      progression: "Progression",
+    },
   },
 
   vi: {
@@ -90,6 +101,17 @@ export const TRANSLATIONS = {
       ideas: "Ý tưởng",
       forge_lab: "Xưởng chế tác",
       settings: "Cài đặt",
+    },
+    settings: {
+      language: "Ngôn ngữ",
+    },
+    gamification: {
+      level: "Cấp độ",
+      operator_stats: "Thông số",
+      rank_designation: "Danh hiệu",
+      experience_log: "Nhật ký XP",
+      day_streak: "Chuỗi trúng đích",
+      progression: "Tiến trình",
     },
   },
 } as const;

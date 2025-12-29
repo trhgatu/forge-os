@@ -49,7 +49,7 @@ export interface Project {
   title: string;
   description?: string;
   updatedAt: Date;
-  status: "active" | "archived" | "draft";
+  status: "active" | "archived" | "draft" | "completed";
   tags?: string[];
   // Hybrid Data
   isPinned?: boolean;
@@ -127,6 +127,17 @@ export interface UserConnection {
   identifier: string;
   metadata?: Record<string, unknown>;
   connectedAt?: Date;
+}
+
+export interface GithubRepo {
+  id: number;
+  name: string;
+  full_name: string;
+  description: string | null;
+  html_url: string;
+  stars: number;
+  language: string | null;
+  updated_at: string;
 }
 
 export interface UserProfile {
