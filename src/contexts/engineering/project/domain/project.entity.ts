@@ -1,4 +1,5 @@
 import { AggregateRoot } from '@nestjs/cqrs';
+import { ProjectCreatedEvent } from './events/project-created.event';
 import {
   ProjectLink,
   ProjectTaskBoard,
@@ -44,5 +45,11 @@ export class Project extends AggregateRoot {
     if (data.taskBoard !== undefined) this.taskBoard = data.taskBoard;
     if (data.links !== undefined) this.links = data.links;
     this.updatedAt = new Date();
+  }
+
+  created(userId: string) {
+    this.apply(
+      new ProjectCreatedEvent(this.id, userId, this.title, this.createdAt),
+    );
   }
 }

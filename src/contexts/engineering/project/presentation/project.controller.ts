@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Delete,
+  Req,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import {
@@ -46,9 +47,9 @@ export class ProjectController {
   }
 
   @Post()
-  async create(@Body() dto: CreateProjectDto) {
+  async create(@Body() dto: CreateProjectDto, @Req() req: any) {
     return this.commandBus.execute(
-      new CreateProjectCommand(dto.title, dto.description),
+      new CreateProjectCommand(dto.title, dto.description, String(req.user.id)),
     );
   }
 
