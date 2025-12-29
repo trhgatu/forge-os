@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Sparkles, Trophy, Flame } from "lucide-react";
+import { Sparkles, Flame } from "lucide-react";
 import { gamificationService } from "../services/gamificationService";
 import { UserStats } from "../types";
 import { LevelUpModal } from "./LevelUpModal";
@@ -24,14 +24,7 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
     const [showLevelUp, setShowLevelUp] = useState(false);
     const previousLevelRef = useRef<number | null>(null);
 
-    // Realtime Events
-    useGamificationSocket(user?.id, () => {
-        // We can trigger a re-fetch here if we expose a refetch function,
-        // or just rely on the fact that THIS component also listens to events?
-        // Actually the hook just runs the callback.
-        // We need fetchStats to be available.
-        // Let's keep fetchStats outside but wrapped in useCallback.
-    });
+
 
     const fetchStats = React.useCallback(async () => {
         if (!user?.id) return;
@@ -47,6 +40,7 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
     }, [user?.id]);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchStats();
     }, [fetchStats]);
 
