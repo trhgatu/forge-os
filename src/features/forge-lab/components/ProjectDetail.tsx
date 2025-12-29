@@ -161,10 +161,15 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
 
   const handleUpdate = async (id: string, data: Partial<Project>) => {
     if (onUpdate) {
-      await onUpdate(id, data);
-      setProject((prev) => ({ ...prev, ...data }));
-      setShowEditModal(false);
-      toast.success("Project updated");
+      try {
+        await onUpdate(id, data);
+        setProject((prev) => ({ ...prev, ...data }));
+        setShowEditModal(false);
+        toast.success("Project updated");
+      } catch (error) {
+        console.error("Failed to update project", error);
+        toast.error("Failed to update project");
+      }
     }
   };
 
@@ -678,7 +683,7 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
                   </h3>
                   <div className="space-y-3">
                     {project.githubStats?.contributors &&
-                      project.githubStats.contributors.length > 0 ? (
+                    project.githubStats.contributors.length > 0 ? (
                       project.githubStats.contributors.slice(0, 4).map((contributor, i) => (
                         <a
                           key={i}
