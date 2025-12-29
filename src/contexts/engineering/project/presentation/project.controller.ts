@@ -21,6 +21,8 @@ import { UpdateProjectCommand } from '../application/commands/update-project.com
 import { CreateProjectDto } from '../application/dtos/create-project.dto';
 import { UpdateProjectDto } from '../application/dtos/update-project.dto';
 import { DeleteProjectCommand } from '../application/commands/delete-project.command';
+import { Permissions } from '@shared/decorators';
+import { PermissionEnum } from '@shared/enums/permission.enum';
 
 @Controller('engineering/projects')
 export class ProjectController {
@@ -52,6 +54,7 @@ export class ProjectController {
   }
 
   @Delete(':id')
+  @Permissions(PermissionEnum.DELETE_PROJECT)
   async remove(@Param('id') id: string) {
     return this.commandBus.execute(new DeleteProjectCommand(id));
   }
