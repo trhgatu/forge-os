@@ -128,6 +128,8 @@ export const ForgeLab: React.FC = () => {
           if (gh) setGithubUsername(gh.identifier);
         })
         .catch((err) => console.error("Failed to load user profile", err));
+    } else {
+      setGithubUsername(undefined);
     }
   }, [authUser?.id]);
 
