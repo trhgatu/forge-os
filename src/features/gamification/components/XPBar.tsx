@@ -24,11 +24,19 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
     const [showLevelUp, setShowLevelUp] = useState(false);
     const previousLevelRef = useRef<number | null>(null);
 
-    const fetchStats = async () => {
+    // Realtime Events
+    useGamificationSocket(user?.id, () => {
+        // We can trigger a re-fetch here if we expose a refetch function,
+        // or just rely on the fact that THIS component also listens to events?
+        // Actually the hook just runs the callback.
+        // We need fetchStats to be available.
+        // Let's keep fetchStats outside but wrapped in useCallback.
+    });
+
+    const fetchStats = React.useCallback(async () => {
         if (!user?.id) return;
         const data = await gamificationService.getStats();
         if (data) {
-            // Check for level up
             if (previousLevelRef.current !== null && data.level > previousLevelRef.current) {
                 setShowLevelUp(true);
             }
@@ -36,18 +44,14 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
             setStats(data);
         }
         setLoading(false);
-    };
-
-    // Realtime Events
-    useGamificationSocket(user?.id, () => {
-        fetchStats();
-    });
+    }, [user?.id]);
 
     useEffect(() => {
-        if (user?.id) {
-            fetchStats();
-        }
-    }, [user?.id]);
+        fetchStats();
+    }, [fetchStats]);
+
+    // Update the hook usage to call the memoized function
+    useGamificationSocket(user?.id, fetchStats);
 
     if (loading) return <div className="h-6 w-32 bg-white/5 rounded-full animate-pulse" />;
     if (!stats) return null;
@@ -119,7 +123,7 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
                             </div>
                             <div className="h-2.5 w-full bg-black rounded-sm border border-zinc-800 relative overflow-hidden p-[1px]">
                                 {/* Grid Pattern Overlay */}
-                                <div className="absolute inset-0 z-10 opacity-20 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+                                <div className="absolute inset-0 z-10 opacity-20 bg-[url('/assets/noise.svg')]" />
                                 <div
                                     className="h-full bg-forge-cyan shadow-[0_0_15px_#22d3ee] relative z-0 duration-700 ease-out"
                                     style={{ width: `${progress}%` }}

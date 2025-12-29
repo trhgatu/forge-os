@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { View } from "@/shared/types/os";
@@ -156,6 +156,13 @@ const SidebarGroup: React.FC<{
     if (group === 'Main' || group === 'Meta') return false;
     return !hasActiveItem;
   });
+
+  useEffect(() => {
+    if (hasActiveItem) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsCollapsed(false);
+    }
+  }, [hasActiveItem]);
 
   const toggle = () => {
     playSound('click');

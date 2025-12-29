@@ -159,13 +159,11 @@ export const ForgeLab: React.FC = () => {
 
   const handleDeleteProject = async (id: string) => {
     try {
-      console.log("Deleting project:", id, "Active:", activeProject?.id);
       await forgeApi.deleteProject(id);
       setProjects((prev) => prev.filter((p) => p.id !== id));
 
       // Force check matching ID or if we are deleting the currently viewed project
       if (activeProject?.id === id) {
-        console.log("Closing active project view");
         setActiveProject(null);
         setActiveTab("projects"); // Go back to list
       }

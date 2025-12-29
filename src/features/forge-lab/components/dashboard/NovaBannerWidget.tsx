@@ -7,20 +7,21 @@ export const NovaBannerWidget: React.FC = () => {
     const [quote, setQuote] = useState<Quote | null>(null);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchQuote = async () => {
-            try {
-                const randomQuote = await quoteService.getRandomQuote();
-                if (randomQuote) {
-                    setQuote(randomQuote);
-                }
-            } catch (error) {
-                console.error("Failed to fetch nova reflection", error);
-            } finally {
-                setLoading(false);
+    const fetchQuote = async () => {
+        setLoading(true);
+        try {
+            const randomQuote = await quoteService.getRandomQuote();
+            if (randomQuote) {
+                setQuote(randomQuote);
             }
-        };
+        } catch (error) {
+            console.error("Failed to fetch nova reflection", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
+    useEffect(() => {
         fetchQuote();
     }, []);
 
@@ -57,7 +58,10 @@ export const NovaBannerWidget: React.FC = () => {
                         )}
                     </div>
                     {/* Interactive Action */}
-                    <button className="whitespace-nowrap px-6 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-forge-cyan/50 transition-all text-sm font-medium text-white group flex items-center gap-3">
+                    <button
+                        onClick={fetchQuote}
+                        disabled={loading}
+                        className="whitespace-nowrap px-6 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-forge-cyan/50 transition-all text-sm font-medium text-white group flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed">
                         <Zap size={16} className="text-yellow-400 group-hover:animate-pulse" />
                         Initiate Deep Scan
                     </button>

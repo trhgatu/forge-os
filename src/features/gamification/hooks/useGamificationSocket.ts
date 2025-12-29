@@ -12,8 +12,10 @@ export const useGamificationSocket = (userId?: string, onXpAwarded?: (data: any)
         // Connect via Singleton Service (Multiplexed)
         const socketInstance = socketService.connect('/gamification');
         setSocket(socketInstance);
+         
+        setSocket(socketInstance);
 
-        socketInstance.on('xp_awarded', (data: { userId: string, xp: number, newLevel: number, reason: string }) => {
+        const handleXpAwarded = (data: { userId: string, xp: number, newLevel: number, reason: string }) => {
             if (data.userId === userId) {
                 // Show Global Toast
                 toast.success(`+${data.xp} XP: ${data.reason}`, {
@@ -25,14 +27,12 @@ export const useGamificationSocket = (userId?: string, onXpAwarded?: (data: any)
                     onXpAwarded(data);
                 }
             }
-        });
+        };
+
+        socketInstance.on('xp_awarded', handleXpAwarded);
 
         return () => {
-            socketInstance.off('xp_awarded');
-            // Do NOT disconnect service here as it might be shared,
-            // OR if strictly page scoped, usage might differ.
-            // For now, let's leave it connected or add cleanup logic in Service if needed.
-            // In Presence, they don't disconnect.
+            socketInstance.off('xp_awarded', handleXpAwarded);
         };
     }, [userId, onXpAwarded]);
 

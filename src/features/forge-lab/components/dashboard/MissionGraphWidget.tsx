@@ -49,10 +49,6 @@ export const MissionGraphWidget: React.FC<MissionGraphWidgetProps> = ({
                                     : "Loading contributions..."}
                             </p>
                         </div>
-                        <select className="bg-black/20 border border-white/10 rounded-lg text-[10px] text-gray-400 px-2 py-1 outline-none">
-                            <option>2025</option>
-                            <option>2024</option>
-                        </select>
                     </div>
 
                     <div className="flex gap-1.5 justify-between overflow-x-auto pb-2 scrollbar-hide mask-linear-fade">

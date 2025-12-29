@@ -170,9 +170,15 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
 
   const handleDelete = async () => {
     if (onDelete) {
-      await onDelete(project.id);
-      setShowDeleteModal(false);
-      toast.success("Project deleted");
+      try {
+        await onDelete(project.id);
+        setShowDeleteModal(false);
+        toast.success("Project deleted");
+        onBack();
+      } catch (error) {
+        console.error("Failed to delete project", error);
+        toast.error("Failed to delete project");
+      }
     }
   };
 
@@ -672,7 +678,7 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
                   </h3>
                   <div className="space-y-3">
                     {project.githubStats?.contributors &&
-                    project.githubStats.contributors.length > 0 ? (
+                      project.githubStats.contributors.length > 0 ? (
                       project.githubStats.contributors.slice(0, 4).map((contributor, i) => (
                         <a
                           key={i}

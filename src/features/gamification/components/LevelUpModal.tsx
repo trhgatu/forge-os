@@ -20,6 +20,8 @@ export const LevelUpModal: React.FC<LevelUpModalProps> = ({
             const duration = 3000;
             const end = Date.now() + duration;
 
+            let animationFrameId: number;
+
             const frame = () => {
                 confetti({
                     particleCount: 2,
@@ -37,11 +39,15 @@ export const LevelUpModal: React.FC<LevelUpModalProps> = ({
                 });
 
                 if (Date.now() < end) {
-                    requestAnimationFrame(frame);
+                    animationFrameId = requestAnimationFrame(frame);
                 }
             };
 
             frame();
+
+            return () => {
+                cancelAnimationFrame(animationFrameId);
+            };
         }
     }, [isOpen]);
 

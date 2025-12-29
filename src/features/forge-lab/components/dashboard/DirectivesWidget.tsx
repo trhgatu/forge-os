@@ -113,7 +113,7 @@ export const DirectivesWidget: React.FC<DirectivesWidgetProps> = ({
                                     </span>
                                 </div>
                                 <span className="px-2 py-0.5 rounded text-[10px] bg-white/5 text-gray-400 border border-white/10">
-                                    {"githubStats" in item ? "Public" : "Internal"}
+                                    {item.githubStats ? "Public" : "Internal"}
                                 </span>
                             </div>
                             <p className="text-xs text-gray-400 mb-4 line-clamp-2">{item.description}</p>

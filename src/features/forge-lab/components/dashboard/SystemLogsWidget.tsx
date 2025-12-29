@@ -18,7 +18,6 @@ export const SystemLogsWidget: React.FC<SystemLogsWidgetProps> = ({ projects }) 
         <div className="space-y-4">
             <div className="flex items-center justify-between px-1">
                 <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest">System Logs</h3>
-                <button className="text-xs text-forge-cyan hover:underline">View All</button>
             </div>
 
             <div className="relative pl-6 space-y-8 before:absolute before:top-3 before:left-[11px] before:w-[2px] before:h-full before:bg-linear-to-b before:from-white/10 before:to-transparent">
