@@ -25,7 +25,7 @@ export const PresenceTracker: React.FC = () => {
 
   useEffect(() => {
     // Connect to 'presence' namespace ONCE on mount
-    socketService.connect(`${SOCKET_URL}/presence`);
+    socketService.connect('/presence');
 
     return () => {
       // Optional: disconnect on unmount
@@ -35,7 +35,7 @@ export const PresenceTracker: React.FC = () => {
 
   // Handle identification logic using Auth Token
   useEffect(() => {
-    const socket = socketService.getSocket();
+    const socket = socketService.getSocket('/presence');
     const token = useAuthStore.getState().token;
 
     if (socket) {

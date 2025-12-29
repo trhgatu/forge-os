@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useRef, useState, useEffect, ReactNode } from "react";
 
-type SoundType = "click" | "hover" | "success" | "error" | "on" | "off";
+export type SoundType = "click" | "hover" | "success" | "error" | "on" | "off";
 
 interface SoundContextType {
   playSound: (type: SoundType) => void;

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { View } from "@/shared/types/os";
 import { cn } from "@/shared/lib/utils";
-import { useLanguage, useSound } from "@/contexts";
+import { useLanguage, useSound, SoundType } from "@/contexts";
 import {
   LayoutDashboard,
   BrainCircuit,
@@ -38,11 +38,14 @@ import {
   Users,
   Radar,
   Inbox,
-  Wind,
   Hammer,
   Film,
   LucideIcon,
+  ChevronRight,
+  ChevronDown,
+  WindIcon
 } from "lucide-react";
+import XPBar from "@/features/gamification/components/XPBar";
 
 interface NavItem {
   id: View;
@@ -58,7 +61,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: View.INSIGHTS, labelKey: "nav.insights", icon: Telescope, group: "Meta" },
   { id: View.DASHBOARD, labelKey: "nav.dashboard", icon: LayoutDashboard, group: "Main" },
   { id: View.FORGE_CHAMBER, labelKey: "nav.forge_chamber", icon: BrainCircuit, group: "Main" },
-  { id: View.THOUGHT_STREAM, labelKey: "nav.thought_stream", icon: Wind, group: "Main" },
+  { id: View.THOUGHT_STREAM, labelKey: "nav.thought_stream", icon: WindIcon, group: "Main" },
   { id: View.TIMELINE, labelKey: "nav.timeline", icon: GitCommitHorizontal, group: "Reflection" },
   { id: View.JOURNAL, labelKey: "nav.journal", icon: BookOpen, group: "Reflection" },
   { id: View.META_JOURNAL, labelKey: "nav.meta_journal", icon: Aperture, group: "Reflection" },
@@ -139,6 +142,117 @@ const getPathForView = (view: View): string => {
   }
 };
 
+const SidebarGroup: React.FC<{
+  group: string;
+  isSidebarExpanded: boolean;
+  items: NavItem[];
+  pathname: string;
+  playSound: (sound: SoundType) => void;
+  t: (key: string) => string;
+}> = ({ group, isSidebarExpanded, items, pathname, playSound, t }) => {
+  // Default expanded if it contains active item OR is 'Main'/'Meta'
+  const hasActiveItem = items.some(i => pathname.startsWith(getPathForView(i.id)));
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    if (group === 'Main' || group === 'Meta') return false;
+    return !hasActiveItem;
+  });
+
+  const toggle = () => {
+    playSound('click');
+    setIsCollapsed(!isCollapsed);
+  };
+
+  // If sidebar is minimized, we generally want to show icons or just hide the grouping effect visually?
+  // Actually, usually minimized sidebar just shows a flat list of icons.
+  // Accordion interaction inside a 80px sidebar is weird.
+  // Logic: If !isSidebarExpanded, show ALL items always (ignore collapse), but hide Header Text.
+
+  // BUT user might want to collapse groups even in mini sidebar? No, that hides icons.
+  // Let's assume when minimized, we show everything.
+
+  const effectiveCollapsed = isSidebarExpanded ? isCollapsed : false;
+
+  return (
+    <div className="relative">
+      {/* Group Label / Toggle */}
+      <button
+        onClick={toggle}
+        disabled={!isSidebarExpanded}
+        className={cn(
+          "flex items-center w-full px-4 mb-2 transition-all duration-300 group/header outline-none",
+          isSidebarExpanded ? "justify-between opacity-100 translate-x-0 cursor-pointer" : "justify-center opacity-0 -translate-x-2 pointer-events-none h-0 mb-0 overflow-hidden"
+        )}
+      >
+        <span className="text-sm font-[family-name:var(--font-rajdhani)] font-bold text-gray-500 uppercase tracking-[0.15em] group-hover/header:text-forge-cyan transition-colors">
+          {t(`group.${group.toLowerCase()}`)}
+        </span>
+        <div className={cn("text-gray-600 group-hover/header:text-forge-cyan transition-transform duration-300", effectiveCollapsed ? "-rotate-90" : "rotate-0")}>
+          <ChevronDown size={12} />
+        </div>
+      </button>
+
+      {/* Items Container */}
+      <div
+        className={cn(
+          "space-y-1 overflow-hidden transition-all duration-500 ease-in-out",
+          effectiveCollapsed ? "max-h-0 opacity-50" : "max-h-[500px] opacity-100"
+        )}
+      >
+        {items.map((item, index) => {
+          const href = getPathForView(item.id);
+          const isActive = pathname.startsWith(href);
+          const Icon = item.icon;
+          const label = t(item.labelKey);
+
+          return (
+            <Link
+              key={item.id}
+              href={href}
+              onClick={() => playSound("click")}
+              onMouseEnter={() => playSound("hover")}
+              className={cn(
+                "nav-item-btn group relative w-full flex items-center p-3 rounded-xl text-[14px] font-[family-name:var(--font-rajdhani)] font-bold tracking-wide transition-all duration-200",
+                isActive
+                  ? `bg-white/10 text-white shadow-inner border border-white/5`
+                  : "text-gray-400 hover:text-white hover:bg-white/5 border border-transparent",
+                isSidebarExpanded ? "justify-start gap-3" : "justify-center"
+              )}
+            >
+              {/* Active Indicator Pill */}
+              {isActive && (
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full bg-forge-cyan shadow-[0_0_10px_#22D3EE] transition-all duration-700" />
+              )}
+
+              {/* Icon */}
+              <Icon
+                size={20}
+                className={cn(
+                  "transition-all duration-300 z-10 shrink-0",
+                  isActive ? "text-forge-cyan" : "text-gray-400 group-hover:text-gray-200",
+                  !isSidebarExpanded && isActive ? "scale-110" : ""
+                )}
+              />
+
+              {/* Label */}
+              <span
+                className={cn(
+                  "whitespace-nowrap transition-all duration-300 ease-spring-out origin-left",
+                  isSidebarExpanded
+                    ? "opacity-100 translate-x-0 w-auto delay-75"
+                    : "opacity-0 -translate-x-4 w-0"
+                )}
+                style={{ transitionDelay: isSidebarExpanded ? `${index * 35}ms` : "0ms" }}
+              >
+                {label}
+              </span>
+            </Link>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
 export const Sidebar: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(true);
   const { language, setLanguage, t } = useLanguage();
@@ -192,7 +306,7 @@ export const Sidebar: React.FC = () => {
             isExpanded ? "opacity-100 translate-x-0 w-auto" : "opacity-0 -translate-x-4 w-0"
           )}
         >
-          <span className="font-display font-bold text-lg tracking-wide text-white leading-none">
+          <span className="font-[family-name:var(--font-rajdhani)] font-bold text-xl tracking-wide text-white leading-none">
             FORGE OS
           </span>
           <span className="text-[10px] font-mono mt-1 text-forge-cyan">v2.9.1-beta</span>
@@ -204,76 +318,30 @@ export const Sidebar: React.FC = () => {
         ref={navContainerRef}
         className="flex-1 overflow-y-auto overflow-x-hidden px-3 py-2 space-y-6 scrollbar-hide"
       >
-        {["Meta", "Main", "Reflection", "Creativity", "Evolution", "System"].map((group) => (
-          <div key={group} className="relative">
-            {/* Group Label */}
-            <h3
-              className={cn(
-                "px-4 text-[10px] font-mono text-gray-500 uppercase tracking-widest mb-2 transition-all duration-300",
-                isExpanded ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-2"
-              )}
-            >
-              {t(`group.${group.toLowerCase()}`)}
-            </h3>
-
-            <div className="space-y-1">
-              {NAV_ITEMS.filter((item) => item.group === group).map((item, index) => {
-                const href = getPathForView(item.id);
-                const isActive = pathname.startsWith(href);
-                const Icon = item.icon;
-                const label = t(item.labelKey);
-
-                return (
-                  <Link
-                    key={item.id}
-                    href={href}
-                    onClick={() => playSound("click")}
-                    onMouseEnter={() => playSound("hover")}
-                    className={cn(
-                      "nav-item-btn group relative w-full flex items-center p-3 rounded-xl text-sm font-medium transition-all duration-200",
-                      isActive
-                        ? `bg-white/10 text-white shadow-inner border border-white/5`
-                        : "text-gray-400 hover:text-white hover:bg-white/5 border border-transparent",
-                      isExpanded ? "justify-start gap-3" : "justify-center"
-                    )}
-                  >
-                    {/* Active Indicator Pill */}
-                    {isActive && (
-                      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full bg-forge-cyan shadow-[0_0_10px_#22D3EE] transition-all duration-700" />
-                    )}
-
-                    {/* Icon */}
-                    <Icon
-                      size={20}
-                      className={cn(
-                        "transition-all duration-300 z-10 shrink-0",
-                        isActive ? "text-forge-cyan" : "text-gray-400 group-hover:text-gray-200",
-                        !isExpanded && isActive ? "scale-110" : ""
-                      )}
-                    />
-
-                    {/* Label */}
-                    <span
-                      className={cn(
-                        "whitespace-nowrap transition-all duration-300 ease-spring-out origin-left",
-                        isExpanded
-                          ? "opacity-100 translate-x-0 w-auto delay-75"
-                          : "opacity-0 -translate-x-4 w-0"
-                      )}
-                      style={{ transitionDelay: isExpanded ? `${index * 35}ms` : "0ms" }}
-                    >
-                      {label}
-                    </span>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        ))}
+        {["Meta", "Main", "Reflection", "Creativity", "Evolution", "System"].map((group) => {
+          return (
+            <SidebarGroup
+              key={group}
+              group={group}
+              isSidebarExpanded={isExpanded}
+              items={NAV_ITEMS.filter((item) => item.group === group)}
+              pathname={pathname}
+              playSound={playSound}
+              t={t}
+            />
+          );
+        })}
       </nav>
 
+      {/* XP Bar (Global Gamification) */}
+      <div className="mt-auto border-t border-white/5 bg-black/20">
+        <div className={cn("py-4 transition-all duration-300", isExpanded ? "px-6" : "px-2 flex justify-center")}>
+          <XPBar compact={!isExpanded} />
+        </div>
+      </div>
+
       {/* Footer Controls */}
-      <div className="p-4 mt-auto border-t border-white/5 bg-black/20 space-y-2">
+      <div className="p-4 border-t border-white/5 bg-black/20 space-y-2">
         {/* Language Toggle */}
         <button
           onClick={toggleLanguage}
@@ -288,7 +356,7 @@ export const Sidebar: React.FC = () => {
           </div>
           {isExpanded && (
             <div className="flex-1 flex items-center justify-between">
-              <span className="text-xs font-medium text-gray-400">{t("settings.language")}</span>
+              <span className="text-sm font-medium text-gray-400">{t("settings.language")}</span>
               <div className="flex bg-black/40 rounded-md p-0.5 border border-white/10">
                 <span
                   className={cn(

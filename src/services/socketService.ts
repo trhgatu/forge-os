@@ -1,10 +1,11 @@
-import { io, Socket } from "socket.io-client";
+import { io, Socket, Manager } from "socket.io-client";
 
 class SocketService {
-  private socket: Socket | null = null;
+  private manager: Manager | null = null;
+  private sockets: Map<string, Socket> = new Map();
   private static instance: SocketService;
 
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): SocketService {
     if (!SocketService.instance) {
@@ -13,34 +14,68 @@ class SocketService {
     return SocketService.instance;
   }
 
-  public connect(url: string) {
-    if (!this.socket) {
-      this.socket = io(url, {
+  private getBaseUrl(): string {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    try {
+      const url = new URL(apiUrl);
+      return url.origin; // e.g. http://localhost:8000
+    } catch (e) {
+      return apiUrl;
+    }
+  }
+
+  private getManager(): Manager {
+    if (!this.manager) {
+      const url = this.getBaseUrl();
+      this.manager = new Manager(url, {
         transports: ["websocket"],
         autoConnect: true,
         reconnection: true,
       });
-
-      this.socket.on("connect", () => {
-        console.log("Connected to Presence Gateway:", this.socket?.id);
-      });
-
-      this.socket.on("disconnect", () => {
-        console.log("Disconnected from Presence Gateway");
-      });
+      console.log(`[SocketService] Initialized Manager at ${url}`);
     }
-    return this.socket;
+    return this.manager;
   }
 
-  public getSocket(): Socket | null {
-    return this.socket;
+  /**
+   * Connects to a namespace.
+   * @param namespace e.g. "/presence" or "/gamification"
+   */
+  public connect(namespace: string): Socket {
+    if (!this.sockets.has(namespace)) {
+      const manager = this.getManager();
+      const socket = manager.socket(namespace);
+
+      socket.on("connect", () => {
+        console.log(`[SocketService] Combined Connection Active for [${namespace}]. ID:`, socket.id);
+      });
+
+      socket.on("disconnect", () => {
+        console.log(`[SocketService] Disconnected from [${namespace}]`);
+      });
+
+      this.sockets.set(namespace, socket);
+      return socket;
+    }
+    return this.sockets.get(namespace)!;
   }
 
-  public disconnect() {
-    if (this.socket) {
-      this.socket.disconnect();
-      this.socket = null;
+  public getSocket(namespace: string): Socket | null {
+    return this.sockets.get(namespace) || null;
+  }
+
+  public disconnect(namespace: string) {
+    const socket = this.sockets.get(namespace);
+    if (socket) {
+      socket.disconnect();
+      this.sockets.delete(namespace);
     }
+  }
+
+  public disconnectAll() {
+    this.sockets.forEach((socket) => socket.disconnect());
+    this.sockets.clear();
+    // Also close manager if needed, usually we keep it open
   }
 }
 
