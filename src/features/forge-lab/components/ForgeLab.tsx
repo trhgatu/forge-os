@@ -86,7 +86,7 @@ export const ForgeLab: React.FC = () => {
   const [activeProject, setActiveProject] = useState<Project | null>(null);
   const [activeFoundation, setActiveFoundation] = useState<Foundation | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   // --- Identity State ---
@@ -94,7 +94,6 @@ export const ForgeLab: React.FC = () => {
   const [githubUsername, setGithubUsername] = useState<string | undefined>(undefined);
 
   const fetchProjects = async () => {
-    setLoading(true);
     try {
       const data = await forgeApi.getProjects();
       const parsedData = data.map((p) => ({
@@ -108,8 +107,6 @@ export const ForgeLab: React.FC = () => {
       setProjects(parsedData);
     } catch (error) {
       console.error("Failed to fetch projects", error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -135,7 +132,7 @@ export const ForgeLab: React.FC = () => {
 
   // --- CRUD Operations ---
   const handleCreateProject = async (data: { title: string; description: string }) => {
-    setLoading(true);
+    setIsCreating(true);
     try {
       await forgeApi.createProject(data);
       await fetchProjects();
@@ -143,7 +140,7 @@ export const ForgeLab: React.FC = () => {
     } catch (err) {
       console.error("Failed to create project", err);
     } finally {
-      setLoading(false);
+      setIsCreating(false);
     }
   };
 
@@ -296,7 +293,7 @@ export const ForgeLab: React.FC = () => {
         isOpen={showCreateModal}
         onClose={() => setShowCreateModal(false)}
         onCreate={handleCreateProject}
-        isLoading={loading}
+        isLoading={isCreating}
       />
     </div>
   );
