@@ -24,12 +24,7 @@ export const useGamificationSocket = (
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setSocket(socketInstance);
 
-    const handleXpAwarded = (data: {
-      userId: string;
-      xp: number;
-      newLevel: number;
-      reason: string;
-    }) => {
+    const handleXpAwarded = (data: XpAwardedData) => {
       if (data.userId === userId) {
         // Show Global Toast
         toast.success(`+${data.xp} XP: ${data.reason}`, {
