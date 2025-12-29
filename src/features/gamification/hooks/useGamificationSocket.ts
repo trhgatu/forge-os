@@ -1,40 +1,54 @@
-import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
-import { socketService } from '@/services/socketService';
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { socketService } from "@/services/socketService";
 
-export const useGamificationSocket = (userId?: string, onXpAwarded?: (data: any) => void) => {
-    // Initialize with existing socket if any
-    const [socket, setSocket] = useState(socketService.getSocket('/gamification'));
+interface XpAwardedData {
+  userId: string;
+  xp: number;
+  newLevel: number;
+  reason: string;
+}
 
-    useEffect(() => {
-        if (!userId) return;
+export const useGamificationSocket = (
+  userId?: string,
+  onXpAwarded?: (data: XpAwardedData) => void
+) => {
+  // Initialize with existing socket if any
+  const [socket, setSocket] = useState(socketService.getSocket("/gamification"));
 
-        // Connect via Singleton Service (Multiplexed)
-        const socketInstance = socketService.connect('/gamification');
-        setSocket(socketInstance);
-         
-        setSocket(socketInstance);
+  useEffect(() => {
+    if (!userId) return;
 
-        const handleXpAwarded = (data: { userId: string, xp: number, newLevel: number, reason: string }) => {
-            if (data.userId === userId) {
-                // Show Global Toast
-                toast.success(`+${data.xp} XP: ${data.reason}`, {
-                    description: data.newLevel ? `Current Level: ${data.newLevel}` : undefined,
-                    duration: 4000,
-                });
+    // Connect via Singleton Service (Multiplexed)
+    const socketInstance = socketService.connect("/gamification");
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSocket(socketInstance);
 
-                if (onXpAwarded) {
-                    onXpAwarded(data);
-                }
-            }
-        };
+    const handleXpAwarded = (data: {
+      userId: string;
+      xp: number;
+      newLevel: number;
+      reason: string;
+    }) => {
+      if (data.userId === userId) {
+        // Show Global Toast
+        toast.success(`+${data.xp} XP: ${data.reason}`, {
+          description: data.newLevel ? `Current Level: ${data.newLevel}` : undefined,
+          duration: 4000,
+        });
 
-        socketInstance.on('xp_awarded', handleXpAwarded);
+        if (onXpAwarded) {
+          onXpAwarded(data);
+        }
+      }
+    };
 
-        return () => {
-            socketInstance.off('xp_awarded', handleXpAwarded);
-        };
-    }, [userId, onXpAwarded]);
+    socketInstance.on("xp_awarded", handleXpAwarded);
 
-    return socket;
+    return () => {
+      socketInstance.off("xp_awarded", handleXpAwarded);
+    };
+  }, [userId, onXpAwarded]);
+
+  return socket;
 };

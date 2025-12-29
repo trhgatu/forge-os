@@ -41,9 +41,8 @@ import {
   Hammer,
   Film,
   LucideIcon,
-  ChevronRight,
   ChevronDown,
-  WindIcon
+  WindIcon,
 } from "lucide-react";
 import XPBar from "@/features/gamification/components/XPBar";
 
@@ -151,9 +150,9 @@ const SidebarGroup: React.FC<{
   t: (key: string) => string;
 }> = ({ group, isSidebarExpanded, items, pathname, playSound, t }) => {
   // Default expanded if it contains active item OR is 'Main'/'Meta'
-  const hasActiveItem = items.some(i => pathname.startsWith(getPathForView(i.id)));
+  const hasActiveItem = items.some((i) => pathname.startsWith(getPathForView(i.id)));
   const [isCollapsed, setIsCollapsed] = useState(() => {
-    if (group === 'Main' || group === 'Meta') return false;
+    if (group === "Main" || group === "Meta") return false;
     return !hasActiveItem;
   });
 
@@ -165,7 +164,7 @@ const SidebarGroup: React.FC<{
   }, [hasActiveItem]);
 
   const toggle = () => {
-    playSound('click');
+    playSound("click");
     setIsCollapsed(!isCollapsed);
   };
 
@@ -187,13 +186,20 @@ const SidebarGroup: React.FC<{
         disabled={!isSidebarExpanded}
         className={cn(
           "flex items-center w-full px-4 mb-2 transition-all duration-300 group/header outline-none",
-          isSidebarExpanded ? "justify-between opacity-100 translate-x-0 cursor-pointer" : "justify-center opacity-0 -translate-x-2 pointer-events-none h-0 mb-0 overflow-hidden"
+          isSidebarExpanded
+            ? "justify-between opacity-100 translate-x-0 cursor-pointer"
+            : "justify-center opacity-0 -translate-x-2 pointer-events-none h-0 mb-0 overflow-hidden"
         )}
       >
         <span className="text-sm font-[family-name:var(--font-rajdhani)] font-bold text-gray-500 uppercase tracking-[0.15em] group-hover/header:text-forge-cyan transition-colors">
           {t(`group.${group.toLowerCase()}`)}
         </span>
-        <div className={cn("text-gray-600 group-hover/header:text-forge-cyan transition-transform duration-300", effectiveCollapsed ? "-rotate-90" : "rotate-0")}>
+        <div
+          className={cn(
+            "text-gray-600 group-hover/header:text-forge-cyan transition-transform duration-300",
+            effectiveCollapsed ? "-rotate-90" : "rotate-0"
+          )}
+        >
           <ChevronDown size={12} />
         </div>
       </button>
@@ -342,7 +348,12 @@ export const Sidebar: React.FC = () => {
 
       {/* XP Bar (Global Gamification) */}
       <div className="mt-auto border-t border-white/5 bg-black/20">
-        <div className={cn("py-4 transition-all duration-300", isExpanded ? "px-6" : "px-2 flex justify-center")}>
+        <div
+          className={cn(
+            "py-4 transition-all duration-300",
+            isExpanded ? "px-6" : "px-2 flex justify-center"
+          )}
+        >
           <XPBar compact={!isExpanded} />
         </div>
       </div>

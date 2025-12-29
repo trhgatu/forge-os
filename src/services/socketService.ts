@@ -1,11 +1,11 @@
-import { io, Socket, Manager } from "socket.io-client";
+import { Socket, Manager } from "socket.io-client";
 
 class SocketService {
   private manager: Manager | null = null;
   private sockets: Map<string, Socket> = new Map();
   private static instance: SocketService;
 
-  private constructor() { }
+  private constructor() {}
 
   public static getInstance(): SocketService {
     if (!SocketService.instance) {
@@ -15,11 +15,11 @@ class SocketService {
   }
 
   private getBaseUrl(): string {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
     try {
       const url = new URL(apiUrl);
       return url.origin; // e.g. http://localhost:8000
-    } catch (e) {
+    } catch {
       return apiUrl;
     }
   }
@@ -47,7 +47,10 @@ class SocketService {
       const socket = manager.socket(namespace);
 
       socket.on("connect", () => {
-        console.log(`[SocketService] Combined Connection Active for [${namespace}]. ID:`, socket.id);
+        console.log(
+          `[SocketService] Combined Connection Active for [${namespace}]. ID:`,
+          socket.id
+        );
       });
 
       socket.on("disconnect", () => {

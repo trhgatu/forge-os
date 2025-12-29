@@ -1,5 +1,4 @@
 import React from "react";
-import { Sparkles } from "lucide-react";
 import {
   Project,
   Foundation,
@@ -9,7 +8,6 @@ import {
   UserConnection,
 } from "../types";
 import { forgeApi } from "../api";
-import { SYSTEM_CONFIG } from "@/shared/config/system.config";
 import { useAuthStore } from "@/shared/store/authStore";
 
 // Widgets
