@@ -42,7 +42,7 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
       if (parts[1]) {
         const [o, r] = parts[1].split('/');
         owner = o;
-        repo = r?.replace('.git', '');
+        repo = r?.replace(/\.git$/, '');
       }
     }
 
@@ -89,6 +89,17 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
         repo,
         syncedAt: new Date(),
       };
+
+      // Add System Log
+      const newCommitCount = repoDetails.recentCommits?.length || 0;
+      project.logs = [
+        {
+          date: new Date(),
+          type: 'update',
+          content: `Synced with GitHub. Fetched ${newCommitCount} recent commits and updated stats.`,
+        },
+        ...(project.logs || []),
+      ];
 
       // Save
       await this.projectRepository.update(project);

@@ -13,7 +13,7 @@ export class CreateProjectHandler
     private readonly projectRepository: ProjectRepository,
   ) {}
 
-  async execute(command: CreateProjectCommand): Promise<any> {
+  async execute(command: CreateProjectCommand): Promise<Project> {
     // Basic factory logic (should be in Domain Factory ideally)
     const newProject = new Project(
       '', // ID handled by DB
@@ -27,6 +27,7 @@ export class CreateProjectHandler
       0,
       { todo: [], inProgress: [], done: [] },
       [],
+      [], // logs
       new Date(),
       new Date(),
     );

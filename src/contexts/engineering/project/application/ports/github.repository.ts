@@ -1,4 +1,5 @@
 import {
+  GithubRepo,
   GithubRepoDetails,
   GithubCommitActivity,
   GithubContributionStats,
@@ -11,4 +12,5 @@ export interface GithubRepository {
     repo: string,
   ): Promise<GithubCommitActivity[]>;
   getUserContributionStats(username: string): Promise<GithubContributionStats>;
+  getUserRepos(username: string): Promise<GithubRepo[]>;
 }

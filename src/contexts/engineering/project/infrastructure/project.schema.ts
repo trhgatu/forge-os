@@ -4,6 +4,7 @@ import { ProjectTask } from '../domain/project.interfaces';
 
 export type ProjectDocument = Project & Document;
 
+@Schema()
 class HybridStats {
   @Prop()
   stars?: number;
@@ -88,6 +89,19 @@ export class ProjectLink {
 }
 export const ProjectLinkSchema = SchemaFactory.createForClass(ProjectLink);
 
+@Schema()
+export class ProjectLog {
+  @Prop({ required: true })
+  date!: Date;
+
+  @Prop({ required: true, enum: ['update', 'alert', 'info'] })
+  type!: string;
+
+  @Prop({ required: true })
+  content!: string;
+}
+export const ProjectLogSchema = SchemaFactory.createForClass(ProjectLog);
+
 @Schema({ timestamps: true })
 export class Project {
   @Prop({ required: true })
@@ -96,7 +110,10 @@ export class Project {
   @Prop()
   description!: string;
 
-  @Prop({ default: 'active', enum: ['active', 'archived', 'draft'] })
+  @Prop({
+    default: 'active',
+    enum: ['active', 'archived', 'draft', 'completed'],
+  })
   status!: string;
 
   @Prop([String])
@@ -128,6 +145,9 @@ export class Project {
 
   @Prop({ type: [ProjectLinkSchema], default: [] })
   links!: ProjectLink[];
+
+  @Prop({ type: [ProjectLogSchema], default: [] })
+  logs!: ProjectLog[];
 }
 
 export const ProjectSchema = SchemaFactory.createForClass(Project);
