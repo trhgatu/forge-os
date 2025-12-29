@@ -16,6 +16,10 @@ export class UpdateQuoteDto {
   source?: string;
 
   @IsOptional()
+  @IsString()
+  mood?: string;
+
+  @IsOptional()
   @IsArray()
   @IsString({ each: true })
   tags?: string[];

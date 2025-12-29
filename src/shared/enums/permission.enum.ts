@@ -61,6 +61,12 @@ export enum PermissionEnum {
   DELETE_JOURNAL = 'delete_journal',
   RESTORE_JOURNAL = 'restore_journal',
 
+  CREATE_MOOD = 'create_mood',
+  READ_MOOD = 'read_mood',
+  UPDATE_MOOD = 'update_mood',
+  DELETE_MOOD = 'delete_mood',
+  RESTORE_MOOD = 'restore_mood',
+
   // 🛡️ PERMISSION
   CREATE_PERMISSION = 'create_permission',
   READ_PERMISSION = 'read_permission',
@@ -70,6 +76,13 @@ export enum PermissionEnum {
   // 📝 AUDIT LOG
   READ_AUDIT_LOG = 'read_audit_log',
   DELETE_AUDIT_LOG = 'delete_audit_log', // Audit logs usually read-only or delete-only
+
+  // 🚀 PROJECT
+  CREATE_PROJECT = 'create_project',
+  READ_PROJECT = 'read_project',
+  UPDATE_PROJECT = 'update_project',
+  DELETE_PROJECT = 'delete_project',
+  RESTORE_PROJECT = 'restore_project',
 
   // 🧪 TESTING or DEBUG
   ACCESS_TEST_ENDPOINT = 'access_test_endpoint',

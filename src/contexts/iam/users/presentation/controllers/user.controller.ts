@@ -19,8 +19,11 @@ import {
   CreateUserCommand,
   UpdateUserCommand,
   DeleteUserCommand,
+  ConnectAccountCommand,
 } from '../../application/commands';
 import { GetUsersQuery, GetUserByIdQuery } from '../../application/queries';
+import { GetUser as User } from 'src/contexts/iam/auth/application/decorators/get-user.decorator';
+import { ConnectAccountDto } from '../../application/dtos/connect-account.dto';
 
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @Controller('users')
@@ -58,5 +61,21 @@ export class UserController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.commandBus.execute(new DeleteUserCommand(id));
+  }
+
+  @Permissions(PermissionEnum.UPDATE_USER)
+  @Post('connect')
+  connectAccount(@User() user: any, @Body() dto: ConnectAccountDto) {
+    // Requires User Decorator to retrieve logged-in user ID
+    // If User decorator provides the full user or just ID, adjust accordingly.
+    // Assuming user object has 'id'.
+    return this.commandBus.execute(
+      new ConnectAccountCommand(
+        String(user.id),
+        dto.provider,
+        dto.identifier,
+        dto.metadata,
+      ),
+    );
   }
 }

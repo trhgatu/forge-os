@@ -8,6 +8,7 @@ export type QuoteDocument = Document & {
   author?: string;
   source?: string;
   tags?: string[];
+  mood?: string;
   status: QuoteStatus;
   isDeleted: boolean;
   deletedAt?: Date;
@@ -33,6 +34,9 @@ export class Quote {
 
   @Prop({ type: [String], default: [] })
   tags?: string[];
+
+  @Prop()
+  mood?: string;
 
   @Prop({ required: true, enum: QuoteStatus, default: QuoteStatus.INTERNAL })
   status!: QuoteStatus;

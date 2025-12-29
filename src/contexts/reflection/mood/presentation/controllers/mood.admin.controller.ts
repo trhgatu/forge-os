@@ -36,13 +36,13 @@ export class MoodAdminController {
   ) {}
 
   @Post()
-  @Permissions(PermissionEnum.CREATE_MEMORY)
+  @Permissions(PermissionEnum.CREATE_MOOD)
   create(@Body() dto: CreateMoodDto) {
     return this.commandBus.execute(new CreateMoodCommand(dto));
   }
 
   @Get()
-  @Permissions(PermissionEnum.READ_MEMORY)
+  @Permissions(PermissionEnum.READ_MOOD)
   findAll(@Query() query: QueryMoodDto) {
     return this.queryBus.execute(
       new GetAllMoodsQuery({
@@ -58,13 +58,13 @@ export class MoodAdminController {
   }
 
   @Get(':id')
-  @Permissions(PermissionEnum.READ_MEMORY)
+  @Permissions(PermissionEnum.READ_MOOD)
   findById(@Param('id') id: string) {
     return this.queryBus.execute(new GetMoodByIdQuery(MoodId.create(id)));
   }
 
   @Patch(':id')
-  @Permissions(PermissionEnum.UPDATE_MEMORY)
+  @Permissions(PermissionEnum.UPDATE_MOOD)
   update(@Param('id') id: string, @Body() dto: UpdateMoodDto) {
     return this.commandBus.execute(
       new UpdateMoodCommand(MoodId.create(id), dto),
@@ -72,7 +72,7 @@ export class MoodAdminController {
   }
 
   @Delete(':id')
-  @Permissions(PermissionEnum.DELETE_MEMORY)
+  @Permissions(PermissionEnum.DELETE_MOOD)
   delete(@Param('id') id: string, @Query('hard') hard?: 'true') {
     const moodId = MoodId.create(id);
     return hard === 'true'
@@ -81,7 +81,7 @@ export class MoodAdminController {
   }
 
   @Patch(':id/restore')
-  @Permissions(PermissionEnum.RESTORE_MEMORY)
+  @Permissions(PermissionEnum.RESTORE_MOOD)
   restore(@Param('id') id: string) {
     return this.commandBus.execute(new RestoreMoodCommand(MoodId.create(id)));
   }

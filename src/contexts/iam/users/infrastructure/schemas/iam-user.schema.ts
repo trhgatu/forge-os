@@ -28,6 +28,24 @@ export class User {
   @Prop({ default: null })
   refreshToken!: string;
 
+  @Prop({
+    type: [
+      {
+        provider: { type: String, required: true },
+        identifier: { type: String, required: true },
+        metadata: { type: Object, default: {} },
+        connectedAt: { type: Date, default: Date.now },
+      },
+    ],
+    default: [],
+  })
+  connections!: {
+    provider: string;
+    identifier: string;
+    metadata: Record<string, any>;
+    connectedAt: Date;
+  }[];
+
   @Prop({ default: false })
   isDeleted!: boolean;
 
@@ -36,6 +54,9 @@ export class User {
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+// Enterprise Grade: Compound Index for fast lookup by provider + identifier
+UserSchema.index({ 'connections.provider': 1, 'connections.identifier': 1 });
 
 UserSchema.pre('save', async function (next) {
   const user = this as unknown as UserDocument;

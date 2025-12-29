@@ -3,4 +3,5 @@ export enum QuoteStatus {
   FEATURED = 'featured',
   INTERNAL = 'internal',
   ARCHIVED = 'archived',
+  FAVORITE = 'favorite',
 }

@@ -118,4 +118,13 @@ export class AuthService {
 
     return newTokens;
   }
+  async verifyToken(token: string) {
+    try {
+      return await this.jwtService.verifyAsync(token, {
+        secret: process.env.JWT_SECRET,
+      });
+    } catch {
+      throw new ForbiddenException('Invalid token');
+    }
+  }
 }

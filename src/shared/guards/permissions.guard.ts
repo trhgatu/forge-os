@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { PERMISSIONS_KEY } from '../decorators/permissions.decorator';
-import { PopulatedRole } from '@shared/interfaces/populated-role.interface';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
@@ -22,19 +21,12 @@ export class PermissionsGuard implements CanActivate {
 
     const req = context.switchToHttp().getRequest();
     const user = req.user;
-    if (!user || !user.roleId) {
+    if (!user || !user.role || !Array.isArray(user.role.permissions)) {
       throw new ForbiddenException('Permission denied');
     }
 
-    const role = user.roleId as PopulatedRole;
-
-    if (!role.permissions || !Array.isArray(role.permissions)) {
-      throw new ForbiddenException('Permission denied');
-    }
-
-    const userPermissions = role.permissions.map((p) =>
-      typeof p === 'string' ? p : p.name,
-    );
+    // Permissions on user.role are already mapped to strings (names) by UserMapper
+    const userPermissions = user.role.permissions;
 
     const hasAllPermissions = requiredPermissions.every((perm) =>
       userPermissions.includes(perm),

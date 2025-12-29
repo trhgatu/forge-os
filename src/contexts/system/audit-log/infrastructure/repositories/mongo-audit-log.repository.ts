@@ -6,9 +6,9 @@ import {
   AuditLog,
   AuditLogDocument,
 } from '../../infrastructure/schemas/sys-audit-log.schema';
-import { CreateAuditLogDto } from '../../dto/create-audit-log.dto';
+import { CreateAuditLogDto } from '../../presentation/dto/create-audit-log.dto';
 import { paginate } from '@shared/utils';
-import { AuditLogQueryDto } from '../../dto/audit-log-query.dto';
+import { AuditLogQueryDto } from '../../presentation/dto/audit-log-query.dto';
 import { PaginatedResult } from '@shared/interfaces/paginated-result.interface';
 import { AuditLog as AuditLogEntity } from '../../domain/audit-log.entity';
 import { AuditLogMapper } from '../mappers/audit-log.mapper';

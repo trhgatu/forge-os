@@ -7,10 +7,14 @@ export class QuoteMapper {
   static toDomain(doc: QuoteDocument): Quote {
     return Quote.createFromPersistence({
       id: doc._id.toString(),
-      content: new Map(doc.content),
+      content:
+        doc.content instanceof Map
+          ? new Map(doc.content)
+          : new Map(Object.entries(doc.content)),
       author: doc.author,
       source: doc.source,
       tags: doc.tags,
+      mood: doc.mood,
       status: doc.status as QuoteStatus,
       isDeleted: doc.isDeleted,
       deletedAt: doc.deletedAt,
@@ -27,6 +31,7 @@ export class QuoteMapper {
       author: props.author,
       source: props.source,
       tags: props.tags,
+      mood: props.mood,
       status: props.status,
       isDeleted: props.isDeleted,
       deletedAt: props.deletedAt,

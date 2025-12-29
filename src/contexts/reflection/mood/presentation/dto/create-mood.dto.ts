@@ -4,12 +4,21 @@ import {
   IsOptional,
   IsString,
   MinLength,
+  IsInt,
+  Min,
+  Max,
 } from 'class-validator';
 
 export class CreateMoodDto {
   @IsString()
   @MinLength(1)
   mood!: string;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(10)
+  intensity?: number;
 
   @IsOptional()
   @IsString()

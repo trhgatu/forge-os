@@ -56,6 +56,24 @@ export class MongoQuoteRepository implements QuoteRepository {
     };
   }
 
+  async findRandom(status?: string): Promise<Quote | null> {
+    const match: FilterQuery<QuoteDocument> = { isDeleted: false };
+    if (status) {
+      match.status = status;
+    }
+
+    const docs = await this.model.aggregate<QuoteDocument>([
+      { $match: match },
+      { $sample: { size: 1 } },
+    ]);
+
+    if (!docs || docs.length === 0) {
+      return null;
+    }
+
+    return QuoteMapper.toDomain(docs[0]);
+  }
+
   async delete(id: QuoteId): Promise<void> {
     const result = await this.model.findByIdAndDelete(id.toString());
     if (!result) throw new NotFoundException('Quote not found');

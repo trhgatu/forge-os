@@ -6,6 +6,7 @@ interface QuoteProps {
   author?: string;
   source?: string;
   tags?: string[];
+  mood?: string;
   status: QuoteStatus;
   createdAt: Date;
   updatedAt: Date;
@@ -71,6 +72,10 @@ export class Quote {
       this.props.tags = props.tags;
     }
 
+    if (props.mood !== undefined) {
+      this.props.mood = props.mood;
+    }
+
     if (props.status !== undefined) {
       this.props.status = props.status;
     }
@@ -114,6 +119,10 @@ export class Quote {
     return this.props.tags;
   }
 
+  get mood() {
+    return this.props.mood;
+  }
+
   get status() {
     return this.props.status;
   }
@@ -133,6 +142,7 @@ export class Quote {
       author: this.props.author,
       source: this.props.source,
       tags: this.props.tags,
+      mood: this.props.mood,
       status: this.props.status,
       createdAt: this.props.createdAt,
       updatedAt: this.props.updatedAt,
@@ -148,6 +158,7 @@ export class Quote {
       author: this.author,
       source: this.source,
       tags: this.tags,
+      mood: this.mood,
       status: this.status,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,

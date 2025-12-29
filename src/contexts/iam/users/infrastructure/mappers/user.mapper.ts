@@ -11,23 +11,49 @@ export class UserMapper {
       email: doc.email,
       password: doc.password,
       roleId: doc.roleId.toString(),
-      role:
-        doc.roleId && typeof doc.roleId === 'object' && 'name' in doc.roleId
-          ? {
-              id: (doc.roleId as any)._id.toString(),
-              name: (doc.roleId as any).name,
-              permissions:
-                (doc.roleId as any).permissions?.map(
-                  (p: any) => p.slug || p.toString(),
-                ) || [],
-            }
-          : undefined,
+      role: UserMapper.extractRole(doc.roleId),
       refreshToken: doc.refreshToken,
       isDeleted: doc.isDeleted,
       deletedAt: doc.deletedAt,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
+      connections: doc.connections || [],
     });
+  }
+
+  private static extractRole(
+    roleOrId: Types.ObjectId | unknown,
+  ): { id: string; name: string; permissions: string[] } | undefined {
+    if (!roleOrId) return undefined;
+    if (roleOrId instanceof Types.ObjectId) return undefined;
+
+    // Type narrowing for populated object
+    if (
+      typeof roleOrId === 'object' &&
+      roleOrId !== null &&
+      'name' in roleOrId &&
+      'permissions' in roleOrId
+    ) {
+      // Safe to treat as object with known shape roughly
+      const role = roleOrId as {
+        _id?: Types.ObjectId;
+        name: string;
+        permissions: unknown[];
+      };
+
+      return {
+        id: role._id?.toString() || '',
+        name: role.name,
+        permissions: Array.isArray(role.permissions)
+          ? role.permissions.map((p) =>
+              typeof p === 'object' && p && 'name' in p
+                ? (p as { name: string }).name
+                : String(p),
+            )
+          : [],
+      };
+    }
+    return undefined;
   }
 
   static toPersistence(entity: User): Partial<UserDocument> {
@@ -40,6 +66,10 @@ export class UserMapper {
       refreshToken: entity.refreshToken,
       isDeleted: entity.isDeleted,
       deletedAt: entity.deletedAt,
+      connections: entity.connections.map((c) => ({
+        ...c,
+        metadata: c.metadata || {},
+      })),
     };
   }
 }

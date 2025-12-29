@@ -6,7 +6,6 @@ import {
   RefreshTokenGuard,
 } from 'src/contexts/iam/auth/application/guards';
 import { GetUser } from '../../application/decorators/get-user.decorator';
-import { UserDocument } from 'src/contexts/iam/users/infrastructure/schemas/iam-user.schema';
 import { Request } from 'express';
 import { extractBearerToken } from '@shared/utils/extract-bearer-token';
 
@@ -33,17 +32,17 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  async getMe(@GetUser() user: UserDocument) {
-    await user.populate('roleId');
+  async getMe(@GetUser() user: any) {
+    // user is already a Domain Entity with role populated by JwtStrategy
 
     return {
       status: 'success',
       message: 'Get current user successfully',
       data: {
-        id: user._id,
+        id: user.id.toString(),
         name: user.name,
         email: user.email,
-        role: user.roleId,
+        role: user.role, // Use the populated role object
       },
     };
   }

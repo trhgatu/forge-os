@@ -1,6 +1,6 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
-import { AuditLogQueryDto } from '../../dto/audit-log-query.dto';
+import { AuditLogQueryDto } from '../dto/audit-log-query.dto';
 import { JwtAuthGuard } from 'src/contexts/iam/auth/application/guards';
 import { PermissionsGuard } from '@shared/guards/permissions.guard';
 import { Permissions } from '@shared/decorators';
