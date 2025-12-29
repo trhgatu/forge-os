@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Param, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Patch,
+  Delete,
+} from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import {
   GetProjectsQuery,
@@ -12,6 +20,7 @@ import { UpdateProjectCommand } from '../application/commands/update-project.com
 
 import { CreateProjectDto } from '../application/dtos/create-project.dto';
 import { UpdateProjectDto } from '../application/dtos/update-project.dto';
+import { DeleteProjectCommand } from '../application/commands/delete-project.command';
 
 @Controller('engineering/projects')
 export class ProjectController {
@@ -40,6 +49,11 @@ export class ProjectController {
   @Patch(':id')
   async update(@Param('id') id: string, @Body() dto: UpdateProjectDto) {
     return this.commandBus.execute(new UpdateProjectCommand(id, dto));
+  }
+
+  @Delete(':id')
+  async remove(@Param('id') id: string) {
+    return this.commandBus.execute(new DeleteProjectCommand(id));
   }
 
   @Post(':id/sync')

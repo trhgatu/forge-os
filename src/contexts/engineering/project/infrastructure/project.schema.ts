@@ -109,7 +109,10 @@ export class Project {
   @Prop()
   description!: string;
 
-  @Prop({ default: 'active', enum: ['active', 'archived', 'draft'] })
+  @Prop({
+    default: 'active',
+    enum: ['active', 'archived', 'draft', 'completed'],
+  })
   status!: string;
 
   @Prop([String])
