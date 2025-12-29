@@ -1,7 +1,8 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { ConnectAccountCommand } from '../commands/connect-account.command';
 import { UserRepository } from '../../application/ports/user.repository';
-import { Logger, NotFoundException } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
+import { UserNotFoundException } from '../../domain/exceptions/user-not-found.exception';
 
 @CommandHandler(ConnectAccountCommand)
 export class ConnectAccountHandler
@@ -16,7 +17,7 @@ export class ConnectAccountHandler
 
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new NotFoundException(`User with ID ${userId} not found`);
+      throw new UserNotFoundException({ userId });
     }
 
     user.addConnection({

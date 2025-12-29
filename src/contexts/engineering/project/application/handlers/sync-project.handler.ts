@@ -42,7 +42,7 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
       if (parts[1]) {
         const [o, r] = parts[1].split('/');
         owner = o;
-        repo = r?.replace('.git', '');
+        repo = r?.replace(/\.git$/, '');
       }
     }
 

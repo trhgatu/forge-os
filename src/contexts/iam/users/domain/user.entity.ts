@@ -127,7 +127,7 @@ export class User {
   }
 
   get connections(): UserConnection[] {
-    return this.props.connections || [];
+    return [...(this.props.connections || [])];
   }
 
   addConnection(connection: UserConnection): void {

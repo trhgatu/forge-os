@@ -4,6 +4,7 @@ import { ProjectTask } from '../domain/project.interfaces';
 
 export type ProjectDocument = Project & Document;
 
+@Schema()
 class HybridStats {
   @Prop()
   stars?: number;
