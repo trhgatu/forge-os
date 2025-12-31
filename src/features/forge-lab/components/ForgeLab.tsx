@@ -95,8 +95,14 @@ export const ForgeLab: React.FC = () => {
 
   const fetchProjects = async () => {
     try {
-      const data = await forgeApi.getProjects();
-      const parsedData = data.map((p) => ({
+      const response = await forgeApi.getProjects();
+      // Handle both paginated and non-paginated responses for backward compatibility
+      // Handle both paginated and non-paginated responses for backward compatibility
+      const data = Array.isArray(response)
+        ? response
+        : (response as { data: Project[] }).data || [];
+
+      const parsedData = data.map((p: Project) => ({
         ...p,
         updatedAt: new Date(p.updatedAt),
         dueDate: p.dueDate ? new Date(p.dueDate) : undefined,
@@ -147,9 +153,17 @@ export const ForgeLab: React.FC = () => {
   const handleUpdateProject = async (id: string, data: Partial<Project>) => {
     try {
       const updated = await forgeApi.updateProject(id, data);
-      setProjects((prev) => prev.map((p) => (p.id === id ? { ...p, ...updated } : p)));
+
+      const parsedUpdated = {
+        ...updated,
+        updatedAt: new Date(updated.updatedAt),
+        dueDate: updated.dueDate ? new Date(updated.dueDate) : undefined,
+        logs: updated.logs?.map((l) => ({ ...l, date: new Date(l.date) })),
+      };
+
+      setProjects((prev) => prev.map((p) => (p.id === id ? { ...p, ...parsedUpdated } : p)));
       if (activeProject?.id === id) {
-        setActiveProject((prev) => (prev ? { ...prev, ...updated } : null));
+        setActiveProject((prev) => (prev ? { ...prev, ...parsedUpdated } : null));
       }
     } catch (err) {
       console.error("Failed to update project", err);

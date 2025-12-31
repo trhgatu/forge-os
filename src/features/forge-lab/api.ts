@@ -1,8 +1,11 @@
 import { apiClient } from "@/services/apiClient";
-import { Project, ContributionStats, UserProfile } from "./types";
+import { Project, ContributionStats, UserProfile, PaginatedResponse } from "./types";
 
 export const forgeApi = {
-  getProjects: () => apiClient.get<Project[]>("/engineering/projects").then((res) => res.data),
+  getProjects: () =>
+    apiClient
+      .get<PaginatedResponse<Project> | Project[]>("/engineering/projects")
+      .then((res) => res.data),
   getProject: (id: string) =>
     apiClient.get<Project>(`/engineering/projects/${id}`).then((res) => res.data),
   createProject: (data: Partial<Project>) =>
