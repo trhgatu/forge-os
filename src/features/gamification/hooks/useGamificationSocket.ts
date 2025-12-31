@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { toast } from "sonner";
 import { socketService } from "@/services/socketService";
+import { useAuthStore } from "@/shared/store/authStore";
 
 interface XpAwardedData {
   userId: string;
@@ -16,6 +17,7 @@ export const useGamificationSocket = (
   // Initialize with existing socket if any
   const [socket, setSocket] = useState(socketService.getSocket("/gamification"));
   const onXpAwardedRef = useRef(onXpAwarded);
+  const token = useAuthStore((state) => state.token);
 
   useEffect(() => {
     onXpAwardedRef.current = onXpAwarded;
@@ -48,7 +50,7 @@ export const useGamificationSocket = (
     return () => {
       socketInstance.off("xp_awarded", handleXpAwarded);
     };
-  }, [userId]);
+  }, [userId, token]);
 
   return socket;
 };

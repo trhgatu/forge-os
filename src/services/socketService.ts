@@ -24,15 +24,62 @@ class SocketService {
     }
   }
 
+  private lastToken: string | undefined;
+
+  private getTokenFromStorage(): string | undefined {
+    if (typeof window !== "undefined") {
+      try {
+        const storage = localStorage.getItem("forge-auth-storage");
+        if (storage) {
+          const parsed = JSON.parse(storage);
+          return parsed.state?.token;
+        }
+      } catch (e) {
+        console.warn("[SocketService] Failed to retrieve auth token", e);
+      }
+    }
+    return undefined;
+  }
+
   private getManager(): Manager {
+    const token = this.getTokenFromStorage();
+
+    // Force recreation if manager exists but was created without token and now we have one
+    if (this.manager && !this.lastToken && token) {
+      this.disconnectAll();
+      this.manager = null;
+    }
+
     if (!this.manager) {
       const url = this.getBaseUrl();
-      this.manager = new Manager(url, {
+      this.lastToken = token;
+
+      interface ManagerOptionsWithAuth {
+        transports: string[];
+        autoConnect: boolean;
+        reconnection: boolean;
+        auth?: {
+          token?: string;
+        };
+        extraHeaders?: Record<string, string>;
+      }
+
+      const managerOptions: ManagerOptionsWithAuth = {
         transports: ["websocket"],
         autoConnect: true,
         reconnection: true,
-      });
-      console.log(`[SocketService] Initialized Manager at ${url}`);
+        auth: {
+          token: token ? `Bearer ${token}` : undefined,
+        },
+        extraHeaders: token
+          ? {
+              Authorization: `Bearer ${token}`,
+            }
+          : {},
+      };
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      this.manager = new Manager(url, managerOptions as any);
     }
     return this.manager;
   }
@@ -42,9 +89,24 @@ class SocketService {
    * @param namespace e.g. "/presence" or "/gamification"
    */
   public connect(namespace: string): Socket {
+    const newToken = this.getTokenFromStorage();
+
+    // Check for token change
+    if (this.manager && newToken !== this.lastToken) {
+      this.disconnectAll();
+      this.manager = null;
+    }
+
     if (!this.sockets.has(namespace)) {
       const manager = this.getManager();
-      const socket = manager.socket(namespace);
+      const token = this.getTokenFromStorage();
+
+      // Pass auth to namespace socket (Manager-level auth doesn't propagate to namespaces)
+      const socket = manager.socket(namespace, {
+        auth: {
+          token: token ? `Bearer ${token}` : undefined,
+        },
+      });
 
       socket.on("connect", () => {
         console.log(
