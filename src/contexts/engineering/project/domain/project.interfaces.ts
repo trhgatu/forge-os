@@ -90,6 +90,7 @@ export interface ProjectLink {
 }
 
 export interface ProjectLog {
+  id?: string;
   date: Date;
   type: 'update' | 'alert' | 'info';
   content: string;

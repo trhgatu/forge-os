@@ -6,22 +6,25 @@ import {
   Param,
   Patch,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import {
-  GetProjectsQuery,
-  GetProjectQuery,
-} from '../application/queries/get-projects.query';
+import { GetAllProjectsQuery } from '../application/queries/get-all-projects.query';
+import { GetProjectByIdQuery } from '../application/queries/get-project-by-id.query';
+import { QueryProjectDto } from './dto/query-project.dto';
 import { GetGithubStatsQuery } from '../application/queries/get-github-stats.query';
 import { GetGithubReposQuery } from '../application/queries/get-github-repos.query';
 import { CreateProjectCommand } from '../application/commands/create-project.command';
 import { SyncProjectCommand } from '../application/commands/sync-project.command';
+import { ProjectId } from '../domain/value-objects/project-id.vo';
+import { Project } from '../domain/project.entity';
 import { UpdateProjectCommand } from '../application/commands/update-project.command';
 
 import { CreateProjectDto } from '../application/dtos/create-project.dto';
 import { UpdateProjectDto } from '../application/dtos/update-project.dto';
 import { DeleteProjectCommand } from '../application/commands/delete-project.command';
-import { Permissions } from '@shared/decorators';
+import { ProjectPresenter } from './project.presenter';
+import { Permissions, User } from '@shared/decorators';
 import { PermissionEnum } from '@shared/enums/permission.enum';
 import { JwtAuthGuard } from '../../../iam/auth/application/guards/jwt-auth.guard';
 import { PermissionsGuard } from '@shared/guards/permissions.guard';
@@ -36,44 +39,64 @@ export class ProjectController {
   ) {}
 
   @Get()
-  async findAll() {
-    return this.queryBus.execute(new GetProjectsQuery());
+  @Permissions(PermissionEnum.READ_PROJECT)
+  async findAll(@Query() query: QueryProjectDto) {
+    return this.queryBus.execute(new GetAllProjectsQuery(query));
   }
 
   @Get(':id')
+  @Permissions(PermissionEnum.READ_PROJECT)
   async findOne(@Param('id') id: string) {
-    return this.queryBus.execute(new GetProjectQuery(id));
+    return this.queryBus.execute(new GetProjectByIdQuery(ProjectId.create(id)));
   }
 
   @Post()
-  async create(@Body() dto: CreateProjectDto) {
-    return this.commandBus.execute(
-      new CreateProjectCommand(dto.title, dto.description),
-    );
+  @Permissions(PermissionEnum.CREATE_PROJECT)
+  async create(@Body() dto: CreateProjectDto, @User('id') userId: string) {
+    const project = (await this.commandBus.execute(
+      new CreateProjectCommand({
+        ...dto,
+        userId,
+      }),
+    )) as unknown as Project; // Explicit cast to avoid unsafe assignment
+    return ProjectPresenter.toResponse(project);
   }
 
   @Patch(':id')
+  @Permissions(PermissionEnum.UPDATE_PROJECT)
   async update(@Param('id') id: string, @Body() dto: UpdateProjectDto) {
-    return this.commandBus.execute(new UpdateProjectCommand(id, dto));
+    const project = (await this.commandBus.execute(
+      new UpdateProjectCommand(ProjectId.create(id), dto),
+    )) as unknown as Project;
+    return ProjectPresenter.toResponse(project);
   }
 
   @Delete(':id')
   @Permissions(PermissionEnum.DELETE_PROJECT)
   async remove(@Param('id') id: string) {
-    return this.commandBus.execute(new DeleteProjectCommand(id));
+    await this.commandBus.execute(
+      new DeleteProjectCommand(ProjectId.create(id)),
+    );
+    return { success: true };
   }
 
   @Post(':id/sync')
+  @Permissions(PermissionEnum.UPDATE_PROJECT)
   async sync(@Param('id') id: string) {
-    return this.commandBus.execute(new SyncProjectCommand(id));
+    const project = (await this.commandBus.execute(
+      new SyncProjectCommand(ProjectId.create(id)),
+    )) as unknown as Project;
+    return ProjectPresenter.toResponse(project);
   }
 
   @Get('github/stats/:username')
+  @Permissions(PermissionEnum.READ_PROJECT)
   async getGithubStats(@Param('username') username: string) {
     return this.queryBus.execute(new GetGithubStatsQuery(username));
   }
 
   @Get('github/repos/:username')
+  @Permissions(PermissionEnum.READ_PROJECT)
   async getGithubRepos(@Param('username') username: string) {
     return this.queryBus.execute(new GetGithubReposQuery(username));
   }

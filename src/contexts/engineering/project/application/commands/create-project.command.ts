@@ -1,6 +1,9 @@
+export class CreateProjectPayload {
+  title!: string;
+  description?: string;
+  userId?: string;
+}
+
 export class CreateProjectCommand {
-  constructor(
-    public readonly title: string,
-    public readonly description?: string,
-  ) {}
+  constructor(public readonly payload: CreateProjectPayload) {}
 }

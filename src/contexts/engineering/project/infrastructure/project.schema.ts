@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import { ProjectTask } from '../domain/project.interfaces';
 
-export type ProjectDocument = Project & Document;
+export type ProjectDocument = Project & Document & { _id: Types.ObjectId };
 
 @Schema()
 class HybridStats {
@@ -148,6 +148,12 @@ export class Project {
 
   @Prop({ type: [ProjectLogSchema], default: [] })
   logs!: ProjectLog[];
+
+  @Prop({ default: false })
+  isDeleted!: boolean;
+
+  @Prop()
+  deletedAt?: Date;
 }
 
 export const ProjectSchema = SchemaFactory.createForClass(Project);
