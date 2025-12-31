@@ -58,14 +58,18 @@ export const SystemLogsWidget: React.FC<SystemLogsWidgetProps> = ({ projects }) 
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-xs text-gray-400">
                 <span className="text-white font-medium">
-                  {new Date(log.date).toLocaleDateString()}
+                  {!isNaN(new Date(log.date).getTime())
+                    ? new Date(log.date).toLocaleDateString()
+                    : "Unknown Date"}
                 </span>
                 <span className="w-1 h-1 rounded-full bg-gray-600" />
                 <span>
-                  {new Date(log.date).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
+                  {!isNaN(new Date(log.date).getTime())
+                    ? new Date(log.date).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })
+                    : "--:--"}
                 </span>
               </div>
               <div className="p-3 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors flex items-start gap-3 cursor-pointer">
@@ -91,7 +95,7 @@ export const SystemLogsWidget: React.FC<SystemLogsWidgetProps> = ({ projects }) 
           </div>
         ))}
 
-        {projects.every((p) => !p.logs || p.logs.length === 0) && (
+        {aggregatedLogs.length === 0 && (
           <div className="text-center py-8 text-gray-500 text-sm italic">
             No recent system activity detected.
           </div>
