@@ -64,7 +64,7 @@ export function QuoteDetailPanel({
           config.bg
         )}
       />
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.05] mix-blend-overlay pointer-events-none" />
+      <div className="absolute inset-0 bg-[url('/assets/noise.svg')] opacity-[0.05] mix-blend-overlay pointer-events-none" />
 
       <div className="relative z-10 min-h-full flex flex-col p-8 md:p-12">
         {/* Header Control Bar */}

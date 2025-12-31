@@ -196,18 +196,26 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
     isPinned: project.isPinned,
   });
 
+  const [error, setError] = useState("");
   useEffect(() => {
-    // eslint-disable-next-line
-    setFormData({
-      title: project.title,
-      description: project.description,
-      status: project.status,
-      isPinned: project.isPinned,
-    });
+    const timer = setTimeout(() => {
+      setFormData({
+        title: project.title,
+        description: project.description,
+        status: project.status,
+        isPinned: project.isPinned,
+      });
+      setError("");
+    }, 0);
+    return () => clearTimeout(timer);
   }, [project]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.title.trim()) {
+      setError("Title is required");
+      return;
+    }
     onUpdate(project.id, formData);
   };
 
@@ -232,9 +240,13 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
               <input
                 type="text"
                 value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                onChange={(e) => {
+                  setFormData({ ...formData, title: e.target.value });
+                  if (error) setError("");
+                }}
                 className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-fuchsia-400/50 focus:ring-1 focus:ring-fuchsia-400/50 transition-all"
               />
+              {error && <p className="text-red-400 text-xs mt-1">{error}</p>}
             </div>
 
             <div>

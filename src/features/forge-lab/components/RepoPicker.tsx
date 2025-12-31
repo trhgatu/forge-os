@@ -18,24 +18,36 @@ export const RepoPicker: React.FC<RepoPickerProps> = ({ isOpen, onClose, onSelec
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchRepos = async () => {
       if (!username) return;
       setLoading(true);
       setError(null);
       try {
         const data = await forgeApi.getGithubRepos(username);
-        setRepos(data);
+        if (isMounted) {
+          setRepos(data);
+        }
       } catch (err) {
         console.error("Failed to fetch repos", err);
-        setError("Failed to load repositories.");
+        if (isMounted) {
+          setError("Failed to load repositories.");
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     if (isOpen && username) {
       fetchRepos();
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [isOpen, username]);
 
   const filteredRepos = repos.filter((repo) =>

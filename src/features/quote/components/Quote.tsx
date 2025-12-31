@@ -36,11 +36,14 @@ export function Quote() {
 
   // Update hero quote when quotes change or on demand
   useEffect(() => {
-    if (quotes.length > 0 && !heroQuote) {
-      const timer = setTimeout(() => {
-        setHeroQuote(quotes[Math.floor(Math.random() * quotes.length)]);
-      }, 0);
-      return () => clearTimeout(timer);
+    if (quotes.length > 0) {
+      const isStale = heroQuote && !quotes.find((q) => q.id === heroQuote.id);
+      if (!heroQuote || isStale) {
+        const timer = setTimeout(() => {
+          setHeroQuote(quotes[Math.floor(Math.random() * quotes.length)]);
+        }, 0);
+        return () => clearTimeout(timer);
+      }
     }
   }, [quotes, heroQuote]);
 

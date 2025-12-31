@@ -69,7 +69,7 @@ export function ZenQuoteView({ quote, onClose }: ZenQuoteViewProps) {
       />
 
       {/* 4. Cinematic Noise (Texture) */}
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.05] mix-blend-overlay pointer-events-none" />
+      <div className="absolute inset-0 bg-[url('/assets/noise.svg')] opacity-[0.05] mix-blend-overlay pointer-events-none" />
 
       {/* Close Button (High Contrast) */}
       <button

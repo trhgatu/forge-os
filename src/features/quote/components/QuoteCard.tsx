@@ -29,7 +29,7 @@ export function QuoteCard({
       <div
         className={cn(
           "absolute left-0 top-0 bottom-0 w-[4px] transition-all duration-500 shadow-[0_0_15px_currentColor]",
-          config.particleColor.replace("bg-", "bg-")
+          config.particleColor
         )}
       />
 
@@ -37,7 +37,7 @@ export function QuoteCard({
       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.03] to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-[1500ms] ease-in-out pointer-events-none" />
 
       {/* 3. Texture (Fine Grain Vellum) */}
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] mix-blend-overlay pointer-events-none" />
+      <div className="absolute inset-0 bg-[url('/assets/noise.svg')] opacity-[0.03] mix-blend-overlay pointer-events-none" />
 
       {/* Header: Silver Foil Metadata */}
       <div className="flex justify-between items-start mb-6 relative z-10">
