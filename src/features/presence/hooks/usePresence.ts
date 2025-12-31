@@ -23,27 +23,13 @@ interface RawVisitorEcho {
   timestamp: string; // Socket sends dates as strings usually
 }
 
-const getSocketUrl = () => {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-  if (process.env.NEXT_PUBLIC_SOCKET_URL) return process.env.NEXT_PUBLIC_SOCKET_URL;
-  if (apiUrl) {
-    try {
-      return new URL(apiUrl).origin;
-    } catch (e) {
-      console.warn("Invalid API URL", e);
-    }
-  }
-  return "http://localhost:8000";
-};
-const SOCKET_URL = getSocketUrl();
-
 export const usePresence = () => {
   const [echoes, setEchoes] = useState<VisitorEcho[]>([]);
   const [stars] = useState(() => generateStars(50));
 
   useEffect(() => {
     // Ensure connection is established
-    const socket = socketService.connect(`${SOCKET_URL}/presence`);
+    const socket = socketService.connect('/presence');
 
     if (!socket) {
       console.warn("usePresence: Failed to get socket instance");

@@ -5,12 +5,14 @@ import { LayoutDashboard, Layers, Book, Network, Plus } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 import { ForgeTab, Project, Foundation, ResearchTrail } from "../types";
 import { forgeApi } from "../api";
+import { useAuthStore } from "@/shared/store/authStore";
 
 // Components
 import { LabDashboard } from "./LabDashboard";
 import { ProjectForge } from "./ProjectForge";
 import { FoundationLibrary } from "./FoundationLibrary";
 import { ResearchTrails } from "./ResearchTrails";
+import { CreateProjectModal } from "./ProjectModals";
 
 const MOCK_FOUNDATIONS: Foundation[] = [
   {
@@ -84,33 +86,104 @@ export const ForgeLab: React.FC = () => {
   const [activeProject, setActiveProject] = useState<Project | null>(null);
   const [activeFoundation, setActiveFoundation] = useState<Foundation | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
-  const [, setLoading] = useState(false);
-  useEffect(() => {
-    const fetchProjects = async () => {
-      setLoading(true);
-      try {
-        const data = await forgeApi.getProjects();
-        // Ensure dates are parsed correctly if JSON returns strings
-        const parsedData = data.map((p) => ({
-          ...p,
-          updatedAt: new Date(p.updatedAt),
-          dueDate: p.dueDate ? new Date(p.dueDate) : undefined,
-          logs: p.logs?.map((l) => ({ ...l, date: new Date(l.date) })),
-          taskBoard: p.taskBoard || { todo: [], inProgress: [], done: [] }, // Ensure taskboard exists
-          links: p.links || [],
-        }));
-        setProjects(parsedData);
-      } catch (error) {
-        console.error("Failed to fetch projects", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const [isCreating, setIsCreating] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
+  // --- Identity State ---
+  const authUser = useAuthStore((state) => state.user);
+  const [githubUsername, setGithubUsername] = useState<string | undefined>(undefined);
+
+  const fetchProjects = async () => {
+    try {
+      const response = await forgeApi.getProjects();
+      // Handle both paginated and non-paginated responses for backward compatibility
+      // Handle both paginated and non-paginated responses for backward compatibility
+      const data = Array.isArray(response)
+        ? response
+        : (response as { data: Project[] }).data || [];
+
+      const parsedData = data.map((p: Project) => ({
+        ...p,
+        updatedAt: new Date(p.updatedAt),
+        dueDate: p.dueDate ? new Date(p.dueDate) : undefined,
+        logs: p.logs?.map((l) => ({ ...l, date: new Date(l.date) })),
+        taskBoard: p.taskBoard || { todo: [], inProgress: [], done: [] },
+        links: p.links || [],
+      }));
+      setProjects(parsedData);
+    } catch (error) {
+      console.error("Failed to fetch projects", error);
+    }
+  };
+
+  useEffect(() => {
     if (activeTab === "projects" || activeTab === "dashboard") {
       fetchProjects();
     }
   }, [activeTab]);
+
+  useEffect(() => {
+    if (authUser?.id) {
+      forgeApi
+        .getUser(authUser.id)
+        .then((profile) => {
+          const gh = profile.connections?.find((c) => c.provider === "github");
+          if (gh) setGithubUsername(gh.identifier);
+        })
+        .catch((err) => console.error("Failed to load user profile", err));
+    } else {
+      setGithubUsername(undefined);
+    }
+  }, [authUser?.id]);
+
+  // --- CRUD Operations ---
+  const handleCreateProject = async (data: { title: string; description: string }) => {
+    setIsCreating(true);
+    try {
+      await forgeApi.createProject(data);
+      await fetchProjects();
+      setShowCreateModal(false);
+    } catch (err) {
+      console.error("Failed to create project", err);
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  const handleUpdateProject = async (id: string, data: Partial<Project>) => {
+    try {
+      const updated = await forgeApi.updateProject(id, data);
+
+      const parsedUpdated = {
+        ...updated,
+        updatedAt: new Date(updated.updatedAt),
+        dueDate: updated.dueDate ? new Date(updated.dueDate) : undefined,
+        logs: updated.logs?.map((l) => ({ ...l, date: new Date(l.date) })),
+      };
+
+      setProjects((prev) => prev.map((p) => (p.id === id ? { ...p, ...parsedUpdated } : p)));
+      if (activeProject?.id === id) {
+        setActiveProject((prev) => (prev ? { ...prev, ...parsedUpdated } : null));
+      }
+    } catch (err) {
+      console.error("Failed to update project", err);
+    }
+  };
+
+  const handleDeleteProject = async (id: string) => {
+    try {
+      await forgeApi.deleteProject(id);
+      setProjects((prev) => prev.filter((p) => p.id !== id));
+
+      // Force check matching ID or if we are deleting the currently viewed project
+      if (activeProject?.id === id) {
+        setActiveProject(null);
+        setActiveTab("projects"); // Go back to list
+      }
+    } catch (err) {
+      console.error("Failed to delete project", err);
+    }
+  };
 
   // Constants
   const NAV_ITEMS = [
@@ -119,6 +192,15 @@ export const ForgeLab: React.FC = () => {
     { id: "foundations", label: "Foundations", icon: Book },
     { id: "research", label: "Research", icon: Network },
   ];
+
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+
+  // Scroll to top when changing views
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [activeTab, activeProject]);
 
   return (
     <div className="h-full flex flex-col bg-[#030304] text-white relative overflow-hidden animate-in fade-in duration-1000">
@@ -131,7 +213,10 @@ export const ForgeLab: React.FC = () => {
 
       {/* Main Content Area - Full Width & Height */}
       <div className="flex-1 h-full relative z-10 flex flex-col min-w-0 overflow-hidden">
-        <div className="flex-1 overflow-y-auto scrollbar-hide relative z-10 pb-32">
+        <div
+          ref={scrollContainerRef}
+          className="flex-1 overflow-y-auto scrollbar-hide relative z-10 pb-32"
+        >
           {activeTab === "dashboard" && (
             <LabDashboard
               projects={projects}
@@ -146,6 +231,10 @@ export const ForgeLab: React.FC = () => {
               projects={projects}
               activeProject={activeProject}
               setActiveProject={setActiveProject}
+              githubUsername={githubUsername}
+              onUpdateProject={handleUpdateProject}
+              onDeleteProject={handleDeleteProject}
+              onRequestCreate={() => setShowCreateModal(true)}
             />
           )}
           {activeTab === "foundations" && (
@@ -201,7 +290,10 @@ export const ForgeLab: React.FC = () => {
 
           <div className="w-px h-6 bg-white/10 mx-1" />
 
-          <button className="p-3 rounded-full bg-white/5 border border-white/5 hover:bg-white/20 hover:border-white/20 text-gray-400 hover:text-white transition-all group relative">
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="p-3 rounded-full bg-white/5 border border-white/5 hover:bg-white/20 hover:border-white/20 text-gray-400 hover:text-white transition-all group relative"
+          >
             <Plus size={20} />
             {/* Tooltip */}
             <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-2 py-1 bg-black border border-white/10 text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
@@ -210,6 +302,13 @@ export const ForgeLab: React.FC = () => {
           </button>
         </div>
       </div>
+      {/* Modals */}
+      <CreateProjectModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onCreate={handleCreateProject}
+        isLoading={isCreating}
+      />
     </div>
   );
 };
