@@ -43,8 +43,8 @@ export const MoodAmbience: React.FC<MoodAmbienceProps> = ({ mood }) => {
       {/* 5. Vertical Pillars of Light (The Stacks) */}
       <div className="absolute inset-0 flex justify-around opacity-10 pointer-events-none">
         <div className="w-[1px] h-full bg-gradient-to-b from-transparent via-white/20 to-transparent transform translate-y-[-20%] animate-[pulse_8s_ease-in-out_infinite]" />
-        <div className="w-[100px] h-full bg-gradient-to-b from-transparent via-white/5 to-transparent blur-xl transform translate-y-[10%] animate-[pulse_12s_ease-in-out_infinite_delay-1000]" />
-        <div className="w-[1px] h-full bg-gradient-to-b from-transparent via-white/10 to-transparent transform translate-y-[-10%] animate-[pulse_10s_ease-in-out_infinite_delay-2000]" />
+        <div className="w-[100px] h-full bg-gradient-to-b from-transparent via-white/5 to-transparent blur-xl transform translate-y-[10%] animate-[pulse_12s_ease-in-out_infinite_1s]" />
+        <div className="w-[1px] h-full bg-gradient-to-b from-transparent via-white/10 to-transparent transform translate-y-[-10%] animate-[pulse_10s_ease-in-out_infinite_2s]" />
       </div>
 
       {/* 6. Ceiling Light (Ambient Reading Light) */}

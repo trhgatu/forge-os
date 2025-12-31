@@ -191,10 +191,7 @@ export function Quote() {
               <div
                 className={cn(
                   "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40%] h-[60%] rounded-full blur-[120px] opacity-10 pointer-events-none",
-                  SEASON_CONFIG[getSeasonFromMood(heroQuote.mood)].particleColor.replace(
-                    "bg-",
-                    "bg-"
-                  )
+                  SEASON_CONFIG[getSeasonFromMood(heroQuote.mood)].particleColor
                 )}
               />
 
@@ -236,7 +233,7 @@ export function Quote() {
                   getSeasonFromMood(
                     filterMood === "all" ? ("curiosity" as MoodType) : (filterMood as MoodType)
                   )
-                ].particleColor.replace("bg-", "bg-")
+                ].particleColor
               )}
             />
 
@@ -276,9 +273,7 @@ export function Quote() {
                     className={cn(
                       "w-1.5 h-1.5 rounded-full transition-all duration-500",
                       filterMood !== "all" &&
-                        SEASON_CONFIG[
-                          getSeasonFromMood(filterMood as MoodType)
-                        ].particleColor.replace("bg-", "bg-"),
+                        SEASON_CONFIG[getSeasonFromMood(filterMood as MoodType)].particleColor,
                       filterMood !== "all" && "shadow-[0_0_8px_currentColor]"
                     )}
                   />

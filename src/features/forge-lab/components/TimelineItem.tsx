@@ -14,7 +14,7 @@ import { formatDistanceToNow } from "date-fns";
 export interface Log {
   id?: string;
   date: Date | string;
-  type: "create" | "update" | "sync" | "delete" | "alert" | "milestone" | "other" | string;
+  type: "create" | "update" | "sync" | "delete" | "alert" | "milestone" | "other";
   content: string;
   projectTitle?: string;
 }

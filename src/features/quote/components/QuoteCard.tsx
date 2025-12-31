@@ -22,9 +22,7 @@ export function QuoteCard({
       onClick={onClick}
       className={cn(
         "group relative overflow-hidden p-8 pl-12 rounded-r-xl rounded-l-[2px] bg-[#111111] border border-white/5 transition-all duration-700 cursor-pointer",
-        "hover:shadow-2xl hover:-translate-y-1 hover:bg-[#141414]",
-        // Dynamic colored shadow based on config
-        `hover:shadow-[0_10px_40px_-10px_${config.particleColor.replace("bg-", "")}]`
+        "hover:shadow-2xl hover:-translate-y-1 hover:bg-[#141414]"
       )}
     >
       {/* 1. The Neon Spine (Glowing Gutter) */}
