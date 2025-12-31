@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
 import { GamificationController } from './presentation/gamification.controller';
+import { AuthModule } from '../iam/auth/auth.module';
 import { MongoUserStatsRepository } from './infrastructure/mongo-user-stats.repository';
 import {
   UserStatsModel,
@@ -18,6 +19,7 @@ import { GamificationGateway } from './presentation/gamification.gateway';
     MongooseModule.forFeature([
       { name: UserStatsModel.name, schema: UserStatsSchema },
     ]),
+    AuthModule,
   ],
   controllers: [GamificationController],
   providers: [

@@ -23,12 +23,16 @@ export class QueryProjectDto {
   tags?: string[];
 
   @IsOptional()
-  @Transform(({ value }) => value === 'true')
+  @Transform(({ value }) =>
+    value === 'true' ? true : value === 'false' ? false : value,
+  )
   @IsBoolean()
   isDeleted?: boolean;
 
   @IsOptional()
-  @Transform(({ value }) => value === 'true')
+  @Transform(({ value }) =>
+    value === 'true' ? true : value === 'false' ? false : value,
+  )
   @IsBoolean()
   isPinned?: boolean;
 

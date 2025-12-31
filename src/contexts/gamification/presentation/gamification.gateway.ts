@@ -5,6 +5,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { AuthService } from '../../iam/auth/application/services/auth.service';
 
 @WebSocketGateway({
   cors: {
@@ -15,18 +16,47 @@ import { Server, Socket } from 'socket.io';
 export class GamificationGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
+  constructor(private readonly authService: AuthService) {}
+
   @WebSocketServer()
   server!: Server;
 
-  handleConnection(client: Socket) {
-    const userId = client.handshake.query.userId as string;
-    if (userId) {
-      void client.join(`user:${userId}`);
-      console.log(
-        `Gamification Client Connected: ${client.id} (User: ${userId})`,
-      );
-    } else {
-      console.log(`Gamification Client Connected: ${client.id} (Anonymous)`);
+  async handleConnection(client: Socket) {
+    try {
+      let userId: string | undefined;
+      const queryUserId = client.handshake.query.userId;
+      if (Array.isArray(queryUserId)) {
+        userId = queryUserId[0];
+      } else {
+        userId = queryUserId as string;
+      }
+
+      // 2. Security: Verify Token if present (Priority)
+      const token =
+        client.handshake.auth?.token || client.handshake.headers?.authorization;
+
+      if (token) {
+        try {
+          const cleanToken = (token as string).replace('Bearer ', '');
+          const payload = await this.authService.verifyToken(cleanToken);
+          userId = payload.sub; // Trust the token over the query param
+        } catch {
+          console.warn(`Gamification: Invalid token for client ${client.id}`);
+          // client.disconnect(); // Optional: Enforce disconnect if strict
+        }
+      }
+
+      if (userId) {
+        void client.join(`user:${userId}`);
+        console.log(
+          `Gamification Client Connected: ${client.id} (User: ${userId})`,
+        );
+      } else {
+        console.log(`Gamification Client Connected: ${client.id} (Anonymous)`);
+      }
+    } catch (error) {
+      console.error('Connection error', error);
+      client.disconnect();
     }
   }
 
@@ -38,6 +68,8 @@ export class GamificationGateway
     userId: string,
     data: { xp: number; newLevel: number; reason: string },
   ) {
-    this.server.to(`user:${userId}`).emit('xp_awarded', { userId, ...data });
+    this.server
+      .to(`user:${String(userId)}`)
+      .emit('xp_awarded', { userId, ...data });
   }
 }
