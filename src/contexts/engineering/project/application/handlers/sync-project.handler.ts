@@ -1,21 +1,23 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject, Logger, NotFoundException } from '@nestjs/common';
+import { Inject, NotFoundException } from '@nestjs/common';
 import { SyncProjectCommand } from '../commands/sync-project.command';
 import { ProjectRepository } from '../ports/project.repository';
 import { GithubRepository } from '../ports/github.repository';
 import { ProjectLink } from '../../domain/project.interfaces';
 import { Project } from '../../domain/project.entity';
+import { LoggerService } from '@shared/logging/logger.service';
 // import { ProjectResponse } from '../../presentation/dto/project.response';
 
 @CommandHandler(SyncProjectCommand)
 export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
-  private readonly logger = new Logger(SyncProjectHandler.name);
+  // private readonly logger = new Logger(SyncProjectHandler.name);
 
   constructor(
     @Inject('ProjectRepository')
     private readonly projectRepository: ProjectRepository,
     @Inject('GithubRepository')
     private readonly githubRepository: GithubRepository,
+    private readonly logger: LoggerService,
   ) {}
 
   async execute(command: SyncProjectCommand): Promise<Project> {
@@ -97,7 +99,7 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
       this.logger.log(`Project ${id} synced successfully`);
       return project;
     } catch (error: any) {
-      this.logger.error(`Failed to sync project ${id}`, error.stack);
+      this.logger.error(`Failed to sync project ${id}`, (error as Error).stack); // Type cast for safety
 
       if (error.status === 404) {
         this.logger.warn(

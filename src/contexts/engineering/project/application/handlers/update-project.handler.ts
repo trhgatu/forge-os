@@ -1,18 +1,20 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject, Logger, NotFoundException } from '@nestjs/common';
+import { Inject, NotFoundException } from '@nestjs/common';
 import { UpdateProjectCommand } from '../commands/update-project.command';
 import { ProjectRepository } from '../ports/project.repository';
 import { Project } from '../../domain/project.entity';
+import { LoggerService } from '@shared/logging/logger.service';
 
 @CommandHandler(UpdateProjectCommand)
 export class UpdateProjectHandler
   implements ICommandHandler<UpdateProjectCommand>
 {
-  private readonly logger = new Logger(UpdateProjectHandler.name);
+  // private readonly logger = new Logger(UpdateProjectHandler.name);
 
   constructor(
     @Inject('ProjectRepository')
     private readonly projectRepository: ProjectRepository,
+    private readonly logger: LoggerService,
   ) {}
 
   async execute(command: UpdateProjectCommand): Promise<Project> {

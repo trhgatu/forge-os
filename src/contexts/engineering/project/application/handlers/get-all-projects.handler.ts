@@ -1,8 +1,9 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { GetAllProjectsQuery } from '../queries/get-all-projects.query';
-import { Inject, Logger } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
 import { ProjectRepository } from '../ports/project.repository';
 import { CacheService } from '@shared/services';
+import { LoggerService } from '@shared/logging/logger.service';
 import { PaginatedResponse } from '@shared/types/paginated-response';
 import { ProjectPresenter } from '../../presentation/project.presenter';
 import { ProjectResponse } from '../../presentation/dto/project.response';
@@ -11,12 +12,13 @@ import { ProjectResponse } from '../../presentation/dto/project.response';
 export class GetAllProjectsHandler
   implements IQueryHandler<GetAllProjectsQuery>
 {
-  private readonly logger = new Logger(GetAllProjectsHandler.name);
+  // private readonly logger = new Logger(GetAllProjectsHandler.name); // Removed standard logger
 
   constructor(
     @Inject('ProjectRepository')
     private readonly projectRepository: ProjectRepository,
     private readonly cacheService: CacheService,
+    private readonly logger: LoggerService,
   ) {}
 
   async execute(
