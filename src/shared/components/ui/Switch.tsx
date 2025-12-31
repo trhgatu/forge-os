@@ -30,11 +30,9 @@ export const Switch: React.FC<SwitchProps> = ({
     >
       <motion.span
         layout
+        animate={{ x: checked ? 20 : 0 }}
         transition={{ type: "spring", stiffness: 500, damping: 30 }}
-        className={cn(
-          "pointer-events-none block h-5 w-5 rounded-full bg-white shadow-lg ring-0 transition-transform",
-          checked ? "translate-x-5" : "translate-x-0"
-        )}
+        className={cn("pointer-events-none block h-5 w-5 rounded-full bg-white shadow-lg ring-0")}
       />
     </button>
   );

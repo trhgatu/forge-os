@@ -9,7 +9,7 @@ interface ProjectForgeProps {
   activeProject: Project | null;
   setActiveProject: (project: Project | null) => void;
   githubUsername?: string;
-  onUpdateProject?: (id: string, data: Partial<Project>) => void;
+  onUpdateProject?: (id: string, data: Partial<Project>) => Promise<void>;
   onDeleteProject?: (id: string) => Promise<void>;
   onRequestCreate?: () => void;
 }

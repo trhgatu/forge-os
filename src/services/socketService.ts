@@ -57,6 +57,10 @@ class SocketService {
         console.log(`[SocketService] Disconnected from [${namespace}]`);
       });
 
+      socket.on("connect_error", (err) => {
+        console.error(`[SocketService] Connection Error on [${namespace}]:`, err.message);
+      });
+
       this.sockets.set(namespace, socket);
       return socket;
     }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { toast } from "sonner";
 import { socketService } from "@/services/socketService";
 
@@ -15,6 +15,11 @@ export const useGamificationSocket = (
 ) => {
   // Initialize with existing socket if any
   const [socket, setSocket] = useState(socketService.getSocket("/gamification"));
+  const onXpAwardedRef = useRef(onXpAwarded);
+
+  useEffect(() => {
+    onXpAwardedRef.current = onXpAwarded;
+  }, [onXpAwarded]);
 
   useEffect(() => {
     if (!userId) return;
@@ -32,8 +37,8 @@ export const useGamificationSocket = (
           duration: 4000,
         });
 
-        if (onXpAwarded) {
-          onXpAwarded(data);
+        if (onXpAwardedRef.current) {
+          onXpAwardedRef.current(data);
         }
       }
     };
@@ -43,7 +48,7 @@ export const useGamificationSocket = (
     return () => {
       socketInstance.off("xp_awarded", handleXpAwarded);
     };
-  }, [userId, onXpAwarded]);
+  }, [userId]);
 
   return socket;
 };
