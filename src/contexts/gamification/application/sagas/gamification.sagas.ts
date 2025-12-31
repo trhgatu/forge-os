@@ -40,8 +40,14 @@ export class GamificationSagas {
         const cap = 100; // Max 100 XP per sync
         const awardedXp = Math.min(xpAmount, cap);
 
+        // Ensure userId is string (handle Value Object from Domain)
+        const userId: string =
+          typeof event.userId === 'object' && 'value' in (event.userId as any)
+            ? (event.userId as any).value
+            : String(event.userId);
+
         return new AwardXpCommand(
-          event.userId,
+          userId,
           awardedXp,
           'project-sync',
           `Synced project ${event.id}. Fetched ${event.newCommitCount} commits.`,
