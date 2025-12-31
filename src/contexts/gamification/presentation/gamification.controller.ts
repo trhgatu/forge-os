@@ -25,7 +25,7 @@ export class GamificationController {
         level: 1,
         title: 'Novice',
         streak: 0,
-        lastActivityDate: new Date(),
+        lastActivityDate: null,
         achievements: [],
       } as any;
     }

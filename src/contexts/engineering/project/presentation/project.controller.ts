@@ -74,7 +74,9 @@ export class ProjectController {
   @Delete(':id')
   @Permissions(PermissionEnum.DELETE_PROJECT)
   async remove(@Param('id') id: string) {
-    await this.commandBus.execute(new DeleteProjectCommand(id));
+    await this.commandBus.execute(
+      new DeleteProjectCommand(ProjectId.create(id)),
+    );
     return { success: true };
   }
 

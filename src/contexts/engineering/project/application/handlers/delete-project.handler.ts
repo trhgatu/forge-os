@@ -2,7 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { DeleteProjectCommand } from '../commands/delete-project.command';
 import { Inject, NotFoundException } from '@nestjs/common';
 import { ProjectRepository } from '../ports/project.repository';
-import { ProjectId } from '../../domain/value-objects/project-id.vo';
+// import { ProjectId } from '../../domain/value-objects/project-id.vo'; // Unused now
 
 @CommandHandler(DeleteProjectCommand)
 export class DeleteProjectHandler
@@ -15,14 +15,13 @@ export class DeleteProjectHandler
 
   async execute(command: DeleteProjectCommand): Promise<void> {
     const { id } = command;
-    const projectId = ProjectId.create(id);
-    const project = await this.projectRepository.findById(projectId);
+    const project = await this.projectRepository.findById(id);
 
     if (!project) {
-      throw new NotFoundException(`Project with ID ${id} not found`);
+      throw new NotFoundException(`Project with ID ${id.toString()} not found`);
     }
 
-    await this.projectRepository.softDelete(projectId);
+    await this.projectRepository.softDelete(id);
     return;
   }
 }

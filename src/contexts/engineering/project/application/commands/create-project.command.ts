@@ -1,5 +1,5 @@
 export class CreateProjectPayload {
-  title?: string;
+  title!: string;
   description?: string;
   userId?: string;
 }

@@ -5,7 +5,7 @@ import {
   IsNumber,
   IsArray,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Type, Transform } from 'class-transformer';
 
 export class QueryProjectDto {
   @IsOptional()
@@ -23,12 +23,12 @@ export class QueryProjectDto {
   tags?: string[];
 
   @IsOptional()
-  @Type(() => Boolean)
+  @Transform(({ value }) => value === 'true')
   @IsBoolean()
   isDeleted?: boolean;
 
   @IsOptional()
-  @Type(() => Boolean)
+  @Transform(({ value }) => value === 'true')
   @IsBoolean()
   isPinned?: boolean;
 

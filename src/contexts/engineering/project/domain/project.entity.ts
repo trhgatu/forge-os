@@ -115,12 +115,14 @@ export class Project {
     if (this.isDeleted) return;
     this.isDeleted = true;
     this.deletedAt = new Date();
+    this.props.updatedAt = new Date();
   }
 
   restore(): void {
     if (!this.isDeleted) return;
     this.isDeleted = false;
     this.deletedAt = undefined;
+    this.props.updatedAt = new Date();
   }
 
   // ============

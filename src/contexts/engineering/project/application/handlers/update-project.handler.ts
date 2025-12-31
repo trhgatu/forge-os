@@ -3,7 +3,6 @@ import { Inject, Logger, NotFoundException } from '@nestjs/common';
 import { UpdateProjectCommand } from '../commands/update-project.command';
 import { ProjectRepository } from '../ports/project.repository';
 import { Project } from '../../domain/project.entity';
-// import { ProjectResponse } from '../../presentation/dto/project.response';
 
 @CommandHandler(UpdateProjectCommand)
 export class UpdateProjectHandler

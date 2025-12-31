@@ -8,9 +8,9 @@ import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({
   cors: {
-    origin: '*',
+    origin: process.env.CORS_ORIGIN || '*', // Consider restricting to specific domains in production
   },
-  namespace: 'gamification', // Separate namespace for clarity
+  namespace: 'gamification',
 })
 export class GamificationGateway
   implements OnGatewayConnection, OnGatewayDisconnect
@@ -19,7 +19,15 @@ export class GamificationGateway
   server!: Server;
 
   handleConnection(client: Socket) {
-    console.log(`Gamification Client Connected: ${client.id}`);
+    const userId = client.handshake.query.userId as string;
+    if (userId) {
+      void client.join(`user:${userId}`);
+      console.log(
+        `Gamification Client Connected: ${client.id} (User: ${userId})`,
+      );
+    } else {
+      console.log(`Gamification Client Connected: ${client.id} (Anonymous)`);
+    }
   }
 
   handleDisconnect(client: Socket) {
@@ -30,9 +38,6 @@ export class GamificationGateway
     userId: string,
     data: { xp: number; newLevel: number; reason: string },
   ) {
-    // Emit to specific user room or broadcast if simplified (for now broadcast to all clients of that user?)
-    // Ideally we join users to a room 'user:userId'
-    // For MVP, if we don't have user rooms yet, we might emit global with userId payload and frontend filters.
-    this.server.emit('xp_awarded', { userId, ...data });
+    this.server.to(`user:${userId}`).emit('xp_awarded', { userId, ...data });
   }
 }

@@ -38,14 +38,22 @@ export class UserStats extends AggregateRoot {
     const now = new Date();
     const last = new Date(this.lastActivityDate);
 
+    // Normalize to midnight for calendar day comparison
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const lastDay = new Date(
+      last.getFullYear(),
+      last.getMonth(),
+      last.getDate(),
+    );
+
     // Check if same day
-    if (now.toDateString() === last.toDateString()) {
+    if (today.getTime() === lastDay.getTime()) {
       return;
     }
 
-    // Check if consecutive day
-    const diffTime = Math.abs(now.getTime() - last.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    // Check if consecutive day (difference is exactly 1 day or within safe threshold)
+    const diffTime = Math.abs(today.getTime() - lastDay.getTime());
+    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
 
     if (diffDays === 1) {
       this.streak += 1;

@@ -12,6 +12,9 @@ export class ProjectMapper {
   static toDomain(doc: ProjectDocument): ProjectEntity {
     // Determine the ID: if available as string or ObjectId or { $oid: ... } legacy import
     let id = (doc as any)._id;
+    if (!id) {
+      throw new Error('Project load failed: Missing _id');
+    }
     if (typeof id === 'object' && id && '$oid' in id) {
       id = (id as any).$oid;
     } else {

@@ -40,8 +40,18 @@ export class MongoProjectRepository implements ProjectRepository {
         filter.tags.length > 0 && { tags: { $in: filter.tags } }),
       ...(filter.keyword && {
         $or: [
-          { title: { $regex: filter.keyword, $options: 'i' } },
-          { description: { $regex: filter.keyword, $options: 'i' } },
+          {
+            title: {
+              $regex: filter.keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
+              $options: 'i',
+            },
+          },
+          {
+            description: {
+              $regex: filter.keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
+              $options: 'i',
+            },
+          },
         ],
       }),
     };

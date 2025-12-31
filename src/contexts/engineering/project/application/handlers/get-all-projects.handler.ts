@@ -25,7 +25,12 @@ export class GetAllProjectsHandler
     const { payload } = query;
     const { page = 1, limit = 10 } = payload;
 
-    const cacheKey = `projects:list:p${page}:l${limit}:${JSON.stringify(payload)}`;
+    // Create deterministic cache key by sorting inputs
+    const safeKeyword = payload.keyword || '';
+    const safeStatus = payload.status || '';
+    const p = page;
+    const l = limit;
+    const cacheKey = `projects:list:${p}:${l}:${safeKeyword}:${safeStatus}`;
 
     const cached =
       await this.cacheService.get<PaginatedResponse<ProjectResponse>>(cacheKey);

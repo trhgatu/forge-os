@@ -1,6 +1,6 @@
 import { Project } from '../domain/project.entity';
 import { ProjectResponse } from './dto/project.response';
-import * as crypto from 'crypto';
+// import * as crypto from 'crypto';
 
 export class ProjectPresenter {
   static toResponse(entity: Project): ProjectResponse {
@@ -16,9 +16,12 @@ export class ProjectPresenter {
       progress: entity.progress,
       taskBoard: entity.taskBoard,
       links: entity.links,
-      logs: entity.logs.map((log) => ({
+      logs: entity.logs.map((log, index) => ({
         ...log,
-        id: log.id || (log as any)._id?.toString() || crypto.randomUUID(),
+        id:
+          log.id ||
+          (log as any)._id?.toString() ||
+          `log-${index}-${new Date(log.date).getTime()}`,
       })),
       createdAt: new Date(entity.createdAt).toISOString(),
       updatedAt: new Date(entity.updatedAt).toISOString(),
