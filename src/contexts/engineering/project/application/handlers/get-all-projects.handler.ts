@@ -28,11 +28,14 @@ export class GetAllProjectsHandler
     const { page = 1, limit = 10 } = payload;
 
     // Create deterministic cache key by sorting inputs
+    // Create deterministic cache key by sorting inputs
     const safeKeyword = payload.keyword || '';
     const safeStatus = payload.status || '';
     const safeTags = [...(payload.tags || [])].sort().join(',');
-    const safeIsDeleted = payload.isDeleted ?? 'undefined';
-    const safeIsPinned = payload.isPinned ?? 'undefined';
+    const safeIsDeleted =
+      payload.isDeleted !== undefined ? String(payload.isDeleted) : '';
+    const safeIsPinned =
+      payload.isPinned !== undefined ? String(payload.isPinned) : '';
     const p = page;
     const l = limit;
     const cacheKey = `projects:list:${p}:${l}:${safeKeyword}:${safeStatus}:${safeTags}:${safeIsDeleted}:${safeIsPinned}`;

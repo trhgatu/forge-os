@@ -1,4 +1,4 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 import { Inject, NotFoundException } from '@nestjs/common';
 import { SyncProjectCommand } from '../commands/sync-project.command';
 import { ProjectRepository } from '../ports/project.repository';
@@ -6,6 +6,7 @@ import { GithubRepository } from '../ports/github.repository';
 import { ProjectLink } from '../../domain/project.interfaces';
 import { Project } from '../../domain/project.entity';
 import { LoggerService } from '@shared/logging/logger.service';
+import { ProjectSyncedEvent } from '../../domain/events/project-synced.event';
 // import { ProjectResponse } from '../../presentation/dto/project.response';
 
 @CommandHandler(SyncProjectCommand)
@@ -18,6 +19,7 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
     @Inject('GithubRepository')
     private readonly githubRepository: GithubRepository,
     private readonly logger: LoggerService,
+    private readonly eventBus: EventBus,
   ) {}
 
   async execute(command: SyncProjectCommand): Promise<Project> {
@@ -96,6 +98,17 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
 
       // Save
       await this.projectRepository.save(project);
+
+      this.eventBus.publish(
+        new ProjectSyncedEvent(
+          id.toString(),
+          'system', // TODO: Pass real userId from command
+          repoDetails,
+          newCommitCount,
+          new Date(),
+        ),
+      );
+
       this.logger.log(`Project ${id} synced successfully`);
       return project;
     } catch (error: any) {
