@@ -5,6 +5,7 @@ import { ProjectRepository } from '../ports/project.repository';
 import { GithubRepository } from '../ports/github.repository';
 import { ProjectLink } from '../../domain/project.interfaces';
 import { Project } from '../../domain/project.entity';
+// import { ProjectResponse } from '../../presentation/dto/project.response';
 
 @CommandHandler(SyncProjectCommand)
 export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
@@ -26,11 +27,6 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
     }
 
     // Extract owner/repo from metadata or links
-    // Assuming metadata contains { owner: '...', repo: '...' } or we parse it
-    // For now, let's look for a github link in links array or metadata
-
-    // 1. Always prioritize the visible GitHub link from the 'links' array as the Source of Truth
-    // This fixes the issue where hidden metadata becomes stale or invalid (e.g. from bad seeding)
     let owner: string | undefined;
     let repo: string | undefined;
 
@@ -46,7 +42,6 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
       }
     }
 
-    // 2. Fallback to existing metadata if no link is found (legacy support)
     if (!owner || !repo) {
       owner = project.metadata?.owner as string;
       repo = project.metadata?.repo as string;
@@ -54,7 +49,6 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
 
     if (!owner || !repo) {
       this.logger.warn(`Project ${id} has no GitHub info to sync`);
-      // Since we promise to return a Project, we should return it even if unchanged/warning
       return project;
     }
 
@@ -66,43 +60,40 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
         repo,
       );
 
-      // Update Project Entity
-      project.githubStats = {
-        stars: repoDetails.stars,
-        forks: repoDetails.forks,
-        issues: repoDetails.issues,
-        language: repoDetails.language,
-        languages: repoDetails.languages,
-        commitActivity: repoDetails.commitActivity,
-        recentCommits: repoDetails.recentCommits,
-        contributors: repoDetails.contributors,
-        updatedAt: repoDetails.updatedAt,
-        readme: repoDetails.readme,
-        issuesList: repoDetails.issuesList,
-        pullRequests: repoDetails.pullRequests,
-      };
-
-      // Update metadata to ensure we have the owner/repo saved if we parsed it
-      project.metadata = {
-        ...project.metadata,
-        owner,
-        repo,
-        syncedAt: new Date(),
-      };
+      // Update Project Entity via public method
+      project.updateInfo({
+        githubStats: {
+          stars: repoDetails.stars,
+          forks: repoDetails.forks,
+          issues: repoDetails.issues,
+          language: repoDetails.language,
+          languages: repoDetails.languages,
+          commitActivity: repoDetails.commitActivity,
+          recentCommits: repoDetails.recentCommits,
+          contributors: repoDetails.contributors,
+          updatedAt: repoDetails.updatedAt,
+          readme: repoDetails.readme,
+          issuesList: repoDetails.issuesList,
+          pullRequests: repoDetails.pullRequests,
+        },
+        metadata: {
+          ...project.metadata,
+          owner,
+          repo,
+          syncedAt: new Date(),
+        },
+      });
 
       // Add System Log
       const newCommitCount = repoDetails.recentCommits?.length || 0;
-      project.logs = [
-        {
-          date: new Date(),
-          type: 'update',
-          content: `Synced with GitHub. Fetched ${newCommitCount} recent commits and updated stats.`,
-        },
-        ...(project.logs || []),
-      ];
+      project.addLog({
+        date: new Date(),
+        type: 'update',
+        content: `Synced with GitHub. Fetched ${newCommitCount} recent commits and updated stats.`,
+      });
 
       // Save
-      await this.projectRepository.update(project);
+      await this.projectRepository.save(project);
       this.logger.log(`Project ${id} synced successfully`);
       return project;
     } catch (error: any) {
@@ -113,11 +104,13 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
           `GitHub Repo ${owner}/${repo} not found. Clearing invalid metadata.`,
         );
 
-        // Clear invalid metadata so the user is forced to fix the link or it re-evaluates next time
         if (project.metadata) {
-          delete project.metadata.owner;
-          delete project.metadata.repo;
-          await this.projectRepository.update(project);
+          const newMetadata = { ...project.metadata };
+          delete newMetadata.owner;
+          delete newMetadata.repo;
+
+          project.updateInfo({ metadata: newMetadata });
+          await this.projectRepository.save(project);
         }
 
         throw new NotFoundException(

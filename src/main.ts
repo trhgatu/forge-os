@@ -1,8 +1,8 @@
 import { NestFactory, HttpAdapterHost } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import { LoggerService } from '@shared/logging/logger.service';
-import { AllExceptionsFilter } from '@shared/filters/all-exceptions.filter';
+import { LoggerService } from './shared/logging/logger.service';
+import { AllExceptionsFilter } from './shared/filters/all-exceptions.filter';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { initRedis } from '@config/redis.config';
 async function bootstrap() {

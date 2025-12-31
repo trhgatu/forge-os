@@ -6,11 +6,13 @@ import { ProjectController } from './presentation/project.controller';
 import { CommandHandlers, QueryHandlers } from './application/handlers';
 import { MongoProjectRepository } from './infrastructure/repositories/mongo-project.repository';
 import { HttpGithubRepository } from './infrastructure/repositories/http-github.repository';
+import { SharedModule } from '@shared/shared.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Project.name, schema: ProjectSchema }]),
     CqrsModule,
+    SharedModule,
   ],
   controllers: [ProjectController],
   providers: [

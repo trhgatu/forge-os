@@ -1,5 +1,6 @@
-import { GetProjectsHandler, GetProjectHandler } from './query.handlers';
-import { CreateProjectHandler } from './command.handlers';
+import { GetAllProjectsHandler } from './get-all-projects.handler';
+import { GetProjectByIdHandler } from './get-project-by-id.handler';
+import { CreateProjectHandler } from './create-project.handler';
 import { SyncProjectHandler } from './sync-project.handler';
 import { UpdateProjectHandler } from './update-project.handler';
 
@@ -15,8 +16,8 @@ export const CommandHandlers = [
   DeleteProjectHandler,
 ];
 export const QueryHandlers = [
-  GetProjectsHandler,
-  GetProjectHandler,
+  GetAllProjectsHandler,
+  GetProjectByIdHandler,
   GetGithubStatsHandler,
   GetGithubReposHandler,
 ];
