@@ -42,6 +42,7 @@ export class GamificationGateway
           userId = payload.sub; // Trust the token over the query param
         } catch {
           console.warn(`Gamification: Invalid token for client ${client.id}`);
+          userId = undefined; // Prevent spoofing: Reset unverified userId
           // client.disconnect(); // Optional: Enforce disconnect if strict
         }
       }

@@ -28,7 +28,7 @@ export class GetAllProjectsHandler
     // Create deterministic cache key by sorting inputs
     const safeKeyword = payload.keyword || '';
     const safeStatus = payload.status || '';
-    const safeTags = (payload.tags || []).sort().join(',');
+    const safeTags = [...(payload.tags || [])].sort().join(',');
     const safeIsDeleted = payload.isDeleted ?? 'undefined';
     const safeIsPinned = payload.isPinned ?? 'undefined';
     const p = page;
