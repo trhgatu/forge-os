@@ -1,9 +1,10 @@
-import React from "react";
-import { Trash2, X, Tag, Sparkles, Pencil } from "lucide-react";
+import React, { useState } from "react";
+import { Trash2, X, Tag, Sparkles, Pencil, Maximize2 } from "lucide-react";
 import { toast } from "sonner";
 import type { Quote } from "@/shared/types/quote";
 import { cn } from "@/shared/lib/utils";
 import { SEASON_CONFIG, getSeasonFromMood } from "../../memory/config/seasons";
+import { ZenQuoteView } from "./ZenQuoteView";
 
 export function QuoteDetailPanel({
   quote,
@@ -22,6 +23,7 @@ export function QuoteDetailPanel({
 }) {
   const season = getSeasonFromMood(quote.mood);
   const config = SEASON_CONFIG[season];
+  const [isZenMode, setIsZenMode] = useState(false);
 
   const handleDeleteClick = () => {
     toast.custom((t) => (
@@ -48,6 +50,10 @@ export function QuoteDetailPanel({
       </div>
     ));
   };
+
+  if (isZenMode) {
+    return <ZenQuoteView quote={quote} onClose={() => setIsZenMode(false)} />;
+  }
 
   return (
     <div className="fixed inset-y-0 right-0 w-full max-w-2xl bg-black/95 backdrop-blur-xl border-l border-white/10 shadow-2xl z-50 overflow-y-auto slide-in-panel">
@@ -79,6 +85,19 @@ export function QuoteDetailPanel({
           </div>
 
           <div className="flex items-center gap-2 shrink-0 ml-4">
+            <button
+              onClick={() => setIsZenMode(true)}
+              className="group relative flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-forge-cyan/50 rounded-full transition-all duration-300 mr-2 overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-forge-cyan/0 via-forge-cyan/10 to-forge-cyan/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+              <Maximize2
+                size={14}
+                className="text-forge-cyan group-hover:scale-110 transition-transform"
+              />
+              <span className="text-xs font-bold uppercase tracking-widest text-white group-hover:text-forge-cyan transition-colors">
+                Enter Zen
+              </span>
+            </button>
             <button
               onClick={() => onEdit(quote)}
               className="p-2 hover:bg-white/10 rounded-full text-gray-400 hover:text-white transition-colors"
