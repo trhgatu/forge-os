@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { X, AlertTriangle, Loader2 } from "lucide-react";
 import { GlassCard } from "@/shared/ui/GlassCard";
+import { Switch } from "@/shared/components/ui/Switch";
 import { Project } from "../types";
 
 interface ModalProps {
@@ -22,6 +23,17 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (isOpen) {
+      const timer = setTimeout(() => {
+        setTitle("");
+        setDescription("");
+        setError("");
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,7 +65,10 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
               <input
                 type="text"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={(e) => {
+                  setTitle(e.target.value);
+                  if (error) setError("");
+                }}
                 className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-forge-cyan/50 focus:ring-1 focus:ring-forge-cyan/50 transition-all"
                 placeholder="e.g. Neural Core Engine"
                 autoFocus
@@ -104,6 +119,69 @@ interface EditProjectModalProps extends ModalProps {
   onUpdate: (id: string, data: Partial<Project>) => void;
 }
 
+const StatusSelect = ({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (val: "active" | "archived" | "draft" | "completed") => void;
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const options = [
+    { value: "active", label: "Active", color: "bg-green-500" },
+    { value: "archived", label: "Archived", color: "bg-gray-500" },
+    { value: "draft", label: "Draft", color: "bg-yellow-500" },
+    { value: "completed", label: "Completed", color: "bg-blue-500" },
+  ];
+
+  const current = options.find((o) => o.value === value) || options[0];
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white flex items-center justify-between hover:border-white/20 transition-all"
+      >
+        <div className="flex items-center gap-2">
+          <span className={`w-2 h-2 rounded-full ${current.color}`} />
+          {current.label}
+        </div>
+        <svg
+          className={`w-4 h-4 text-gray-500 transition-transform ${isOpen ? "rotate-180" : ""}`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      {isOpen && (
+        <>
+          <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
+          <div className="absolute top-full left-0 right-0 mt-2 bg-[#18181b] border border-white/10 rounded-xl shadow-2xl z-20 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
+            {options.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => {
+                  onChange(opt.value as "active" | "archived" | "draft" | "completed");
+                  setIsOpen(false);
+                }}
+                className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors text-left"
+              >
+                <span className={`w-2 h-2 rounded-full ${opt.color}`} />
+                {opt.label}
+                {value === opt.value && <span className="ml-auto text-forge-cyan text-xs">✓</span>}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </>
+  );
+};
+
 export const EditProjectModal: React.FC<EditProjectModalProps> = ({
   isOpen,
   onClose,
@@ -118,18 +196,26 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
     isPinned: project.isPinned,
   });
 
+  const [error, setError] = useState("");
   useEffect(() => {
-    // eslint-disable-next-line
-    setFormData({
-      title: project.title,
-      description: project.description,
-      status: project.status,
-      isPinned: project.isPinned,
-    });
+    const timer = setTimeout(() => {
+      setFormData({
+        title: project.title,
+        description: project.description,
+        status: project.status,
+        isPinned: project.isPinned,
+      });
+      setError("");
+    }, 0);
+    return () => clearTimeout(timer);
   }, [project]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.title.trim()) {
+      setError("Title is required");
+      return;
+    }
     onUpdate(project.id, formData);
   };
 
@@ -154,9 +240,13 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
               <input
                 type="text"
                 value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                onChange={(e) => {
+                  setFormData({ ...formData, title: e.target.value });
+                  if (error) setError("");
+                }}
                 className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-fuchsia-400/50 focus:ring-1 focus:ring-fuchsia-400/50 transition-all"
               />
+              {error && <p className="text-red-400 text-xs mt-1">{error}</p>}
             </div>
 
             <div>
@@ -171,39 +261,27 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-medium text-gray-400 mb-1.5 uppercase tracking-wider">
+            <div className="grid grid-cols-2 gap-6 pt-2">
+              <div className="relative z-50">
+                <label className="block text-xs font-medium text-gray-400 mb-2 uppercase tracking-wider">
                   Status
                 </label>
-                <select
-                  value={formData.status}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      status: e.target.value as "active" | "archived" | "draft" | "completed",
-                    })
-                  }
-                  className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-fuchsia-400/50 focus:ring-1 focus:ring-fuchsia-400/50 transition-all"
-                >
-                  <option value="active">Active</option>
-                  <option value="archived">Archived</option>
-                  <option value="draft">Draft</option>
-                  <option value="completed">Completed</option>
-                </select>
-              </div>
-              <div className="flex items-end mb-2">
-                <label className="flex items-center gap-3 cursor-pointer group">
-                  <input
-                    type="checkbox"
-                    checked={formData.isPinned}
-                    onChange={(e) => setFormData({ ...formData, isPinned: e.target.checked })}
-                    className="w-5 h-5 rounded border border-white/20 bg-black/20 checked:bg-forge-cyan checked:border-forge-cyan transition-colors"
+                <div className="relative">
+                  <StatusSelect
+                    value={formData.status}
+                    onChange={(val) => setFormData({ ...formData, status: val })}
                   />
-                  <span className="text-sm text-gray-300 group-hover:text-white transition-colors">
-                    Pin to Dashboard
-                  </span>
-                </label>
+                </div>
+              </div>
+
+              <div className="flex flex-col justify-end pb-2">
+                <div className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors">
+                  <span className="text-sm text-gray-300 font-medium">Pin to Dashboard</span>
+                  <Switch
+                    checked={formData.isPinned || false}
+                    onCheckedChange={(checked) => setFormData({ ...formData, isPinned: checked })}
+                  />
+                </div>
               </div>
             </div>
 

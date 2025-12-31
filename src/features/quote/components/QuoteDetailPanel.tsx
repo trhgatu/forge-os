@@ -1,9 +1,10 @@
-import React from "react";
-import { Trash2, X, Tag, Sparkles, Pencil } from "lucide-react";
+import React, { useState } from "react";
+import { Trash2, X, Sparkles, Pencil, Maximize2 } from "lucide-react";
 import { toast } from "sonner";
 import type { Quote } from "@/shared/types/quote";
 import { cn } from "@/shared/lib/utils";
 import { SEASON_CONFIG, getSeasonFromMood } from "../../memory/config/seasons";
+import { ZenQuoteView } from "./ZenQuoteView";
 
 export function QuoteDetailPanel({
   quote,
@@ -22,6 +23,7 @@ export function QuoteDetailPanel({
 }) {
   const season = getSeasonFromMood(quote.mood);
   const config = SEASON_CONFIG[season];
+  const [isZenMode, setIsZenMode] = useState(false);
 
   const handleDeleteClick = () => {
     toast.custom((t) => (
@@ -49,135 +51,151 @@ export function QuoteDetailPanel({
     ));
   };
 
-  return (
-    <div className="fixed inset-y-0 right-0 w-full max-w-2xl bg-black/95 backdrop-blur-xl border-l border-white/10 shadow-2xl z-50 overflow-y-auto slide-in-panel">
-      {/* Visual Effects Layer */}
-      <div className={cn("pointer-events-none absolute inset-0 opacity-20", config.bg)} />
-      <div
-        className="pointer-events-none absolute inset-0 opacity-10 mix-blend-overlay"
-        style={{
-          backgroundImage:
-            "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E\")",
-        }}
-      />
+  if (isZenMode) {
+    return <ZenQuoteView quote={quote} onClose={() => setIsZenMode(false)} />;
+  }
 
-      <div className="relative z-10 flex h-full flex-col">
-        <div className="p-6 border-b border-white/5 flex items-start justify-between bg-black/40 sticky top-0 backdrop-blur-md z-20">
-          <div>
-            <div
-              className={cn(
-                "mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest",
-                config.accent
-              )}
-            >
-              <config.icon size={12} />
-              Mood: {quote.mood}
-            </div>
-            <h2 className="text-2xl font-display font-bold leading-tight text-white line-clamp-2">
-              {quote.text}
-            </h2>
+  return (
+    <div className="fixed inset-y-0 right-0 w-full max-w-2xl bg-[#050505]/95 backdrop-blur-3xl border-l border-white/[0.08] shadow-[0_0_50px_rgba(0,0,0,0.5)] z-50 overflow-y-auto slide-in-panel">
+      {/* Background Ambience */}
+      <div
+        className={cn(
+          "pointer-events-none absolute inset-0 opacity-10 transition-all duration-[2000ms]",
+          config.bg
+        )}
+      />
+      <div className="absolute inset-0 bg-[url('/assets/noise.svg')] opacity-[0.05] mix-blend-overlay pointer-events-none" />
+
+      <div className="relative z-10 min-h-full flex flex-col p-8 md:p-12">
+        {/* Header Control Bar */}
+        <div className="flex justify-between items-center mb-16">
+          <div
+            className={cn(
+              "flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 rounded-full border border-white/10 bg-white/[0.02]",
+              config.accent
+            )}
+          >
+            <config.icon size={12} />
+            <span>{season} Protocol</span>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0 ml-4">
-            <button
-              onClick={() => onEdit(quote)}
-              className="p-2 hover:bg-white/10 rounded-full text-gray-400 hover:text-white transition-colors"
-              title="Edit Quote"
-            >
-              <Pencil size={20} />
-            </button>
-            <button
-              onClick={handleDeleteClick}
-              className="p-2 hover:bg-red-500/10 rounded-full text-gray-400 hover:text-red-500 transition-colors"
-              title="Delete Quote"
-            >
-              <Trash2 size={20} />
-            </button>
-            <button
-              onClick={onClose}
-              className="p-2 hover:bg-white/10 rounded-full text-gray-400 hover:text-white"
-            >
-              <X size={20} />
-            </button>
+          <button
+            onClick={onClose}
+            className="group p-2 rounded-full hover:bg-white/10 text-white/40 hover:text-white transition-all duration-300"
+          >
+            <X size={24} className="group-hover:rotate-90 transition-transform duration-500" />
+          </button>
+        </div>
+
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col justify-center">
+          <div className="mb-8">
+            <QuoteDetailMetadata quote={quote} />
+          </div>
+
+          <h2 className="text-3xl md:text-5xl lg:text-6xl font-serif font-medium leading-[1.1] text-transparent bg-clip-text bg-gradient-to-br from-white via-white/90 to-white/50 mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            &quot;{quote.text}&quot;
+          </h2>
+
+          <div className="flex items-center gap-6">
+            <div className="h-px flex-1 bg-gradient-to-r from-white/20 to-transparent" />
+            <div className="text-right">
+              <p className="font-mono text-sm text-white/60 uppercase tracking-widest mb-1">
+                {quote.author || "Unknown"}
+              </p>
+              {quote.source && (
+                <p className="font-sans text-xs text-white/30 italic">{quote.source}</p>
+              )}
+            </div>
           </div>
         </div>
 
-        <div className="p-8 space-y-8 flex-1">
-          <div>
-            <blockquote className="font-display text-2xl font-medium text-white leading-relaxed mb-4">
-              {quote.text}
-            </blockquote>
-            <cite className="font-mono text-sm uppercase tracking-wider text-forge-cyan not-italic block">
-              — {quote.author}
-            </cite>
-            {quote.source && (
-              <span className="font-mono text-[10px] text-gray-500 mt-2 block uppercase tracking-widest">
-                Source: {quote.source}
-              </span>
+        {/* Control Deck (Floating Dock) */}
+        <div className="mt-16 bg-[#111111]/80 border border-white/10 rounded-2xl p-6 backdrop-blur-xl shadow-2xl relative overflow-hidden group">
+          {/* Hover Glow */}
+          <div
+            className={cn(
+              "absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-700 pointer-events-none",
+              config.bg
             )}
-          </div>
+          />
 
-          <div className="flex flex-wrap gap-2">
-            {quote.tags.map((tag) => (
-              <span
-                key={tag}
-                className="px-3 py-1 rounded-full bg-white/5 border border-white/5 text-[10px] font-mono uppercase tracking-wider text-gray-300 flex items-center gap-1"
+          <div className="relative z-10 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+            <button
+              onClick={() => setIsZenMode(true)}
+              className="flex-1 flex items-center justify-center gap-3 bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 hover:border-white/20 text-white rounded-xl py-4 px-6 transition-all duration-300 group/btn"
+            >
+              <Maximize2
+                size={16}
+                className="text-forge-cyan group-hover/btn:scale-110 transition-transform"
+              />
+              <span className="text-xs font-bold uppercase tracking-[0.2em] group-hover/btn:text-forge-cyan transition-colors">
+                Enter Zen Mode
+              </span>
+            </button>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => onAnalyze(quote.id)}
+                disabled={isAnalyzing}
+                className="p-4 rounded-xl bg-white/[0.02] hover:bg-white/[0.08] border border-white/5 hover:border-white/20 text-white/60 hover:text-forge-cyan transition-all"
+                title="AI Analysis"
               >
-                <Tag size={10} /> {tag}
-              </span>
-            ))}
+                <Sparkles size={18} className={cn(isAnalyzing && "animate-spin")} />
+              </button>
+
+              <div className="w-px h-10 bg-white/10 mx-2" />
+
+              <button
+                onClick={() => onEdit(quote)}
+                className="p-4 rounded-xl hover:bg-white/10 border border-transparent hover:border-white/10 text-white/60 hover:text-white transition-all"
+              >
+                <Pencil size={18} />
+              </button>
+
+              <button
+                onClick={handleDeleteClick}
+                className="p-4 rounded-xl hover:bg-red-500/10 border border-transparent hover:border-red-500/20 text-white/60 hover:text-red-400 transition-all"
+              >
+                <Trash2 size={18} />
+              </button>
+            </div>
           </div>
 
-          <div className="border-t border-white/10 pt-8">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Sparkles size={14} className="text-forge-accent" /> Neural Decoding
-              </h3>
-              {!quote.analysis && (
-                <button
-                  onClick={() => onAnalyze(quote.id)}
-                  disabled={isAnalyzing}
-                  className="text-xs bg-white/5 hover:bg-forge-accent hover:text-white px-3 py-1.5 rounded-lg transition-all disabled:opacity-50 flex items-center gap-2"
-                >
-                  {isAnalyzing ? (
-                    <Sparkles size={12} className="animate-spin" />
-                  ) : (
-                    <Sparkles size={12} />
-                  )}
-                  {isAnalyzing ? "Analyzing..." : "Decode Meaning"}
-                </button>
-              )}
+          {/* Tech Footer */}
+          <div className="mt-6 pt-6 border-t border-white/5 flex items-center justify-between text-[9px] uppercase tracking-widest text-white/20 font-mono">
+            <span>
+              ID: {quote.id.split("-")[0]} {"//"} {quote.mood}
+            </span>
+            <div className="flex gap-3">
+              {quote.tags?.map((tag) => (
+                <span key={tag} className="text-white/30">
+                  #{tag}
+                </span>
+              ))}
             </div>
-
-            {quote.analysis ? (
-              <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                <div className="p-5 rounded-xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 relative overflow-hidden">
-                  <div className="relative z-10">
-                    <div className="text-[10px] text-forge-accent font-mono uppercase tracking-widest mb-2">
-                      Hidden Meaning
-                    </div>
-                    <p className="text-sm text-gray-200 leading-relaxed">
-                      {quote.analysis.meaning}
-                    </p>
-                  </div>
-                </div>
-                <div className="p-5 rounded-xl bg-white/[0.02] border border-white/5 border-l-2 border-l-forge-cyan">
-                  <div className="text-[10px] text-forge-cyan font-mono uppercase tracking-widest mb-2">
-                    Daily Prompt
-                  </div>
-                  <p className="text-sm text-white italic">{quote.analysis.reflectionPrompt}</p>
-                </div>
-              </div>
-            ) : (
-              <div className="text-center py-8 border border-dashed border-white/10 rounded-xl">
-                <p className="text-xs text-gray-500">
-                  Activate neural core to interpret this wisdom.
-                </p>
-              </div>
-            )}
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function QuoteDetailMetadata({ quote }: { quote: Quote }) {
+  return (
+    <div className="flex flex-wrap gap-2">
+      <span
+        className={cn(
+          "px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border border-white/10 bg-white/5 text-white/60"
+        )}
+      >
+        {quote.mood}
+      </span>
+      {quote.isFavorite && (
+        <span className="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border border-red-500/20 bg-red-500/10 text-red-400 flex items-center gap-1">
+          <span className="w-1 h-1 rounded-full bg-red-500 animate-pulse" /> Favorite
+        </span>
+      )}
     </div>
   );
 }

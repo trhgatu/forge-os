@@ -44,6 +44,18 @@ export interface HybridStats {
   health?: number; // 0-100
 }
 
+export interface PaginatedResponse<T> {
+  data: T[];
+  meta: {
+    page: number;
+    take: number;
+    itemCount: number;
+    pageCount: number;
+    hasPreviousPage: boolean;
+    hasNextPage: boolean;
+  };
+}
+
 export interface Project {
   id: string;
   title: string;

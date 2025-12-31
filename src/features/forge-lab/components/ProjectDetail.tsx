@@ -34,8 +34,8 @@ interface ProjectDetailProps {
   project: Project;
   onBack: () => void;
   githubUsername?: string;
-  onUpdate?: (id: string, data: Partial<Project>) => void;
-  onDelete?: (id: string) => void;
+  onUpdate?: (id: string, data: Partial<Project>) => Promise<void>;
+  onDelete?: (id: string) => Promise<void>;
 }
 
 type Tab = "overview" | "tasks" | "resources" | "logs" | "readme";
