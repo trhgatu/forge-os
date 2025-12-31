@@ -24,6 +24,17 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
   const [description, setDescription] = useState("");
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    if (isOpen) {
+      const timer = setTimeout(() => {
+        setTitle("");
+        setDescription("");
+        setError("");
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) {
@@ -54,7 +65,10 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
               <input
                 type="text"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={(e) => {
+                  setTitle(e.target.value);
+                  if (error) setError("");
+                }}
                 className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-forge-cyan/50 focus:ring-1 focus:ring-forge-cyan/50 transition-all"
                 placeholder="e.g. Neural Core Engine"
                 autoFocus
