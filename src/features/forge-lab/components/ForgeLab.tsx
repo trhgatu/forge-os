@@ -83,7 +83,7 @@ const MOCK_TRAILS: ResearchTrail[] = [
 export const ForgeLab: React.FC = () => {
   // --- Local State (Journal Pattern) ---
   const [activeTab, setActiveTab] = useState<ForgeTab>("dashboard");
-  const [activeProject, setActiveProject] = useState<Project | null>(null);
+  const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
   const [activeFoundation, setActiveFoundation] = useState<Foundation | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
   const [isCreating, setIsCreating] = useState(false);
@@ -96,8 +96,8 @@ export const ForgeLab: React.FC = () => {
   const fetchProjects = async () => {
     try {
       const response = await forgeApi.getProjects();
-      // Handle both paginated and non-paginated responses for backward compatibility
-      // Handle both paginated and non-paginated responses for backward compatibility
+      console.log(response);
+
       const data = Array.isArray(response)
         ? response
         : (response as { data: Project[] }).data || [];
@@ -110,6 +110,7 @@ export const ForgeLab: React.FC = () => {
         taskBoard: p.taskBoard || { todo: [], inProgress: [], done: [] },
         links: p.links || [],
       }));
+      console.log(parsedData);
       setProjects(parsedData);
     } catch (error) {
       console.error("Failed to fetch projects", error);
@@ -162,9 +163,7 @@ export const ForgeLab: React.FC = () => {
       };
 
       setProjects((prev) => prev.map((p) => (p.id === id ? { ...p, ...parsedUpdated } : p)));
-      if (activeProject?.id === id) {
-        setActiveProject((prev) => (prev ? { ...prev, ...parsedUpdated } : null));
-      }
+      // No need to update activeProject state - ProjectDetail will refetch
     } catch (err) {
       console.error("Failed to update project", err);
     }
@@ -176,8 +175,8 @@ export const ForgeLab: React.FC = () => {
       setProjects((prev) => prev.filter((p) => p.id !== id));
 
       // Force check matching ID or if we are deleting the currently viewed project
-      if (activeProject?.id === id) {
-        setActiveProject(null);
+      if (activeProjectId === id) {
+        setActiveProjectId(null);
         setActiveTab("projects"); // Go back to list
       }
     } catch (err) {
@@ -200,7 +199,7 @@ export const ForgeLab: React.FC = () => {
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTo({ top: 0, behavior: "smooth" });
     }
-  }, [activeTab, activeProject]);
+  }, [activeTab, activeProjectId]);
 
   return (
     <div className="h-full flex flex-col bg-[#030304] text-white relative overflow-hidden animate-in fade-in duration-1000">
@@ -223,14 +222,14 @@ export const ForgeLab: React.FC = () => {
               foundations={MOCK_FOUNDATIONS}
               trails={MOCK_TRAILS}
               setActiveTab={setActiveTab}
-              setActiveProject={setActiveProject}
+              setActiveProjectId={setActiveProjectId}
             />
           )}
           {activeTab === "projects" && (
             <ProjectForge
               projects={projects}
-              activeProject={activeProject}
-              setActiveProject={setActiveProject}
+              activeProjectId={activeProjectId}
+              setActiveProjectId={setActiveProjectId}
               githubUsername={githubUsername}
               onUpdateProject={handleUpdateProject}
               onDeleteProject={handleDeleteProject}
