@@ -22,7 +22,7 @@ interface LabDashboardProps {
   foundations: Foundation[];
   trails: ResearchTrail[];
   setActiveTab: (tab: ForgeTab) => void;
-  setActiveProject: (project: Project | null) => void;
+  setActiveProjectId: (projectId: string | null) => void;
 }
 
 export const LabDashboard: React.FC<LabDashboardProps> = ({
@@ -30,7 +30,7 @@ export const LabDashboard: React.FC<LabDashboardProps> = ({
   foundations,
   trails,
   setActiveTab,
-  setActiveProject,
+  setActiveProjectId,
 }) => {
   const [contributionStats, setContributionStats] = React.useState<ContributionStats | null>(null);
   const [loadingStats, setLoadingStats] = React.useState(true);
@@ -104,7 +104,7 @@ export const LabDashboard: React.FC<LabDashboardProps> = ({
             projects={projects}
             foundations={foundations}
             setActiveTab={setActiveTab}
-            setActiveProject={setActiveProject}
+            setActiveProjectId={setActiveProjectId}
           />
         </div>
 
