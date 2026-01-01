@@ -6,8 +6,8 @@ import { ProjectDetail } from "./ProjectDetail";
 
 interface ProjectForgeProps {
   projects: Project[];
-  activeProject: Project | null;
-  setActiveProject: (project: Project | null) => void;
+  activeProjectId: string | null;
+  setActiveProjectId: (projectId: string | null) => void;
   githubUsername?: string;
   onUpdateProject?: (id: string, data: Partial<Project>) => Promise<void>;
   onDeleteProject?: (id: string) => Promise<void>;
@@ -16,18 +16,18 @@ interface ProjectForgeProps {
 
 export const ProjectForge: React.FC<ProjectForgeProps> = ({
   projects,
-  activeProject,
-  setActiveProject,
+  activeProjectId,
+  setActiveProjectId,
   githubUsername,
   onUpdateProject,
   onDeleteProject,
   onRequestCreate,
 }) => {
-  if (activeProject) {
+  if (activeProjectId) {
     return (
       <ProjectDetail
-        project={activeProject}
-        onBack={() => setActiveProject(null)}
+        projectId={activeProjectId}
+        onBack={() => setActiveProjectId(null)}
         githubUsername={githubUsername}
         onUpdate={onUpdateProject}
         onDelete={onDeleteProject}
@@ -73,7 +73,7 @@ export const ProjectForge: React.FC<ProjectForgeProps> = ({
           <GlassCard
             key={project.id}
             className="group hover:border-white/20 flex flex-col h-full cursor-pointer"
-            onClick={() => setActiveProject(project)}
+            onClick={() => setActiveProjectId(project.id)}
           >
             <div className="flex justify-between items-start mb-4">
               <div className="p-3 rounded-xl bg-white/5 border border-white/5 text-gray-300 group-hover:text-white group-hover:bg-white/10 transition-colors">

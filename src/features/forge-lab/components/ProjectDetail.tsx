@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ArrowLeft,
   Github,
@@ -31,7 +31,7 @@ import { toast } from "sonner";
 import Image from "next/image";
 
 interface ProjectDetailProps {
-  project: Project;
+  projectId: string;
   onBack: () => void;
   githubUsername?: string;
   onUpdate?: (id: string, data: Partial<Project>) => Promise<void>;
@@ -41,14 +41,16 @@ interface ProjectDetailProps {
 type Tab = "overview" | "tasks" | "resources" | "logs" | "readme";
 
 export const ProjectDetail: React.FC<ProjectDetailProps> = ({
-  project: initialProject,
+  projectId,
   onBack,
   githubUsername,
   onUpdate,
   onDelete,
 }) => {
+  const [project, setProject] = useState<Project | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>("overview");
-  const [project, setProject] = useState<Project>(initialProject);
   const [isSyncing, setIsSyncing] = useState(false);
   const [showResourceModal, setShowResourceModal] = useState(false);
   const [showRepoPicker, setShowRepoPicker] = useState(false);
@@ -57,6 +59,108 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
   const [newLink, setNewLink] = useState({ title: "", url: "" });
   const [editingResourceIndex, setEditingResourceIndex] = useState<number | null>(null);
   const [taskViewMode, setTaskViewMode] = useState<"board" | "issues">("board");
+
+  // Fetch project details on mount and when projectId changes
+  useEffect(() => {
+    const abortController = new AbortController();
+    let isMounted = true;
+
+    const fetchProjectDetail = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await forgeApi.getProject(projectId);
+
+        // Only update state if component is still mounted and request wasn't aborted
+        if (isMounted && !abortController.signal.aborted) {
+          // Parse dates
+          const parsedProject: Project = {
+            ...data,
+            updatedAt: new Date(data.updatedAt),
+            dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
+            logs: data.logs?.map((l) => ({ ...l, date: new Date(l.date) })),
+            taskBoard: data.taskBoard || { todo: [], inProgress: [], done: [] },
+            links: data.links || [],
+          };
+          setProject(parsedProject);
+        }
+      } catch (err) {
+        // Only show error if request wasn't aborted
+        if (isMounted && !abortController.signal.aborted) {
+          console.error("Failed to fetch project detail", err);
+          setError("Failed to load project details");
+          toast.error("Failed to load project details");
+        }
+      } finally {
+        if (isMounted && !abortController.signal.aborted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchProjectDetail();
+
+    // Cleanup function to prevent race condition
+    return () => {
+      isMounted = false;
+      abortController.abort();
+    };
+  }, [projectId]);
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto p-6 md:p-10 pb-32">
+        <div className="flex items-center gap-4 mb-8">
+          <button
+            onClick={onBack}
+            className="p-2 rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
+          >
+            <ArrowLeft size={20} />
+          </button>
+          <div className="h-8 w-64 bg-white/5 rounded-lg animate-pulse" />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 space-y-6">
+            <div className="h-96 bg-white/5 rounded-xl animate-pulse" />
+          </div>
+          <div className="space-y-6">
+            <div className="h-64 bg-white/5 rounded-xl animate-pulse" />
+            <div className="h-64 bg-white/5 rounded-xl animate-pulse" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error || !project) {
+    return (
+      <div className="max-w-7xl mx-auto p-6 md:p-10 pb-32">
+        <div className="flex items-center gap-4 mb-8">
+          <button
+            onClick={onBack}
+            className="p-2 rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
+          >
+            <ArrowLeft size={20} />
+          </button>
+        </div>
+        <GlassCard className="p-12 text-center">
+          <div className="text-red-400 mb-4">
+            <Activity size={48} className="mx-auto" />
+          </div>
+          <h2 className="text-xl font-bold text-white mb-2">Failed to Load Project</h2>
+          <p className="text-gray-400 mb-6">{error || "Project not found"}</p>
+          <button
+            onClick={onBack}
+            className="px-6 py-2 rounded-xl bg-forge-cyan/10 border border-forge-cyan/20 text-forge-cyan hover:bg-forge-cyan/20 transition-colors"
+          >
+            Back to Projects
+          </button>
+        </GlassCard>
+      </div>
+    );
+  }
 
   const handleRepoSelect = (repo: GithubRepo) => {
     setNewLink({
@@ -163,7 +267,7 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
     if (onUpdate) {
       try {
         await onUpdate(id, data);
-        setProject((prev) => ({ ...prev, ...data }));
+        setProject((prev) => (prev ? ({ ...prev, ...data } as Project) : null));
         setShowEditModal(false);
         toast.success("Project updated");
       } catch (error) {
