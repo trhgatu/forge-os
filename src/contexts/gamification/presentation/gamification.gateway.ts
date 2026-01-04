@@ -6,6 +6,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { AuthService } from '../../iam/auth/application/services/auth.service';
+import { LoggerService } from '@shared/logging/logger.service';
 
 @WebSocketGateway({
   cors: {
@@ -16,21 +17,33 @@ import { AuthService } from '../../iam/auth/application/services/auth.service';
 export class GamificationGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly logger: LoggerService,
+  ) {}
 
   @WebSocketServer()
   server!: Server;
 
   async handleConnection(client: Socket) {
     try {
-      console.log('=== Gamification Connection Debug ===');
-      console.log('Client ID:', client.id);
-      console.log('Auth payload:', client.handshake.auth);
-      console.log(
-        'Headers authorization:',
-        client.handshake.headers?.authorization,
+      this.logger.debug(
+        '=== Gamification Connection Debug ===',
+        'GamificationGateway',
       );
-      console.log('Query params:', client.handshake.query);
+      this.logger.debug(`Client ID: ${client.id}`, 'GamificationGateway');
+      this.logger.debug(
+        `Auth payload: ${JSON.stringify(client.handshake.auth)}`,
+        'GamificationGateway',
+      );
+      this.logger.debug(
+        `Headers authorization: ${client.handshake.headers?.authorization}`,
+        'GamificationGateway',
+      );
+      this.logger.debug(
+        `Query params: ${JSON.stringify(client.handshake.query)}`,
+        'GamificationGateway',
+      );
 
       let userId: string | undefined;
       const queryUserId = client.handshake.query.userId;
@@ -44,7 +57,7 @@ export class GamificationGateway
       const token =
         client.handshake.auth?.token || client.handshake.headers?.authorization;
 
-      console.log('Token found:', !!token);
+      this.logger.debug(`Token found: ${!!token}`, 'GamificationGateway');
 
       if (token) {
         try {
@@ -52,9 +65,9 @@ export class GamificationGateway
           const payload = await this.authService.verifyToken(cleanToken);
           userId = payload.sub; // Trust the token over the query param
         } catch (err) {
-          console.warn(
-            `Gamification: Invalid token for client ${client.id}`,
-            err,
+          this.logger.warn(
+            `Invalid token for client ${client.id}: ${(err as Error).message}`,
+            'GamificationGateway',
           );
           userId = undefined; // Prevent spoofing: Reset unverified userId
           // client.disconnect(); // Optional: Enforce disconnect if strict
@@ -63,20 +76,28 @@ export class GamificationGateway
 
       if (userId) {
         void client.join(`user:${userId}`);
-        console.log(
-          `Gamification Client Connected: ${client.id} (User: ${userId})`,
+        this.logger.log(
+          `Client connected: ${client.id} (User: ${userId})`,
+          'GamificationGateway',
         );
       } else {
-        console.log(`Gamification Client Connected: ${client.id} (Anonymous)`);
+        this.logger.log(
+          `Client connected: ${client.id} (Anonymous)`,
+          'GamificationGateway',
+        );
       }
     } catch (error) {
-      console.error('Connection error', error);
+      this.logger.error(
+        `Connection error: ${(error as Error).message}`,
+        (error as Error).stack,
+        'GamificationGateway',
+      );
       client.disconnect();
     }
   }
 
   handleDisconnect(client: Socket) {
-    console.log(`Gamification Client Disconnected: ${client.id}`);
+    this.logger.log(`Client disconnected: ${client.id}`, 'GamificationGateway');
   }
 
   emitXpAwarded(
