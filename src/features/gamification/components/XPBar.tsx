@@ -29,10 +29,10 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
     try {
       const data = await gamificationService.getStats();
       if (data) {
-        if (previousLevelRef.current !== null && data.level > previousLevelRef.current) {
+        if (previousLevelRef.current !== null && data.props.level > previousLevelRef.current) {
           setShowLevelUp(true);
         }
-        previousLevelRef.current = data.level;
+        previousLevelRef.current = data.props.level;
         setStats(data);
       }
     } catch (error) {
@@ -53,11 +53,11 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
   if (!stats) return null;
 
   // Calculate generic progress
-  const currentLevelXp = Math.pow(stats.level - 1, 2) * 100;
-  const nextLevelXp = Math.pow(stats.level, 2) * 100;
+  const currentLevelXp = Math.pow(stats.props.level - 1, 2) * 100;
+  const nextLevelXp = Math.pow(stats.props.level, 2) * 100;
   const progress = Math.min(
     100,
-    Math.max(0, ((stats.xp - currentLevelXp) / (nextLevelXp - currentLevelXp)) * 100)
+    Math.max(0, ((stats.props.xp - currentLevelXp) / (nextLevelXp - currentLevelXp)) * 100)
   );
 
   return (
@@ -93,7 +93,7 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
                 {t("gamification.level")}
               </span>
               <span className="text-xl font-bold text-white font-[family-name:var(--font-rajdhani)] tracking-wide drop-shadow-md">
-                {String(stats.level).padStart(2, "0")}
+                {String(stats.props.level).padStart(2, "0")}
               </span>
             </div>
           )}
@@ -124,7 +124,7 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
                 {t("gamification.rank_designation")}
               </span>
               <span className="text-xs text-white font-bold uppercase tracking-wide px-3 py-1 bg-forge-cyan/10 border border-forge-cyan/20 rounded-sm text-forge-cyan font-[family-name:var(--font-rajdhani)]">
-                {stats.title}
+                {stats.props.title}
               </span>
             </div>
 
@@ -135,7 +135,7 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
                   {t("gamification.experience_log")}
                 </span>
                 <span className="text-sm font-[family-name:var(--font-rajdhani)] text-forge-cyan font-bold">
-                  {Math.floor(stats.xp)} <span className="text-gray-600 font-normal">/</span>{" "}
+                  {Math.floor(stats.props.xp)} <span className="text-gray-600 font-normal">/</span>{" "}
                   {nextLevelXp} XP
                 </span>
               </div>
@@ -156,7 +156,7 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
               <div className="flex items-center gap-2 text-xs text-amber-500 font-mono bg-amber-500/10 px-2 py-1 rounded-sm border border-amber-500/20">
                 <Flame size={12} fill="currentColor" className="animate-pulse" />
                 <span className="font-bold font-[family-name:var(--font-rajdhani)] tracking-wide">
-                  {stats.streak} {t("gamification.day_streak").toUpperCase()}
+                  {stats.props.streak} {t("gamification.day_streak").toUpperCase()}
                 </span>
               </div>
               <span className="text-[9px] text-zinc-600 font-mono tracking-tighter">
@@ -200,7 +200,7 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
 
       <LevelUpModal
         isOpen={showLevelUp}
-        newLevel={stats.level}
+        newLevel={stats.props.level}
         onClose={() => setShowLevelUp(false)}
       />
     </div>
