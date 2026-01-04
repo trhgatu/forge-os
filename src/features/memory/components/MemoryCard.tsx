@@ -14,94 +14,139 @@ export function MemoryCard({ memory, onClick }: MemoryCardProps) {
   const season = getSeasonFromMood(memory.mood);
   const config = SEASON_CONFIG[season];
 
+  // Crystal glow colors based on season
+  const glowColors = {
+    Spring: "rgba(16, 185, 129, 0.4)", // emerald
+    Summer: "rgba(245, 158, 11, 0.4)", // amber
+    Autumn: "rgba(220, 38, 38, 0.4)", // crimson
+    Winter: "rgba(6, 182, 212, 0.4)", // cyan
+  };
+
   return (
     <button
       type="button"
       onClick={onClick}
       className={cn(
-        "group relative flex min-h-[280px] cursor-pointer flex-col overflow-hidden rounded-2xl border backdrop-blur-md transition-all duration-700 ease-out",
-        "hover:-translate-y-2 hover:shadow-2xl",
-        config.bg,
-        config.border
+        "group relative flex min-h-[240px] cursor-pointer flex-col overflow-hidden rounded-2xl transition-all duration-500 ease-out",
+        "hover:-translate-y-3 hover:scale-[1.02]",
+        "transform-gpu perspective-1000",
+        // Glassmorphism base
+        "backdrop-blur-2xl bg-gradient-to-br from-white/10 via-white/5 to-transparent",
+        "border border-white/20 hover:border-white/30",
+        // Crystal shadow with seasonal glow
+        "shadow-[0_8px_32px_rgba(0,0,0,0.3)]",
+        "hover:shadow-[0_12px_48px_rgba(0,0,0,0.4)]"
       )}
+      style={{
+        boxShadow: `0 8px 32px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1) inset`,
+      }}
     >
-      {/* Atmospheric background */}
+      {/* Ambient glow halo */}
+      <div
+        className="absolute -inset-1 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl -z-10"
+        style={{
+          background: `radial-gradient(circle at 50% 50%, ${glowColors[season]}, transparent 70%)`,
+        }}
+      />
+
+      {/* Frosted glass overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-black/20 pointer-events-none" />
+
+      {/* Refraction edge highlight */}
+      <div className="absolute inset-0 rounded-2xl opacity-50 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+      </div>
+
+      {/* Season atmospheric gradient */}
       <div
         className={cn(
-          "absolute inset-0 bg-linear-to-br opacity-40 transition-opacity duration-700 group-hover:opacity-60",
+          "absolute inset-0 opacity-30 group-hover:opacity-40 transition-opacity duration-500 mix-blend-overlay",
           config.gradient
         )}
       />
 
-      {/* Spring diffused texture */}
-      {season === "Spring" && (
-        <>
-          <div
-            className="pointer-events-none absolute inset-0 opacity-20 mix-blend-overlay"
-            style={{
-              backgroundImage:
-                "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E\")",
-            }}
-          />
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_bottom,var(--tw-gradient-stops))] from-emerald-500/10 via-transparent to-transparent opacity-50" />
-        </>
-      )}
+      {/* Image with depth */}
       {memory.imageUrl && (
         <div className="absolute inset-0 z-0">
           <Image
             src={memory.imageUrl}
             alt={memory.title}
             fill
-            className="h-full w-full object-cover opacity-30 transition-all duration-1000 grayscale group-hover:scale-105 group-hover:opacity-40 group-hover:grayscale-50"
+            className="h-full w-full object-cover opacity-40 transition-all duration-700 grayscale-[0.3] group-hover:scale-110 group-hover:opacity-60 group-hover:grayscale-0"
           />
-          <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/70 via-transparent to-transparent" />
+          {/* Multi-layer depth gradient */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-br from-black/20 via-transparent to-black/40" />
         </div>
       )}
 
-      {/* Content */}
-      <div className="relative z-10 flex h-full flex-col p-6">
-        {/* Top indicator */}
-        <div className="mb-6 flex items-start justify-between opacity-80 transition-opacity group-hover:opacity-100">
+      {/* Content with crystal clarity */}
+      <div className="relative z-10 flex h-full flex-col justify-between p-5">
+        {/* Crystalline season badge */}
+        <div className="flex items-start justify-between">
           <div
             className={cn(
-              "flex items-center gap-2 rounded-full border bg-black/20 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] backdrop-blur-md",
-              config.accent,
-              config.border
+              "flex items-center gap-2 rounded-full px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-300",
+              "backdrop-blur-xl bg-white/10 border border-white/20",
+              "group-hover:bg-white/15 group-hover:border-white/30",
+              "shadow-lg"
             )}
           >
-            <config.icon size={12} />
-            {config.label}
+            <config.icon
+              size={14}
+              className={cn(
+                "transition-all duration-300 group-hover:scale-110 drop-shadow-lg",
+                config.accent
+              )}
+            />
+            <span className="text-white/90 group-hover:text-white">{config.label}</span>
           </div>
           {memory.analysis && (
-            <span className={cn("animate-pulse", config.accent)}>{/* small sparkle dot */}●</span>
+            <div className="relative">
+              <div
+                className="absolute inset-0 animate-pulse blur-sm"
+                style={{ background: glowColors[season] }}
+              />
+              <span className={cn("relative text-sm", config.accent)}>●</span>
+            </div>
           )}
         </div>
 
-        <div className="flex-1" />
-
-        {/* Title + description */}
-        <div className="mt-auto">
-          <h3 className="mb-3 text-2xl font-display font-medium leading-tight text-white transition-transform duration-500 group-hover:translate-x-1">
+        {/* Title + description with premium typography */}
+        <div className="mt-auto space-y-3">
+          <h3 className="text-2xl font-display font-medium leading-tight text-white transition-all duration-300 group-hover:translate-x-1 drop-shadow-lg">
             {memory.title}
           </h3>
 
-          <div className="mb-4 h-px w-12 opacity-50 transition-all duration-700 group-hover:w-full bg-white/40" />
+          {/* Crystal divider */}
+          <div className="relative h-px w-12 group-hover:w-24 transition-all duration-500">
+            <div className="absolute inset-0 bg-gradient-to-r from-white/60 via-white/40 to-transparent" />
+            <div className="absolute inset-0 blur-sm bg-gradient-to-r from-white/40 to-transparent" />
+          </div>
 
-          <p className="line-clamp-2 font-serif text-sm font-light leading-relaxed text-gray-300 opacity-80 transition-opacity group-hover:opacity-100">
+          <p className="line-clamp-2 font-serif text-sm font-light leading-relaxed text-gray-200 opacity-90 transition-opacity duration-300 group-hover:opacity-100">
             {memory.content}
           </p>
         </div>
 
-        {/* Footer meta */}
-        <div className="mt-4 flex items-center justify-between border-t border-white/5 pt-4 text-[10px] font-mono text-gray-500">
-          <span>
+        {/* Frosted footer */}
+        <div className="mt-3 flex items-center justify-between border-t border-white/10 pt-3 text-[10px] font-mono backdrop-blur-sm">
+          <span className="text-gray-400 transition-colors duration-300 group-hover:text-white">
             {memory.date.toLocaleDateString(undefined, {
               month: "long",
               day: "numeric",
             })}
           </span>
-          <span className="uppercase tracking-wider opacity-60">#{memory.mood}</span>
+          <span className="uppercase tracking-wider text-gray-500 opacity-60 transition-all duration-300 group-hover:opacity-100 group-hover:text-gray-300">
+            #{memory.mood}
+          </span>
         </div>
+      </div>
+
+      {/* Hover ripple effect */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent animate-pulse" />
       </div>
     </button>
   );

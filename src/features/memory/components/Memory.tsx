@@ -153,19 +153,52 @@ export function Memory() {
         bgClass
       )}
     >
-      <div className="pointer-events-none absolute inset-0 transition-all duration-1000">
+      {/* Deep atmospheric background */}
+      <div className="pointer-events-none absolute inset-0">
+        {/* Primary gradient wash */}
         <div
           className={cn(
-            "absolute left-0 top-0 h-[500px] w-full bg-linear-to-b opacity-30 transition-colors duration-1000",
+            "absolute left-0 top-0 h-[600px] w-full transition-all duration-1000",
             activeFilter === "Spring"
-              ? "from-emerald-900/30"
+              ? "bg-gradient-to-b from-emerald-950/40 via-emerald-900/20 to-transparent"
               : activeFilter === "Summer"
-                ? "from-amber-900/30"
+                ? "bg-gradient-to-b from-amber-950/40 via-amber-900/20 to-transparent"
                 : activeFilter === "Autumn"
-                  ? "from-orange-900/30"
-                  : "from-slate-900/30"
+                  ? "bg-gradient-to-b from-red-950/40 via-red-900/20 to-transparent"
+                  : activeFilter === "Winter"
+                    ? "bg-gradient-to-b from-cyan-950/40 via-cyan-900/20 to-transparent"
+                    : "bg-gradient-to-b from-slate-950/40 via-slate-900/20 to-transparent"
           )}
         />
+
+        {/* Radial light source */}
+        <div
+          className="absolute left-1/2 top-0 h-[800px] w-[800px] -translate-x-1/2 opacity-20 transition-opacity duration-1000"
+          style={{
+            background: `radial-gradient(circle at center, ${
+              activeFilter === "Spring"
+                ? "rgba(16, 185, 129, 0.3)"
+                : activeFilter === "Summer"
+                  ? "rgba(245, 158, 11, 0.3)"
+                  : activeFilter === "Autumn"
+                    ? "rgba(220, 38, 38, 0.3)"
+                    : activeFilter === "Winter"
+                      ? "rgba(6, 182, 212, 0.3)"
+                      : "rgba(148, 163, 184, 0.2)"
+            }, transparent 60%)`,
+          }}
+        />
+
+        {/* Subtle noise texture */}
+        <div
+          className="absolute inset-0 opacity-[0.015] mix-blend-overlay"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+          }}
+        />
+
+        {/* Depth fog */}
+        <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-black/40 to-transparent" />
       </div>
 
       {/* header */}
@@ -206,7 +239,7 @@ export function Memory() {
       </div>
 
       {/* filter bar */}
-      <div className="z-20 flex gap-2 overflow-x-auto px-8 py-4 scrollbar-hide">
+      <div className="z-20 flex gap-3 overflow-x-auto px-8 py-4 scrollbar-hide">
         {(["All", "Spring", "Summer", "Autumn", "Winter"] as SeasonFilter[]).map((seasonKey) => {
           const isAll = seasonKey === "All";
           const config = !isAll ? SEASON_CONFIG[seasonKey] : undefined;
@@ -218,14 +251,20 @@ export function Memory() {
               type="button"
               onClick={() => setActiveFilter(seasonKey)}
               className={cn(
-                "flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all",
+                "flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all duration-300",
                 isActive
-                  ? "border-white/20 bg-white/10 text-white shadow-lg"
-                  : "border-transparent bg-transparent text-gray-500 hover:bg-white/5 hover:text-gray-300"
+                  ? "border-white/20 bg-white/10 text-white shadow-lg shadow-white/5 scale-105"
+                  : "border-transparent bg-transparent text-gray-500 hover:bg-white/5 hover:text-gray-300 hover:border-white/10"
               )}
             >
               {config && (
-                <config.icon size={12} className={isActive ? config.accent : "text-gray-600"} />
+                <config.icon
+                  size={16}
+                  className={cn(
+                    "transition-all duration-300",
+                    isActive ? config.accent : "text-gray-600"
+                  )}
+                />
               )}
               {seasonKey}
             </button>
@@ -245,11 +284,33 @@ export function Memory() {
               ))}
             </div>
           ) : (
-            <div className="py-32 text-center opacity-40">
-              <>
-                <ImageIcon size={32} className="mx-auto mb-4 text-white" />
-                <p className="font-mono text-sm text-gray-500">The landscape is silent.</p>
-              </>
+            <div className="flex flex-col items-center justify-center py-32 animate-in fade-in duration-700">
+              <div className="relative mb-8">
+                <div className="absolute inset-0 animate-pulse bg-white/5 blur-3xl" />
+                <ImageIcon size={64} className="relative text-white/20" />
+              </div>
+              <p className="mb-2 text-lg font-display text-white/40">
+                {activeFilter !== "All"
+                  ? `No ${activeFilter.toLowerCase()} memories found`
+                  : searchTerm
+                    ? "No memories match your search"
+                    : "The landscape is silent"}
+              </p>
+              <p className="mb-8 text-sm font-mono text-gray-600">
+                {activeFilter !== "All" || searchTerm
+                  ? "Try adjusting your filters"
+                  : "Begin preserving your moments"}
+              </p>
+              {!searchTerm && (
+                <button
+                  type="button"
+                  onClick={() => setIsCreating(true)}
+                  className="flex items-center gap-2 rounded-full bg-white/10 px-6 py-3 text-sm font-bold text-white border border-white/20 transition-all hover:bg-white/20 hover:scale-105"
+                >
+                  <Plus size={16} />
+                  Preserve Your First Memory
+                </button>
+              )}
             </div>
           )}
 
