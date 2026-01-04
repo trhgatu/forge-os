@@ -274,14 +274,67 @@ export function Memory() {
       <div className="relative z-10 flex-1 overflow-y-auto px-8 pb-32 scrollbar-hide">
         <div className="mx-auto max-w-7xl pt-8">
           {filteredMemories.length > 0 ? (
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 animate-in slide-in-from-bottom-8 duration-700">
-              {filteredMemories.map((memory) => (
-                <MemoryCard
-                  key={memory.id}
-                  memory={memory}
-                  onClick={() => setSelectedMemoryId(memory.id)}
-                />
-              ))}
+            <div className="space-y-16">
+              {/* Group memories by season */}
+              {(["Spring", "Summer", "Autumn", "Winter"] as InnerSeason[]).map((season) => {
+                const seasonMemories = filteredMemories.filter(
+                  (m) => getSeasonFromMood(m.mood) === season
+                );
+
+                if (seasonMemories.length === 0 && activeFilter !== "All") return null;
+                if (seasonMemories.length === 0) return null;
+
+                const config = SEASON_CONFIG[season];
+                const seasonText = {
+                  Spring: "Những ngày tươi mới bắt đầu, hy vọng nảy nở như chồi non...",
+                  Summer: "Rồi mùa hè đến với ánh nắng rực rỡ, năng lượng tràn đầy...",
+                  Autumn: "Thu về mang theo sự trầm lắng, những suy tư sâu xa...",
+                  Winter: "Đông lạnh giá nhưng thanh tịnh, thời gian để nhìn lại...",
+                };
+
+                return (
+                  <div
+                    key={season}
+                    className="animate-in fade-in slide-in-from-bottom-8 duration-700"
+                    style={{
+                      animationDelay: `${["Spring", "Summer", "Autumn", "Winter"].indexOf(season) * 100}ms`,
+                    }}
+                  >
+                    {/* Chapter Header */}
+                    <div className="mb-8 space-y-3">
+                      <div className="flex items-center gap-3">
+                        <config.icon size={24} className={cn("opacity-60", config.accent)} />
+                        <h2 className="text-2xl font-display font-medium text-white/80">
+                          {season} Memories
+                        </h2>
+                      </div>
+                      <p className="font-serif text-sm text-gray-400 italic leading-relaxed max-w-2xl">
+                        {seasonText[season]}
+                      </p>
+                      <div className="h-px w-24 bg-gradient-to-r from-white/20 to-transparent" />
+                    </div>
+
+                    {/* Masonry Grid */}
+                    <div
+                      className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6"
+                      style={{ columnGap: "1.5rem" }}
+                    >
+                      {seasonMemories.map((memory, idx) => (
+                        <div
+                          key={memory.id}
+                          className="break-inside-avoid mb-6 animate-in fade-in slide-in-from-bottom-4 duration-500"
+                          style={{ animationDelay: `${idx * 50}ms` }}
+                        >
+                          <MemoryCard
+                            memory={memory}
+                            onClick={() => setSelectedMemoryId(memory.id)}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-32 animate-in fade-in duration-700">
@@ -294,12 +347,12 @@ export function Memory() {
                   ? `No ${activeFilter.toLowerCase()} memories found`
                   : searchTerm
                     ? "No memories match your search"
-                    : "The landscape is silent"}
+                    : "The story has yet to begin"}
               </p>
-              <p className="mb-8 text-sm font-mono text-gray-600">
+              <p className="mb-8 text-sm font-serif italic text-gray-600">
                 {activeFilter !== "All" || searchTerm
                   ? "Try adjusting your filters"
-                  : "Begin preserving your moments"}
+                  : "Every journey starts with a single memory..."}
               </p>
               {!searchTerm && (
                 <button
@@ -308,7 +361,7 @@ export function Memory() {
                   className="flex items-center gap-2 rounded-full bg-white/10 px-6 py-3 text-sm font-bold text-white border border-white/20 transition-all hover:bg-white/20 hover:scale-105"
                 >
                   <Plus size={16} />
-                  Preserve Your First Memory
+                  Begin Your Story
                 </button>
               )}
             </div>
