@@ -9,8 +9,6 @@ import { LoggerService } from '@shared/logging/logger.service';
 export class GetGithubReposHandler
   implements IQueryHandler<GetGithubReposQuery>
 {
-  // private readonly logger = new Logger(GetGithubReposHandler.name);
-
   constructor(
     @Inject('GithubRepository')
     private readonly githubRepository: GithubRepository,

@@ -12,8 +12,6 @@ import { ProjectResponse } from '../../presentation/dto/project.response';
 export class GetAllProjectsHandler
   implements IQueryHandler<GetAllProjectsQuery>
 {
-  // private readonly logger = new Logger(GetAllProjectsHandler.name); // Removed standard logger
-
   constructor(
     @Inject('ProjectRepository')
     private readonly projectRepository: ProjectRepository,
@@ -27,8 +25,6 @@ export class GetAllProjectsHandler
     const { payload } = query;
     const { page = 1, limit = 10 } = payload;
 
-    // Create deterministic cache key by sorting inputs
-    // Create deterministic cache key by sorting inputs
     const safeKeyword = payload.keyword || '';
     const safeStatus = payload.status || '';
     const safeTags = [...(payload.tags || [])].sort().join(',');

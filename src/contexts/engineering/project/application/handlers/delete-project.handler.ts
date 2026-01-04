@@ -3,6 +3,7 @@ import { DeleteProjectCommand } from '../commands/delete-project.command';
 import { Inject, NotFoundException } from '@nestjs/common';
 import { ProjectRepository } from '../ports/project.repository';
 import { ProjectDeletedEvent } from '../../domain/events/project-deleted.event';
+import { LoggerService } from '@shared/logging/logger.service';
 // import { ProjectId } from '../../domain/value-objects/project-id.vo'; // Unused now
 
 @CommandHandler(DeleteProjectCommand)
@@ -13,6 +14,7 @@ export class DeleteProjectHandler
     @Inject('ProjectRepository')
     private readonly projectRepository: ProjectRepository,
     private readonly eventBus: EventBus,
+    private readonly logger: LoggerService,
   ) {}
 
   async execute(command: DeleteProjectCommand): Promise<void> {
@@ -25,9 +27,13 @@ export class DeleteProjectHandler
 
     await this.projectRepository.softDelete(id);
 
-    // TODO: Need userId in Command for full auditing
     this.eventBus.publish(
       new ProjectDeletedEvent(id.toString(), 'system', new Date()),
+    );
+
+    this.logger.warn(
+      `Project soft-deleted: ${id.toString()} (Title: "${project.title}")`,
+      'DeleteProjectHandler',
     );
     return;
   }

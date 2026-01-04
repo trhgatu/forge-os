@@ -9,6 +9,7 @@ import { ProjectResponse } from '../../presentation/dto/project.response';
 import { ProjectPresenter } from '../../presentation/project.presenter';
 import { CacheService } from '@shared/services';
 import { ProjectCreatedEvent } from '../../domain/events/project-created.event';
+import { LoggerService } from '@shared/logging/logger.service';
 
 @CommandHandler(CreateProjectCommand)
 export class CreateProjectHandler
@@ -19,6 +20,7 @@ export class CreateProjectHandler
     private readonly projectRepository: ProjectRepository,
     private readonly eventBus: EventBus,
     private readonly cacheService: CacheService,
+    private readonly logger: LoggerService,
   ) {}
 
   async execute(command: CreateProjectCommand): Promise<ProjectResponse> {
@@ -35,30 +37,16 @@ export class CreateProjectHandler
       projectId,
     );
 
-    // Save returns void now
     await this.projectRepository.save(project);
 
-    // Publish event
     this.eventBus.publish(
-      new ProjectCreatedEvent(
-        projectId.toString(),
-        userId,
-        project.title, // Use getter since props are private
-        now,
-      ),
+      new ProjectCreatedEvent(projectId.toString(), userId, project.title, now),
     );
 
-    // Invalidate cache
-    await this.cacheService.deleteByPattern('projects:list:*');
-
-    console.log(
-      'DEBUG: Project CreatedAt Type:',
-      typeof project.createdAt,
-      project.createdAt,
+    this.logger.log(
+      `Project created: "${project.title}" (ID: ${projectId.toString()}) by user ${userId}`,
+      'CreateProjectHandler',
     );
-    if (typeof project.createdAt === 'string') {
-      console.error('CRITICAL: project.createdAt mutated to string!');
-    }
 
     return ProjectPresenter.toResponse(project);
   }
