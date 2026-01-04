@@ -4,10 +4,12 @@ import { UserStats } from "../types";
 export const gamificationService = {
   getStats: async (): Promise<UserStats | null> => {
     const res = await apiClient.get<UserStats>("/gamification/stats");
-    // Convert date strings to Date objects
     return {
-      ...res.data,
-      lastActivityDate: new Date(res.data.lastActivityDate),
+      userId: res.data.userId,
+      props: {
+        ...res.data.props,
+        lastActivityDate: new Date(res.data.props.lastActivityDate),
+      },
     };
   },
 };
