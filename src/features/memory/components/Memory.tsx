@@ -244,30 +244,36 @@ export function Memory() {
           </button>
         </div>
 
-        {/* Bottom row - Search and Filters (Flowing) */}
-        <div className="flex items-center gap-4 pt-4 border-t border-stone-800/30">
-          {/* Organic Search with Premium Interactions */}
-          <div className="group relative flex-1 max-w-sm">
-            <Search
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-600/50 transition-all duration-500 group-focus-within:text-stone-400 group-focus-within:scale-110 group-focus-within:rotate-12"
-              size={13}
-            />
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="search through time..."
-              className="w-full rounded-full border border-stone-800/40 bg-stone-950/30 pl-11 pr-4 py-2.5 text-xs text-stone-200 outline-none transition-all duration-500 placeholder-stone-600/50 placeholder:italic focus:border-stone-700/50 focus:bg-stone-950/50 focus:shadow-lg focus:shadow-stone-500/5 focus:scale-[1.02] font-serif shadow-inner backdrop-blur-sm"
-            />
-            {/* Search glow on focus */}
-            <div className="absolute inset-0 rounded-full opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur-xl -z-10 bg-stone-500/8" />
+        {/* Premium Search and Filters */}
+        <div className="flex items-center gap-6 pt-6">
+          {/* Premium Search - Elevated Card */}
+          <div className="group relative flex-1 max-w-md">
+            <div className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-stone-600/20 via-stone-500/20 to-stone-600/20 opacity-0 group-focus-within:opacity-100 blur transition-opacity duration-500" />
+
+            <div className="relative rounded-2xl border border-stone-700/50 bg-gradient-to-br from-stone-900/60 to-stone-950/80 backdrop-blur-md shadow-lg group-focus-within:border-stone-600/70 group-focus-within:shadow-xl transition-all duration-500">
+              <Search
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-500 transition-all duration-500 group-focus-within:text-stone-300 group-focus-within:scale-110"
+                size={16}
+              />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+                placeholder="search memories..."
+                className="w-full rounded-2xl bg-transparent pl-12 pr-4 py-3.5 text-sm text-stone-100 outline-none placeholder-stone-500 placeholder:font-serif placeholder:italic font-serif"
+              />
+            </div>
           </div>
 
-          {/* Flowing Divider */}
-          <div className="h-6 w-px bg-gradient-to-b from-transparent via-stone-700/30 to-transparent" />
+          {/* Elegant Divider */}
+          <div className="flex items-center gap-2 opacity-40">
+            <div className="h-px w-3 bg-gradient-to-r from-transparent to-stone-600" />
+            <div className="h-1.5 w-1.5 rounded-full bg-stone-600" />
+            <div className="h-px w-3 bg-gradient-to-l from-transparent to-stone-600" />
+          </div>
 
-          {/* Organic Filter Pills */}
-          <div className="flex items-center gap-2">
+          {/* Premium Filter Pills */}
+          <div className="flex items-center gap-2.5">
             {(["All", "Spring", "Summer", "Autumn", "Winter"] as SeasonFilter[]).map(
               (seasonKey) => {
                 const isAll = seasonKey === "All";
@@ -280,28 +286,48 @@ export function Memory() {
                     type="button"
                     onClick={() => setActiveFilter(seasonKey)}
                     className={cn(
-                      "group relative flex items-center gap-1.5 rounded-full px-3.5 py-2 text-[10px] font-medium uppercase tracking-[0.15em] transition-all duration-500 backdrop-blur-sm",
+                      "group relative flex items-center gap-2 rounded-xl px-4 py-2.5 text-[11px] font-medium uppercase tracking-[0.15em] transition-all duration-500 backdrop-blur-sm font-serif",
                       isActive
                         ? "scale-105 shadow-lg"
-                        : "hover:scale-105 opacity-60 hover:opacity-100"
+                        : "hover:scale-105 opacity-50 hover:opacity-100"
                     )}
                     style={{
                       background: isActive
-                        ? "linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 100%)"
-                        : "rgba(255, 255, 255, 0.04)",
-                      border: isActive
-                        ? `1px solid ${
+                        ? `linear-gradient(135deg, ${
                             seasonKey === "Spring"
-                              ? "rgba(16, 185, 129, 0.4)"
+                              ? "rgba(16, 185, 129, 0.15)"
                               : seasonKey === "Summer"
-                                ? "rgba(245, 158, 11, 0.4)"
+                                ? "rgba(245, 158, 11, 0.15)"
                                 : seasonKey === "Autumn"
-                                  ? "rgba(220, 38, 38, 0.4)"
+                                  ? "rgba(220, 38, 38, 0.15)"
                                   : seasonKey === "Winter"
-                                    ? "rgba(6, 182, 212, 0.4)"
-                                    : "rgba(156, 163, 175, 0.3)"
+                                    ? "rgba(6, 182, 212, 0.15)"
+                                    : "rgba(120, 113, 108, 0.15)"
+                          } 0%, ${
+                            seasonKey === "Spring"
+                              ? "rgba(16, 185, 129, 0.05)"
+                              : seasonKey === "Summer"
+                                ? "rgba(245, 158, 11, 0.05)"
+                                : seasonKey === "Autumn"
+                                  ? "rgba(220, 38, 38, 0.05)"
+                                  : seasonKey === "Winter"
+                                    ? "rgba(6, 182, 212, 0.05)"
+                                    : "rgba(120, 113, 108, 0.05)"
+                          } 100%)`
+                        : "rgba(41, 37, 36, 0.4)",
+                      border: isActive
+                        ? `1.5px solid ${
+                            seasonKey === "Spring"
+                              ? "rgba(16, 185, 129, 0.5)"
+                              : seasonKey === "Summer"
+                                ? "rgba(245, 158, 11, 0.5)"
+                                : seasonKey === "Autumn"
+                                  ? "rgba(220, 38, 38, 0.5)"
+                                  : seasonKey === "Winter"
+                                    ? "rgba(6, 182, 212, 0.5)"
+                                    : "rgba(168, 162, 158, 0.4)"
                           }`
-                        : "1px solid rgba(255, 255, 255, 0.08)",
+                        : "1px solid rgba(87, 83, 78, 0.3)",
                       color: isActive
                         ? seasonKey === "Spring"
                           ? "#10b981"
@@ -311,22 +337,21 @@ export function Memory() {
                               ? "#dc2626"
                               : seasonKey === "Winter"
                                 ? "#06b6d4"
-                                : "#9ca3af"
-                        : "#6b7280",
+                                : "#d6d3d1"
+                        : "#78716c",
                     }}
                   >
                     {config && (
                       <config.icon
-                        size={11}
+                        size={13}
                         className="transition-transform duration-300 group-hover:rotate-12"
                       />
                     )}
-                    <span className="font-serif text-[9px]">{seasonKey}</span>
+                    <span>{seasonKey}</span>
 
-                    {/* Glow effect on active */}
                     {isActive && (
                       <div
-                        className="absolute inset-0 rounded-full opacity-20 blur-md -z-10"
+                        className="absolute inset-0 rounded-xl opacity-30 blur-lg -z-10"
                         style={{
                           background:
                             seasonKey === "Spring"
@@ -337,7 +362,7 @@ export function Memory() {
                                   ? "#dc2626"
                                   : seasonKey === "Winter"
                                     ? "#06b6d4"
-                                    : "#9ca3af",
+                                    : "#a8a29e",
                         }}
                       />
                     )}
