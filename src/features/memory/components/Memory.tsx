@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, useRef, useEffect } from "react";
-import { Image as ImageIcon, Plus, Search, Wind } from "lucide-react";
+import { Search, BookOpen, Feather } from "lucide-react";
 import { toast } from "sonner";
 
 import type { Memory } from "@/shared/types/memory";
@@ -12,6 +12,7 @@ import { analyzeMemory } from "../services/analyze";
 import { MemoryCard } from "./MemoryCard";
 import { MemoryDetailPanel } from "./MemoryDetailPanel";
 import { CreateMemoryModal } from "./CreateMemoryModal";
+import { MemoryParticles } from "./MemoryParticles";
 
 type SeasonFilter = InnerSeason | "All";
 
@@ -29,7 +30,16 @@ export function Memory() {
   const [isCreating, setIsCreating] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [activeFilter, setActiveFilter] = useState<SeasonFilter>("All");
+
+  // Debounce search for performance
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   // Infinite Scroll Trigger
   const observerTarget = useRef(null);
@@ -52,7 +62,7 @@ export function Memory() {
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const filteredMemories = useMemo(() => {
-    const query = searchTerm.toLowerCase().trim();
+    const query = debouncedSearch.toLowerCase().trim();
 
     let current = memories;
 
@@ -68,7 +78,7 @@ export function Memory() {
     }
 
     return current;
-  }, [memories, searchTerm, activeFilter]);
+  }, [memories, debouncedSearch, activeFilter]);
 
   const selectedMemoryBase = memories.find((memory) => memory.id === selectedMemoryId) ?? null;
 
@@ -96,7 +106,6 @@ export function Memory() {
   const createMemory = useCreateMemory();
 
   const handleSaveNew = (memory: Partial<Memory>) => {
-    // We can safely cast because CreateModal validation ensures these fields exist for new memories
     const payload = {
       title: memory.title!,
       content: memory.content!,
@@ -108,9 +117,8 @@ export function Memory() {
 
     createMemory.mutate(payload, {
       onSuccess: (newMemory) => {
-        toast.success("Memory crystallized successfully");
+        toast.success("Memory preserved in the archives");
         setIsCreating(false);
-        // Small delay to allow modal to close gracefully before panel slides in
         setTimeout(() => setSelectedMemoryId(newMemory.id), 300);
       },
       onError: (error) => {
@@ -120,161 +128,232 @@ export function Memory() {
     });
   };
 
-  const bgClass =
-    activeFilter === "Spring"
-      ? "bg-[#020a0a]"
-      : activeFilter === "Summer"
-        ? "bg-[#0c0804]"
-        : activeFilter === "Autumn"
-          ? "bg-[#0c0505]"
-          : activeFilter === "Winter"
-            ? "bg-[#02030a]"
-            : "bg-[#020204]";
+  // Soft contemplative dark - muted warmth
+  const bgClass = "bg-gradient-to-br from-[#1c1917] via-[#181614] to-[#0c0a09]";
 
   if (isLoading) {
     return (
-      <div className="flex h-full items-center justify-center">
-        <p className="text-sm text-gray-500">Loading memories...</p>
+      <div className="flex h-full flex-col bg-gradient-to-br from-[#1c1917] to-[#0c0a09]">
+        {/* Loading particles */}
+        <MemoryParticles />
+
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center space-y-4">
+            <div className="relative">
+              <div className="absolute inset-0 animate-pulse bg-stone-500/10 blur-3xl" />
+              <BookOpen size={48} className="relative text-stone-400/40 animate-pulse" />
+            </div>
+            <p className="text-sm text-stone-300/50 font-serif italic animate-pulse">
+              Loading memories from the archives...
+            </p>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (isError) {
     return (
-      <div className="flex h-full items-center justify-center">
-        <p className="text-sm text-red-400">Failed to load memories.</p>
+      <div className="flex h-full items-center justify-center bg-gradient-to-br from-[#1c1917] to-[#0c0a09]">
+        <p className="text-sm text-red-300/80 font-serif">Failed to retrieve memories.</p>
       </div>
     );
   }
+
   return (
     <div
       className={cn(
-        "relative flex h-full flex-col overflow-hidden animate-in fade-in duration-1000 selection:bg-white/20",
+        "relative flex h-full flex-col overflow-hidden animate-in fade-in duration-1000",
         bgClass
       )}
     >
-      {/* Deep atmospheric background */}
-      <div className="pointer-events-none absolute inset-0">
-        {/* Primary gradient wash */}
-        <div
-          className={cn(
-            "absolute left-0 top-0 h-[600px] w-full transition-all duration-1000",
-            activeFilter === "Spring"
-              ? "bg-gradient-to-b from-emerald-950/40 via-emerald-900/20 to-transparent"
-              : activeFilter === "Summer"
-                ? "bg-gradient-to-b from-amber-950/40 via-amber-900/20 to-transparent"
-                : activeFilter === "Autumn"
-                  ? "bg-gradient-to-b from-red-950/40 via-red-900/20 to-transparent"
-                  : activeFilter === "Winter"
-                    ? "bg-gradient-to-b from-cyan-950/40 via-cyan-900/20 to-transparent"
-                    : "bg-gradient-to-b from-slate-950/40 via-slate-900/20 to-transparent"
-          )}
-        />
+      {/* Soft paper texture overlay */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.015] mix-blend-overlay"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+        }}
+      />
 
-        {/* Radial light source */}
-        <div
-          className="absolute left-1/2 top-0 h-[800px] w-[800px] -translate-x-1/2 opacity-20 transition-opacity duration-1000"
-          style={{
-            background: `radial-gradient(circle at center, ${
-              activeFilter === "Spring"
-                ? "rgba(16, 185, 129, 0.3)"
-                : activeFilter === "Summer"
-                  ? "rgba(245, 158, 11, 0.3)"
-                  : activeFilter === "Autumn"
-                    ? "rgba(220, 38, 38, 0.3)"
-                    : activeFilter === "Winter"
-                      ? "rgba(6, 182, 212, 0.3)"
-                      : "rgba(148, 163, 184, 0.2)"
-            }, transparent 60%)`,
-          }}
-        />
+      {/* Soft vignette */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/30" />
 
-        {/* Subtle noise texture */}
-        <div
-          className="absolute inset-0 opacity-[0.015] mix-blend-overlay"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-          }}
-        />
+      {/* Subtle warm glow - very muted */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-stone-800/5 via-transparent to-stone-900/5" />
 
-        {/* Depth fog */}
-        <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-black/40 to-transparent" />
-      </div>
+      {/* Floating Particles */}
+      <MemoryParticles />
 
-      {/* header */}
-      <div className="sticky top-0 z-20 flex items-end justify-between border-b border-white/5 px-8 py-8 backdrop-blur-sm">
-        <div>
-          <div className="mb-2 flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-gray-500">
-            <Wind size={14} />
-            Mnemosyne Engine
+      {/* Timeless Header - Flowing Layout */}
+      <div className="sticky top-0 z-20 border-b border-stone-800/30 px-8 py-8 backdrop-blur-xl bg-gradient-to-b from-[#1c1917]/95 to-[#1c1917]/80">
+        {/* Top row - Title and Actions */}
+        <div className="flex items-start justify-between mb-6">
+          <div className="flex-1">
+            {/* Ethereal label */}
+            <div className="mb-4 flex items-center gap-2 opacity-60">
+              <div className="h-px w-8 bg-gradient-to-r from-stone-600/40 to-transparent" />
+              <span className="text-[10px] font-serif uppercase tracking-[0.4em] text-stone-500/70">
+                Echoes of Time
+              </span>
+            </div>
+
+            {/* Poetic Title */}
+            <h1
+              className="text-5xl font-light tracking-tight text-stone-100 leading-tight mb-3"
+              style={{
+                fontFamily: "'Playfair Display', 'Georgia', serif",
+                fontWeight: 300,
+                letterSpacing: "-0.02em",
+              }}
+            >
+              Memories
+            </h1>
+
+            {/* Flowing Subtitle - More Poetic */}
+            <p className="font-serif text-sm text-stone-400/80 leading-relaxed max-w-xl italic">
+              Fragments of moments, crystallized in time—each memory a whisper from the past,
+              preserved in the quiet corners of the soul...
+            </p>
           </div>
-          <h1 className="text-3xl font-display font-bold tracking-tight text-white">
-            Memory Landscape
-          </h1>
+
+          {/* Preserve Button - Floating with Ripple */}
+          <button
+            type="button"
+            onClick={() => setIsCreating(true)}
+            className="group relative flex items-center gap-2.5 rounded-full px-6 py-3 text-xs font-medium uppercase tracking-[0.15em] transition-all duration-500 shadow-lg hover:shadow-2xl backdrop-blur-md overflow-hidden"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(120, 113, 108, 0.15) 0%, rgba(87, 83, 78, 0.1) 100%)",
+              border: "1px solid rgba(168, 162, 158, 0.25)",
+              color: "#d6d3d1",
+            }}
+          >
+            <Feather
+              size={13}
+              className="relative z-10 transition-transform duration-500 group-hover:rotate-12 group-hover:scale-110"
+            />
+            <span className="relative z-10 font-serif">Preserve</span>
+
+            {/* Ripple effect on hover */}
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              <div className="absolute inset-0 bg-gradient-to-r from-stone-400/10 to-transparent animate-[ripple_2s_ease-out_infinite]" />
+            </div>
+
+            {/* Glow pulse */}
+            <div className="absolute -inset-1 opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-xl -z-10 bg-stone-400/15 animate-pulse" />
+          </button>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="group relative">
+        {/* Bottom row - Search and Filters (Flowing) */}
+        <div className="flex items-center gap-4 pt-4 border-t border-stone-800/30">
+          {/* Organic Search with Premium Interactions */}
+          <div className="group relative flex-1 max-w-sm">
             <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 transition-colors group-focus-within:text-white"
-              size={14}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-600/50 transition-all duration-500 group-focus-within:text-stone-400 group-focus-within:scale-110 group-focus-within:rotate-12"
+              size={13}
             />
             <input
               type="text"
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Search echoes..."
-              className="w-48 rounded-full border border-white/10 bg-white/5 px-9 py-2 text-xs text-white outline-none transition-all placeholder-gray-600 focus:border-white/20"
+              placeholder="search through time..."
+              className="w-full rounded-full border border-stone-800/40 bg-stone-950/30 pl-11 pr-4 py-2.5 text-xs text-stone-200 outline-none transition-all duration-500 placeholder-stone-600/50 placeholder:italic focus:border-stone-700/50 focus:bg-stone-950/50 focus:shadow-lg focus:shadow-stone-500/5 focus:scale-[1.02] font-serif shadow-inner backdrop-blur-sm"
             />
+            {/* Search glow on focus */}
+            <div className="absolute inset-0 rounded-full opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 blur-xl -z-10 bg-stone-500/8" />
           </div>
-          <button
-            type="button"
-            onClick={() => setIsCreating(true)}
-            className="flex items-center gap-2 rounded-full bg-white px-5 py-2 text-xs font-bold text-black shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all hover:scale-105"
-          >
-            <Plus size={14} />
-            Preserve
-          </button>
+
+          {/* Flowing Divider */}
+          <div className="h-6 w-px bg-gradient-to-b from-transparent via-stone-700/30 to-transparent" />
+
+          {/* Organic Filter Pills */}
+          <div className="flex items-center gap-2">
+            {(["All", "Spring", "Summer", "Autumn", "Winter"] as SeasonFilter[]).map(
+              (seasonKey) => {
+                const isAll = seasonKey === "All";
+                const config = !isAll ? SEASON_CONFIG[seasonKey] : undefined;
+                const isActive = activeFilter === seasonKey;
+
+                return (
+                  <button
+                    key={seasonKey}
+                    type="button"
+                    onClick={() => setActiveFilter(seasonKey)}
+                    className={cn(
+                      "group relative flex items-center gap-1.5 rounded-full px-3.5 py-2 text-[10px] font-medium uppercase tracking-[0.15em] transition-all duration-500 backdrop-blur-sm",
+                      isActive
+                        ? "scale-105 shadow-lg"
+                        : "hover:scale-105 opacity-60 hover:opacity-100"
+                    )}
+                    style={{
+                      background: isActive
+                        ? "linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 100%)"
+                        : "rgba(255, 255, 255, 0.04)",
+                      border: isActive
+                        ? `1px solid ${
+                            seasonKey === "Spring"
+                              ? "rgba(16, 185, 129, 0.4)"
+                              : seasonKey === "Summer"
+                                ? "rgba(245, 158, 11, 0.4)"
+                                : seasonKey === "Autumn"
+                                  ? "rgba(220, 38, 38, 0.4)"
+                                  : seasonKey === "Winter"
+                                    ? "rgba(6, 182, 212, 0.4)"
+                                    : "rgba(156, 163, 175, 0.3)"
+                          }`
+                        : "1px solid rgba(255, 255, 255, 0.08)",
+                      color: isActive
+                        ? seasonKey === "Spring"
+                          ? "#10b981"
+                          : seasonKey === "Summer"
+                            ? "#f59e0b"
+                            : seasonKey === "Autumn"
+                              ? "#dc2626"
+                              : seasonKey === "Winter"
+                                ? "#06b6d4"
+                                : "#9ca3af"
+                        : "#6b7280",
+                    }}
+                  >
+                    {config && (
+                      <config.icon
+                        size={11}
+                        className="transition-transform duration-300 group-hover:rotate-12"
+                      />
+                    )}
+                    <span className="font-serif text-[9px]">{seasonKey}</span>
+
+                    {/* Glow effect on active */}
+                    {isActive && (
+                      <div
+                        className="absolute inset-0 rounded-full opacity-20 blur-md -z-10"
+                        style={{
+                          background:
+                            seasonKey === "Spring"
+                              ? "#10b981"
+                              : seasonKey === "Summer"
+                                ? "#f59e0b"
+                                : seasonKey === "Autumn"
+                                  ? "#dc2626"
+                                  : seasonKey === "Winter"
+                                    ? "#06b6d4"
+                                    : "#9ca3af",
+                        }}
+                      />
+                    )}
+                  </button>
+                );
+              }
+            )}
+          </div>
         </div>
       </div>
 
-      {/* filter bar */}
-      <div className="z-20 flex gap-3 overflow-x-auto px-8 py-4 scrollbar-hide">
-        {(["All", "Spring", "Summer", "Autumn", "Winter"] as SeasonFilter[]).map((seasonKey) => {
-          const isAll = seasonKey === "All";
-          const config = !isAll ? SEASON_CONFIG[seasonKey] : undefined;
-          const isActive = activeFilter === seasonKey;
-
-          return (
-            <button
-              key={seasonKey}
-              type="button"
-              onClick={() => setActiveFilter(seasonKey)}
-              className={cn(
-                "flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all duration-300",
-                isActive
-                  ? "border-white/20 bg-white/10 text-white shadow-lg shadow-white/5 scale-105"
-                  : "border-transparent bg-transparent text-gray-500 hover:bg-white/5 hover:text-gray-300 hover:border-white/10"
-              )}
-            >
-              {config && (
-                <config.icon
-                  size={16}
-                  className={cn(
-                    "transition-all duration-300",
-                    isActive ? config.accent : "text-gray-600"
-                  )}
-                />
-              )}
-              {seasonKey}
-            </button>
-          );
-        })}
-      </div>
+      {/* Content Area */}
       <div className="relative z-10 flex-1 overflow-y-auto px-8 pb-32 scrollbar-hide">
         <div className="mx-auto max-w-7xl pt-8">
           {filteredMemories.length > 0 ? (
-            <div className="space-y-16">
+            <div className="space-y-20">
               {/* Group memories by season */}
               {(["Spring", "Summer", "Autumn", "Winter"] as InnerSeason[]).map((season) => {
                 const seasonMemories = filteredMemories.filter(
@@ -300,37 +379,66 @@ export function Memory() {
                       animationDelay: `${["Spring", "Summer", "Autumn", "Winter"].indexOf(season) * 100}ms`,
                     }}
                   >
-                    {/* Chapter Header */}
-                    <div className="mb-8 space-y-3">
+                    {/* Soft Contemplative Chapter Header */}
+                    <div className="mb-10 space-y-4">
                       <div className="flex items-center gap-3">
-                        <config.icon size={24} className={cn("opacity-60", config.accent)} />
-                        <h2 className="text-2xl font-display font-medium text-white/80">
-                          {season} Memories
+                        <div className="h-px w-12 bg-gradient-to-r from-transparent to-stone-600/25" />
+                        <config.icon
+                          size={20}
+                          className="opacity-40"
+                          style={{
+                            color:
+                              season === "Spring"
+                                ? "#10b981"
+                                : season === "Summer"
+                                  ? "#f59e0b"
+                                  : season === "Autumn"
+                                    ? "#dc2626"
+                                    : "#06b6d4",
+                          }}
+                        />
+                        <h2
+                          className="text-2xl font-medium text-stone-200/85"
+                          style={{
+                            fontFamily: "'Playfair Display', 'Georgia', serif",
+                          }}
+                        >
+                          {season}
                         </h2>
+                        <div className="h-px flex-1 bg-gradient-to-r from-stone-600/25 to-transparent" />
                       </div>
-                      <p className="font-serif text-sm text-gray-400 italic leading-relaxed max-w-2xl">
+                      <p className="font-serif text-sm text-stone-400/60 italic leading-relaxed pl-16">
                         {seasonText[season]}
                       </p>
-                      <div className="h-px w-24 bg-gradient-to-r from-white/20 to-transparent" />
                     </div>
 
-                    {/* Masonry Grid */}
+                    {/* Masonry Grid with Staggered Entrance */}
                     <div
                       className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6"
                       style={{ columnGap: "1.5rem" }}
                     >
-                      {seasonMemories.map((memory, idx) => (
-                        <div
-                          key={memory.id}
-                          className="break-inside-avoid mb-6 animate-in fade-in slide-in-from-bottom-4 duration-500"
-                          style={{ animationDelay: `${idx * 50}ms` }}
-                        >
-                          <MemoryCard
-                            memory={memory}
-                            onClick={() => setSelectedMemoryId(memory.id)}
-                          />
-                        </div>
-                      ))}
+                      {seasonMemories.map((memory, idx) => {
+                        // Depth of field - cards further down get slightly blurred
+                        const depthBlur = idx > 6 ? "blur-[0.3px]" : "";
+
+                        return (
+                          <div
+                            key={memory.id}
+                            className={cn(
+                              "break-inside-avoid mb-6 opacity-0 animate-[fadeInUp_0.8s_ease-out_forwards]",
+                              depthBlur
+                            )}
+                            style={{
+                              animationDelay: `${idx * 80}ms`,
+                            }}
+                          >
+                            <MemoryCard
+                              memory={memory}
+                              onClick={() => setSelectedMemoryId(memory.id)}
+                            />
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 );
@@ -339,29 +447,35 @@ export function Memory() {
           ) : (
             <div className="flex flex-col items-center justify-center py-32 animate-in fade-in duration-700">
               <div className="relative mb-8">
-                <div className="absolute inset-0 animate-pulse bg-white/5 blur-3xl" />
-                <ImageIcon size={64} className="relative text-white/20" />
+                <div className="absolute inset-0 animate-pulse bg-stone-500/5 blur-3xl" />
+                <BookOpen size={64} className="relative text-stone-600/30" />
               </div>
-              <p className="mb-2 text-lg font-display text-white/40">
+              <p className="mb-2 text-xl font-serif text-stone-300/70">
                 {activeFilter !== "All"
                   ? `No ${activeFilter.toLowerCase()} memories found`
                   : searchTerm
                     ? "No memories match your search"
-                    : "The story has yet to begin"}
+                    : "The archives await..."}
               </p>
-              <p className="mb-8 text-sm font-serif italic text-gray-600">
+              <p className="mb-8 text-sm font-serif italic text-stone-500/50 leading-relaxed">
                 {activeFilter !== "All" || searchTerm
-                  ? "Try adjusting your filters"
-                  : "Every journey starts with a single memory..."}
+                  ? "Try adjusting your search"
+                  : "Every story begins with a single memory"}
               </p>
               {!searchTerm && (
                 <button
                   type="button"
                   onClick={() => setIsCreating(true)}
-                  className="flex items-center gap-2 rounded-full bg-white/10 px-6 py-3 text-sm font-bold text-white border border-white/20 transition-all hover:bg-white/20 hover:scale-105"
+                  className="flex items-center gap-2 rounded-full px-6 py-3 text-sm font-medium uppercase tracking-[0.15em] transition-all shadow-lg hover:shadow-2xl backdrop-blur-sm"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, rgba(120, 113, 108, 0.15) 0%, rgba(87, 83, 78, 0.1) 100%)",
+                    border: "1px solid rgba(168, 162, 158, 0.25)",
+                    color: "#d6d3d1",
+                  }}
                 >
-                  <Plus size={16} />
-                  Begin Your Story
+                  <Feather size={16} />
+                  <span className="font-serif">Begin Writing</span>
                 </button>
               )}
             </div>
@@ -371,7 +485,7 @@ export function Memory() {
           {hasNextPage && (
             <div ref={observerTarget} className="mt-8 flex justify-center py-4">
               {isFetchingNextPage ? (
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" />
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-400/20 border-t-gray-600" />
               ) : (
                 <div className="h-4" />
               )}
@@ -379,6 +493,7 @@ export function Memory() {
           )}
         </div>
       </div>
+
       <MemoryDetailPanel
         memory={selectedMemory}
         onClose={() => setSelectedMemoryId(null)}
