@@ -19,90 +19,146 @@ export function MemoryCard({ memory, onClick }: MemoryCardProps) {
       type="button"
       onClick={onClick}
       className={cn(
-        "group relative flex min-h-[280px] cursor-pointer flex-col overflow-hidden rounded-2xl border backdrop-blur-md transition-all duration-700 ease-out",
-        "hover:-translate-y-2 hover:shadow-2xl",
-        config.bg,
-        config.border
+        "group relative w-full cursor-pointer transition-all duration-500 ease-out",
+        "hover:-translate-y-4 hover:scale-[1.02]",
+        "transform-gpu"
       )}
     >
-      {/* Atmospheric background */}
+      {/* Polaroid Frame - like picking up a photo */}
       <div
-        className={cn(
-          "absolute inset-0 bg-linear-to-br opacity-40 transition-opacity duration-700 group-hover:opacity-60",
-          config.gradient
-        )}
-      />
+        className="relative p-4 pb-16 shadow-lg rounded-sm transition-all duration-500 group-hover:shadow-[0_25px_50px_rgba(0,0,0,0.35)]"
+        style={{
+          background: "linear-gradient(135deg, #fdfcfb 0%, #f7f5f2 100%)",
+        }}
+      >
+        {/* Subtle glow when lifted */}
+        <div
+          className="absolute -inset-1 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl -z-10 rounded-sm"
+          style={{
+            background: `radial-gradient(circle at 50% 50%, rgba(214, 211, 209, 0.15), transparent 70%)`,
+          }}
+        />
+        {/* Paper texture overlay */}
+        <div
+          className="absolute inset-0 opacity-[0.03] mix-blend-multiply pointer-events-none rounded-sm"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+          }}
+        />
 
-      {/* Spring diffused texture */}
-      {season === "Spring" && (
-        <>
-          <div
-            className="pointer-events-none absolute inset-0 opacity-20 mix-blend-overlay"
-            style={{
-              backgroundImage:
-                "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E\")",
-            }}
-          />
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_bottom,var(--tw-gradient-stops))] from-emerald-500/10 via-transparent to-transparent opacity-50" />
-        </>
-      )}
-      {memory.imageUrl && (
-        <div className="absolute inset-0 z-0">
-          <Image
-            src={memory.imageUrl}
-            alt={memory.title}
-            fill
-            className="h-full w-full object-cover opacity-30 transition-all duration-1000 grayscale group-hover:scale-105 group-hover:opacity-40 group-hover:grayscale-50"
-          />
-          <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/70 via-transparent to-transparent" />
-        </div>
-      )}
+        {/* Aged edges */}
+        <div className="absolute inset-0 rounded-sm shadow-[inset_0_0_20px_rgba(139,115,85,0.1)] pointer-events-none" />
 
-      {/* Content */}
-      <div className="relative z-10 flex h-full flex-col p-6">
-        {/* Top indicator */}
-        <div className="mb-6 flex items-start justify-between opacity-80 transition-opacity group-hover:opacity-100">
-          <div
-            className={cn(
-              "flex items-center gap-2 rounded-full border bg-black/20 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] backdrop-blur-md",
-              config.accent,
-              config.border
-            )}
-          >
-            <config.icon size={12} />
-            {config.label}
-          </div>
-          {memory.analysis && (
-            <span className={cn("animate-pulse", config.accent)}>{/* small sparkle dot */}●</span>
+        {/* Image Container with vintage filter */}
+        <div className="relative aspect-square w-full overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50 rounded-sm">
+          {memory.imageUrl ? (
+            <>
+              <Image
+                src={memory.imageUrl}
+                alt={memory.title}
+                fill
+                className="object-cover transition-all duration-1000 group-hover:scale-110"
+                style={{
+                  filter: "sepia(0.15) contrast(1.1) brightness(0.95)",
+                }}
+              />
+              {/* Film grain overlay */}
+              <div
+                className="absolute inset-0 opacity-[0.08] mix-blend-overlay pointer-events-none"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                }}
+              />
+            </>
+          ) : (
+            // Vintage placeholder
+            <div
+              className="absolute inset-0 flex items-center justify-center opacity-10"
+              style={{
+                background: `radial-gradient(circle, ${
+                  season === "Spring"
+                    ? "#8b7355"
+                    : season === "Summer"
+                      ? "#d4a574"
+                      : season === "Autumn"
+                        ? "#a0522d"
+                        : "#708090"
+                }, transparent 70%)`,
+              }}
+            >
+              <config.icon size={64} className="text-gray-400" />
+            </div>
           )}
+
+          {/* Vignette - stronger for vintage feel */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/10 pointer-events-none" />
+          <div className="absolute inset-0 shadow-[inset_0_0_60px_rgba(0,0,0,0.15)] pointer-events-none" />
         </div>
 
-        <div className="flex-1" />
-
-        {/* Title + description */}
-        <div className="mt-auto">
-          <h3 className="mb-3 text-2xl font-display font-medium leading-tight text-white transition-transform duration-500 group-hover:translate-x-1">
+        {/* Handwritten Caption Area */}
+        <div className="absolute bottom-4 left-4 right-4 space-y-1.5">
+          {/* Title - handwritten style */}
+          <h3
+            className="text-base text-gray-700 line-clamp-2 leading-relaxed transition-colors duration-500 group-hover:text-gray-900"
+            style={{
+              fontFamily: "'Caveat', 'Dancing Script', cursive",
+              fontWeight: 500,
+            }}
+          >
             {memory.title}
           </h3>
 
-          <div className="mb-4 h-px w-12 opacity-50 transition-all duration-700 group-hover:w-full bg-white/40" />
-
-          <p className="line-clamp-2 font-serif text-sm font-light leading-relaxed text-gray-300 opacity-80 transition-opacity group-hover:opacity-100">
-            {memory.content}
+          {/* Date - typewriter style */}
+          <p className="font-mono text-[10px] text-gray-500 tracking-wide">
+            {memory.date.toLocaleDateString("en-US", {
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+            })}
           </p>
         </div>
 
-        {/* Footer meta */}
-        <div className="mt-4 flex items-center justify-between border-t border-white/5 pt-4 text-[10px] font-mono text-gray-500">
-          <span>
-            {memory.date.toLocaleDateString(undefined, {
-              month: "long",
-              day: "numeric",
-            })}
-          </span>
-          <span className="uppercase tracking-wider opacity-60">#{memory.mood}</span>
+        {/* Vintage stamp badge */}
+        <div className="absolute top-6 right-6">
+          <div
+            className={cn(
+              "relative flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest",
+              "backdrop-blur-sm shadow-lg border-2 transition-all duration-500",
+              "group-hover:scale-110 group-hover:rotate-6"
+            )}
+            style={{
+              background: "rgba(255, 255, 255, 0.7)",
+              borderColor:
+                season === "Spring"
+                  ? "#8b7355"
+                  : season === "Summer"
+                    ? "#d4a574"
+                    : season === "Autumn"
+                      ? "#a0522d"
+                      : "#708090",
+              color:
+                season === "Spring"
+                  ? "#8b7355"
+                  : season === "Summer"
+                    ? "#d4a574"
+                    : season === "Autumn"
+                      ? "#a0522d"
+                      : "#708090",
+              borderStyle: "dashed",
+            }}
+          >
+            <config.icon size={11} />
+            {config.label}
+          </div>
         </div>
+
+        {/* Tape effect on corners */}
+        <div className="absolute -top-2 left-8 w-16 h-6 bg-gradient-to-b from-gray-200/60 to-gray-100/40 backdrop-blur-sm rotate-[-5deg] shadow-sm" />
+        <div className="absolute -top-2 right-8 w-16 h-6 bg-gradient-to-b from-gray-200/60 to-gray-100/40 backdrop-blur-sm rotate-[5deg] shadow-sm" />
       </div>
+
+      {/* Soft shadow beneath (aged paper on surface) */}
+      <div className="absolute -bottom-2 left-4 right-4 h-6 bg-gradient-to-b from-transparent to-black/15 blur-2xl -z-10 transition-all duration-700 group-hover:to-black/25" />
     </button>
   );
 }
