@@ -141,3 +141,15 @@
 @utility slide-in-panel {
   animation: slide-in-from-right 0.8s var(--ease-spring-out) both;
 }
+
+/* Fade In Up (Memories) */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
