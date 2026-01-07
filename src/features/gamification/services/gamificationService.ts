@@ -5,11 +5,8 @@ export const gamificationService = {
   getStats: async (): Promise<UserStats | null> => {
     const res = await apiClient.get<UserStats>("/gamification/stats");
     return {
-      userId: res.data.userId,
-      props: {
-        ...res.data.props,
-        lastActivityDate: new Date(res.data.props.lastActivityDate),
-      },
+      ...res.data,
+      lastActivityDate: new Date(res.data.lastActivityDate),
     };
   },
 };
