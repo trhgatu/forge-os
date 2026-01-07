@@ -16,6 +16,7 @@ import { MoodType } from '@shared/enums';
 import { JournalStatus } from '../../domain/enums/journal-status.enum';
 import { JournalType } from '../../domain/enums/journal-type.enum';
 import { CacheService } from '@shared/services';
+import { LoggerService } from '@shared/logging/logger.service';
 
 @CommandHandler(CreateJournalCommand)
 export class CreateJournalHandler
@@ -26,6 +27,7 @@ export class CreateJournalHandler
     private readonly journalRepo: JournalRepository,
     private readonly eventBus: EventBus,
     private readonly cacheService: CacheService,
+    private readonly logger: LoggerService,
   ) {}
 
   async execute(command: CreateJournalCommand): Promise<JournalResponse> {
@@ -59,6 +61,10 @@ export class CreateJournalHandler
     await this.cacheService.deleteByPattern('journals:public:*');
 
     this.eventBus.publish(new JournalModifiedEvent(id, 'create'));
+    this.logger.log(
+      `Created Journal ${id.toString()} with title: ${journal.title}`,
+      CreateJournalHandler.name,
+    );
 
     return JournalPresenter.toResponse(journal);
   }

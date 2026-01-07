@@ -20,6 +20,7 @@ import { MoodModule } from '@root/contexts/reflection/mood/mood.module';
 import { CqrsModule } from '@nestjs/cqrs';
 import { PresenceModule } from '@root/contexts/nova/presence/presence.module';
 import { EngineeringModule } from '@root/contexts/engineering/engineering.module';
+import { GamificationModule } from '@root/contexts/gamification/gamification.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { EngineeringModule } from '@root/contexts/engineering/engineering.module
 
     PresenceModule,
     EngineeringModule,
+    GamificationModule,
   ],
   controllers: [AppController],
 })
