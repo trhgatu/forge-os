@@ -33,10 +33,6 @@ export class GamificationGateway
       );
       this.logger.debug(`Client ID: ${client.id}`, 'GamificationGateway');
       this.logger.debug(
-        `Auth payload: ${JSON.stringify(client.handshake.auth)}`,
-        'GamificationGateway',
-      );
-      this.logger.debug(
         `Headers authorization: ${client.handshake.headers?.authorization}`,
         'GamificationGateway',
       );
@@ -53,7 +49,6 @@ export class GamificationGateway
         userId = queryUserId as string;
       }
 
-      // 2. Security: Verify Token if present (Priority)
       const token =
         client.handshake.auth?.token || client.handshake.headers?.authorization;
 
@@ -63,14 +58,13 @@ export class GamificationGateway
         try {
           const cleanToken = (token as string).replace('Bearer ', '');
           const payload = await this.authService.verifyToken(cleanToken);
-          userId = payload.sub; // Trust the token over the query param
+          userId = payload.sub;
         } catch (err) {
           this.logger.warn(
             `Invalid token for client ${client.id}: ${(err as Error).message}`,
             'GamificationGateway',
           );
-          userId = undefined; // Prevent spoofing: Reset unverified userId
-          // client.disconnect(); // Optional: Enforce disconnect if strict
+          userId = undefined;
         }
       }
 
