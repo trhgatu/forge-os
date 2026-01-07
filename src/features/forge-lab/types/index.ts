@@ -56,6 +56,7 @@ export interface PaginatedResponse<T> {
   };
 }
 
+export * from "./dto";
 export interface Project {
   id: string;
   title: string;

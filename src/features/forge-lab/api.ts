@@ -7,7 +7,27 @@ export const forgeApi = {
       .get<PaginatedResponse<Project> | Project[]>("/engineering/projects")
       .then((res) => res.data),
   getProject: (id: string) =>
-    apiClient.get<Project>(`/engineering/projects/${id}`).then((res) => res.data),
+    apiClient
+      .get<import("./types/dto").ProjectSummaryResponse>(`/engineering/projects/${id}`)
+      .then((res) => res.data),
+  getProjectGithubStats: (id: string) =>
+    apiClient
+      .get<import("./types/dto").GithubStatsResponse>(`/engineering/projects/${id}/github-stats`)
+      .then((res) => res.data),
+  getProjectReadme: (id: string) =>
+    apiClient
+      .get<import("./types/dto").ReadmeResponse>(`/engineering/projects/${id}/readme`)
+      .then((res) => res.data),
+  getProjectTaskBoard: (id: string) =>
+    apiClient
+      .get<import("./types/dto").TaskBoardResponse>(`/engineering/projects/${id}/taskboard`)
+      .then((res) => res.data),
+  getProjectLogs: (id: string, page: number = 1, limit: number = 20) =>
+    apiClient
+      .get<
+        import("./types/dto").PaginatedLogsResponse
+      >(`/engineering/projects/${id}/logs`, { params: { page, limit } })
+      .then((res) => res.data),
   createProject: (data: Partial<Project>) =>
     apiClient.post<Project>("/engineering/projects", data).then((res) => res.data),
   updateProject: (id: string, data: Partial<Project>) =>
