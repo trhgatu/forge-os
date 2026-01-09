@@ -4,6 +4,7 @@ import { Inject, NotFoundException } from '@nestjs/common';
 import { ProjectRepository } from '../ports/project.repository';
 import { ProjectDeletedEvent } from '../../domain/events/project-deleted.event';
 import { LoggerService } from '@shared/logging/logger.service';
+import { CacheService } from '@shared/services';
 // import { ProjectId } from '../../domain/value-objects/project-id.vo'; // Unused now
 
 @CommandHandler(DeleteProjectCommand)
@@ -15,6 +16,7 @@ export class DeleteProjectHandler
     private readonly projectRepository: ProjectRepository,
     private readonly eventBus: EventBus,
     private readonly logger: LoggerService,
+    private readonly cacheService: CacheService,
   ) {}
 
   async execute(command: DeleteProjectCommand): Promise<void> {
@@ -35,6 +37,10 @@ export class DeleteProjectHandler
       `Project soft-deleted: ${id.toString()} (Title: "${project.title}")`,
       'DeleteProjectHandler',
     );
+
+    // Invalidate project list cache
+    await this.cacheService.deleteByPattern('projects:*');
+
     return;
   }
 }

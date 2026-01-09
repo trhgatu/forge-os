@@ -102,6 +102,8 @@ export class ProjectLog {
 }
 export const ProjectLogSchema = SchemaFactory.createForClass(ProjectLog);
 
+export const HybridStatsSchema = SchemaFactory.createForClass(HybridStats);
+
 @Schema({ timestamps: true })
 export class Project {
   @Prop({ required: true })
@@ -124,7 +126,7 @@ export class Project {
   @Prop({ default: false })
   isPinned!: boolean;
 
-  @Prop({ type: HybridStats })
+  @Prop({ type: HybridStatsSchema })
   githubStats!: HybridStats;
 
   // Store raw GitHub response or other metadata
