@@ -38,9 +38,12 @@ export class ProjectPresenter {
       currentMilestone: entity.metadata?.currentMilestone
         ? {
             ...entity.metadata.currentMilestone,
-            dueDate: entity.metadata.currentMilestone.dueDate
-              ? entity.metadata.currentMilestone.dueDate
-              : entity.metadata.currentMilestone.dueDate,
+            dueDate:
+              (entity.metadata.currentMilestone.dueDate as any) instanceof Date
+                ? (
+                    entity.metadata.currentMilestone.dueDate as any
+                  ).toISOString()
+                : entity.metadata.currentMilestone.dueDate,
           }
         : undefined,
       dueDate: entity.metadata?.dueDate,
