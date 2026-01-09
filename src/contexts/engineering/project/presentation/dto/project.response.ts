@@ -29,7 +29,7 @@ export interface ProjectResponse {
     id: string;
     title: string;
     description?: string;
-    dueDate?: Date;
+    dueDate?: string;
     status: 'pending' | 'in_progress' | 'completed';
     progress: number;
   };

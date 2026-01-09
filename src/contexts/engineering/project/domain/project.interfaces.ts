@@ -102,7 +102,7 @@ export interface ProjectMetadata {
     id: string;
     title: string;
     description?: string;
-    dueDate?: Date;
+    dueDate?: string;
     status: 'pending' | 'in_progress' | 'completed';
     progress: number; // Restored for frontend compatibility
   };

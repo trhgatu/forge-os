@@ -35,7 +35,14 @@ export class ProjectPresenter {
 
       // Frontend Compatibility
       technologies: entity.metadata?.technologies || [],
-      currentMilestone: entity.metadata?.currentMilestone,
+      currentMilestone: entity.metadata?.currentMilestone
+        ? {
+            ...entity.metadata.currentMilestone,
+            dueDate: entity.metadata.currentMilestone.dueDate
+              ? entity.metadata.currentMilestone.dueDate
+              : entity.metadata.currentMilestone.dueDate,
+          }
+        : undefined,
       dueDate: entity.metadata?.dueDate,
       team: entity.metadata?.team,
       lead: entity.metadata?.lead,
@@ -136,7 +143,7 @@ export class ProjectPresenter {
 
     return {
       data: paginatedLogs.map((log, index) => ({
-        id: log.id || `log-${index}`,
+        id: log.id || `log-${startIndex + index}`,
         content: log.content,
         date: log.date,
         type: log.type,

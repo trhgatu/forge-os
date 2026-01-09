@@ -7,8 +7,9 @@ import {
   Patch,
   Delete,
   Query,
-  Req,
+  ParseIntPipe,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 
 import { Request } from 'express';
@@ -40,6 +41,7 @@ export class ProjectController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
+    private readonly configService: ConfigService,
   ) {}
 
   @Get()
@@ -50,13 +52,11 @@ export class ProjectController {
 
   @Get(':id')
   @Permissions(PermissionEnum.READ_PROJECT)
-  async findOne(@Param('id') id: string, @Req() req: Request) {
+  async findOne(@Param('id') id: string) {
     const project = (await this.queryBus.execute(
       new GetProjectByIdQuery(ProjectId.create(id)),
     )) as Project;
-    const protocol = req.protocol;
-    const host = req.get('host');
-    const baseUrl = `${protocol}://${host}/engineering`;
+    const baseUrl = this.configService.get<string>('API_URL') || '/engineering';
     return ProjectPresenter.toSummaryResponse(project, baseUrl);
   }
   @Get(':id/github-stats')
@@ -90,8 +90,8 @@ export class ProjectController {
   @Permissions(PermissionEnum.READ_PROJECT)
   async getLogs(
     @Param('id') id: string,
-    @Query('page') page: number = 1,
-    @Query('limit') limit: number = 20,
+    @Query('page', ParseIntPipe) page: number = 1,
+    @Query('limit', ParseIntPipe) limit: number = 20,
   ) {
     const project = (await this.queryBus.execute(
       new GetProjectByIdQuery(ProjectId.create(id)),
