@@ -1,6 +1,6 @@
 import React from "react";
 import { Book, Search, ArrowRight, Bookmark, Plus, Users } from "lucide-react";
-import { GlassCard } from "./GlassCard";
+import { GlassCard } from "@/features/forge-lab/components/ui/GlassCard";
 import { Foundation } from "../types";
 import { FoundationDetail } from "./FoundationDetail";
 import { cn } from "@/shared/lib/utils";
