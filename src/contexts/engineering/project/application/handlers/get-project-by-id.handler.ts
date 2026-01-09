@@ -2,8 +2,7 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { GetProjectByIdQuery } from '../queries/get-project-by-id.query';
 import { Inject, NotFoundException } from '@nestjs/common';
 import { ProjectRepository } from '../ports/project.repository';
-import { ProjectPresenter } from '../../presentation/project.presenter';
-import { ProjectResponse } from '../../presentation/dto/project.response';
+import { Project } from '../../domain/project.entity';
 import { LoggerService } from '@shared/logging/logger.service';
 
 @QueryHandler(GetProjectByIdQuery)
@@ -18,7 +17,7 @@ export class GetProjectByIdHandler
     private readonly logger: LoggerService,
   ) {}
 
-  async execute(query: GetProjectByIdQuery): Promise<ProjectResponse> {
+  async execute(query: GetProjectByIdQuery): Promise<Project> {
     const { id } = query;
     const project = await this.projectRepository.findById(id);
 
@@ -26,6 +25,6 @@ export class GetProjectByIdHandler
       throw new NotFoundException(`Project with ID ${id.toString()} not found`);
     }
 
-    return ProjectPresenter.toResponse(project);
+    return project;
   }
 }

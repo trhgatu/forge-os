@@ -95,3 +95,27 @@ export interface ProjectLog {
   type: 'update' | 'alert' | 'info';
   content: string;
 }
+
+export interface ProjectMetadata {
+  technologies?: string[];
+  currentMilestone?: {
+    id: string;
+    title: string;
+    description?: string;
+    dueDate?: Date;
+    status: 'pending' | 'in_progress' | 'completed';
+    progress: number; // Restored for frontend compatibility
+  };
+  dueDate?: string;
+  team?: {
+    id: string;
+    name: string;
+    avatar?: string; // Renamed from avatarUrl to match frontend
+  }[];
+  lead?: {
+    id: string;
+    name: string;
+    avatar?: string; // Renamed from avatarUrl to match frontend
+  };
+  [key: string]: unknown; // Allow extension while strictly typing known fields
+}

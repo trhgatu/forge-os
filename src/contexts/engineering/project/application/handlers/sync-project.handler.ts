@@ -7,6 +7,7 @@ import { ProjectLink } from '../../domain/project.interfaces';
 import { Project } from '../../domain/project.entity';
 import { LoggerService } from '@shared/logging/logger.service';
 import { ProjectSyncedEvent } from '../../domain/events/project-synced.event';
+import { CacheService } from '@shared/services';
 // import { ProjectResponse } from '../../presentation/dto/project.response';
 
 @CommandHandler(SyncProjectCommand)
@@ -20,6 +21,7 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
     private readonly githubRepository: GithubRepository,
     private readonly logger: LoggerService,
     private readonly eventBus: EventBus,
+    private readonly cacheService: CacheService,
   ) {}
 
   async execute(command: SyncProjectCommand): Promise<Project> {
@@ -99,6 +101,9 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
       // Save
       await this.projectRepository.save(project);
 
+      // Invalidate Cache
+      await this.cacheService.deleteByPattern('projects:*');
+
       this.eventBus.publish(
         new ProjectSyncedEvent(
           id.toString(),
@@ -126,6 +131,8 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
 
           project.updateInfo({ metadata: newMetadata });
           await this.projectRepository.save(project);
+
+          await this.cacheService.deleteByPattern('projects:*');
         }
 
         throw new NotFoundException(

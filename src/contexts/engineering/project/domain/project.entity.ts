@@ -3,6 +3,7 @@ import {
   ProjectTaskBoard,
   GithubRepoDetails,
   ProjectLog,
+  ProjectMetadata,
 } from './project.interfaces';
 import { ProjectId } from './value-objects/project-id.vo';
 
@@ -13,7 +14,7 @@ interface ProjectProps {
   tags: string[];
   isPinned: boolean;
   githubStats: Partial<GithubRepoDetails>;
-  metadata: Record<string, unknown>;
+  metadata: ProjectMetadata;
   progress: number;
   taskBoard: ProjectTaskBoard;
   links: ProjectLink[];
@@ -46,7 +47,7 @@ export class Project {
       | 'isPinned'
     > & {
       githubStats?: Partial<GithubRepoDetails>;
-      metadata?: Record<string, unknown>;
+      metadata?: ProjectMetadata;
       status?: string;
       tags?: string[];
       isPinned?: boolean;
