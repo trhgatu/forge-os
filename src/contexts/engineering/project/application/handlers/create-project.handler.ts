@@ -39,6 +39,9 @@ export class CreateProjectHandler
 
     await this.projectRepository.save(project);
 
+    // Invalidate project list cache
+    await this.cacheService.deleteByPattern('projects:*');
+
     this.eventBus.publish(
       new ProjectCreatedEvent(projectId.toString(), userId, project.title, now),
     );

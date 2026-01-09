@@ -7,8 +7,13 @@ import {
   Patch,
   Delete,
   Query,
+  ParseIntPipe,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
+
+import { Request } from 'express';
+
 import { GetAllProjectsQuery } from '../application/queries/get-all-projects.query';
 import { GetProjectByIdQuery } from '../application/queries/get-project-by-id.query';
 import { QueryProjectDto } from './dto/query-project.dto';
@@ -36,6 +41,7 @@ export class ProjectController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
+    private readonly configService: ConfigService,
   ) {}
 
   @Get()
@@ -47,7 +53,54 @@ export class ProjectController {
   @Get(':id')
   @Permissions(PermissionEnum.READ_PROJECT)
   async findOne(@Param('id') id: string) {
-    return this.queryBus.execute(new GetProjectByIdQuery(ProjectId.create(id)));
+    const project = (await this.queryBus.execute(
+      new GetProjectByIdQuery(ProjectId.create(id)),
+    )) as Project;
+    const baseUrl = this.configService.get<string>('API_URL') || '/engineering';
+    return ProjectPresenter.toSummaryResponse(project, baseUrl);
+  }
+  @Get(':id/github-stats')
+  @Permissions(PermissionEnum.READ_PROJECT)
+  async getProjectGithubStats(@Param('id') id: string) {
+    const project = (await this.queryBus.execute(
+      new GetProjectByIdQuery(ProjectId.create(id)),
+    )) as Project;
+    return ProjectPresenter.toGithubStatsResponse(project);
+  }
+
+  @Get(':id/readme')
+  @Permissions(PermissionEnum.READ_PROJECT)
+  async getReadme(@Param('id') id: string) {
+    const project = (await this.queryBus.execute(
+      new GetProjectByIdQuery(ProjectId.create(id)),
+    )) as Project;
+    return ProjectPresenter.toReadmeResponse(project);
+  }
+
+  @Get(':id/taskboard')
+  @Permissions(PermissionEnum.READ_PROJECT)
+  async getTaskBoard(@Param('id') id: string) {
+    const project = (await this.queryBus.execute(
+      new GetProjectByIdQuery(ProjectId.create(id)),
+    )) as Project;
+    return ProjectPresenter.toTaskBoardResponse(project);
+  }
+
+  @Get(':id/logs')
+  @Permissions(PermissionEnum.READ_PROJECT)
+  async getLogs(
+    @Param('id') id: string,
+    @Query('page', new ParseIntPipe({ optional: true })) page: number = 1,
+    @Query('limit', new ParseIntPipe({ optional: true })) limit: number = 20,
+  ) {
+    const project = (await this.queryBus.execute(
+      new GetProjectByIdQuery(ProjectId.create(id)),
+    )) as Project;
+    return ProjectPresenter.toLogsResponse(
+      project,
+      Number(page),
+      Number(limit),
+    );
   }
 
   @Post()
@@ -58,7 +111,7 @@ export class ProjectController {
         ...dto,
         userId,
       }),
-    )) as unknown as Project; // Explicit cast to avoid unsafe assignment
+    )) as Project;
     return ProjectPresenter.toResponse(project);
   }
 
@@ -67,7 +120,7 @@ export class ProjectController {
   async update(@Param('id') id: string, @Body() dto: UpdateProjectDto) {
     const project = (await this.commandBus.execute(
       new UpdateProjectCommand(ProjectId.create(id), dto),
-    )) as unknown as Project;
+    )) as Project;
     return ProjectPresenter.toResponse(project);
   }
 
@@ -85,13 +138,13 @@ export class ProjectController {
   async sync(@Param('id') id: string) {
     const project = (await this.commandBus.execute(
       new SyncProjectCommand(ProjectId.create(id)),
-    )) as unknown as Project;
+    )) as Project;
     return ProjectPresenter.toResponse(project);
   }
 
   @Get('github/stats/:username')
   @Permissions(PermissionEnum.READ_PROJECT)
-  async getGithubStats(@Param('username') username: string) {
+  async getGithubUserStats(@Param('username') username: string) {
     return this.queryBus.execute(new GetGithubStatsQuery(username));
   }
 

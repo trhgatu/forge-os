@@ -25,8 +25,15 @@ export interface ProjectResponse {
 
   // Frontend Compatibility Fields (mapped from metadata)
   technologies?: string[];
-  currentMilestone?: { title: string; progress: number; dueDate: string };
+  currentMilestone?: {
+    id: string;
+    title: string;
+    description?: string;
+    dueDate?: string;
+    status: 'pending' | 'in_progress' | 'completed';
+    progress: number;
+  };
   dueDate?: string;
-  team?: { name: string; avatar?: string }[];
-  lead?: { name: string; avatar?: string };
+  team?: { id: string; name: string; avatar?: string }[];
+  lead?: { id: string; name: string; avatar?: string };
 }

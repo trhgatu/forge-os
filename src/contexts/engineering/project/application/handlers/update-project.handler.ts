@@ -5,6 +5,7 @@ import { ProjectRepository } from '../ports/project.repository';
 import { Project } from '../../domain/project.entity';
 import { LoggerService } from '@shared/logging/logger.service';
 import { ProjectUpdatedEvent } from '../../domain/events/project-updated.event';
+import { CacheService } from '@shared/services';
 
 @CommandHandler(UpdateProjectCommand)
 export class UpdateProjectHandler
@@ -17,6 +18,7 @@ export class UpdateProjectHandler
     private readonly projectRepository: ProjectRepository,
     private readonly logger: LoggerService,
     private readonly eventBus: EventBus,
+    private readonly cacheService: CacheService,
   ) {}
 
   async execute(command: UpdateProjectCommand): Promise<Project> {
@@ -47,6 +49,10 @@ export class UpdateProjectHandler
     this.logger.log(
       `Project ${id} updated in DB. Links count: ${project.links?.length}`,
     );
+
+    // Invalidate project list cache
+    await this.cacheService.deleteByPattern('projects:*');
+
     return project;
   }
 }
