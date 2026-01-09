@@ -6,16 +6,16 @@ import {
   ForgeTab,
   ContributionStats,
   UserConnection,
-} from "../types";
-import { forgeApi } from "../api";
+} from "../../types";
+import { forgeApi } from "../../api";
 import { useAuthStore } from "@/shared/store/authStore";
 
 // Widgets
-import { QuickStatsWidget } from "./dashboard/QuickStatsWidget";
-import { NovaBannerWidget } from "./dashboard/NovaBannerWidget";
-import { DirectivesWidget } from "./dashboard/DirectivesWidget";
-import { MissionGraphWidget } from "./dashboard/MissionGraphWidget";
-import { SystemLogsWidget } from "./dashboard/SystemLogsWidget";
+import { QuickStatsWidget } from "./QuickStatsWidget";
+import { NovaBannerWidget } from "./NovaBannerWidget";
+import { DirectivesWidget } from "./DirectivesWidget";
+import { MissionGraphWidget } from "./MissionGraphWidget";
+import { SystemLogsWidget } from "./SystemLogsWidget";
 
 interface LabDashboardProps {
   projects: Project[];
@@ -35,13 +35,20 @@ export const LabDashboard: React.FC<LabDashboardProps> = ({
   const [contributionStats, setContributionStats] = React.useState<ContributionStats | null>(null);
   const [loadingStats, setLoadingStats] = React.useState(true);
   const authUser = useAuthStore((state) => state.user);
+  const token = useAuthStore((state) => state.token);
+  const isHydrated = useAuthStore((state) => state.isHydrated);
 
   React.useEffect(() => {
     const initIdentity = async () => {
-      // If no user is logged in (or yet to hydrate), we can't fetch profile.
-      // But we should stop loading to avoid "Eternal Skeleton" if user is null.
+      // Wait for hydration to finish before deciding auth state
+      if (!isHydrated) return;
+
+      // Avoid flickering: If we have a token but no user yet (hydration), wait.
+      // Only stop loading if we truly have no token (logged out).
       if (!authUser?.id) {
-        setLoadingStats(false);
+        if (!token) {
+          setLoadingStats(false);
+        }
         return;
       }
 
@@ -69,7 +76,7 @@ export const LabDashboard: React.FC<LabDashboardProps> = ({
     };
 
     initIdentity();
-  }, [authUser?.id]);
+  }, [authUser?.id, isHydrated, token]);
 
   return (
     <div className="max-w-[1600px] mx-auto p-6 md:p-10 pb-32 space-y-10 animate-in fade-in zoom-in-95 duration-700">

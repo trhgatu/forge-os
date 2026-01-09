@@ -8,11 +8,18 @@ import { forgeApi } from "../api";
 import { useAuthStore } from "@/shared/store/authStore";
 
 // Components
-import { LabDashboard } from "./LabDashboard";
+import { LabDashboard } from "./dashboard/LabDashboard";
 import { ProjectForge } from "./ProjectForge";
 import { FoundationLibrary } from "./FoundationLibrary";
 import { ResearchTrails } from "./ResearchTrails";
-import { CreateProjectModal } from "./ProjectModals";
+import { CreateProjectModal } from "./project-detail/ProjectModals";
+
+import {
+  useProjects,
+  useCreateProject,
+  useUpdateProject,
+  useDeleteProject,
+} from "../hooks/useProjects";
 
 const MOCK_FOUNDATIONS: Foundation[] = [
   {
@@ -85,103 +92,82 @@ export const ForgeLab: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ForgeTab>("dashboard");
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
   const [activeFoundation, setActiveFoundation] = useState<Foundation | null>(null);
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [isCreating, setIsCreating] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   // --- Identity State ---
   const authUser = useAuthStore((state) => state.user);
   const [githubUsername, setGithubUsername] = useState<string | undefined>(undefined);
 
-  const fetchProjects = async () => {
-    try {
-      const response = await forgeApi.getProjects();
-      console.log(response);
+  // --- React Query Integration ---
+  const { data: projectsData } = useProjects();
+  const createProjectMutation = useCreateProject();
+  const updateProjectMutation = useUpdateProject();
+  const deleteProjectMutation = useDeleteProject();
 
-      const data = Array.isArray(response)
-        ? response
-        : (response as { data: Project[] }).data || [];
+  const projects = React.useMemo(() => {
+    if (!projectsData) return [];
+    if (Array.isArray(projectsData)) return projectsData;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (projectsData as any).data || [];
+  }, [projectsData]);
 
-      const parsedData = data.map((p: Project) => ({
-        ...p,
-        updatedAt: new Date(p.updatedAt),
-        dueDate: p.dueDate ? new Date(p.dueDate) : undefined,
-        logs: p.logs?.map((l) => ({ ...l, date: new Date(l.date) })),
-        taskBoard: p.taskBoard || { todo: [], inProgress: [], done: [] },
-        links: p.links || [],
-      }));
-      console.log(parsedData);
-      setProjects(parsedData);
-    } catch (error) {
-      console.error("Failed to fetch projects", error);
-    }
-  };
-
-  useEffect(() => {
-    if (activeTab === "projects" || activeTab === "dashboard") {
-      fetchProjects();
-    }
-  }, [activeTab]);
+  // Parse dates for UI compatibility (Data Transformation Layer)
+  const parsedProjects = React.useMemo(() => {
+    return projects.map((p: Project) => ({
+      ...p,
+      updatedAt: new Date(p.updatedAt),
+      dueDate: p.dueDate ? new Date(p.dueDate) : undefined,
+      logs: p.logs?.map((l) => ({ ...l, date: new Date(l.date) })),
+      taskBoard: p.taskBoard || { todo: [], inProgress: [], done: [] },
+      links: p.links || [],
+    }));
+  }, [projects]);
 
   useEffect(() => {
+    let isMounted = true;
+
     if (authUser?.id) {
       forgeApi
         .getUser(authUser.id)
         .then((profile) => {
+          if (!isMounted) return;
           const gh = profile.connections?.find((c) => c.provider === "github");
           if (gh) setGithubUsername(gh.identifier);
         })
         .catch((err) => console.error("Failed to load user profile", err));
     } else {
-      setGithubUsername(undefined);
+      // Defer state update to avoid synchronous effect warning
+      setTimeout(() => {
+        if (isMounted) setGithubUsername(undefined);
+      }, 0);
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [authUser?.id]);
 
   // --- CRUD Operations ---
   const handleCreateProject = async (data: { title: string; description: string }) => {
-    setIsCreating(true);
-    try {
-      await forgeApi.createProject(data);
-      await fetchProjects();
-      setShowCreateModal(false);
-    } catch (err) {
-      console.error("Failed to create project", err);
-    } finally {
-      setIsCreating(false);
-    }
+    createProjectMutation.mutate(data, {
+      onSuccess: () => setShowCreateModal(false),
+    });
   };
 
   const handleUpdateProject = async (id: string, data: Partial<Project>) => {
-    try {
-      const updated = await forgeApi.updateProject(id, data);
-
-      const parsedUpdated = {
-        ...updated,
-        updatedAt: new Date(updated.updatedAt),
-        dueDate: updated.dueDate ? new Date(updated.dueDate) : undefined,
-        logs: updated.logs?.map((l) => ({ ...l, date: new Date(l.date) })),
-      };
-
-      setProjects((prev) => prev.map((p) => (p.id === id ? { ...p, ...parsedUpdated } : p)));
-      // No need to update activeProject state - ProjectDetail will refetch
-    } catch (err) {
-      console.error("Failed to update project", err);
-    }
+    updateProjectMutation.mutate({ id, data });
   };
 
   const handleDeleteProject = async (id: string) => {
-    try {
-      await forgeApi.deleteProject(id);
-      setProjects((prev) => prev.filter((p) => p.id !== id));
-
-      // Force check matching ID or if we are deleting the currently viewed project
-      if (activeProjectId === id) {
-        setActiveProjectId(null);
-        setActiveTab("projects"); // Go back to list
-      }
-    } catch (err) {
-      console.error("Failed to delete project", err);
-    }
+    deleteProjectMutation.mutate(id, {
+      onSuccess: () => {
+        // Force check matching ID or if we are deleting the currently viewed project
+        if (activeProjectId === id) {
+          setActiveProjectId(null);
+          setActiveTab("projects"); // Go back to list
+        }
+      },
+    });
   };
 
   // Constants
@@ -218,7 +204,7 @@ export const ForgeLab: React.FC = () => {
         >
           {activeTab === "dashboard" && (
             <LabDashboard
-              projects={projects}
+              projects={parsedProjects}
               foundations={MOCK_FOUNDATIONS}
               trails={MOCK_TRAILS}
               setActiveTab={setActiveTab}
@@ -227,7 +213,7 @@ export const ForgeLab: React.FC = () => {
           )}
           {activeTab === "projects" && (
             <ProjectForge
-              projects={projects}
+              projects={parsedProjects}
               activeProjectId={activeProjectId}
               setActiveProjectId={setActiveProjectId}
               githubUsername={githubUsername}
@@ -306,7 +292,7 @@ export const ForgeLab: React.FC = () => {
         isOpen={showCreateModal}
         onClose={() => setShowCreateModal(false)}
         onCreate={handleCreateProject}
-        isLoading={isCreating}
+        isLoading={createProjectMutation.isPending}
       />
     </div>
   );

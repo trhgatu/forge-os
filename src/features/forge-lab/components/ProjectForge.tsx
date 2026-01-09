@@ -1,8 +1,8 @@
 import React from "react";
 import { Plus, Search, Filter, MoreHorizontal, Folder, Clock } from "lucide-react";
-import { GlassCard } from "./GlassCard";
+import { GlassCard } from "./ui/GlassCard";
 import { Project } from "../types";
-import { ProjectDetail } from "./ProjectDetail";
+import { ProjectDetail } from "./project-detail/ProjectDetail";
 
 interface ProjectForgeProps {
   projects: Project[];
