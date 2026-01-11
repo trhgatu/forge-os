@@ -20,7 +20,7 @@ export class CreateAuditLogMiddleware implements NestMiddleware {
           params: req.params,
           query: req.query,
           body: req.body,
-          user: user?._id || null,
+          user: user?.id || null,
         }),
       );
     });
