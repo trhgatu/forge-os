@@ -260,9 +260,7 @@ export function Quote() {
           {/* Masonry Layout - Organic Waterfall */}
           <div className="px-6 py-8">
             <div className="max-w-[1600px] mx-auto columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
-              {filteredQuotes.map((quote, index) => {
-                const isHero = (index + 1) % 7 === 0;
-
+              {filteredQuotes.map((quote) => {
                 return (
                   <div key={quote.id} className="break-inside-avoid">
                     <QuoteCard
@@ -271,8 +269,6 @@ export function Quote() {
                       onToggleFav={(e) => handleToggleFav(e, quote.id)}
                       onEdit={() => setEditingQuote(quote)}
                       onDelete={() => handleDelete(quote.id)}
-                      isHero={isHero}
-                      animationDelay={index * 80}
                     />
                   </div>
                 );
