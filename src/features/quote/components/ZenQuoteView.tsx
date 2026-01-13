@@ -89,8 +89,8 @@ export function ZenQuoteView({ quote, onClose }: ZenQuoteViewProps) {
       >
         <blockquote
           className={cn(
-            "font-display font-medium leading-tight text-white drop-shadow-2xl",
-            quote.text.length > 100 ? "text-4xl md:text-6xl" : "text-5xl md:text-7xl lg:text-8xl"
+            "font-quote font-medium leading-tight text-white drop-shadow-2xl whitespace-pre-wrap break-words italic",
+            quote.text.length > 100 ? "text-3xl md:text-5xl" : "text-4xl md:text-6xl lg:text-7xl"
           )}
         >
           &quot;{quote.text}&quot;

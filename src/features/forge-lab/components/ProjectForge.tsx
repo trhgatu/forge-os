@@ -1,6 +1,6 @@
 import React from "react";
 import { Plus, Search, Filter, MoreHorizontal, Folder, Clock } from "lucide-react";
-import { GlassCard } from "./ui/GlassCard";
+import { GlassCard } from "@/shared/components/ui/GlassCard";
 import { Project } from "../types";
 import { ProjectDetail } from "./project-detail/ProjectDetail";
 

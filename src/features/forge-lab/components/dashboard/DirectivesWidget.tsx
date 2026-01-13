@@ -1,6 +1,6 @@
 import React from "react";
 import { Layers, Book, Network, Terminal, Star, GitBranch } from "lucide-react";
-import { GlassCard } from "@/features/forge-lab/components/ui/GlassCard";
+import { GlassCard } from "@/shared/components/ui/GlassCard";
 import { ForgeTab, Project, Foundation } from "../../types";
 import { cn } from "@/shared/lib/utils";
 

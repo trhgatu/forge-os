@@ -1,6 +1,6 @@
 import React from "react";
 import { Activity } from "lucide-react";
-import { GlassCard } from "@/features/forge-lab/components/ui/GlassCard";
+import { GlassCard } from "@/shared/components/ui/GlassCard";
 import { ConnectGithubWidget } from "../ConnectGithubWidget";
 import { ContributionStats } from "@/features/forge-lab/types";
 import { cn } from "@/shared/lib/utils";

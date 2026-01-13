@@ -4,7 +4,7 @@ import { BrainCircuit, ChevronRight, Sparkles, Hash } from "lucide-react";
 
 import { JournalAnalysis } from "@/shared/types/journal";
 import { cn } from "@/shared/lib/utils";
-import { GlassCard } from "@/shared/ui/GlassCard";
+import { GlassCard } from "@/shared/components/ui/GlassCard";
 
 export function JournalContextPanel({ analysis }: { analysis?: JournalAnalysis }) {
   if (!analysis) {
