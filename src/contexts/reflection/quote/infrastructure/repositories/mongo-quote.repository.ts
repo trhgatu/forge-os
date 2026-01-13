@@ -2,6 +2,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Model, FilterQuery } from 'mongoose';
 import { QuoteDocument } from '../quote.schema';
+import { DailyQuoteDocument } from '../daily-quote.schema';
 import { QuoteRepository } from '../../application/ports/quote.repository';
 import { Quote } from '../../domain/quote.entity';
 import { QuoteId } from '../../domain/value-objects/quote-id.vo';
@@ -14,7 +15,39 @@ import { PaginatedResult } from '@shared/types/paginated-result';
 export class MongoQuoteRepository implements QuoteRepository {
   constructor(
     @InjectModel('Quote') private readonly model: Model<QuoteDocument>,
+    @InjectModel('DailyQuote')
+    private readonly dailyModel: Model<DailyQuoteDocument>,
   ) {}
+
+  async findDaily(date: string): Promise<Quote | null> {
+    // 1. Check if daily quote exists
+    const daily = await this.dailyModel.findOne({ date });
+
+    if (daily) {
+      const quote = await this.model.findById(daily.quoteId);
+      return quote ? QuoteMapper.toDomain(quote) : null;
+    }
+
+    // 2. If not, generate new one
+    const randomQuote = await this.findRandom();
+    if (!randomQuote) return null;
+
+    // 3. Persist mapping
+    try {
+      await this.dailyModel.create({
+        date,
+        quoteId: randomQuote.id.toString(),
+      });
+    } catch (error: any) {
+      // Handle race condition (duplicate key error)
+      if (error.code === 11000) {
+        return this.findDaily(date);
+      }
+      throw error;
+    }
+
+    return randomQuote;
+  }
 
   async save(quote: Quote): Promise<void> {
     const doc = QuoteMapper.toPersistence(quote);

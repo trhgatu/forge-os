@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
 import { QuoteSchema } from './infrastructure/quote.schema';
+import { DailyQuoteSchema } from './infrastructure/daily-quote.schema';
 import { MongoQuoteRepository } from './infrastructure/repositories/mongo-quote.repository';
 import { QuoteAdminController } from './presentation/controllers/quote.admin.controller';
 import { QuotePublicController } from './presentation/controllers/quote.public.controller';
@@ -10,7 +11,10 @@ import { QuoteHandlers } from './application/handlers';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'Quote', schema: QuoteSchema }]),
+    MongooseModule.forFeature([
+      { name: 'Quote', schema: QuoteSchema },
+      { name: 'DailyQuote', schema: DailyQuoteSchema },
+    ]),
     CqrsModule,
     SharedModule,
   ],
