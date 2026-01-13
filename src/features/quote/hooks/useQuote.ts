@@ -1,9 +1,15 @@
 "use client";
 
-import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import type { Quote } from "@/shared/types/quote";
 import type { MoodType } from "@/shared/types/journal";
-import { getQuotes, deleteQuote, updateQuote, createQuote } from "../services/quoteService";
+import {
+  getQuotes,
+  deleteQuote,
+  updateQuote,
+  createQuote,
+  getDailyQuote,
+} from "../services/quoteService";
 import type { PaginatedResponse } from "@/shared/types";
 import { QuoteFilter } from "@/shared/types/dto/quote.dto";
 
@@ -102,5 +108,13 @@ export function useUpdateQuote() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUOTE_QUERY_KEY });
     },
+  });
+}
+
+export function useDailyQuote() {
+  return useQuery({
+    queryKey: ["daily-quote"],
+    queryFn: getDailyQuote,
+    staleTime: 1000 * 60 * 60, // 1 hour
   });
 }

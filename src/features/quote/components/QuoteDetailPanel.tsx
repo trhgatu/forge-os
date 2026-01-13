@@ -5,6 +5,7 @@ import type { Quote } from "@/shared/types/quote";
 import { cn } from "@/shared/lib/utils";
 import { SEASON_CONFIG, getSeasonFromMood } from "../../memory/config/seasons";
 import { ZenQuoteView } from "./ZenQuoteView";
+import { GlassCard } from "@/shared/components/ui/GlassCard";
 
 export function QuoteDetailPanel({
   quote,
@@ -56,7 +57,7 @@ export function QuoteDetailPanel({
   }
 
   return (
-    <div className="fixed inset-y-0 right-0 w-full max-w-2xl bg-[#050505]/95 backdrop-blur-3xl border-l border-white/[0.08] shadow-[0_0_50px_rgba(0,0,0,0.5)] z-50 overflow-y-auto slide-in-panel">
+    <div className="fixed inset-y-0 right-0 w-full max-w-2xl bg-[#09090b]/95 backdrop-blur-3xl border-l border-white/10 shadow-[0_0_80px_-20px_rgba(34,211,238,0.1)] z-50 overflow-y-auto slide-in-panel ring-1 ring-white/5">
       {/* Background Ambience */}
       <div
         className={cn(
@@ -93,25 +94,31 @@ export function QuoteDetailPanel({
             <QuoteDetailMetadata quote={quote} />
           </div>
 
-          <h2 className="text-3xl md:text-5xl lg:text-6xl font-serif font-medium leading-[1.1] text-transparent bg-clip-text bg-gradient-to-br from-white via-white/90 to-white/50 mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <h2 className="font-quote text-3xl md:text-4xl lg:text-5xl font-bold leading-[1.2] text-transparent bg-clip-text bg-gradient-to-br from-white via-white/90 to-white/50 mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700 italic whitespace-pre-wrap break-words">
             &quot;{quote.text}&quot;
           </h2>
 
           <div className="flex items-center gap-6">
             <div className="h-px flex-1 bg-gradient-to-r from-white/20 to-transparent" />
             <div className="text-right">
-              <p className="font-mono text-sm text-white/60 uppercase tracking-widest mb-1">
+              <p className="font-handwriting text-3xl text-forge-cyan/80 mb-1">
                 {quote.author || "Unknown"}
               </p>
               {quote.source && (
-                <p className="font-sans text-xs text-white/30 italic">{quote.source}</p>
+                <p className="font-sans text-xs text-white/30 tracking-widest uppercase">
+                  {quote.source}
+                </p>
               )}
             </div>
           </div>
         </div>
 
         {/* Control Deck (Floating Dock) */}
-        <div className="mt-16 bg-[#111111]/80 border border-white/10 rounded-2xl p-6 backdrop-blur-xl shadow-2xl relative overflow-hidden group">
+        <GlassCard
+          className="mt-16 p-6 group relative overflow-hidden"
+          interactive={false}
+          gradient
+        >
           {/* Hover Glow */}
           <div
             className={cn(
@@ -175,7 +182,7 @@ export function QuoteDetailPanel({
               ))}
             </div>
           </div>
-        </div>
+        </GlassCard>
       </div>
     </div>
   );

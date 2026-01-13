@@ -73,3 +73,14 @@ export const getRandomQuote = async (): Promise<Quote | null> => {
     return null;
   }
 };
+
+export const getDailyQuote = async (): Promise<Quote | null> => {
+  try {
+    const res = await apiClient.get<QuoteDto>("/quotes/daily");
+    if (!res.data) return null;
+    return mapDtoToQuote(res.data);
+  } catch (error) {
+    console.error("Failed to fetch daily quote", error);
+    return null;
+  }
+};

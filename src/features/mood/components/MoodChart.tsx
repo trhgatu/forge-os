@@ -3,7 +3,7 @@
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 import { Activity } from "lucide-react";
 
-import { GlassCard } from "@/shared/ui/GlassCard";
+import { GlassCard } from "@/shared/components/ui/GlassCard";
 import type { MoodEntry } from "@/shared/types/mood";
 import { MOOD_CHART_COLOR, MOOD_CHART_GRADIENT_ID } from "../config";
 
