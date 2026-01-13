@@ -25,6 +25,7 @@ export class CreateProjectHandler
 
   async execute(command: CreateProjectCommand): Promise<ProjectResponse> {
     const { payload } = command;
+
     const projectId = ProjectId.create(new Types.ObjectId());
     const userId = payload.userId || 'system';
     const now = new Date();
@@ -39,7 +40,6 @@ export class CreateProjectHandler
 
     await this.projectRepository.save(project);
 
-    // Invalidate project list cache
     await this.cacheService.deleteByPattern('projects:*');
 
     this.eventBus.publish(

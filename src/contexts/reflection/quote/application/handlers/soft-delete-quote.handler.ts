@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 import { SoftDeleteQuoteCommand } from '../commands/soft-delete-quote.command';
 import { QuoteRepository } from '../../application/ports/quote.repository';
-import { Inject, NotFoundException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 import { QuoteModifiedEvent } from '../events/quote-modified.event';
 import { QuotePresenter } from '../../presentation/quote.presenter';
 import { QuoteResponse } from '../../presentation/dto/quote.response';
@@ -11,7 +11,6 @@ export class SoftDeleteQuoteHandler
   implements ICommandHandler<SoftDeleteQuoteCommand, QuoteResponse>
 {
   constructor(
-    @Inject('QuoteRepository')
     private readonly quoteRepo: QuoteRepository,
     private readonly eventBus: EventBus,
   ) {}
