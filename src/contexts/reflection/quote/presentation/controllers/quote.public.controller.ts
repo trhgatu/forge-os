@@ -5,12 +5,18 @@ import {
   GetQuoteByIdForPublicQuery,
 } from '../../application/queries';
 import { GetRandomQuoteQuery } from '../../application/queries/get-random-quote.query';
+import { GetDailyQuoteQuery } from '../../application/queries/get-daily-quote.query';
 import { QuoteId } from '../../domain/value-objects/quote-id.vo';
 import { QueryBus } from '@nestjs/cqrs';
 
 @Controller('quotes')
 export class QuotePublicController {
   constructor(private readonly queryBus: QueryBus) {}
+
+  @Get('daily')
+  getDaily(@Query('lang') lang?: string) {
+    return this.queryBus.execute(new GetDailyQuoteQuery(lang));
+  }
 
   @Get('random')
   getRandom(@Query('lang') lang?: string) {
