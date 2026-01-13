@@ -11,6 +11,8 @@ import { GetRandomQuoteHandler } from './get-random-quote.handler';
 import { GetDailyQuoteHandler } from './get-daily-quote.handler';
 import { InvalidateQuoteCacheHandler } from './invalidate-quote-cache.handler';
 
+import { LogQuoteActivityHandler } from './log-quote-activity.handler';
+
 export const QuoteHandlers = [
   CreateQuoteHandler,
   UpdateQuoteHandler,
@@ -26,6 +28,7 @@ export const QuoteHandlers = [
   GetDailyQuoteHandler,
 
   InvalidateQuoteCacheHandler,
+  LogQuoteActivityHandler,
 ];
 
 export * from './create-quote.handler';
@@ -40,3 +43,4 @@ export * from './get-all-quotes-for-public.handler';
 export * from './get-quote-by-id-public.handler';
 export * from './invalidate-quote-cache.handler';
 export * from './get-daily-quote.handler';
+export * from './log-quote-activity.handler';

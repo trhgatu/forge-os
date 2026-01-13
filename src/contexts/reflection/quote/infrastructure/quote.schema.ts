@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { QuoteStatus } from '@shared/enums';
+import { SoftDeletePlugin } from '@shared/database/mongo/plugins/soft-delete.plugin';
 
 export type QuoteDocument = Document & {
   _id: Types.ObjectId;
@@ -49,3 +50,4 @@ export class Quote {
 }
 
 export const QuoteSchema = SchemaFactory.createForClass(Quote);
+QuoteSchema.plugin(SoftDeletePlugin);

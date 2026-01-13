@@ -9,4 +9,8 @@ export class QuoteId extends BaseId {
   public static create(value: string | Types.ObjectId): QuoteId {
     return new QuoteId(value);
   }
+
+  public static random(): QuoteId {
+    return new QuoteId(new Types.ObjectId());
+  }
 }

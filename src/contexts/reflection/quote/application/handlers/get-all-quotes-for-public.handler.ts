@@ -1,5 +1,4 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { Inject } from '@nestjs/common';
 
 import { GetAllQuotesForPublicQuery } from '../queries/get-all-quotes-for-public.query';
 import { QuoteRepository } from '../../application/ports/quote.repository';
@@ -14,7 +13,6 @@ export class GetAllQuotesForPublicHandler
   implements IQueryHandler<GetAllQuotesForPublicQuery>
 {
   constructor(
-    @Inject('QuoteRepository')
     private readonly quoteRepo: QuoteRepository,
 
     private readonly cacheService: CacheService,

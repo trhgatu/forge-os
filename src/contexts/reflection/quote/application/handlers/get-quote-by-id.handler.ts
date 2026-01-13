@@ -1,6 +1,6 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { GetQuoteByIdQuery } from '../queries/get-quote-by-id.query';
-import { Inject, NotFoundException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 import { QuoteRepository } from '../../application/ports/quote.repository';
 import { QuoteResponse } from '../../presentation/dto/quote.response';
 import { QuotePresenter } from '../../presentation/quote.presenter';
@@ -9,10 +9,7 @@ import { QuotePresenter } from '../../presentation/quote.presenter';
 export class GetQuoteByIdHandler
   implements IQueryHandler<GetQuoteByIdQuery, QuoteResponse>
 {
-  constructor(
-    @Inject('QuoteRepository')
-    private readonly quoteRepo: QuoteRepository,
-  ) {}
+  constructor(private readonly quoteRepo: QuoteRepository) {}
 
   async execute(query: GetQuoteByIdQuery): Promise<QuoteResponse> {
     const { id, lang } = query;
