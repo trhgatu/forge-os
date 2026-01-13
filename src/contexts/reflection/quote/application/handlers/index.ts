@@ -39,3 +39,4 @@ export * from './get-quote-by-id.handler';
 export * from './get-all-quotes-for-public.handler';
 export * from './get-quote-by-id-public.handler';
 export * from './invalidate-quote-cache.handler';
+export * from './get-daily-quote.handler';
