@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { GithubRepo } from "../../types";
 import { forgeApi } from "../../api";
 import { Search, Loader2, Github, X, Star, Calendar } from "lucide-react";
-import { GlassCard } from "../ui/GlassCard";
+import { GlassCard } from "@/shared/components/ui/GlassCard";
 
 interface RepoPickerProps {
   isOpen: boolean;

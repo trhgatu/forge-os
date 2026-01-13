@@ -16,7 +16,7 @@ import {
 
 import { cn } from "@/shared/lib/utils";
 import type { KnowledgeConcept } from "@/shared/types";
-import { GlassCard } from "@/shared/ui/GlassCard";
+import { GlassCard } from "@/shared/components/ui/GlassCard";
 import Image from "next/image";
 
 interface KnowledgeDetailProps {

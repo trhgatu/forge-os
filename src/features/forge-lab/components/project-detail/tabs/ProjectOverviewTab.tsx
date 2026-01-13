@@ -2,7 +2,7 @@ import React from "react";
 import { Cpu, Activity, Clock, History, Users } from "lucide-react";
 import Image from "next/image";
 import { Project } from "../../../types";
-import { GlassCard } from "../../ui/GlassCard";
+import { GlassCard } from "@/shared/components/ui/GlassCard";
 import { cn } from "@/shared/lib/utils";
 
 interface ProjectOverviewTabProps {
