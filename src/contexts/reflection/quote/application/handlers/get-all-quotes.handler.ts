@@ -5,6 +5,7 @@ import { CacheService } from '@shared/services';
 import { QuotePresenter } from '../../presentation/quote.presenter';
 import { PaginatedResponse } from '@shared/types/paginated-response';
 import { QuoteResponse } from '../../presentation/dto/quote.response';
+import { QuoteCacheKeys } from '../../infrastructure/cache/quote-cache.keys';
 
 @QueryHandler(GetAllQuotesQuery)
 export class GetAllQuotesHandler implements IQueryHandler<GetAllQuotesQuery> {
@@ -20,9 +21,7 @@ export class GetAllQuotesHandler implements IQueryHandler<GetAllQuotesQuery> {
     const lang = payload.lang ?? 'en';
     const { page = 1, limit = 10 } = payload;
 
-    const cacheKey = `quotes:admin:p${page}:l${limit}:${JSON.stringify(
-      payload,
-    )}`;
+    const cacheKey = QuoteCacheKeys.GET_ALL_ADMIN(page, limit, payload);
 
     const cached =
       await this.cacheService.get<PaginatedResponse<QuoteResponse>>(cacheKey);
