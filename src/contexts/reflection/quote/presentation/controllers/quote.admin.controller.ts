@@ -44,8 +44,8 @@ export class QuoteAdminController {
 
   @Get()
   @Permissions(PermissionEnum.READ_QUOTE)
-  findAll(@Query() query: QueryQuoteDto) {
-    return this.queryBus.execute(new GetAllQuotesQuery(query));
+  findAll(@Query() query: QueryQuoteDto, @Query('lang') lang?: string) {
+    return this.queryBus.execute(new GetAllQuotesQuery(query, lang));
   }
 
   @Get(':id')

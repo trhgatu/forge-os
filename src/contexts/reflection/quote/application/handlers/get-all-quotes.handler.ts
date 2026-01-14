@@ -17,8 +17,7 @@ export class GetAllQuotesHandler implements IQueryHandler<GetAllQuotesQuery> {
   async execute(
     query: GetAllQuotesQuery,
   ): Promise<PaginatedResponse<QuoteResponse>> {
-    const { payload } = query;
-    const lang = payload.lang ?? 'en';
+    const { payload, lang } = query;
     const { page = 1, limit = 10 } = payload;
 
     const cacheKey = QuoteCacheKeys.GET_ALL_ADMIN(page, limit, payload);
