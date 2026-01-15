@@ -15,6 +15,10 @@ interface KnowledgeState {
   clearActive: () => void;
   clearHistory: () => void;
   clearResults: () => void;
+
+  // Discovery
+  discoveryItems: KnowledgeConcept[];
+  loadDiscovery: (lang: string) => Promise<void>;
 }
 
 export const useKnowledgeStore = create<KnowledgeState>()(
@@ -74,10 +78,31 @@ export const useKnowledgeStore = create<KnowledgeState>()(
       clearActive: () => set({ activeConcept: null }),
       clearHistory: () => set({ history: [] }),
       clearResults: () => set({ searchResults: [] }),
+
+      // Discovery
+      discoveryItems: [],
+      loadDiscovery: async (lang: string) => {
+        // Check if we already have items to avoid frequent fetching
+        if (get().discoveryItems.length >= 10) return;
+
+        // Dynamically import to separate logic
+        const { getRandomConcepts } = await import("@/features/knowledge/services");
+        try {
+          // Fetch slightly more to filter distinct
+          const items = await getRandomConcepts(lang, 20);
+          set({ discoveryItems: items });
+        } catch (e) {
+          console.error("Discovery load failed", e);
+        }
+      },
     }),
     {
       name: "forge-knowledge-storage",
-      partialize: (state) => ({ history: state.history }), // Only persist history
+      partialize: (state) => ({
+        history: state.history,
+        // Optional: persist discovery items too if desired
+        discoveryItems: state.discoveryItems,
+      }),
     }
   )
 );
