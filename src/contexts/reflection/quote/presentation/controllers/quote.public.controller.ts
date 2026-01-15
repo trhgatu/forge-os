@@ -24,8 +24,10 @@ export class QuotePublicController {
   }
 
   @Get()
-  findAll(@Query() query: QueryQuoteDto) {
-    return this.queryBus.execute(new GetAllQuotesForPublicQuery(query));
+  findAll(@Query() query: QueryQuoteDto, @Query('lang') lang?: string) {
+    return this.queryBus.execute(
+      new GetAllQuotesForPublicQuery(query, lang ?? 'en'),
+    );
   }
 
   @Get(':id')

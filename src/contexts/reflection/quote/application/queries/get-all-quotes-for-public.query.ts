@@ -1,13 +1,8 @@
-import { QuoteStatus } from '@shared/enums';
-
-export interface GetAllQuotesForPublicPayload {
-  page?: number;
-  limit?: number;
-  keyword?: string;
-  status?: QuoteStatus;
-  tags?: string[];
-}
+import { QuoteFilter } from './quote-filter';
 
 export class GetAllQuotesForPublicQuery {
-  constructor(public readonly payload: GetAllQuotesForPublicPayload) {}
+  constructor(
+    public readonly payload: QuoteFilter,
+    public readonly lang: string = 'en',
+  ) {}
 }

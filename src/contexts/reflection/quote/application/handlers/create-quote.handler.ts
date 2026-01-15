@@ -8,8 +8,6 @@ import { QuoteResponse } from '../../presentation/dto/quote.response';
 import { QuoteModifiedEvent } from '../events/quote-modified.event';
 import { QuoteStatus } from '@shared/enums';
 
-import { LoggerService } from '@shared/logging/logger.service';
-
 @CommandHandler(CreateQuoteCommand)
 export class CreateQuoteHandler
   implements ICommandHandler<CreateQuoteCommand, QuoteResponse>
@@ -17,8 +15,6 @@ export class CreateQuoteHandler
   constructor(
     private readonly quoteRepo: QuoteRepository,
     private readonly eventBus: EventBus,
-
-    private readonly logger: LoggerService,
   ) {}
 
   async execute(command: CreateQuoteCommand): Promise<QuoteResponse> {
@@ -43,10 +39,6 @@ export class CreateQuoteHandler
 
     this.eventBus.publish(new QuoteModifiedEvent(quoteId, 'create'));
 
-    this.logger.log(
-      `Quote created: "${quote.localizedContent('en')}" (ID: ${quoteId.toString()})`,
-      CreateQuoteHandler.name,
-    );
     return QuotePresenter.toResponse(quote, lang);
   }
 }
