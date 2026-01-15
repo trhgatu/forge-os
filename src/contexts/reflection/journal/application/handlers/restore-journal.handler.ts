@@ -1,10 +1,8 @@
 import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
-import { Inject, NotFoundException } from '@nestjs/common';
-
+import { NotFoundException } from '@nestjs/common';
 import { RestoreJournalCommand } from '../commands/restore-journal.command';
 import { JournalRepository } from '../../application/ports/journal.repository';
 import { JournalModifiedEvent } from '../events/journal-modified.event';
-
 import { JournalPresenter } from '../../presentation/journal.presenter';
 import { JournalResponse } from '../../presentation/dto/journal.response';
 
@@ -13,9 +11,7 @@ export class RestoreJournalHandler
   implements ICommandHandler<RestoreJournalCommand, JournalResponse>
 {
   constructor(
-    @Inject('JournalRepository')
     private readonly journalRepo: JournalRepository,
-
     private readonly eventBus: EventBus,
   ) {}
 

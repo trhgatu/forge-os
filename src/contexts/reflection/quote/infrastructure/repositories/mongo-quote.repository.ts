@@ -1,7 +1,7 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Model, FilterQuery, Types } from 'mongoose';
-import { QuoteDocument } from '../quote.schema';
+import { QuoteDocument, Quote as QuoteSchemaClass } from '../quote.schema';
 import { DailyQuoteDocument } from '../daily-quote.schema';
 import { QuoteRepository } from '../../application/ports/quote.repository';
 import { Quote } from '../../domain/quote.entity';
@@ -13,7 +13,6 @@ import { PaginatedResult } from '@shared/types/paginated-result';
 import { MongoErrorUtils } from '@shared/database/mongo/utils/mongo-error.utils';
 
 import { Logger } from '@nestjs/common';
-import { Quote as QuoteSchemaClass } from '../quote.schema';
 import { DailyQuote } from '../daily-quote.schema';
 
 @Injectable()

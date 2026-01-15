@@ -2,6 +2,7 @@ import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { JournalModifiedEvent } from '../events/journal-modified.event';
 import { CacheService } from '@shared/services/cache.service';
 import { LoggerService } from '@shared/logging/logger.service';
+import { JournalCacheKeys } from '../../infrastructure/cache/journal-cache.keys';
 
 @EventsHandler(JournalModifiedEvent)
 export class InvalidateJournalCacheHandler
@@ -14,11 +15,17 @@ export class InvalidateJournalCacheHandler
 
   async handle(event: JournalModifiedEvent): Promise<void> {
     this.logger.log(
-      `Journal modified event received: ${event.journalId}`,
-      'InvalidateJournalCacheHandler',
+      `Invalidating cache for journal: ${event.journalId.toString()}`,
+      InvalidateJournalCacheHandler.name,
     );
-    await this.cacheService.deleteByPattern('memories:all:*');
-    await this.cacheService.deleteByPattern('memories:public:*');
-    await this.cacheService.deleteByPattern(`memories:id:${event.journalId}`);
+    await this.cacheService.deleteByPattern(
+      JournalCacheKeys.ALL_JOURNALS_PATTERN,
+    );
+    await this.cacheService.deleteByPattern(
+      JournalCacheKeys.PUBLIC_JOURNALS_PATTERN,
+    );
+    await this.cacheService.deleteByPattern(
+      JournalCacheKeys.GET_BY_ID(event.journalId),
+    );
   }
 }

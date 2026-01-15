@@ -1,5 +1,5 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { Inject, NotFoundException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 
 import { GetJournalByIdQuery } from '../queries/get-journal-by-id.query';
 
@@ -11,10 +11,7 @@ import { JournalResponse } from '../../presentation/dto/journal.response';
 export class GetJournalByIdHandler
   implements IQueryHandler<GetJournalByIdQuery, JournalResponse>
 {
-  constructor(
-    @Inject('JournalRepository')
-    private readonly journalRepo: JournalRepository,
-  ) {}
+  constructor(private readonly journalRepo: JournalRepository) {}
 
   async execute(query: GetJournalByIdQuery): Promise<JournalResponse> {
     const { id } = query;
