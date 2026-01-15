@@ -1,8 +1,11 @@
 import { InjectModel } from '@nestjs/mongoose';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { Model, FilterQuery } from 'mongoose';
 
-import { JournalDocument } from '../journal.schema';
+import {
+  Journal as JournalSchemaClass,
+  JournalDocument,
+} from '../journal.schema';
 import { JournalRepository } from '../../application/ports/journal.repository';
 
 import { Journal } from '../../domain/journal.entity';
@@ -15,8 +18,10 @@ import { PaginatedResult } from '@shared/types/paginated-result';
 
 @Injectable()
 export class MongoJournalRepository implements JournalRepository {
+  private readonly logger = new Logger(MongoJournalRepository.name);
   constructor(
-    @InjectModel('Journal') private readonly model: Model<JournalDocument>,
+    @InjectModel(JournalSchemaClass.name)
+    private readonly model: Model<JournalDocument>,
   ) {}
 
   async save(journal: Journal): Promise<void> {
@@ -38,7 +43,7 @@ export class MongoJournalRepository implements JournalRepository {
     const skip = (page - 1) * limit;
 
     const filter: FilterQuery<JournalDocument> = {
-      isDeleted: query.isDeleted ?? false,
+      ...(query.isDeleted !== undefined && { isDeleted: query.isDeleted }),
       ...(query.keyword && {
         $or: [
           { title: { $regex: query.keyword, $options: 'i' } },

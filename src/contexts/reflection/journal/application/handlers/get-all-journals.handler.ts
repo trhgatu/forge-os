@@ -1,23 +1,18 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { Inject } from '@nestjs/common';
-
 import { GetAllJournalsQuery } from '../queries/get-all-journals.query';
-
 import { JournalRepository } from '../../application/ports/journal.repository';
 import { CacheService } from '@shared/services';
-
 import { JournalPresenter } from '../../presentation/journal.presenter';
 import { PaginatedResponse } from '@shared/types/paginated-response';
 import { JournalResponse } from '../../presentation/dto/journal.response';
+import { JournalCacheKeys } from '../../infrastructure/cache/journal-cache.keys';
 
 @QueryHandler(GetAllJournalsQuery)
 export class GetAllJournalsHandler
   implements IQueryHandler<GetAllJournalsQuery>
 {
   constructor(
-    @Inject('JournalRepository')
     private readonly journalRepo: JournalRepository,
-
     private readonly cacheService: CacheService,
   ) {}
 
@@ -27,9 +22,7 @@ export class GetAllJournalsHandler
     const { payload } = query;
     const { page = 1, limit = 10 } = payload;
 
-    const cacheKey = `journals:admin:p${page}:l${limit}:${JSON.stringify(
-      payload,
-    )}`;
+    const cacheKey = JournalCacheKeys.GET_ALL_ADMIN(page, limit, payload);
 
     const cached =
       await this.cacheService.get<PaginatedResponse<JournalResponse>>(cacheKey);

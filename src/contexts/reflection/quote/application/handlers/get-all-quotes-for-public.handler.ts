@@ -15,7 +15,6 @@ export class GetAllQuotesForPublicHandler
 {
   constructor(
     private readonly quoteRepo: QuoteRepository,
-
     private readonly cacheService: CacheService,
   ) {}
 

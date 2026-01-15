@@ -7,25 +7,20 @@ import {
   JournalRelationType,
 } from '../domain/enums';
 
+import { SoftDeletePlugin } from '@shared/database/mongo/plugins/soft-delete.plugin';
+
 export type JournalDocument = Document & {
   _id: Types.ObjectId;
-
   title?: string;
   content: string;
-
   mood?: MoodType;
   tags?: string[];
-
   type: JournalType;
   status: JournalStatus;
-
   source: 'user' | 'ai' | 'system';
-
   relations?: { type: JournalRelationType; id: string }[];
-
   isDeleted: boolean;
   deletedAt?: Date;
-
   createdAt: Date;
   updatedAt: Date;
 };
@@ -90,3 +85,5 @@ export class Journal {
 }
 
 export const JournalSchema = SchemaFactory.createForClass(Journal);
+
+JournalSchema.plugin(SoftDeletePlugin);

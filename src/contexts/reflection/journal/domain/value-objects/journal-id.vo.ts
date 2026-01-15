@@ -9,4 +9,8 @@ export class JournalId extends BaseId {
   public static create(value: string | Types.ObjectId): JournalId {
     return new JournalId(value);
   }
+
+  public static random(): JournalId {
+    return new JournalId(new Types.ObjectId());
+  }
 }
