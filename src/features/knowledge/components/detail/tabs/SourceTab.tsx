@@ -1,14 +1,23 @@
 import React from "react";
-import { BookOpen, Calendar, Layers, Sparkles, BrainCircuit, ArrowUpRight } from "lucide-react";
+import {
+  BookOpen,
+  Calendar,
+  Layers,
+  Sparkles,
+  BrainCircuit,
+  ArrowUpRight,
+  Hammer,
+} from "lucide-react";
 import Image from "next/image";
 import { KnowledgeConcept } from "@/shared/types";
 import { GlassCard } from "@/shared/components/ui/GlassCard";
 
 interface SourceTabProps {
   concept: KnowledgeConcept;
+  onCrystallize: () => void;
 }
 
-export const SourceTab: React.FC<SourceTabProps> = ({ concept }) => {
+export const SourceTab: React.FC<SourceTabProps> = ({ concept, onCrystallize }) => {
   const lastModified = concept.lastModified
     ? new Date(concept.lastModified).toLocaleDateString()
     : null;
@@ -74,6 +83,21 @@ export const SourceTab: React.FC<SourceTabProps> = ({ concept }) => {
 
       {/* RIGHT SIDEBAR: Metadata & Insights */}
       <div className="w-full md:w-[350px] space-y-6 shrink-0">
+        {/* ACTION: Crystallize Button */}
+        <button
+          onClick={onCrystallize}
+          className="w-full group relative overflow-hidden p-4 rounded-xl bg-gradient-to-r from-forge-accent to-purple-600 border border-white/20 text-white font-bold shadow-[0_0_20px_rgba(124,58,237,0.3)] hover:shadow-[0_0_30px_rgba(124,58,237,0.5)] transition-all duration-300"
+        >
+          <div className="absolute inset-0 bg-white/20 group-hover:translate-x-full transition-transform duration-700 ease-in-out skew-x-12 -translate-x-full" />
+          <div className="flex items-center justify-center gap-3 relative z-10">
+            <Hammer size={20} className="group-hover:rotate-12 transition-transform" />
+            <span>Forge Insight</span>
+          </div>
+          <p className="text-[10px] text-white/70 text-center mt-1 font-normal relative z-10">
+            Transition to Anvil & Crystallize
+          </p>
+        </button>
+
         {/* Reflection */}
         <div className="relative p-6 rounded-2xl bg-gradient-to-br from-forge-accent/10 to-transparent border border-forge-accent/20 overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-forge-accent/20 blur-3xl" />

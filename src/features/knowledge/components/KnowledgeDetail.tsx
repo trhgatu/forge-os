@@ -98,7 +98,9 @@ export const KnowledgeDetail: React.FC<KnowledgeDetailProps> = ({ concept, onClo
 
       {/* MAIN CONTENT AREA */}
       <div className="max-w-[1600px] mx-auto px-4 md:px-8 py-8 md:py-12 relative z-10 min-h-screen">
-        {activeTab === "source" && <SourceTab concept={concept} />}
+        {activeTab === "source" && (
+          <SourceTab concept={concept} onCrystallize={() => setActiveTab("anvil")} />
+        )}
         {activeTab === "anvil" && <AnvilTab />}
         {activeTab === "nexus" && <NexusTab />}
       </div>
