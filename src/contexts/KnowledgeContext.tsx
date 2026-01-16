@@ -20,7 +20,10 @@ export const useKnowledge = () => {
   const isLoading = useKnowledgeStore((state) => state.isLoading);
   const clearActive = useKnowledgeStore((state) => state.clearActive);
   const clearHistory = useKnowledgeStore((state) => state.clearHistory);
+
   const clearResults = useKnowledgeStore((state) => state.clearResults);
+  const discoveryItems = useKnowledgeStore((state) => state.discoveryItems);
+  const loadDiscovery = useKnowledgeStore((state) => state.loadDiscovery);
 
   // Actions that need dynamic arguments (language)
   const { language } = useLanguage();
@@ -46,11 +49,17 @@ export const useKnowledge = () => {
     [selectAction, language]
   );
 
+  const loadDiscoveryWrapper = useCallback(async () => {
+    await loadDiscovery(language);
+  }, [loadDiscovery, language]);
+
   return {
     searchResults,
     activeConcept,
     history,
     isLoading,
+    discoveryItems,
+    loadDiscovery: loadDiscoveryWrapper,
     search,
     selectConcept,
     clearActive,
