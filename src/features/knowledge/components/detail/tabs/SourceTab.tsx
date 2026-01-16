@@ -86,14 +86,17 @@ export const SourceTab: React.FC<SourceTabProps> = ({ concept, onCrystallize }) 
         {/* ACTION: Crystallize Button */}
         <button
           onClick={onCrystallize}
-          className="w-full group relative overflow-hidden p-4 rounded-xl bg-gradient-to-r from-forge-accent to-purple-600 border border-white/20 text-white font-bold shadow-[0_0_20px_rgba(124,58,237,0.3)] hover:shadow-[0_0_30px_rgba(124,58,237,0.5)] transition-all duration-300"
+          className="w-full group relative overflow-hidden p-4 rounded-xl bg-gradient-to-r from-cyan-950/50 to-blue-950/50 border border-cyan-500/30 text-cyan-100 font-bold shadow-[0_0_20px_rgba(34,211,238,0.15)] hover:shadow-[0_0_30px_rgba(34,211,238,0.3)] hover:border-cyan-400/50 transition-all duration-300"
         >
-          <div className="absolute inset-0 bg-white/20 group-hover:translate-x-full transition-transform duration-700 ease-in-out skew-x-12 -translate-x-full" />
+          <div className="absolute inset-0 bg-cyan-400/10 group-hover:translate-x-full transition-transform duration-700 ease-in-out skew-x-12 -translate-x-full" />
           <div className="flex items-center justify-center gap-3 relative z-10">
-            <Hammer size={20} className="group-hover:rotate-12 transition-transform" />
-            <span>Forge Insight</span>
+            <Hammer
+              size={20}
+              className="group-hover:rotate-12 transition-transform text-cyan-300"
+            />
+            <span className="tracking-wide">Forge Insight</span>
           </div>
-          <p className="text-[10px] text-white/70 text-center mt-1 font-normal relative z-10">
+          <p className="text-[10px] text-cyan-200/60 text-center mt-1 font-normal relative z-10 font-mono tracking-widest uppercase">
             Transition to Anvil & Crystallize
           </p>
         </button>
