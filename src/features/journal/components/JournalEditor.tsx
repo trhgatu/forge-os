@@ -1,13 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
 import { Calendar, Maximize2, Minimize2, Save, Sparkles } from "lucide-react";
 
 import { JournalEntry } from "@/features/journal/types";
 import { cn } from "@/shared/lib/utils";
-import { JournalToolbar } from "./JournalToolbar";
 import { MoodSelector } from "./MoodSelector";
-import { MarkdownRenderer } from "./MarkdownRenderer";
+import { ForgeEditor } from "@/shared/components/editor/ForgeEditor";
 
 export function JournalEditor({
   entry,
@@ -26,56 +24,6 @@ export function JournalEditor({
   toggleFocusMode: () => void;
   saveStatus?: "saved" | "saving" | "error";
 }) {
-  const [mode, setMode] = useState<"write" | "preview">("write");
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-
-  // Insert markdown format
-  const insert = (prefix: string, suffix = "") => {
-    if (!textareaRef.current) return;
-    const el = textareaRef.current;
-
-    const start = el.selectionStart;
-    const end = el.selectionEnd;
-
-    const before = entry.content.slice(0, start);
-    const selected = entry.content.slice(start, end);
-    const after = entry.content.slice(end);
-
-    const newValue = before + prefix + selected + suffix + after;
-    onChange({ content: newValue });
-
-    setTimeout(() => {
-      el.focus();
-      el.setSelectionRange(start + prefix.length, end + prefix.length);
-    });
-  };
-
-  const onToolbar = (action: string) => {
-    switch (action) {
-      case "bold":
-        insert("**", "**");
-        break;
-      case "italic":
-        insert("*", "*");
-        break;
-      case "h1":
-        insert("# ");
-        break;
-      case "h2":
-        insert("## ");
-        break;
-      case "list":
-        insert("- ");
-        break;
-      case "quote":
-        insert("> ");
-        break;
-      case "code":
-        insert("`", "`");
-        break;
-    }
-  };
-
   return (
     <div
       className={cn("flex-1 flex flex-col transition-all duration-500", isFocusMode && "bg-black")}
@@ -144,9 +92,6 @@ export function JournalEditor({
             <MoodSelector mood={entry.mood || "neutral"} onSelect={(m) => onChange({ mood: m })} />
           </div>
 
-          {/* Toolbar */}
-          <JournalToolbar mode={mode} onMode={setMode} onAction={onToolbar} />
-
           {/* Title */}
           <input
             type="text"
@@ -157,20 +102,15 @@ export function JournalEditor({
           />
 
           {/* Content */}
-          {mode === "write" ? (
-            <textarea
-              ref={textareaRef}
-              value={entry.content}
-              onChange={(e) => onChange({ content: e.target.value })}
+          <div className="flex-1 min-h-[500px]">
+            <ForgeEditor
+              content={entry.content}
+              onChange={(v) => onChange({ content: v })}
               placeholder="Start writing... (Markdown supported)"
-              spellCheck={false}
-              className="flex-1 w-full bg-transparent border-none text-lg leading-relaxed text-gray-300 placeholder-gray-700 focus:ring-0 px-0 resize-none font-sans scrollbar-hide min-h-[500px]"
+              className="min-h-[500px]"
             />
-          ) : (
-            <div className="flex-1 min-h-[500px] animate-in fade-in duration-300">
-              <MarkdownRenderer content={entry.content} />
-            </div>
-          )}
+          </div>
+
           {isFocusMode && (
             <button
               onClick={toggleFocusMode}

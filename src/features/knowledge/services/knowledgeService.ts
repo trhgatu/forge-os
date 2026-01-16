@@ -144,3 +144,44 @@ export async function getConceptDetails(
     return null;
   }
 }
+
+// --------------------------------------------------
+// RANDOM DISCOVERY
+// --------------------------------------------------
+export async function getRandomConcepts(
+  lang: string,
+  limit: number = 20
+): Promise<KnowledgeConcept[]> {
+  const normalized = normalizeLang(lang);
+
+  const params = new URLSearchParams({
+    origin: "*",
+    action: "query",
+    list: "random",
+    rnnamespace: "0", // Articles only
+    rnlimit: String(limit),
+    format: "json",
+  });
+
+  try {
+    const res = await fetch(`https://${normalized}.wikipedia.org/w/api.php?${params}`);
+    const data = await res.json();
+    const items = data.query?.random ?? [];
+
+    const now = new Date().toISOString();
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return items.map((item: any) => ({
+      id: `${normalized}-${item.id}`,
+      title: item.title,
+      summary: "A random discovery from the global grid.",
+      extract: "",
+      createdAt: now,
+      source: "wikipedia",
+      language: normalized,
+    }));
+  } catch (err) {
+    console.error("Random concept error:", err);
+    return [];
+  }
+}
