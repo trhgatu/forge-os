@@ -251,17 +251,19 @@ export const SourceTab: React.FC<SourceTabProps> = ({
         </button>
 
         {/* Reflection */}
-        <div className="relative p-6 rounded-2xl bg-gradient-to-br from-forge-accent/10 to-transparent border border-forge-accent/20 overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-forge-accent/20 blur-3xl" />
-          <div className="relative z-10">
-            <div className="flex items-center gap-2 text-xs font-bold text-forge-accent uppercase tracking-widest mb-3">
-              <Sparkles size={14} /> Nova Reflection
+        {concept.reflection && (
+          <div className="relative p-6 rounded-2xl bg-gradient-to-br from-forge-accent/10 to-transparent border border-forge-accent/20 overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-forge-accent/20 blur-3xl" />
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 text-xs font-bold text-forge-accent uppercase tracking-widest mb-3">
+                <Sparkles size={14} /> Nova Reflection
+              </div>
+              <p className="text-base text-white font-light italic leading-relaxed font-serif">
+                &quot;{concept.reflection}&quot;
+              </p>
             </div>
-            <p className="text-base text-white font-light italic leading-relaxed font-serif">
-              &quot;{concept.reflection}&quot;
-            </p>
           </div>
-        </div>
+        )}
 
         {/* Insights / Captured Extracts */}
         {(extracts.length > 0 || concept.insights) && (
@@ -333,17 +335,19 @@ export const SourceTab: React.FC<SourceTabProps> = ({
         )}
 
         {/* Source Link */}
-        <a
-          href={concept.url}
-          target="_blank"
-          rel="noreferrer"
-          className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 group transition-all"
-        >
-          <span className="text-xs text-gray-500 group-hover:text-gray-300">
-            View Original Source
-          </span>
-          <ArrowUpRight size={14} className="text-gray-600 group-hover:text-white" />
-        </a>
+        {concept.url && (
+          <a
+            href={concept.url}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 group transition-all"
+          >
+            <span className="text-xs text-gray-500 group-hover:text-gray-300">
+              View Original Source
+            </span>
+            <ArrowUpRight size={14} className="text-gray-600 group-hover:text-white" />
+          </a>
+        )}
       </div>
     </div>
   );

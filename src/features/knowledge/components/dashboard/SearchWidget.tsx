@@ -111,12 +111,19 @@ export const SearchWidget: React.FC = () => {
             </div>
           )}
 
-          {searchResults.map((result, idx) => (
+          {searchResults.map((result) => (
             <div
               key={result.id}
               onClick={() => handleSelect(result)}
-              className="group flex items-start gap-4 p-4 border-b border-white/5 last:border-0 hover:bg-white/5 cursor-pointer transition-colors"
-              style={{ animationDelay: `${idx * 50}ms` }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  handleSelect(result);
+                }
+              }}
+              role="option"
+              aria-selected={false}
+              tabIndex={0}
+              className="group flex items-start gap-4 p-4 border-b border-white/5 last:border-0 hover:bg-white/5 cursor-pointer transition-colors focus:bg-white/10 focus:outline-none"
             >
               <div className="mt-1 p-2 rounded-lg bg-white/5 text-gray-400 group-hover:text-forge-cyan transition-colors">
                 <Globe size={16} />

@@ -11,6 +11,14 @@ export const DiscoveryCarousel: React.FC = () => {
   const { discoveryItems, loadDiscovery, selectConcept, isLoading } = useKnowledge();
   const [index, setIndex] = useState(0);
 
+  const [prevItems, setPrevItems] = useState(discoveryItems);
+
+  // Render-phase state update to reset index when items change
+  if (discoveryItems !== prevItems) {
+    setPrevItems(discoveryItems);
+    setIndex(0);
+  }
+
   useEffect(() => {
     loadDiscovery();
   }, [loadDiscovery]);

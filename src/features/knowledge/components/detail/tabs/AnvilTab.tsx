@@ -23,7 +23,10 @@ export const AnvilTab: React.FC<AnvilTabProps> = ({ extracts = [], onRemoveExtra
   };
 
   const insertExtract = (text: string) => {
-    setContent((prev) => `${prev}\n> ${text}\n\n`);
+    setContent((prev) => {
+      const prefix = prev ? "\n" : "";
+      return `${prev}${prefix}> ${text}\n\n`;
+    });
   };
 
   return (
@@ -46,7 +49,7 @@ export const AnvilTab: React.FC<AnvilTabProps> = ({ extracts = [], onRemoveExtra
             ) : (
               extracts.map((e, i) => (
                 <div
-                  key={i}
+                  key={`${i}-${e.substring(0, 5)}`}
                   onClick={() => insertExtract(e)}
                   className="group relative p-3 rounded-lg bg-white/5 border border-white/5 hover:bg-white/10 hover:border-forge-accent/50 cursor-pointer transition-all active:scale-95 pr-6"
                 >
