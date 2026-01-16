@@ -24,19 +24,25 @@ export const KnowledgeDetail: React.FC<KnowledgeDetailProps> = ({ concept, onClo
   // Two-stage capture process:
   // 1. stagingExtracts: Captured in SourceTab, not yet moved to Anvil.
   // 2. committedExtracts: Explicitly moved to Anvil via "Forge Insight".
-  const [stagingExtracts, setStagingExtracts] = useState<string[]>([]);
-  const [committedExtracts, setCommittedExtracts] = useState<string[]>([]);
+
+  interface ExtractItem {
+    id: string;
+    text: string;
+  }
+
+  const [stagingExtracts, setStagingExtracts] = useState<ExtractItem[]>([]);
+  const [committedExtracts, setCommittedExtracts] = useState<ExtractItem[]>([]);
 
   const handleCapture = (text: string) => {
-    setStagingExtracts((prev) => [...prev, text]);
+    setStagingExtracts((prev) => [...prev, { id: crypto.randomUUID(), text }]);
   };
 
-  const handleRemoveStaging = (index: number) => {
-    setStagingExtracts((prev) => prev.filter((_, i) => i !== index));
+  const handleRemoveStaging = (id: string) => {
+    setStagingExtracts((prev) => prev.filter((item) => item.id !== id));
   };
 
-  const handleRemoveCommitted = (index: number) => {
-    setCommittedExtracts((prev) => prev.filter((_, i) => i !== index));
+  const handleRemoveCommitted = (id: string) => {
+    setCommittedExtracts((prev) => prev.filter((item) => item.id !== id));
   };
 
   const handleCrystallize = () => {

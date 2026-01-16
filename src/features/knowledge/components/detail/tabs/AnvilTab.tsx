@@ -5,8 +5,8 @@ import { cn } from "@/shared/lib/utils";
 import { ForgeEditor } from "@/shared/components/editor/ForgeEditor";
 
 interface AnvilTabProps {
-  extracts?: string[];
-  onRemoveExtract?: (index: number) => void;
+  extracts?: { id: string; text: string }[];
+  onRemoveExtract?: (id: string) => void;
 }
 
 export const AnvilTab: React.FC<AnvilTabProps> = ({ extracts = [], onRemoveExtract }) => {
@@ -47,10 +47,10 @@ export const AnvilTab: React.FC<AnvilTabProps> = ({ extracts = [], onRemoveExtra
                 Drag extracts here or select text from Source to visualize context.
               </div>
             ) : (
-              extracts.map((e, i) => (
+              extracts.map((e) => (
                 <div
-                  key={`${i}-${e.substring(0, 5)}`}
-                  onClick={() => insertExtract(e)}
+                  key={e.id}
+                  onClick={() => insertExtract(e.text)}
                   className="group relative p-3 rounded-lg bg-white/5 border border-white/5 hover:bg-white/10 hover:border-forge-accent/50 cursor-pointer transition-all active:scale-95 pr-6"
                 >
                   <Quote
@@ -58,7 +58,7 @@ export const AnvilTab: React.FC<AnvilTabProps> = ({ extracts = [], onRemoveExtra
                     className="text-forge-accent mb-2 opacity-50 group-hover:opacity-100"
                   />
                   <p className="text-xs text-gray-300 line-clamp-4 leading-relaxed font-serif italic text-pretty">
-                    &quot;{e}&quot;
+                    &quot;{e.text}&quot;
                   </p>
 
                   {/* Delete Button */}
@@ -66,7 +66,7 @@ export const AnvilTab: React.FC<AnvilTabProps> = ({ extracts = [], onRemoveExtra
                     <button
                       onClick={(ev) => {
                         ev.stopPropagation();
-                        onRemoveExtract(i);
+                        onRemoveExtract(e.id);
                       }}
                       className="absolute top-2 right-2 p-1.5 rounded-full bg-black/40 hover:bg-red-500/80 text-gray-400 hover:text-white opacity-0 group-hover:opacity-100 transition-all duration-200 backdrop-blur-sm z-10"
                       title="Remove Extract"

@@ -18,10 +18,10 @@ import { cn } from "@/shared/lib/utils";
 
 interface SourceTabProps {
   concept: KnowledgeConcept;
-  extracts: string[];
+  extracts: { id: string; text: string }[];
   onCrystallize: () => void;
   onCapture: (text: string) => void;
-  onRemoveExtract: (index: number) => void;
+  onRemoveExtract: (id: string) => void;
 }
 
 // Strictly memoized content display to protect text selection state
@@ -56,6 +56,14 @@ export const SourceTab: React.FC<SourceTabProps> = ({
   onCapture,
   onRemoveExtract,
 }) => {
+  /* ... (unchanged parts omitted for brevity, will only replace the top props part and the bottom render part) ... */
+  /* Wait, I cannot omit unchanged parts in ReplacementContent if I am using replace_file_content with a large range. */
+  /* I will split this into two replacements if possible, or one large one locally. */
+  /* Given the tool constraints, I should target the props interface separately if they are far apart. */
+  /* Props are at top, loop is at bottom. I will make two calls using multi_replace_file_content if available, or just use replace_file_content twice. */
+  /* I'll use replace_file_content for the whole file if it's small enough, or just targeting specific blocks. */
+  /* The props definition is at the top. The loop is lines 276-300. */
+  /* I will update the Props definition first. */
   const lastModified = concept.lastModified
     ? new Date(concept.lastModified).toLocaleDateString()
     : null;
@@ -273,15 +281,15 @@ export const SourceTab: React.FC<SourceTabProps> = ({
             </h3>
             <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin">
               {/* Show newly captured extracts first */}
-              {extracts.map((extract, i) => (
+              {extracts.map((extract) => (
                 <div
-                  key={`captured-${i}`}
+                  key={extract.id}
                   className="group relative p-3 rounded-lg bg-emerald-950/20 border border-emerald-500/20 hover:bg-emerald-950/30 transition-colors animate-in fade-in slide-in-from-left-2"
                 >
                   <div className="flex gap-3">
                     <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_5px_#34D399] shrink-0" />
                     <p className="text-sm text-gray-200 leading-relaxed font-light line-clamp-4 pr-6">
-                      {extract}
+                      {extract.text}
                     </p>
                   </div>
 
@@ -289,7 +297,7 @@ export const SourceTab: React.FC<SourceTabProps> = ({
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      onRemoveExtract(i);
+                      onRemoveExtract(extract.id);
                     }}
                     className="absolute top-2 right-2 p-1.5 rounded-full bg-black/40 hover:bg-red-500/80 text-gray-400 hover:text-white opacity-0 group-hover:opacity-100 transition-all duration-200 backdrop-blur-sm"
                     title="Remove Extract"
