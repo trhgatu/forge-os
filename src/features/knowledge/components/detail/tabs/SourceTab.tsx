@@ -56,14 +56,6 @@ export const SourceTab: React.FC<SourceTabProps> = ({
   onCapture,
   onRemoveExtract,
 }) => {
-  /* ... (unchanged parts omitted for brevity, will only replace the top props part and the bottom render part) ... */
-  /* Wait, I cannot omit unchanged parts in ReplacementContent if I am using replace_file_content with a large range. */
-  /* I will split this into two replacements if possible, or one large one locally. */
-  /* Given the tool constraints, I should target the props interface separately if they are far apart. */
-  /* Props are at top, loop is at bottom. I will make two calls using multi_replace_file_content if available, or just use replace_file_content twice. */
-  /* I'll use replace_file_content for the whole file if it's small enough, or just targeting specific blocks. */
-  /* The props definition is at the top. The loop is lines 276-300. */
-  /* I will update the Props definition first. */
   const lastModified = concept.lastModified
     ? new Date(concept.lastModified).toLocaleDateString()
     : null;
