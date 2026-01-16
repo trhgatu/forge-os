@@ -21,6 +21,32 @@ export const KnowledgeDetail: React.FC<KnowledgeDetailProps> = ({ concept, onClo
   const [activeTab, setActiveTab] = useState<Tab>("source");
   const [isSaved, setIsSaved] = useState(false);
 
+  // Two-stage capture process:
+  // 1. stagingExtracts: Captured in SourceTab, not yet moved to Anvil.
+  // 2. committedExtracts: Explicitly moved to Anvil via "Forge Insight".
+  const [stagingExtracts, setStagingExtracts] = useState<string[]>([]);
+  const [committedExtracts, setCommittedExtracts] = useState<string[]>([]);
+
+  const handleCapture = (text: string) => {
+    setStagingExtracts((prev) => [...prev, text]);
+  };
+
+  const handleRemoveStaging = (index: number) => {
+    setStagingExtracts((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleRemoveCommitted = (index: number) => {
+    setCommittedExtracts((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleCrystallize = () => {
+    if (stagingExtracts.length > 0) {
+      setCommittedExtracts((prev) => [...prev, ...stagingExtracts]);
+      setStagingExtracts([]); // Clear staging after moving
+    }
+    setActiveTab("anvil");
+  };
+
   const TABS = [
     { id: "source", label: "Source", icon: BookOpen },
     { id: "anvil", label: "Anvil", icon: Hammer },
@@ -29,7 +55,6 @@ export const KnowledgeDetail: React.FC<KnowledgeDetailProps> = ({ concept, onClo
 
   return (
     <div className="absolute inset-0 z-50 bg-[#030304] animate-in fade-in duration-300 overflow-y-auto custom-scrollbar">
-      {/* Ambient Backgorund */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-[-20%] right-[-10%] w-[800px] h-[800px] bg-indigo-900/10 rounded-full blur-[150px] opacity-20" />
         <div className="absolute top-[20%] left-[-10%] w-[600px] h-[600px] bg-forge-cyan/5 rounded-full blur-[100px] opacity-10" />
@@ -99,9 +124,17 @@ export const KnowledgeDetail: React.FC<KnowledgeDetailProps> = ({ concept, onClo
       {/* MAIN CONTENT AREA */}
       <div className="max-w-[1600px] mx-auto px-4 md:px-8 py-8 md:py-12 relative z-10 min-h-screen">
         {activeTab === "source" && (
-          <SourceTab concept={concept} onCrystallize={() => setActiveTab("anvil")} />
+          <SourceTab
+            concept={concept}
+            extracts={stagingExtracts}
+            onCrystallize={handleCrystallize}
+            onCapture={handleCapture}
+            onRemoveExtract={handleRemoveStaging}
+          />
         )}
-        {activeTab === "anvil" && <AnvilTab />}
+        {activeTab === "anvil" && (
+          <AnvilTab extracts={committedExtracts} onRemoveExtract={handleRemoveCommitted} />
+        )}
         {activeTab === "nexus" && <NexusTab />}
       </div>
     </div>

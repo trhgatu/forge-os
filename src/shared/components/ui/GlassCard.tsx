@@ -6,6 +6,7 @@ interface GlassCardProps extends React.HTMLAttributes<HTMLDivElement> {
   gradient?: boolean;
   interactive?: boolean;
   noPadding?: boolean;
+  innerClassName?: string;
 }
 
 export function GlassCard({
@@ -14,6 +15,7 @@ export function GlassCard({
   gradient = false,
   interactive = false,
   noPadding = false,
+  innerClassName,
   ...props
 }: GlassCardProps) {
   return (
@@ -35,8 +37,8 @@ export function GlassCard({
       )}
       {...props}
     >
-      <div className="relative z-10">{children}</div>
-      <div className="absolute inset-0 bg-[url('/assets/noise.svg')] opacity-[0.03] mix-blend-overlay pointer-events-none" />
+      <div className={cn("relative z-10", innerClassName)}>{children}</div>
+      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] mix-blend-overlay pointer-events-none" />
     </div>
   );
 }
