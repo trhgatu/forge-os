@@ -12,9 +12,7 @@ import { UserMapper } from '../mappers/user.mapper';
 
 @Injectable()
 export class MongoUserRepository implements UserRepository {
-  constructor(
-    @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
-  ) {}
+  constructor(@InjectModel(User.name) private readonly userModel: Model<UserDocument>) {}
 
   async create(dto: CreateUserDto): Promise<UserEntity> {
     const createdUser = new this.userModel(dto);
@@ -29,9 +27,7 @@ export class MongoUserRepository implements UserRepository {
     const skip = (pageNum - 1) * limitNum;
 
     // Default to isDeleted: false if not specified
-    const isDeleted = query.isDeleted
-      ? String(query.isDeleted) === 'true'
-      : false;
+    const isDeleted = query.isDeleted ? String(query.isDeleted) === 'true' : false;
 
     const search: FilterQuery<UserDocument> = { isDeleted };
     if (keyword) {

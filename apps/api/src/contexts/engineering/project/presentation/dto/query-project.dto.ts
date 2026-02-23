@@ -1,10 +1,4 @@
-import {
-  IsOptional,
-  IsString,
-  IsBoolean,
-  IsNumber,
-  IsArray,
-} from 'class-validator';
+import { IsOptional, IsString, IsBoolean, IsNumber, IsArray } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
 
 export class QueryProjectDto {
@@ -23,16 +17,12 @@ export class QueryProjectDto {
   tags?: string[];
 
   @IsOptional()
-  @Transform(({ value }) =>
-    value === 'true' ? true : value === 'false' ? false : value,
-  )
+  @Transform(({ value }) => (value === 'true' ? true : value === 'false' ? false : value))
   @IsBoolean()
   isDeleted?: boolean;
 
   @IsOptional()
-  @Transform(({ value }) =>
-    value === 'true' ? true : value === 'false' ? false : value,
-  )
+  @Transform(({ value }) => (value === 'true' ? true : value === 'false' ? false : value))
   @IsBoolean()
   isPinned?: boolean;
 

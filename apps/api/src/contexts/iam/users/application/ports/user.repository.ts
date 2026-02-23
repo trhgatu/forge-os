@@ -11,10 +11,7 @@ export abstract class UserRepository {
   abstract findByIdWithRoleAndPermissions(id: string): Promise<User | null>;
   abstract findByEmail(email: string): Promise<User | null>;
   abstract update(id: string, dto: UpdateUserDto): Promise<User | null>;
-  abstract updateRefreshToken(
-    id: string,
-    refreshToken: string | null,
-  ): Promise<void>;
+  abstract updateRefreshToken(id: string, refreshToken: string | null): Promise<void>;
   abstract delete(id: string): Promise<void>;
   abstract softDelete(id: string): Promise<void>;
   abstract restore(id: string): Promise<void>;

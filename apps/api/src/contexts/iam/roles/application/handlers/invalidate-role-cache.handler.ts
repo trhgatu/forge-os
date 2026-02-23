@@ -22,9 +22,7 @@ export class InvalidateRoleCacheHandler implements IEventHandler<RoleModifiedEve
 
       // Invalidate specific role cache
       // Assuming we will cache by ID with pattern roles:id:{id}
-      await this.cacheService.deleteByPattern(
-        `roles:id:${event.roleId.toString()}`,
-      );
+      await this.cacheService.deleteByPattern(`roles:id:${event.roleId.toString()}`);
     } catch (error: any) {
       this.logger.error(
         `Failed to invalidate cache for role ${event.roleId}: ${error.message}`,

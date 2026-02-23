@@ -59,14 +59,10 @@ export class Role {
     return this.props.updatedAt;
   }
 
-  update(
-    props: Partial<Omit<RoleProps, 'id' | 'isDeleted' | 'deletedAt'>>,
-  ): void {
+  update(props: Partial<Omit<RoleProps, 'id' | 'isDeleted' | 'deletedAt'>>): void {
     if (props.name !== undefined) this.props.name = props.name;
-    if (props.description !== undefined)
-      this.props.description = props.description;
-    if (props.permissions !== undefined)
-      this.props.permissions = [...props.permissions];
+    if (props.description !== undefined) this.props.description = props.description;
+    if (props.permissions !== undefined) this.props.permissions = [...props.permissions];
     // isSystem typically shouldn't change
     this.props.updatedAt = new Date();
   }

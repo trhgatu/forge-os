@@ -5,8 +5,7 @@ export class MoodId {
   private constructor(private readonly value: ObjectId) {}
 
   static create(id?: string | ObjectId): MoodId {
-    const objectId =
-      typeof id === 'string' ? new ObjectId(id) : (id ?? new ObjectId());
+    const objectId = typeof id === 'string' ? new ObjectId(id) : (id ?? new ObjectId());
     if (!ObjectId.isValid(objectId)) {
       throw new BadRequestException('Invalid MoodId');
     }

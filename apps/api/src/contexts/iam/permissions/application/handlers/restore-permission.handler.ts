@@ -21,9 +21,7 @@ export class RestorePermissionHandler implements ICommandHandler<RestorePermissi
     }
 
     await this.permissionRepository.restore(id);
-    this.eventBus.publish(
-      new PermissionModifiedEvent(permission.id, 'restore'),
-    );
+    this.eventBus.publish(new PermissionModifiedEvent(permission.id, 'restore'));
     return { restored: true };
   }
 }

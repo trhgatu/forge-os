@@ -36,9 +36,7 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
     let owner: string | undefined;
     let repo: string | undefined;
 
-    const githubLink = project.links?.find((l: ProjectLink) =>
-      l.url?.includes('github.com'),
-    );
+    const githubLink = project.links?.find((l: ProjectLink) => l.url?.includes('github.com'));
     if (githubLink) {
       const parts = githubLink.url.split('github.com/');
       if (parts[1]) {
@@ -61,10 +59,7 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
     this.logger.log(`Syncing project ${id} with GitHub ${owner}/${repo}`);
 
     try {
-      const repoDetails = await this.githubRepository.getRepoDetails(
-        owner,
-        repo,
-      );
+      const repoDetails = await this.githubRepository.getRepoDetails(owner, repo);
 
       // Update Project Entity via public method
       project.updateInfo({
@@ -120,9 +115,7 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
       this.logger.error(`Failed to sync project ${id}`, (error as Error).stack); // Type cast for safety
 
       if (error.status === 404) {
-        this.logger.warn(
-          `GitHub Repo ${owner}/${repo} not found. Clearing invalid metadata.`,
-        );
+        this.logger.warn(`GitHub Repo ${owner}/${repo} not found. Clearing invalid metadata.`);
 
         if (project.metadata) {
           const newMetadata = { ...project.metadata };

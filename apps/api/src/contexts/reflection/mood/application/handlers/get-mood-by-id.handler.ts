@@ -6,10 +6,7 @@ import { MoodPresenter } from '../../presentation/mood.presenter';
 import { MoodResponse } from '../../presentation/dto/mood.response';
 
 @QueryHandler(GetMoodByIdQuery)
-export class GetMoodByIdHandler implements IQueryHandler<
-  GetMoodByIdQuery,
-  MoodResponse
-> {
+export class GetMoodByIdHandler implements IQueryHandler<GetMoodByIdQuery, MoodResponse> {
   constructor(
     @Inject('MoodRepository')
     private readonly moodRepo: MoodRepository,

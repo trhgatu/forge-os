@@ -37,9 +37,7 @@ interface VisitorEcho {
   },
   namespace: 'presence',
 })
-export class PresenceGateway
-  implements OnGatewayConnection, OnGatewayDisconnect
-{
+export class PresenceGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server!: Server;
 
@@ -55,9 +53,7 @@ export class PresenceGateway
   async handleConnection(client: Socket) {
     // Reliable IP Extraction
     const forwarded = client.handshake.headers['x-forwarded-for'];
-    const ipList = Array.isArray(forwarded)
-      ? forwarded
-      : (forwarded as string)?.split(',');
+    const ipList = Array.isArray(forwarded) ? forwarded : (forwarded as string)?.split(',');
     // Take the first IP (client IP) and strip whitespace
     let ip = ipList?.[0]?.trim() || client.handshake.address;
 
@@ -92,9 +88,7 @@ export class PresenceGateway
     const device = uaParser.getDevice();
     const deviceInfo = `${device.model || 'PC'} - ${os.name || 'Unknown OS'} - ${browser.name || 'Unknown Browser'}`;
 
-    this.logger.log(
-      `Client connected: ${client.id} [${ip}] (${location}) [${deviceInfo}]`,
-    );
+    this.logger.log(`Client connected: ${client.id} [${ip}] (${location}) [${deviceInfo}]`);
 
     // Create ephemeral visitor
     const newVisitor: VisitorEcho = {
@@ -145,10 +139,7 @@ export class PresenceGateway
   }
 
   @SubscribeMessage('updateLocation')
-  handleLocationUpdate(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() data: { path: string },
-  ) {
+  handleLocationUpdate(@ConnectedSocket() client: Socket, @MessageBody() data: { path: string }) {
     if (!data?.path) return;
     const visitor = this.activeVisitors.get(client.id);
     if (visitor) {
@@ -159,10 +150,7 @@ export class PresenceGateway
   }
 
   @SubscribeMessage('identify')
-  async handleIdentify(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() data: { token: string },
-  ) {
+  async handleIdentify(@ConnectedSocket() client: Socket, @MessageBody() data: { token: string }) {
     try {
       if (!data.token) return;
       const payload = (await this.authService.verifyToken(data.token)) as {
@@ -206,10 +194,7 @@ export class PresenceGateway
             );
           } catch (error) {
             const err = error as Error;
-            this.logger.error(
-              `Failed to log WS_IDENTIFY: ${err.message}`,
-              err.stack,
-            );
+            this.logger.error(`Failed to log WS_IDENTIFY: ${err.message}`, err.stack);
           }
         }
       }
@@ -220,24 +205,22 @@ export class PresenceGateway
   }
 
   private broadcastPresence() {
-    const visitorsList = Array.from(this.activeVisitors.values()).map(
-      (visitor) => {
-        // Security: Sanitize PII before broadcasting
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { email, ...safeVisitor } = visitor;
+    const visitorsList = Array.from(this.activeVisitors.values()).map((visitor) => {
+      // Security: Sanitize PII before broadcasting
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { email, ...safeVisitor } = visitor;
 
-        // Also ensure connectionDetails does not leak IP if we don't want it to
-        // But for now, just removing email is the critical request.
-        // Let's also mask IP in connectionDetails if it exists
-        if (safeVisitor.connectionDetails) {
-          safeVisitor.connectionDetails = {
-            ...safeVisitor.connectionDetails,
-            ip: '***.***.***.***', // Mask IP
-          };
-        }
-        return safeVisitor;
-      },
-    );
+      // Also ensure connectionDetails does not leak IP if we don't want it to
+      // But for now, just removing email is the critical request.
+      // Let's also mask IP in connectionDetails if it exists
+      if (safeVisitor.connectionDetails) {
+        safeVisitor.connectionDetails = {
+          ...safeVisitor.connectionDetails,
+          ip: '***.***.***.***', // Mask IP
+        };
+      }
+      return safeVisitor;
+    });
     this.server.emit('presence_update', visitorsList);
   }
 }

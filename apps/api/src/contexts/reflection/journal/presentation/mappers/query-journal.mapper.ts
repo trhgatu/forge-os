@@ -1,9 +1,7 @@
 import { QueryJournalDto } from '../dto';
 import { JournalFilter } from '../../application/queries/journal-filter';
 
-export function mapQueryJournalDtoToFilter(
-  dto: QueryJournalDto,
-): JournalFilter {
+export function mapQueryJournalDtoToFilter(dto: QueryJournalDto): JournalFilter {
   return {
     keyword: dto.keyword,
     status: dto.status,

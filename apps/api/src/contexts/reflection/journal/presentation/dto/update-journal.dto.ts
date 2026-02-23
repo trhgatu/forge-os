@@ -1,18 +1,8 @@
-import {
-  IsString,
-  IsOptional,
-  IsArray,
-  IsEnum,
-  ValidateNested,
-} from 'class-validator';
+import { IsString, IsOptional, IsArray, IsEnum, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 
 import { MoodType } from '@shared/enums';
-import {
-  JournalStatus,
-  JournalType,
-  JournalRelationType,
-} from '../../domain/enums';
+import { JournalStatus, JournalType, JournalRelationType } from '../../domain/enums';
 
 export class UpdateJournalRelationDto {
   @IsEnum(JournalRelationType)

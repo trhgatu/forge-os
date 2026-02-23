@@ -16,14 +16,8 @@ export class InvalidateJournalCacheHandler implements IEventHandler<JournalModif
       `Invalidating cache for journal: ${event.journalId.toString()}`,
       InvalidateJournalCacheHandler.name,
     );
-    await this.cacheService.deleteByPattern(
-      JournalCacheKeys.ALL_JOURNALS_PATTERN,
-    );
-    await this.cacheService.deleteByPattern(
-      JournalCacheKeys.PUBLIC_JOURNALS_PATTERN,
-    );
-    await this.cacheService.deleteByPattern(
-      JournalCacheKeys.GET_BY_ID(event.journalId),
-    );
+    await this.cacheService.deleteByPattern(JournalCacheKeys.ALL_JOURNALS_PATTERN);
+    await this.cacheService.deleteByPattern(JournalCacheKeys.PUBLIC_JOURNALS_PATTERN);
+    await this.cacheService.deleteByPattern(JournalCacheKeys.GET_BY_ID(event.journalId));
   }
 }

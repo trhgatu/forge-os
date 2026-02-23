@@ -1,9 +1,6 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { QueryQuoteDto } from '../dto';
-import {
-  GetAllQuotesForPublicQuery,
-  GetQuoteByIdForPublicQuery,
-} from '../../application/queries';
+import { GetAllQuotesForPublicQuery, GetQuoteByIdForPublicQuery } from '../../application/queries';
 import { GetRandomQuoteQuery } from '../../application/queries/get-random-quote.query';
 import { GetDailyQuoteQuery } from '../../application/queries/get-daily-quote.query';
 import { QuoteId } from '../../domain/value-objects/quote-id.vo';
@@ -25,15 +22,11 @@ export class QuotePublicController {
 
   @Get()
   findAll(@Query() query: QueryQuoteDto, @Query('lang') lang?: string) {
-    return this.queryBus.execute(
-      new GetAllQuotesForPublicQuery(query, lang ?? 'en'),
-    );
+    return this.queryBus.execute(new GetAllQuotesForPublicQuery(query, lang ?? 'en'));
   }
 
   @Get(':id')
   findById(@Param('id') id: string, @Query('lang') lang?: string) {
-    return this.queryBus.execute(
-      new GetQuoteByIdForPublicQuery(QuoteId.create(id), lang ?? 'en'),
-    );
+    return this.queryBus.execute(new GetQuoteByIdForPublicQuery(QuoteId.create(id), lang ?? 'en'));
   }
 }

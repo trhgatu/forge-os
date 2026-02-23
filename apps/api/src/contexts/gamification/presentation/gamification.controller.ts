@@ -11,9 +11,7 @@ export class GamificationController {
 
   @Get('stats')
   async getUserStats(@Req() req: any): Promise<UserStats> {
-    const stats = await this.queryBus.execute(
-      new GetUserStatsQuery(String(req.user.id)),
-    );
+    const stats = await this.queryBus.execute(new GetUserStatsQuery(String(req.user.id)));
     if (!stats) {
       // Return default stats (or should we create them?)
       // Frontend can handle null, or we can return empty object.

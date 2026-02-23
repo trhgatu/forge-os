@@ -2,10 +2,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { Model, FilterQuery } from 'mongoose';
 
-import {
-  Journal as JournalSchemaClass,
-  JournalDocument,
-} from '../journal.schema';
+import { Journal as JournalSchemaClass, JournalDocument } from '../journal.schema';
 import { JournalRepository } from '../../application/ports/journal.repository';
 
 import { Journal } from '../../domain/journal.entity';
@@ -26,11 +23,7 @@ export class MongoJournalRepository implements JournalRepository {
 
   async save(journal: Journal): Promise<void> {
     const doc = JournalMapper.toPersistence(journal);
-    await this.model.updateOne(
-      { _id: doc._id },
-      { $set: doc },
-      { upsert: true },
-    );
+    await this.model.updateOne({ _id: doc._id }, { $set: doc }, { upsert: true });
   }
 
   async findById(id: JournalId): Promise<Journal | null> {

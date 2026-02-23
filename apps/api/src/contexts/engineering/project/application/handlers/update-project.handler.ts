@@ -27,9 +27,7 @@ export class UpdateProjectHandler implements ICommandHandler<UpdateProjectComman
       throw new NotFoundException(`Project with ID ${id} not found`);
     }
 
-    this.logger.log(
-      `Updating project ${id} with data: ${JSON.stringify(payload)}`,
-    );
+    this.logger.log(`Updating project ${id} with data: ${JSON.stringify(payload)}`);
 
     project.updateInfo(payload);
 
@@ -44,9 +42,7 @@ export class UpdateProjectHandler implements ICommandHandler<UpdateProjectComman
       ),
     );
 
-    this.logger.log(
-      `Project ${id} updated in DB. Links count: ${project.links?.length}`,
-    );
+    this.logger.log(`Project ${id} updated in DB. Links count: ${project.links?.length}`);
 
     // Invalidate project list cache
     await this.cacheService.deleteByPattern('projects:*');

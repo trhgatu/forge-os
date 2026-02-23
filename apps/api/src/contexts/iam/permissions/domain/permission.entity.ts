@@ -15,9 +15,7 @@ export interface PermissionProps {
 export class Permission {
   private constructor(private readonly props: PermissionProps) {}
 
-  static create(
-    props: Omit<PermissionProps, 'isDeleted' | 'deletedAt'>,
-  ): Permission {
+  static create(props: Omit<PermissionProps, 'isDeleted' | 'deletedAt'>): Permission {
     return new Permission({ ...props, isDeleted: false });
   }
 
@@ -61,12 +59,9 @@ export class Permission {
     return this.props.updatedAt;
   }
 
-  update(
-    props: Partial<Omit<PermissionProps, 'id' | 'isDeleted' | 'deletedAt'>>,
-  ): void {
+  update(props: Partial<Omit<PermissionProps, 'id' | 'isDeleted' | 'deletedAt'>>): void {
     if (props.name !== undefined) this.props.name = props.name;
-    if (props.description !== undefined)
-      this.props.description = props.description;
+    if (props.description !== undefined) this.props.description = props.description;
     if (props.resource !== undefined) this.props.resource = props.resource;
     if (props.action !== undefined) this.props.action = props.action;
     this.props.updatedAt = new Date();

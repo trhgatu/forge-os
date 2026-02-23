@@ -53,9 +53,7 @@ export class MongoQuoteRepository implements QuoteRepository {
         });
       } catch (error: unknown) {
         if (MongoErrorUtils.isDuplicateKeyError(error)) {
-          this.logger.warn(
-            `Race condition detected for date ${date}. Retrying...`,
-          );
+          this.logger.warn(`Race condition detected for date ${date}. Retrying...`);
           return this.findDaily(date);
         }
         throw error;
@@ -67,11 +65,7 @@ export class MongoQuoteRepository implements QuoteRepository {
 
   async save(quote: Quote): Promise<void> {
     const doc = QuoteMapper.toPersistence(quote);
-    await this.model.updateOne(
-      { _id: doc._id },
-      { $set: doc },
-      { upsert: true },
-    );
+    await this.model.updateOne({ _id: doc._id }, { $set: doc }, { upsert: true });
   }
 
   async findById(id: QuoteId): Promise<Quote | null> {

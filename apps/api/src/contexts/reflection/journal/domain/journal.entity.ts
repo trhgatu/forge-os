@@ -29,10 +29,10 @@ export class Journal {
   ) {}
 
   static create(
-    props: Omit<
-      JournalProps,
-      'createdAt' | 'updatedAt' | 'tags' | 'relations'
-    > & { tags?: string[]; relations?: JournalRelation[] },
+    props: Omit<JournalProps, 'createdAt' | 'updatedAt' | 'tags' | 'relations'> & {
+      tags?: string[];
+      relations?: JournalRelation[];
+    },
     id: JournalId,
     now: Date,
   ): Journal {
@@ -61,9 +61,7 @@ export class Journal {
   }
 
   updateInfo(
-    props: Partial<
-      Omit<JournalProps, 'createdAt' | 'updatedAt' | 'relations' | 'tags'>
-    > & {
+    props: Partial<Omit<JournalProps, 'createdAt' | 'updatedAt' | 'relations' | 'tags'>> & {
       tags?: string[];
       relations?: JournalRelation[];
     },

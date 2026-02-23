@@ -1,9 +1,5 @@
 import { MoodType } from '@shared/enums';
-import {
-  JournalStatus,
-  JournalType,
-  JournalRelationType,
-} from '../../domain/enums';
+import { JournalStatus, JournalType, JournalRelationType } from '../../domain/enums';
 
 export interface CreateJournalRelationPayload {
   type: JournalRelationType;

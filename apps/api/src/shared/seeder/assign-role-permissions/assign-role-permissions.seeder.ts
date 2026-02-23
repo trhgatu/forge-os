@@ -2,10 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import {
-  Role,
-  RoleDocument,
-} from 'src/contexts/iam/roles/infrastructure/schemas/iam-role.schema';
+import { Role, RoleDocument } from 'src/contexts/iam/roles/infrastructure/schemas/iam-role.schema';
 import {
   Permission,
   PermissionDocument,
@@ -31,8 +28,6 @@ export class AssignRolePermissionsSeeder {
     adminRole.permissions = allPermissions.map((p) => p._id as Types.ObjectId);
 
     await adminRole.save();
-    console.log(
-      `✅ Assigned ${allPermissions.length} permissions to Admin role`,
-    );
+    console.log(`✅ Assigned ${allPermissions.length} permissions to Admin role`);
   }
 }

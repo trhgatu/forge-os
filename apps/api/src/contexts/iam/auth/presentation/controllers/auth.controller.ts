@@ -1,10 +1,7 @@
 import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from '../../application/services/auth.service';
 import { RegisterDto, LoginDto } from '../../application/dtos';
-import {
-  JwtAuthGuard,
-  RefreshTokenGuard,
-} from 'src/contexts/iam/auth/application/guards';
+import { JwtAuthGuard, RefreshTokenGuard } from 'src/contexts/iam/auth/application/guards';
 import { GetUser } from '../../application/decorators/get-user.decorator';
 import { Request } from 'express';
 import { extractBearerToken } from '@shared/utils/extract-bearer-token';

@@ -15,9 +15,7 @@ export class DeletePermissionHandler implements ICommandHandler<DeletePermission
     const existing = await this.permissionRepository.findById(command.id);
     if (!existing) throw new PermissionNotFoundException({ id: command.id });
     await this.permissionRepository.softDelete(command.id);
-    this.eventBus.publish(
-      new PermissionModifiedEvent(existing.id, 'soft-delete'),
-    );
+    this.eventBus.publish(new PermissionModifiedEvent(existing.id, 'soft-delete'));
     return { deleted: true };
   }
 }

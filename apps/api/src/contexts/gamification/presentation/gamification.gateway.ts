@@ -14,9 +14,7 @@ import { LoggerService } from '@shared/logging/logger.service';
   },
   namespace: 'gamification',
 })
-export class GamificationGateway
-  implements OnGatewayConnection, OnGatewayDisconnect
-{
+export class GamificationGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private readonly authService: AuthService,
     private readonly logger: LoggerService,
@@ -27,10 +25,7 @@ export class GamificationGateway
 
   async handleConnection(client: Socket) {
     try {
-      this.logger.debug(
-        '=== Gamification Connection Debug ===',
-        'GamificationGateway',
-      );
+      this.logger.debug('=== Gamification Connection Debug ===', 'GamificationGateway');
       this.logger.debug(`Client ID: ${client.id}`, 'GamificationGateway');
       this.logger.debug(
         `Headers authorization: ${client.handshake.headers?.authorization}`,
@@ -49,8 +44,7 @@ export class GamificationGateway
         userId = queryUserId as string;
       }
 
-      const token =
-        client.handshake.auth?.token || client.handshake.headers?.authorization;
+      const token = client.handshake.auth?.token || client.handshake.headers?.authorization;
 
       this.logger.debug(`Token found: ${!!token}`, 'GamificationGateway');
 
@@ -70,15 +64,9 @@ export class GamificationGateway
 
       if (userId) {
         void client.join(`user:${userId}`);
-        this.logger.log(
-          `Client connected: ${client.id} (User: ${userId})`,
-          'GamificationGateway',
-        );
+        this.logger.log(`Client connected: ${client.id} (User: ${userId})`, 'GamificationGateway');
       } else {
-        this.logger.log(
-          `Client connected: ${client.id} (Anonymous)`,
-          'GamificationGateway',
-        );
+        this.logger.log(`Client connected: ${client.id} (Anonymous)`, 'GamificationGateway');
       }
     } catch (error) {
       this.logger.error(
@@ -94,12 +82,7 @@ export class GamificationGateway
     this.logger.log(`Client disconnected: ${client.id}`, 'GamificationGateway');
   }
 
-  emitXpAwarded(
-    userId: string,
-    data: { xp: number; newLevel: number; reason: string },
-  ) {
-    this.server
-      .to(`user:${String(userId)}`)
-      .emit('xp_awarded', { userId, ...data });
+  emitXpAwarded(userId: string, data: { xp: number; newLevel: number; reason: string }) {
+    this.server.to(`user:${String(userId)}`).emit('xp_awarded', { userId, ...data });
   }
 }

@@ -7,10 +7,7 @@ import { MemoryPresenter } from '../../presentation/memory.presenter';
 import { MemoryResponse } from '../../presentation/dto/memory.response';
 
 @CommandHandler(UpdateMemoryCommand)
-export class UpdateMemoryHandler implements ICommandHandler<
-  UpdateMemoryCommand,
-  MemoryResponse
-> {
+export class UpdateMemoryHandler implements ICommandHandler<UpdateMemoryCommand, MemoryResponse> {
   constructor(
     @Inject('MemoryRepository')
     private readonly memoryRepo: MemoryRepository,
@@ -26,9 +23,7 @@ export class UpdateMemoryHandler implements ICommandHandler<
     const mappedPayload = {
       ...payload,
       title: payload.title ? new Map(Object.entries(payload.title)) : undefined,
-      content: payload.content
-        ? new Map(Object.entries(payload.content))
-        : undefined,
+      content: payload.content ? new Map(Object.entries(payload.content)) : undefined,
     };
 
     memory.updateInfo(mappedPayload);

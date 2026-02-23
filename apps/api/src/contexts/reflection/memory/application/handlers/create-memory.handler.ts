@@ -14,10 +14,7 @@ import { EventBus } from '@nestjs/cqrs';
 import { MemoryStatus, MoodType } from '@shared/enums';
 
 @CommandHandler(CreateMemoryCommand)
-export class CreateMemoryHandler implements ICommandHandler<
-  CreateMemoryCommand,
-  MemoryResponse
-> {
+export class CreateMemoryHandler implements ICommandHandler<CreateMemoryCommand, MemoryResponse> {
   constructor(
     @Inject('MemoryRepository')
     private readonly memoryRepo: MemoryRepository,

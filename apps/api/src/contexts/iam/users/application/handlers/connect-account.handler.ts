@@ -30,8 +30,6 @@ export class ConnectAccountHandler implements ICommandHandler<ConnectAccountComm
       connections: user.connections,
     });
 
-    this.logger.log(
-      `Connected account ${provider}:${identifier} to user ${userId}`,
-    );
+    this.logger.log(`Connected account ${provider}:${identifier} to user ${userId}`);
   }
 }

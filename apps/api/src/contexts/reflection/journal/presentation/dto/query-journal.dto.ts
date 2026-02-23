@@ -1,11 +1,4 @@
-import {
-  IsEnum,
-  IsOptional,
-  IsString,
-  IsBoolean,
-  IsNumber,
-  IsArray,
-} from 'class-validator';
+import { IsEnum, IsOptional, IsString, IsBoolean, IsNumber, IsArray } from 'class-validator';
 import { Type } from 'class-transformer';
 
 import { MoodType } from '@shared/enums';

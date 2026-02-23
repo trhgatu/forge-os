@@ -4,11 +4,6 @@ import { HttpStatus } from '@nestjs/common';
 
 export class UserNotFoundException extends BaseDomainException {
   constructor(metadata?: Record<string, any>) {
-    super(
-      'User not found',
-      ErrorCode.USER_NOT_FOUND,
-      HttpStatus.NOT_FOUND,
-      metadata,
-    );
+    super('User not found', ErrorCode.USER_NOT_FOUND, HttpStatus.NOT_FOUND, metadata);
   }
 }

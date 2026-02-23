@@ -66,9 +66,7 @@ export class MoodAdminController {
   @Patch(':id')
   @Permissions(PermissionEnum.UPDATE_MOOD)
   update(@Param('id') id: string, @Body() dto: UpdateMoodDto) {
-    return this.commandBus.execute(
-      new UpdateMoodCommand(MoodId.create(id), dto),
-    );
+    return this.commandBus.execute(new UpdateMoodCommand(MoodId.create(id), dto));
   }
 
   @Delete(':id')

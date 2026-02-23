@@ -4,19 +4,11 @@ export class QuoteCacheKeys {
   static readonly ALL_QUOTES_PATTERN = 'quotes:*';
   static readonly PUBLIC_QUOTES_PATTERN = 'quotes:public:*';
 
-  static GET_ALL_PUBLIC(
-    page: number,
-    limit: number,
-    payload: QuoteFilter,
-  ): string {
+  static GET_ALL_PUBLIC(page: number, limit: number, payload: QuoteFilter): string {
     return `quotes:public:p${page}:l${limit}:${JSON.stringify(payload)}`;
   }
 
-  static GET_ALL_ADMIN(
-    page: number,
-    limit: number,
-    payload: QuoteFilter,
-  ): string {
+  static GET_ALL_ADMIN(page: number, limit: number, payload: QuoteFilter): string {
     return `quotes:admin:p${page}:l${limit}:${JSON.stringify(payload)}`;
   }
 

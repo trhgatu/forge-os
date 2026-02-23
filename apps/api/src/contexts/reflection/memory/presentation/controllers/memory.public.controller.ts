@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  Query,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { QueryMemoryDto, CreateMemoryDto, UpdateMemoryDto } from '../dto';
 import {
   GetAllMemoriesForPublicQuery,
@@ -50,16 +41,12 @@ export class MemoryPublicController {
   @Put(':id')
   update(@Param('id') id: string, @Body() dto: UpdateMemoryDto) {
     const lang = 'en';
-    return this.commandBus.execute(
-      new UpdateMemoryCommand(MemoryId.create(id), dto, lang),
-    );
+    return this.commandBus.execute(new UpdateMemoryCommand(MemoryId.create(id), dto, lang));
   }
 
   @Delete(':id')
   delete(@Param('id') id: string) {
     const lang = 'en';
-    return this.commandBus.execute(
-      new SoftDeleteMemoryCommand(MemoryId.create(id), lang),
-    );
+    return this.commandBus.execute(new SoftDeleteMemoryCommand(MemoryId.create(id), lang));
   }
 }

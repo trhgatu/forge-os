@@ -1,8 +1,7 @@
 export const projects = [
   {
     title: 'Forge OS System',
-    description:
-      'The personal operating system for productivity and reflection.',
+    description: 'The personal operating system for productivity and reflection.',
     status: 'active',
     tags: ['React', 'Next.js', 'System Architecture'],
     isPinned: true,

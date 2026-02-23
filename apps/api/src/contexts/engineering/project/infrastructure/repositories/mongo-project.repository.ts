@@ -19,16 +19,10 @@ export class MongoProjectRepository implements ProjectRepository {
 
   async save(project: ProjectEntity): Promise<void> {
     const doc = ProjectMapper.toPersistence(project);
-    await this.projectModel.updateOne(
-      { _id: doc._id },
-      { $set: doc },
-      { upsert: true },
-    );
+    await this.projectModel.updateOne({ _id: doc._id }, { $set: doc }, { upsert: true });
   }
 
-  async findAll(
-    filter: ProjectFilter,
-  ): Promise<PaginatedResult<ProjectEntity>> {
+  async findAll(filter: ProjectFilter): Promise<PaginatedResult<ProjectEntity>> {
     const { page = 1, limit = 10 } = filter;
     const skip = (page - 1) * limit;
 
@@ -36,8 +30,7 @@ export class MongoProjectRepository implements ProjectRepository {
       isDeleted: filter.isDeleted ? true : { $ne: true },
       ...(filter.status && { status: filter.status }),
       ...(filter.isPinned !== undefined && { isPinned: filter.isPinned }),
-      ...(filter.tags &&
-        filter.tags.length > 0 && { tags: { $in: filter.tags } }),
+      ...(filter.tags && filter.tags.length > 0 && { tags: { $in: filter.tags } }),
       ...(filter.keyword && {
         $or: [
           {
@@ -57,11 +50,7 @@ export class MongoProjectRepository implements ProjectRepository {
     };
 
     const result = await paginateDDD(
-      this.projectModel
-        .find(query)
-        .sort({ isPinned: -1, updatedAt: -1 })
-        .skip(skip)
-        .limit(limit),
+      this.projectModel.find(query).sort({ isPinned: -1, updatedAt: -1 }).skip(skip).limit(limit),
       this.projectModel.countDocuments(query),
       page,
       limit,
@@ -80,30 +69,20 @@ export class MongoProjectRepository implements ProjectRepository {
   }
 
   async delete(id: ProjectId): Promise<void> {
-    const result = await this.projectModel
-      .findByIdAndDelete(id.toString())
-      .exec();
+    const result = await this.projectModel.findByIdAndDelete(id.toString()).exec();
     if (!result) throw new NotFoundException('Project not found');
   }
 
   async softDelete(id: ProjectId): Promise<void> {
     const result = await this.projectModel
-      .findByIdAndUpdate(
-        id.toString(),
-        { isDeleted: true, deletedAt: new Date() },
-        { new: true },
-      )
+      .findByIdAndUpdate(id.toString(), { isDeleted: true, deletedAt: new Date() }, { new: true })
       .exec();
     if (!result) throw new NotFoundException('Project not found');
   }
 
   async restore(id: ProjectId): Promise<void> {
     const result = await this.projectModel
-      .findByIdAndUpdate(
-        id.toString(),
-        { isDeleted: false, deletedAt: null },
-        { new: true },
-      )
+      .findByIdAndUpdate(id.toString(), { isDeleted: false, deletedAt: null }, { new: true })
       .exec();
     if (!result) throw new NotFoundException('Project not found');
   }

@@ -20,8 +20,6 @@ export class InvalidatePermissionCacheHandler implements IEventHandler<Permissio
     await this.cacheService.deleteByPattern('permissions:all:*');
 
     // Invalidate specific permission cache
-    await this.cacheService.deleteByPattern(
-      `permissions:id:${event.permissionId.toString()}`,
-    );
+    await this.cacheService.deleteByPattern(`permissions:id:${event.permissionId.toString()}`);
   }
 }

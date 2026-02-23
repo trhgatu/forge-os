@@ -18,10 +18,7 @@ import {
   SoftDeleteQuoteCommand,
   RestoreQuoteCommand,
 } from '../../application/commands';
-import {
-  GetAllQuotesQuery,
-  GetQuoteByIdQuery,
-} from '../../application/queries';
+import { GetAllQuotesQuery, GetQuoteByIdQuery } from '../../application/queries';
 import { QuoteId } from '../../domain/value-objects/quote-id.vo';
 import { JwtAuthGuard } from 'src/contexts/iam/auth/application/guards';
 import { PermissionsGuard } from '@shared/guards/permissions.guard';
@@ -51,17 +48,13 @@ export class QuoteAdminController {
   @Get(':id')
   @Permissions(PermissionEnum.READ_QUOTE)
   findById(@Param('id') id: string, @Query('lang') lang?: string) {
-    return this.queryBus.execute(
-      new GetQuoteByIdQuery(QuoteId.create(id), lang ?? 'en'),
-    );
+    return this.queryBus.execute(new GetQuoteByIdQuery(QuoteId.create(id), lang ?? 'en'));
   }
 
   @Patch(':id')
   @Permissions(PermissionEnum.UPDATE_MEMORY)
   update(@Param('id') id: string, @Body() dto: UpdateQuoteDto) {
-    return this.commandBus.execute(
-      new UpdateQuoteCommand(QuoteId.create(id), dto),
-    );
+    return this.commandBus.execute(new UpdateQuoteCommand(QuoteId.create(id), dto));
   }
 
   @Delete(':id')
