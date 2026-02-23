@@ -1,6 +1,7 @@
 "use client";
 
-import React, { createContext, useContext, useRef, useState, useEffect, ReactNode } from "react";
+import type { ReactNode } from "react";
+import React, { createContext, useContext, useRef, useState, useEffect } from "react";
 
 export type SoundType = "click" | "hover" | "success" | "error" | "on" | "off";
 

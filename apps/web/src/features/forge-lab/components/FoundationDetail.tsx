@@ -1,6 +1,7 @@
-import React from "react";
 import { ArrowLeft, Share2, Edit3, Activity, GitMerge, Sparkles, Zap } from "lucide-react";
-import { Foundation } from "../types";
+import React from "react";
+
+import type { Foundation } from "../types";
 
 interface FoundationDetailProps {
   foundation: Foundation;

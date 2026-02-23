@@ -1,5 +1,5 @@
-import { MoodType } from "./journal";
-import {
+import type { MoodType } from "./journal";
+import type {
   MemoryMetadata,
   QuoteMetadata,
   JournalMetadata,

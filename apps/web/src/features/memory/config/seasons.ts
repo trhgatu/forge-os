@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import { Sprout, Sun, Leaf, Snowflake } from "lucide-react";
+
 import type { MoodType } from "@/shared/types";
 
 export type InnerSeason = "Spring" | "Summer" | "Autumn" | "Winter";

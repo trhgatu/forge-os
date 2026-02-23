@@ -5,19 +5,11 @@ export class JournalCacheKeys {
   static readonly ALL_JOURNALS_PATTERN = 'journals:*';
   static readonly PUBLIC_JOURNALS_PATTERN = 'journals:public:*';
 
-  static GET_ALL_PUBLIC(
-    page: number,
-    limit: number,
-    payload: JournalFilter,
-  ): string {
+  static GET_ALL_PUBLIC(page: number, limit: number, payload: JournalFilter): string {
     return `journals:public:p${page}:l${limit}:${JSON.stringify(payload)}`;
   }
 
-  static GET_ALL_ADMIN(
-    page: number,
-    limit: number,
-    payload: JournalFilter,
-  ): string {
+  static GET_ALL_ADMIN(page: number, limit: number, payload: JournalFilter): string {
     return `journals:admin:p${page}:l${limit}:${JSON.stringify(payload)}`;
   }
 

@@ -1,4 +1,4 @@
-import { JournalEntry } from "@/shared/types/journal";
+import type { JournalEntry } from "@/shared/types/journal";
 
 export const MOCK_ENTRIES: JournalEntry[] = [
   {

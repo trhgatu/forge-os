@@ -1,7 +1,10 @@
-import React from "react";
 import { Plus, Search, Filter, MoreHorizontal, Folder, Clock } from "lucide-react";
+import React from "react";
+
 import { GlassCard } from "@/shared/components/ui/GlassCard";
-import { Project } from "../types";
+
+import type { Project } from "../types";
+
 import { ProjectDetail } from "./project-detail/ProjectDetail";
 
 interface ProjectForgeProps {

@@ -2,10 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, FilterQuery } from 'mongoose';
 import { RoleRepository } from '../../application/ports/role.repository';
-import {
-  Role,
-  RoleDocument,
-} from '../../infrastructure/schemas/iam-role.schema';
+import { Role, RoleDocument } from '../../infrastructure/schemas/iam-role.schema';
 import { CreateRoleDto, UpdateRoleDto, QueryRoleDto } from '../../dto';
 import { paginate } from '@shared/utils';
 import { PaginatedResult } from '@shared/interfaces/paginated-result.interface';
@@ -14,9 +11,7 @@ import { RoleMapper } from '../mappers/role.mapper';
 
 @Injectable()
 export class MongoRoleRepository implements RoleRepository {
-  constructor(
-    @InjectModel(Role.name) private readonly roleModel: Model<RoleDocument>,
-  ) {}
+  constructor(@InjectModel(Role.name) private readonly roleModel: Model<RoleDocument>) {}
 
   async create(dto: CreateRoleDto): Promise<RoleEntity> {
     const createdRole = await this.roleModel.create(dto);
@@ -30,9 +25,7 @@ export class MongoRoleRepository implements RoleRepository {
     const skip = (pageNum - 1) * limitNum;
 
     // Default to isDeleted: false if not specified
-    const isDeleted = query.isDeleted
-      ? String(query.isDeleted) === 'true'
-      : false;
+    const isDeleted = query.isDeleted ? String(query.isDeleted) === 'true' : false;
 
     const search: FilterQuery<RoleDocument> = { isDeleted };
     if (keyword) {
@@ -41,11 +34,7 @@ export class MongoRoleRepository implements RoleRepository {
     }
 
     const result = await paginate(
-      this.roleModel
-        .find(search)
-        .skip(skip)
-        .limit(limitNum)
-        .populate('permissions'),
+      this.roleModel.find(search).skip(skip).limit(limitNum).populate('permissions'),
       this.roleModel.countDocuments(search),
       pageNum,
       limitNum,
@@ -58,10 +47,7 @@ export class MongoRoleRepository implements RoleRepository {
   }
 
   async findById(id: string): Promise<RoleEntity | null> {
-    const role = await this.roleModel
-      .findById(id)
-      .populate('permissions')
-      .exec();
+    const role = await this.roleModel.findById(id).populate('permissions').exec();
     return role ? RoleMapper.toDomain(role) : null;
   }
 

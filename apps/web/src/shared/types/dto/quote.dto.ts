@@ -1,4 +1,4 @@
-import { MoodType } from "@/shared/types/journal";
+import type { MoodType } from "@/shared/types/journal";
 
 export interface QuoteDto {
   id: string;

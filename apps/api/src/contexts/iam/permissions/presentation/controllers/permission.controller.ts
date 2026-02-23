@@ -21,10 +21,7 @@ import {
   UpdatePermissionCommand,
   DeletePermissionCommand,
 } from '../../application/commands';
-import {
-  GetPermissionsQuery,
-  GetPermissionByIdQuery,
-} from '../../application/queries';
+import { GetPermissionsQuery, GetPermissionByIdQuery } from '../../application/queries';
 
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @Controller('permissions')

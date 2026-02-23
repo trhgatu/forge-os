@@ -12,17 +12,11 @@ import { PaginatedResult } from '@shared/types/paginated-result';
 
 @Injectable()
 export class MongoMemoryRepository implements MemoryRepository {
-  constructor(
-    @InjectModel('Memory') private readonly model: Model<MemoryDocument>,
-  ) {}
+  constructor(@InjectModel('Memory') private readonly model: Model<MemoryDocument>) {}
 
   async save(memory: Memory): Promise<void> {
     const doc = MemoryMapper.toPersistence(memory);
-    await this.model.updateOne(
-      { _id: doc._id },
-      { $set: doc },
-      { upsert: true },
-    );
+    await this.model.updateOne({ _id: doc._id }, { $set: doc }, { upsert: true });
   }
 
   async findById(id: MemoryId): Promise<Memory | null> {
@@ -37,8 +31,7 @@ export class MongoMemoryRepository implements MemoryRepository {
     const lang = query.lang || 'en';
 
     // Helper to escape regex special characters
-    const escapeRegex = (str: string) =>
-      str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const escapeRegex = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const safeKeyword = query.keyword ? escapeRegex(query.keyword) : undefined;
 
     const filter: FilterQuery<MemoryDocument> = {

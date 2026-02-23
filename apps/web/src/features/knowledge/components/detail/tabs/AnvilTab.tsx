@@ -1,8 +1,9 @@
-import React, { useState } from "react";
 import { Hammer, Eye, Quote, X } from "lucide-react";
+import React, { useState } from "react";
+
+import { ForgeEditor } from "@/shared/components/editor/ForgeEditor";
 import { GlassCard } from "@/shared/components/ui/GlassCard";
 import { cn } from "@/shared/lib/utils";
-import { ForgeEditor } from "@/shared/components/editor/ForgeEditor";
 
 interface AnvilTabProps {
   extracts?: { id: string; text: string }[];

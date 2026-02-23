@@ -13,14 +13,8 @@ import {
   Permission,
   PermissionSchema,
 } from 'src/contexts/iam/permissions/infrastructure/schemas/iam-permission.schema';
-import {
-  Role,
-  RoleSchema,
-} from 'src/contexts/iam/roles/infrastructure/schemas/iam-role.schema';
-import {
-  User,
-  UserSchema,
-} from 'src/contexts/iam/users/infrastructure/schemas/iam-user.schema';
+import { Role, RoleSchema } from 'src/contexts/iam/roles/infrastructure/schemas/iam-role.schema';
+import { User, UserSchema } from 'src/contexts/iam/users/infrastructure/schemas/iam-user.schema';
 
 import {
   ProjectSchema,
@@ -45,12 +39,6 @@ import { ProjectSeeder } from './project/project.seeder';
       { name: Project.name, schema: ProjectSchema },
     ]),
   ],
-  providers: [
-    PermissionSeeder,
-    RoleSeeder,
-    AssignRolePermissionsSeeder,
-    UserSeeder,
-    ProjectSeeder,
-  ],
+  providers: [PermissionSeeder, RoleSeeder, AssignRolePermissionsSeeder, UserSeeder, ProjectSeeder],
 })
 export class SeederModule {}

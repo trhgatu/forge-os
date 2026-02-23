@@ -1,8 +1,11 @@
-import React, { useState } from "react";
 import { Github, Loader2, AlertCircle } from "lucide-react";
-import { forgeApi } from "../api";
+import React, { useState } from "react";
+
+
 import { GlassCard } from "@/shared/components/ui/GlassCard";
 import { SYSTEM_CONFIG } from "@/shared/config/system.config";
+
+import { forgeApi } from "../api";
 
 interface ConnectGithubProps {
   onConnected: (username: string) => void;

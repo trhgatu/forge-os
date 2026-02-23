@@ -1,9 +1,12 @@
 "use client";
 
-import type { Memory } from "@/shared/types/memory";
-import { cn } from "@/shared/lib/utils";
-import { SEASON_CONFIG, getSeasonFromMood } from "../config";
 import Image from "next/image";
+
+import { cn } from "@/shared/lib/utils";
+import type { Memory } from "@/shared/types/memory";
+
+import { SEASON_CONFIG, getSeasonFromMood } from "../config";
+
 
 interface MemoryCardProps {
   memory: Memory;

@@ -1,4 +1,5 @@
-import { KnowledgeConcept } from "@/shared/types";
+import type { KnowledgeConcept } from "@/shared/types";
+
 import type { WikiQueryResponse, WikiSearchResponse } from "../types/wiki-api";
 
 const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
@@ -169,6 +170,7 @@ export async function getRandomConcepts(
     const items = data.query?.random ?? [];
 
     const now = new Date().toISOString();
+
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return items.map((item: any) => ({

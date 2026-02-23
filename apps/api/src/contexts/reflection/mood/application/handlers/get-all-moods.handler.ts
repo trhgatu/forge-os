@@ -16,9 +16,7 @@ export class GetAllMoodsHandler implements IQueryHandler<
     private readonly moodRepo: MoodRepository,
   ) {}
 
-  async execute(
-    query: GetAllMoodsQuery,
-  ): Promise<PaginatedResult<MoodResponse>> {
+  async execute(query: GetAllMoodsQuery): Promise<PaginatedResult<MoodResponse>> {
     const result = await this.moodRepo.findAll(query.filter);
     return {
       meta: result.meta,

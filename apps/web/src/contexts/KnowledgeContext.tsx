@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useCallback } from "react";
-import type { KnowledgeConcept } from "@/shared/types";
+
 import { useLanguage } from "@/contexts/LanguageContext";
+import type { KnowledgeConcept } from "@/shared/types";
 import { useKnowledgeStore } from "@/store/knowledge.store";
 
 interface KnowledgeProviderProps {

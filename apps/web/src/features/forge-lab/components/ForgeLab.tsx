@@ -1,25 +1,27 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
 import { LayoutDashboard, Layers, Book, Network, Plus } from "lucide-react";
+import React, { useState, useEffect } from "react";
+
 import { cn } from "@/shared/lib/utils";
-import { ForgeTab, Project, Foundation, ResearchTrail } from "../types";
-import { forgeApi } from "../api";
 import { useAuthStore } from "@/shared/store/authStore";
 
-// Components
-import { LabDashboard } from "./dashboard/LabDashboard";
-import { ProjectForge } from "./ProjectForge";
-import { FoundationLibrary } from "./FoundationLibrary";
-import { ResearchTrails } from "./ResearchTrails";
-import { CreateProjectModal } from "./project-detail/ProjectModals";
-
+import { forgeApi } from "../api";
 import {
   useProjects,
   useCreateProject,
   useUpdateProject,
   useDeleteProject,
 } from "../hooks/useProjects";
+import type { ForgeTab, Project, Foundation, ResearchTrail } from "../types";
+
+// Components
+import { LabDashboard } from "./dashboard/LabDashboard";
+import { FoundationLibrary } from "./FoundationLibrary";
+import { CreateProjectModal } from "./project-detail/ProjectModals";
+import { ProjectForge } from "./ProjectForge";
+import { ResearchTrails } from "./ResearchTrails";
+
 
 const MOCK_FOUNDATIONS: Foundation[] = [
   {
@@ -107,6 +109,7 @@ export const ForgeLab: React.FC = () => {
   const projects = React.useMemo(() => {
     if (!projectsData) return [];
     if (Array.isArray(projectsData)) return projectsData;
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (projectsData as any).data || [];
   }, [projectsData]);

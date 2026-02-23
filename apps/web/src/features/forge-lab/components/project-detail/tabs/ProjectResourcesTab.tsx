@@ -1,7 +1,10 @@
-import React from "react";
 import { Plus, GitBranch, Link as LinkIcon, PenTool, FileText } from "lucide-react";
-import { Project } from "../../../types";
+import React from "react";
+
 import { GlassCard } from "@/shared/components/ui/GlassCard";
+
+import type { Project } from "../../../types";
+
 
 interface ProjectLink {
   title: string;

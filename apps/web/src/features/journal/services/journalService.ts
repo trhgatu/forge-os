@@ -1,6 +1,7 @@
 import { apiClient } from "@/services/apiClient";
 import type { PaginatedResponse } from "@/shared/types/api";
-import { MoodType } from "@/shared/types/journal";
+import type { MoodType } from "@/shared/types/journal";
+
 import type { CreateJournalDto, JournalEntry, JournalFilter, RawJournalItem } from "../types";
 import { JournalStatus, JournalType } from "../types";
 

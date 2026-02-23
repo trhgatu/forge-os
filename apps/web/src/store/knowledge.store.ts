@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { KnowledgeConcept } from "@/shared/types";
+
 import { searchWikipedia, getConceptDetails } from "@/features/knowledge/services";
+import type { KnowledgeConcept } from "@/shared/types";
 
 interface KnowledgeState {
   searchResults: KnowledgeConcept[];

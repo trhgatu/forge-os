@@ -1,5 +1,9 @@
 import React from "react";
-import {
+
+import { useAuthStore } from "@/shared/store/authStore";
+
+import { forgeApi } from "../../api";
+import type {
   Project,
   Foundation,
   ResearchTrail,
@@ -7,14 +11,12 @@ import {
   ContributionStats,
   UserConnection,
 } from "../../types";
-import { forgeApi } from "../../api";
-import { useAuthStore } from "@/shared/store/authStore";
 
 // Widgets
-import { QuickStatsWidget } from "./QuickStatsWidget";
-import { NovaBannerWidget } from "./NovaBannerWidget";
 import { DirectivesWidget } from "./DirectivesWidget";
 import { MissionGraphWidget } from "./MissionGraphWidget";
+import { NovaBannerWidget } from "./NovaBannerWidget";
+import { QuickStatsWidget } from "./QuickStatsWidget";
 import { SystemLogsWidget } from "./SystemLogsWidget";
 
 interface LabDashboardProps {

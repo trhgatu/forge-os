@@ -1,7 +1,7 @@
-import type { Memory, CreateMemoryPayload } from "@/shared/types/memory";
 import { apiClient } from "@/services/apiClient";
 import type { PaginatedResponse } from "@/shared/types";
-import { MemoryDto } from "@/shared/types/dto/memory.dto";
+import type { MemoryDto } from "@/shared/types/dto/memory.dto";
+import type { Memory, CreateMemoryPayload } from "@/shared/types/memory";
 
 const mapDtoToMemory = (dto: MemoryDto): Memory => ({
   id: dto.id,

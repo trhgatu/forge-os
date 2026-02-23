@@ -1,9 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { GlassCard } from "@/shared/ui/GlassCard";
 /* import { streamChatResponse } from "@/lib/geminiService"; */
-import { cn } from "@/shared/lib/utils";
 import {
   Send,
   User,
@@ -13,9 +10,13 @@ import {
   ToggleRight,
   Sparkles,
 } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+
 /* import type { GenerateContentResponse } from "@google/genai"; */
 import { AgentDock, AGENTS } from "@/features/chamber/components/AgentDock";
+import { cn } from "@/shared/lib/utils";
 import type { Message, AgentId, Agent } from "@/shared/types";
+import { GlassCard } from "@/shared/ui/GlassCard";
 
 export const ForgeChamber = () => {
   const [input, setInput] = useState("");

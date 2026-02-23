@@ -6,16 +6,13 @@
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"],
-      "env": [
-        "GEMINI_API_KEY",
-        "NEXT_PUBLIC_API_URL"
-      ]
+      "env": ["GEMINI_API_KEY", "NEXT_PUBLIC_API_URL"]
     },
     "lint": {
-      "dependsOn": ["^lint"]
+      "outputs": []
     },
     "check-types": {
-      "dependsOn": ["^check-types"]
+      "outputs": []
     },
     "dev": {
       "cache": false,

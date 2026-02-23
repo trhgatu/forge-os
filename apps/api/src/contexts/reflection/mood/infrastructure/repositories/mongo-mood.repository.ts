@@ -12,17 +12,11 @@ import { PaginatedResult } from '@shared/types/paginated-result';
 
 @Injectable()
 export class MongoMoodRepository implements MoodRepository {
-  constructor(
-    @InjectModel('Mood') private readonly model: Model<MoodDocument>,
-  ) {}
+  constructor(@InjectModel('Mood') private readonly model: Model<MoodDocument>) {}
 
   async save(mood: Mood): Promise<void> {
     const doc = MoodMapper.toPersistence(mood);
-    await this.model.updateOne(
-      { _id: doc._id },
-      { $set: doc },
-      { upsert: true },
-    );
+    await this.model.updateOne({ _id: doc._id }, { $set: doc }, { upsert: true });
   }
 
   async findById(id: MoodId): Promise<Mood | null> {

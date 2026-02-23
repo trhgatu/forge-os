@@ -1,7 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { forgeApi } from "../api";
-import { Project } from "../types";
 import { toast } from "sonner";
+
+import { forgeApi } from "../api";
+import type { Project } from "../types";
 
 // Keys for cache management
 export const projectKeys = {

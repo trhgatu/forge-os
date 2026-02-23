@@ -1,11 +1,15 @@
-import React, { useState } from "react";
 import { Trash2, X, Sparkles, Pencil, Maximize2 } from "lucide-react";
+import React, { useState } from "react";
 import { toast } from "sonner";
-import type { Quote } from "@/shared/types/quote";
-import { cn } from "@/shared/lib/utils";
-import { SEASON_CONFIG, getSeasonFromMood } from "../../memory/config/seasons";
-import { ZenQuoteView } from "./ZenQuoteView";
+
 import { GlassCard } from "@/shared/components/ui/GlassCard";
+import { cn } from "@/shared/lib/utils";
+import type { Quote } from "@/shared/types/quote";
+
+import { SEASON_CONFIG, getSeasonFromMood } from "../../memory/config/seasons";
+
+import { ZenQuoteView } from "./ZenQuoteView";
+
 
 export function QuoteDetailPanel({
   quote,

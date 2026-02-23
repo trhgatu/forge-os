@@ -17,11 +17,7 @@ export class InvalidateQuoteCacheHandler implements IEventHandler<QuoteModifiedE
       InvalidateQuoteCacheHandler.name,
     );
     await this.cacheService.deleteByPattern(QuoteCacheKeys.ALL_QUOTES_PATTERN);
-    await this.cacheService.deleteByPattern(
-      QuoteCacheKeys.PUBLIC_QUOTES_PATTERN,
-    );
-    await this.cacheService.deleteByPattern(
-      QuoteCacheKeys.GET_BY_ID(event.quoteId),
-    );
+    await this.cacheService.deleteByPattern(QuoteCacheKeys.PUBLIC_QUOTES_PATTERN);
+    await this.cacheService.deleteByPattern(QuoteCacheKeys.GET_BY_ID(event.quoteId));
   }
 }

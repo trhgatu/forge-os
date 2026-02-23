@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import {
   ArrowLeft,
   Github,
@@ -13,16 +12,10 @@ import {
   Loader2,
   RefreshCw,
 } from "lucide-react";
-import { Project, GithubRepo } from "../../types";
-import { GlassCard } from "../ui/GlassCard";
+import React, { useState } from "react";
+import { toast } from "sonner";
+
 import { cn } from "@/shared/lib/utils";
-import { RepoPicker } from "./RepoPicker";
-import { EditProjectModal, DeleteConfirmModal } from "./ProjectModals";
-import { ProjectOverviewTab } from "./tabs/ProjectOverviewTab";
-import { ProjectTasksTab } from "./tabs/ProjectTasksTab";
-import { ProjectResourcesTab } from "./tabs/ProjectResourcesTab";
-import { ProjectLogsTab } from "./tabs/ProjectLogsTab";
-import { ProjectReadmeTab } from "./tabs/ProjectReadmeTab";
 
 import {
   useProject,
@@ -34,8 +27,19 @@ import {
   useDeleteProject,
   useSyncProject,
 } from "../../hooks/useProjects";
+import type { Project, GithubRepo } from "../../types";
+import { GlassCard } from "../ui/GlassCard";
 
-import { toast } from "sonner";
+
+import { EditProjectModal, DeleteConfirmModal } from "./ProjectModals";
+import { RepoPicker } from "./RepoPicker";
+import { ProjectLogsTab } from "./tabs/ProjectLogsTab";
+import { ProjectOverviewTab } from "./tabs/ProjectOverviewTab";
+import { ProjectReadmeTab } from "./tabs/ProjectReadmeTab";
+import { ProjectResourcesTab } from "./tabs/ProjectResourcesTab";
+import { ProjectTasksTab } from "./tabs/ProjectTasksTab";
+
+
 
 interface ProjectDetailProps {
   projectId: string;

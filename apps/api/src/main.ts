@@ -17,11 +17,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api/v1');
 
   app.enableCors({
-    origin: [
-      'http://localhost:3000',
-      'http://localhost:3001',
-      'https://forge-os.vercel.app',
-    ],
+    origin: ['http://localhost:3000', 'http://localhost:3001', 'https://forge-os.vercel.app'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     allowedHeaders: 'Content-Type, Authorization, X-Requested-With',
     credentials: true,

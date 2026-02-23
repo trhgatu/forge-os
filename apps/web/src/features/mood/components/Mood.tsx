@@ -1,17 +1,19 @@
 "use client";
 
-import { useState } from "react";
 import { Plus, Sparkles } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 
-import type { MoodAnalysis, MoodEntry } from "@/shared/types/mood";
-import { useMoods, useCreateMood, useUpdateMood, useDeleteMood } from "../hooks/useMood";
-import { CreateMoodDto } from "../services/moodService";
 import { useAuthStore } from "@/shared/store/authStore";
+import type { MoodAnalysis, MoodEntry } from "@/shared/types/mood";
+
+import { useMoods, useCreateMood, useUpdateMood, useDeleteMood } from "../hooks/useMood";
+import type { CreateMoodDto } from "../services/moodService";
+
+import { InsightPanel } from "./InsightPanel";
 import { MoodChart } from "./MoodChart";
 import { MoodHistoryList } from "./MoodHistoryList";
 import { MoodModal } from "./MoodModal";
-import { InsightPanel } from "./InsightPanel";
 
 export function Mood() {
   // Real Data Hook
@@ -53,6 +55,7 @@ export function Mood() {
   // Removed misplaced import
 
   const handleDelete = (id: string) => {
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     toast.custom((t: any) => (
       <div className="flex flex-col gap-2 rounded-xl border border-red-500/20 bg-black/90 p-4 text-sm text-white shadow-xl backdrop-blur-md">

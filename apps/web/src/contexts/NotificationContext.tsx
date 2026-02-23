@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { useNotificationStore } from "@/store/notification.store";
 import { toast } from "sonner";
+
+import { useNotificationStore } from "@/store/notification.store";
 
 // Mock messages
 const AMBIENT_WHISPERS = [
@@ -45,6 +46,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
             description: latest.source.toUpperCase(),
             action: {
               label: "View",
+              // eslint-disable-next-line no-console
               onClick: () => console.log("View notification", latest.id),
             },
           });

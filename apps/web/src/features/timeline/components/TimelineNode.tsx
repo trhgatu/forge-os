@@ -1,8 +1,9 @@
 "use client";
 
 import { cn } from "@/shared/lib/utils";
-import { TYPE_CONFIG } from "../config";
 import type { TimelineItem } from "@/shared/types/timeline";
+
+import { TYPE_CONFIG } from "../config";
 
 export default function TimelineNode({
   item,

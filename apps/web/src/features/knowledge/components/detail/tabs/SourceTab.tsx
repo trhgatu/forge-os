@@ -1,4 +1,3 @@
-import React, { useEffect, useState, useRef, memo } from "react";
 import {
   BookOpen,
   Calendar,
@@ -12,9 +11,11 @@ import {
   X,
 } from "lucide-react";
 import Image from "next/image";
-import { KnowledgeConcept } from "@/shared/types";
+import React, { useEffect, useState, useRef, memo } from "react";
+
 import { GlassCard } from "@/shared/components/ui/GlassCard";
 import { cn } from "@/shared/lib/utils";
+import type { KnowledgeConcept } from "@/shared/types";
 
 interface SourceTabProps {
   concept: KnowledgeConcept;

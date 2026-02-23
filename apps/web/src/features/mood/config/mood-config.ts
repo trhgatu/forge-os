@@ -14,6 +14,7 @@ import {
   Wind,
   History as HistoryIcon,
 } from "lucide-react";
+
 import type { MoodType } from "@/shared/types";
 
 export interface MoodConfigItem {

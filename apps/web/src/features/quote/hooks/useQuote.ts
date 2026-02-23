@@ -1,8 +1,12 @@
 "use client";
 
 import { useInfiniteQuery, useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import type { Quote } from "@/shared/types/quote";
+
+import type { PaginatedResponse } from "@/shared/types";
+import type { QuoteFilter } from "@/shared/types/dto/quote.dto";
 import type { MoodType } from "@/shared/types/journal";
+import type { Quote } from "@/shared/types/quote";
+
 import {
   getQuotes,
   deleteQuote,
@@ -10,8 +14,7 @@ import {
   createQuote,
   getDailyQuote,
 } from "../services/quoteService";
-import type { PaginatedResponse } from "@/shared/types";
-import { QuoteFilter } from "@/shared/types/dto/quote.dto";
+
 
 export const QUOTE_QUERY_KEY = ["quotes"];
 
@@ -90,6 +93,7 @@ export function useUpdateQuote() {
       mood?: string;
       status?: string;
     }) => {
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const payload: Record<string, any> = {};
       if (content) {

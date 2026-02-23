@@ -1,11 +1,13 @@
 "use client";
 
 import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { Memory, CreateMemoryPayload } from "@/shared/types/memory";
-import { getMemories, deleteMemory, updateMemory } from "../services/memoryService";
 import { apiClient } from "@/services/apiClient";
 import type { PaginatedResponse } from "@/shared/types";
+import type { Memory, CreateMemoryPayload } from "@/shared/types/memory";
+
+import { getMemories, deleteMemory, updateMemory } from "../services/memoryService";
 
 export const MEMORY_QUERY_KEY = ["memories"];
 

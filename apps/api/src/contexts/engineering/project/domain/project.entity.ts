@@ -88,20 +88,16 @@ export class Project {
     );
   }
 
-  updateInfo(
-    props: Partial<Omit<ProjectProps, 'createdAt' | 'updatedAt' | 'logs'>>,
-  ): void {
+  updateInfo(props: Partial<Omit<ProjectProps, 'createdAt' | 'updatedAt' | 'logs'>>): void {
     if (props.title !== undefined) this.props.title = props.title;
-    if (props.description !== undefined)
-      this.props.description = props.description;
+    if (props.description !== undefined) this.props.description = props.description;
     if (props.status !== undefined) this.props.status = props.status;
     if (props.tags !== undefined) this.props.tags = props.tags;
     if (props.isPinned !== undefined) this.props.isPinned = props.isPinned;
     if (props.progress !== undefined) this.props.progress = props.progress;
     if (props.taskBoard !== undefined) this.props.taskBoard = props.taskBoard;
     if (props.links !== undefined) this.props.links = props.links;
-    if (props.githubStats !== undefined)
-      this.props.githubStats = props.githubStats;
+    if (props.githubStats !== undefined) this.props.githubStats = props.githubStats;
     if (props.metadata !== undefined) this.props.metadata = props.metadata;
 
     this.props.updatedAt = new Date();

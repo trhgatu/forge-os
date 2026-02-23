@@ -1,4 +1,4 @@
-import { MoodType } from "@/shared/types";
+import type { MoodType } from "@/shared/types";
 
 export const MOOD_COLORS: Record<MoodType, string> = {
   inspired: "text-fuchsia-400 bg-fuchsia-400/10",

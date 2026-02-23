@@ -1,4 +1,4 @@
-import { TimelineItem } from "@/shared/types";
+import type { TimelineItem } from "@/shared/types";
 
 export const MOCK_TIMELINE: TimelineItem[] = [
   {

@@ -10,9 +10,7 @@ import { GetAllMoodsQuery } from '../../../mood/application/queries';
 export class GetTimelineHandler implements IQueryHandler<GetTimelineQuery> {
   constructor(private readonly queryBus: QueryBus) {}
 
-  async execute(
-    queryDto: GetTimelineQuery,
-  ): Promise<PaginatedResponse<TimelineResponse>> {
+  async execute(queryDto: GetTimelineQuery): Promise<PaginatedResponse<TimelineResponse>> {
     const { page = 1, limit = 20, lang } = queryDto.query;
 
     // Fetch more than needed to ensure sorting correctness across pagination boundaries (Naive Aggregation)
@@ -26,15 +24,9 @@ export class GetTimelineHandler implements IQueryHandler<GetTimelineQuery> {
     const fetchLimit = page * limit;
 
     const [memories, journals, moods] = await Promise.all([
-      this.queryBus.execute(
-        new GetAllMemoriesForPublicQuery({ page: 1, limit: fetchLimit, lang }),
-      ),
-      this.queryBus.execute(
-        new GetAllJournalsForPublicQuery({ page: 1, limit: fetchLimit }),
-      ),
-      this.queryBus.execute(
-        new GetAllMoodsQuery({ page: 1, limit: fetchLimit }),
-      ),
+      this.queryBus.execute(new GetAllMemoriesForPublicQuery({ page: 1, limit: fetchLimit, lang })),
+      this.queryBus.execute(new GetAllJournalsForPublicQuery({ page: 1, limit: fetchLimit })),
+      this.queryBus.execute(new GetAllMoodsQuery({ page: 1, limit: fetchLimit })),
     ]);
 
     // Map and Tag

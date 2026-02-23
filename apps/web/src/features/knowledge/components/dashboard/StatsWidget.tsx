@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
 import { BrainCircuit, Database, Share2, TrendingUp } from "lucide-react";
+import React from "react";
+
 import { GlassCard } from "@/shared/components/ui/GlassCard";
 
 interface StatsWidgetProps {

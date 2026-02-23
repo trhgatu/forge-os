@@ -2,10 +2,11 @@
 
 import { Calendar, Maximize2, Minimize2, Save, Sparkles } from "lucide-react";
 
-import { JournalEntry } from "@/features/journal/types";
-import { cn } from "@/shared/lib/utils";
-import { MoodSelector } from "./MoodSelector";
+import type { JournalEntry } from "@/features/journal/types";
 import { ForgeEditor } from "@/shared/components/editor/ForgeEditor";
+import { cn } from "@/shared/lib/utils";
+
+import { MoodSelector } from "./MoodSelector";
 
 export function JournalEditor({
   entry,

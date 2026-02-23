@@ -20,10 +20,7 @@ import {
   SoftDeleteJournalCommand,
   RestoreJournalCommand,
 } from '../../application/commands';
-import {
-  GetAllJournalsQuery,
-  GetJournalByIdQuery,
-} from '../../application/queries';
+import { GetAllJournalsQuery, GetJournalByIdQuery } from '../../application/queries';
 
 import { JournalId } from '../../domain/value-objects/journal-id.vo';
 import { JwtAuthGuard } from 'src/contexts/iam/auth/application/guards';
@@ -60,9 +57,7 @@ export class JournalAdminController {
   @Patch(':id')
   @Permissions(PermissionEnum.UPDATE_JOURNAL)
   update(@Param('id') id: string, @Body() dto: UpdateJournalDto) {
-    return this.commandBus.execute(
-      new UpdateJournalCommand(JournalId.create(id), dto),
-    );
+    return this.commandBus.execute(new UpdateJournalCommand(JournalId.create(id), dto));
   }
 
   @Delete(':id')
@@ -78,8 +73,6 @@ export class JournalAdminController {
   @Patch(':id/restore')
   @Permissions(PermissionEnum.RESTORE_JOURNAL)
   restore(@Param('id') id: string) {
-    return this.commandBus.execute(
-      new RestoreJournalCommand(JournalId.create(id)),
-    );
+    return this.commandBus.execute(new RestoreJournalCommand(JournalId.create(id)));
   }
 }

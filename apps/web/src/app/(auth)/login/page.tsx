@@ -1,18 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { toast } from "sonner";
 import { ArrowRight, Lock, Mail } from "lucide-react";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import z from "zod";
 
-import { GlassCard } from "@/shared/components/ui/GlassCard";
+import { authService } from "@/features/auth/services/authService";
 import { Button } from "@/shared/components/ui/Button";
+import { GlassCard } from "@/shared/components/ui/GlassCard";
 import { Input } from "@/shared/components/ui/Input";
 import { useAuthStore } from "@/shared/store/authStore";
-import { authService } from "@/features/auth/services/authService";
 
 // Schema
 const loginSchema = z.object({
@@ -43,6 +43,7 @@ export default function LoginPage() {
       login(user, token, refreshToken);
       toast.success("Welcome back, " + (user.name || "Traveller"));
       router.push("/forge/dashboard");
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error(error);

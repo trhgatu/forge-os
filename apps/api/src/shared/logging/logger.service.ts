@@ -16,15 +16,7 @@ export class LoggerService implements NestLoggerService {
         : winston.format.combine(
             winston.format.colorize(),
             winston.format.printf(
-              ({
-                timestamp,
-                level,
-                message,
-                context,
-                traceId,
-                trace,
-                stack,
-              }) => {
+              ({ timestamp, level, message, context, traceId, trace, stack }) => {
                 const stackTrace = trace || stack;
                 return `${timestamp} [${level}] ${context ? `[${context}] ` : ''}${message}${traceId ? ` [traceId=${traceId}]` : ''}${stackTrace ? `\n${stackTrace}` : ''}`;
               },
@@ -38,18 +30,12 @@ export class LoggerService implements NestLoggerService {
       zippedArchive: true,
       maxSize: '20m',
       maxFiles: '14d',
-      format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.json(),
-      ),
+      format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
     });
 
     this.logger = winston.createLogger({
       level: isProduction ? 'info' : 'debug',
-      transports: [
-        new winston.transports.Console({ format: consoleFormat }),
-        fileTransport,
-      ],
+      transports: [new winston.transports.Console({ format: consoleFormat }), fileTransport],
     });
   }
 

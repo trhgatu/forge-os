@@ -1,11 +1,14 @@
-import React from "react";
 import { Activity } from "lucide-react";
-import { GlassCard } from "@/shared/components/ui/GlassCard";
-import { ConnectGithubWidget } from "../ConnectGithubWidget";
-import { ContributionStats } from "@/features/forge-lab/types";
-import { cn } from "@/shared/lib/utils";
-import { forgeApi } from "@/features/forge-lab/api";
+import React from "react";
 import { toast } from "sonner";
+
+import { forgeApi } from "@/features/forge-lab/api";
+import type { ContributionStats } from "@/features/forge-lab/types";
+import { GlassCard } from "@/shared/components/ui/GlassCard";
+import { cn } from "@/shared/lib/utils";
+
+import { ConnectGithubWidget } from "../ConnectGithubWidget";
+
 
 interface MissionGraphWidgetProps {
   contributionStats: ContributionStats | null;

@@ -84,15 +84,12 @@ export class User {
     return this.props.updatedAt;
   }
 
-  update(
-    props: Partial<Omit<UserProps, 'id' | 'isDeleted' | 'deletedAt'>>,
-  ): void {
+  update(props: Partial<Omit<UserProps, 'id' | 'isDeleted' | 'deletedAt'>>): void {
     if (props.name !== undefined) this.props.name = props.name;
     if (props.email !== undefined) this.props.email = props.email;
     if (props.password !== undefined) this.props.password = props.password;
     if (props.roleId !== undefined) this.props.roleId = props.roleId;
-    if (props.refreshToken !== undefined)
-      this.props.refreshToken = props.refreshToken;
+    if (props.refreshToken !== undefined) this.props.refreshToken = props.refreshToken;
     this.props.updatedAt = new Date();
   }
 
@@ -136,9 +133,7 @@ export class User {
     }
     // Prevent duplicates
     const exists = this.props.connections.some(
-      (c) =>
-        c.provider === connection.provider &&
-        c.identifier === connection.identifier,
+      (c) => c.provider === connection.provider && c.identifier === connection.identifier,
     );
     if (!exists) {
       this.props.connections.push(connection);

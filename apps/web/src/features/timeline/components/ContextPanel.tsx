@@ -1,10 +1,12 @@
 "use client";
 
 import { Calendar, Tag, Sparkles, X } from "lucide-react";
-import { cn } from "@/shared/lib/utils";
-import { TYPE_CONFIG } from "../config/";
-import type { TimelineItem } from "@/shared/types/timeline";
 import Image from "next/image";
+
+import { cn } from "@/shared/lib/utils";
+import type { TimelineItem } from "@/shared/types/timeline";
+
+import { TYPE_CONFIG } from "../config/";
 
 interface Props {
   item: TimelineItem | null;

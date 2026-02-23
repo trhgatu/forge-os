@@ -1,6 +1,7 @@
-import React from "react";
 import { Activity, GitBranch, Cpu, Zap } from "lucide-react";
-import { Project } from "@/features/forge-lab/types";
+import React from "react";
+
+import type { Project } from "@/features/forge-lab/types";
 import { cn } from "@/shared/lib/utils";
 
 interface SystemLogsWidgetProps {

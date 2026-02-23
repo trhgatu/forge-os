@@ -1,17 +1,19 @@
 "use client";
 
-import { useMemo, useState, useRef, useEffect } from "react";
 import { Search, BookOpen, Feather } from "lucide-react";
+import { useMemo, useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 
-import type { Memory } from "@/shared/types/memory";
-import { cn } from "@/shared/lib/utils";
-import { SEASON_CONFIG, type InnerSeason, getSeasonFromMood } from "../config";
 import { useMemories, useCreateMemory } from "@/features/memory/hooks";
+import { cn } from "@/shared/lib/utils";
+import type { Memory as MemoryType } from "@/shared/types/memory";
+
+import { SEASON_CONFIG, type InnerSeason, getSeasonFromMood } from "../config";
 import { analyzeMemory } from "../services/analyze";
+
+import { CreateMemoryModal } from "./CreateMemoryModal";
 import { MemoryCard } from "./MemoryCard";
 import { MemoryDetailPanel } from "./MemoryDetailPanel";
-import { CreateMemoryModal } from "./CreateMemoryModal";
 import { MemoryParticles } from "./MemoryParticles";
 
 type SeasonFilter = InnerSeason | "All";
@@ -25,7 +27,7 @@ export function Memory() {
   }, [data]);
 
   const [selectedMemoryId, setSelectedMemoryId] = useState<string | null>(null);
-  const [analysisMap, setAnalysisMap] = useState<Record<string, Memory["analysis"]>>({});
+  const [analysisMap, setAnalysisMap] = useState<Record<string, MemoryType["analysis"]>>({});
 
   const [isCreating, setIsCreating] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -105,7 +107,7 @@ export function Memory() {
 
   const createMemory = useCreateMemory();
 
-  const handleSaveNew = (memory: Partial<Memory>) => {
+  const handleSaveNew = (memory: Partial<MemoryType>) => {
     const payload = {
       title: memory.title!,
       content: memory.content!,
@@ -293,40 +295,37 @@ export function Memory() {
                     )}
                     style={{
                       background: isActive
-                        ? `linear-gradient(135deg, ${
-                            seasonKey === "Spring"
-                              ? "rgba(16, 185, 129, 0.15)"
-                              : seasonKey === "Summer"
-                                ? "rgba(245, 158, 11, 0.15)"
-                                : seasonKey === "Autumn"
-                                  ? "rgba(220, 38, 38, 0.15)"
-                                  : seasonKey === "Winter"
-                                    ? "rgba(6, 182, 212, 0.15)"
-                                    : "rgba(120, 113, 108, 0.15)"
-                          } 0%, ${
-                            seasonKey === "Spring"
-                              ? "rgba(16, 185, 129, 0.05)"
-                              : seasonKey === "Summer"
-                                ? "rgba(245, 158, 11, 0.05)"
-                                : seasonKey === "Autumn"
-                                  ? "rgba(220, 38, 38, 0.05)"
-                                  : seasonKey === "Winter"
-                                    ? "rgba(6, 182, 212, 0.05)"
-                                    : "rgba(120, 113, 108, 0.05)"
-                          } 100%)`
+                        ? `linear-gradient(135deg, ${seasonKey === "Spring"
+                          ? "rgba(16, 185, 129, 0.15)"
+                          : seasonKey === "Summer"
+                            ? "rgba(245, 158, 11, 0.15)"
+                            : seasonKey === "Autumn"
+                              ? "rgba(220, 38, 38, 0.15)"
+                              : seasonKey === "Winter"
+                                ? "rgba(6, 182, 212, 0.15)"
+                                : "rgba(120, 113, 108, 0.15)"
+                        } 0%, ${seasonKey === "Spring"
+                          ? "rgba(16, 185, 129, 0.05)"
+                          : seasonKey === "Summer"
+                            ? "rgba(245, 158, 11, 0.05)"
+                            : seasonKey === "Autumn"
+                              ? "rgba(220, 38, 38, 0.05)"
+                              : seasonKey === "Winter"
+                                ? "rgba(6, 182, 212, 0.05)"
+                                : "rgba(120, 113, 108, 0.05)"
+                        } 100%)`
                         : "rgba(41, 37, 36, 0.4)",
                       border: isActive
-                        ? `1.5px solid ${
-                            seasonKey === "Spring"
-                              ? "rgba(16, 185, 129, 0.5)"
-                              : seasonKey === "Summer"
-                                ? "rgba(245, 158, 11, 0.5)"
-                                : seasonKey === "Autumn"
-                                  ? "rgba(220, 38, 38, 0.5)"
-                                  : seasonKey === "Winter"
-                                    ? "rgba(6, 182, 212, 0.5)"
-                                    : "rgba(168, 162, 158, 0.4)"
-                          }`
+                        ? `1.5px solid ${seasonKey === "Spring"
+                          ? "rgba(16, 185, 129, 0.5)"
+                          : seasonKey === "Summer"
+                            ? "rgba(245, 158, 11, 0.5)"
+                            : seasonKey === "Autumn"
+                              ? "rgba(220, 38, 38, 0.5)"
+                              : seasonKey === "Winter"
+                                ? "rgba(6, 182, 212, 0.5)"
+                                : "rgba(168, 162, 158, 0.4)"
+                        }`
                         : "1px solid rgba(87, 83, 78, 0.3)",
                       color: isActive
                         ? seasonKey === "Spring"

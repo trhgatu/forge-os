@@ -1,4 +1,4 @@
-import { MoodType } from "./journal";
+import type { MoodType } from "./journal";
 
 export interface QuoteAnalysis {
   meaning: string;

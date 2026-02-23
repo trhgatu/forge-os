@@ -2,10 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, FilterQuery } from 'mongoose';
 import { AuditLogRepository } from '../../application/ports/audit-log.repository';
-import {
-  AuditLog,
-  AuditLogDocument,
-} from '../../infrastructure/schemas/sys-audit-log.schema';
+import { AuditLog, AuditLogDocument } from '../../infrastructure/schemas/sys-audit-log.schema';
 import { CreateAuditLogDto } from '../../presentation/dto/create-audit-log.dto';
 import { paginate } from '@shared/utils';
 import { AuditLogQueryDto } from '../../presentation/dto/audit-log-query.dto';
@@ -25,9 +22,7 @@ export class MongoAuditLogRepository implements AuditLogRepository {
     return AuditLogMapper.toDomain(createdLog);
   }
 
-  async findAll(
-    query: AuditLogQueryDto,
-  ): Promise<PaginatedResult<AuditLogEntity>> {
+  async findAll(query: AuditLogQueryDto): Promise<PaginatedResult<AuditLogEntity>> {
     const { page = 1, limit = 10, userId } = query;
     const pageNum = Number(page);
     const limitNum = Number(limit);
@@ -39,11 +34,7 @@ export class MongoAuditLogRepository implements AuditLogRepository {
     }
 
     const result = await paginate(
-      this.auditLogModel
-        .find(filter)
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limitNum),
+      this.auditLogModel.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limitNum),
       this.auditLogModel.countDocuments(filter),
       pageNum,
       limitNum,
@@ -51,9 +42,7 @@ export class MongoAuditLogRepository implements AuditLogRepository {
 
     return {
       ...result,
-      data: result.data.map((doc) =>
-        AuditLogMapper.toDomain(doc as AuditLogDocument),
-      ),
+      data: result.data.map((doc) => AuditLogMapper.toDomain(doc as AuditLogDocument)),
     };
   }
 }

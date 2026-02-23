@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
-import { X, Trophy, Sparkles } from "lucide-react";
 import confetti from "canvas-confetti";
+import { X, Trophy, Sparkles } from "lucide-react";
+import React, { useEffect } from "react";
 
 interface LevelUpModalProps {
   isOpen: boolean;

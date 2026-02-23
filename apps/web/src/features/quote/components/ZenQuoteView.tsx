@@ -1,8 +1,10 @@
+import { Minimize2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { Minimize2 } from "lucide-react";
+
 import { cn } from "@/shared/lib/utils";
 import type { Quote } from "@/shared/types/quote";
+
 import { SEASON_CONFIG, getSeasonFromMood } from "../../memory/config/seasons";
 
 interface ZenQuoteViewProps {
@@ -17,7 +19,6 @@ export function ZenQuoteView({ quote, onClose }: ZenQuoteViewProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
     // Delay setting visibility to allow for mounting transition
     const timer = setTimeout(() => setIsVisible(true), 10);

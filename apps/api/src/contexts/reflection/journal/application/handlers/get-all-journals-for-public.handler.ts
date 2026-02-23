@@ -19,16 +19,13 @@ export class GetAllJournalsForPublicHandler implements IQueryHandler<GetAllJourn
     private readonly cacheService: CacheService,
   ) {}
 
-  async execute(
-    query: GetAllJournalsForPublicQuery,
-  ): Promise<PaginatedResponse<JournalResponse>> {
+  async execute(query: GetAllJournalsForPublicQuery): Promise<PaginatedResponse<JournalResponse>> {
     const { payload } = query;
     const { page = 1, limit = 10 } = payload;
 
     const cacheKey = JournalCacheKeys.GET_ALL_PUBLIC(page, limit, payload);
 
-    const cached =
-      await this.cacheService.get<PaginatedResult<JournalResponse>>(cacheKey);
+    const cached = await this.cacheService.get<PaginatedResult<JournalResponse>>(cacheKey);
     if (cached) return cached;
 
     const journals = await this.journalRepo.findAll({
@@ -38,9 +35,7 @@ export class GetAllJournalsForPublicHandler implements IQueryHandler<GetAllJourn
 
     const response = {
       meta: journals.meta,
-      data: journals.data.map((journal) =>
-        JournalPresenter.toResponse(journal),
-      ),
+      data: journals.data.map((journal) => JournalPresenter.toResponse(journal)),
     };
 
     await this.cacheService.set(cacheKey, response, 60);

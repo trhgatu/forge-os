@@ -1,4 +1,4 @@
-import { MoodType } from "./journal";
+import type { MoodType } from "./journal";
 
 export type MemoryType = "moment" | "milestone" | "insight" | "challenge";
 

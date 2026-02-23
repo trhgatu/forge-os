@@ -1,9 +1,10 @@
 "use client";
 
-import React from "react";
 import { Cpu, Sparkles, Binary, BrainCircuit, MoreHorizontal, Activity } from "lucide-react";
-import { Agent } from "@/shared/types";
+import React from "react";
+
 import { cn } from "@/shared/lib/utils";
+import type { Agent } from "@/shared/types";
 
 // =============================================
 // TAILWIND v4 FIX – MAPPING TEXT-COLOR → REAL COLORS

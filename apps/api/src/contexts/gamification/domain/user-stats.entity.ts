@@ -40,11 +40,7 @@ export class UserStats extends AggregateRoot {
 
     // Normalize to midnight for calendar day comparison
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const lastDay = new Date(
-      last.getFullYear(),
-      last.getMonth(),
-      last.getDate(),
-    );
+    const lastDay = new Date(last.getFullYear(), last.getMonth(), last.getDate());
 
     // Check if same day
     if (today.getTime() === lastDay.getTime()) {

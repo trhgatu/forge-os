@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState } from "react";
+
 import { View } from "@/shared/types/os";
 
 interface NovaViewContextValue {

@@ -14,16 +14,13 @@ export class GetAllJournalsHandler implements IQueryHandler<GetAllJournalsQuery>
     private readonly cacheService: CacheService,
   ) {}
 
-  async execute(
-    query: GetAllJournalsQuery,
-  ): Promise<PaginatedResponse<JournalResponse>> {
+  async execute(query: GetAllJournalsQuery): Promise<PaginatedResponse<JournalResponse>> {
     const { payload } = query;
     const { page = 1, limit = 10 } = payload;
 
     const cacheKey = JournalCacheKeys.GET_ALL_ADMIN(page, limit, payload);
 
-    const cached =
-      await this.cacheService.get<PaginatedResponse<JournalResponse>>(cacheKey);
+    const cached = await this.cacheService.get<PaginatedResponse<JournalResponse>>(cacheKey);
 
     if (cached) return cached;
 
@@ -31,9 +28,7 @@ export class GetAllJournalsHandler implements IQueryHandler<GetAllJournalsQuery>
 
     const response = {
       meta: journals.meta,
-      data: journals.data.map((journal) =>
-        JournalPresenter.toResponse(journal),
-      ),
+      data: journals.data.map((journal) => JournalPresenter.toResponse(journal)),
     };
 
     await this.cacheService.set(cacheKey, response, 60);

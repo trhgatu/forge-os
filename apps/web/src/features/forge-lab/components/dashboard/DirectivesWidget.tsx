@@ -1,8 +1,10 @@
-import React from "react";
 import { Layers, Book, Network, Terminal, Star, GitBranch } from "lucide-react";
+import React from "react";
+
 import { GlassCard } from "@/shared/components/ui/GlassCard";
-import { ForgeTab, Project, Foundation } from "../../types";
 import { cn } from "@/shared/lib/utils";
+
+import type { ForgeTab, Project, Foundation } from "../../types";
 
 interface DirectivesWidgetProps {
   projects: Project[];

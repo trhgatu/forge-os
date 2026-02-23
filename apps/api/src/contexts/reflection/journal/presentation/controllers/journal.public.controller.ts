@@ -21,8 +21,6 @@ export class JournalPublicController {
 
   @Get(':id')
   findById(@Param('id') id: string) {
-    return this.queryBus.execute(
-      new GetJournalByIdForPublicQuery(JournalId.create(id)),
-    );
+    return this.queryBus.execute(new GetJournalByIdForPublicQuery(JournalId.create(id)));
   }
 }

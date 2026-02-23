@@ -1,4 +1,4 @@
-import { JournalAnalysis } from "@/shared/types/journal";
+import type { JournalAnalysis } from "@/shared/types/journal";
 
 export async function analyzeJournalEntry(content: string): Promise<JournalAnalysis> {
   void content;

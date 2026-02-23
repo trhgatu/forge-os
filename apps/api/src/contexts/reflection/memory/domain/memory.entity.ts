@@ -50,9 +50,7 @@ export class Memory {
     );
   }
 
-  updateInfo(
-    props: Partial<Omit<MemoryProps, 'createdAt' | 'updatedAt'>>,
-  ): void {
+  updateInfo(props: Partial<Omit<MemoryProps, 'createdAt' | 'updatedAt'>>): void {
     if (props.title) {
       for (const [lang, val] of props.title.entries()) {
         this.props.title.set(lang, val);

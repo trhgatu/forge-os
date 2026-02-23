@@ -46,9 +46,7 @@ export class UserMapper {
         name: role.name,
         permissions: Array.isArray(role.permissions)
           ? role.permissions.map((p) =>
-              typeof p === 'object' && p && 'name' in p
-                ? (p as { name: string }).name
-                : String(p),
+              typeof p === 'object' && p && 'name' in p ? (p as { name: string }).name : String(p),
             )
           : [],
       };

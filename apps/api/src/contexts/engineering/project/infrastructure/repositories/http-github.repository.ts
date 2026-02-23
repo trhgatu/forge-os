@@ -40,10 +40,7 @@ export class HttpGithubRepository implements GithubRepository, OnModuleInit {
     }
   }
 
-  async getRepoDetails(
-    owner: string,
-    repo: string,
-  ): Promise<GithubRepoDetails> {
+  async getRepoDetails(owner: string, repo: string): Promise<GithubRepoDetails> {
     try {
       const { data } = await this.octokit.repos.get({
         owner,
@@ -71,16 +68,11 @@ export class HttpGithubRepository implements GithubRepository, OnModuleInit {
                 date.setDate(date.getDate() + i);
                 return { date: date.toISOString(), count };
               })
-              .filter(
-                (item: any): item is { date: string; count: number } =>
-                  item !== null,
-              ),
+              .filter((item: any): item is { date: string; count: number } => item !== null),
           );
         }
       } catch (e: any) {
-        this.logger.warn(
-          `Failed to fetch commit activity for ${owner} / ${repo}: ${e.message} `,
-        );
+        this.logger.warn(`Failed to fetch commit activity for ${owner} / ${repo}: ${e.message} `);
       }
 
       const recentCommits = await this.getCommitActivity(owner, repo);
@@ -179,18 +171,12 @@ export class HttpGithubRepository implements GithubRepository, OnModuleInit {
         pullRequests,
       };
     } catch (error) {
-      this.logger.error(
-        `Failed to fetch repo details for ${owner} / ${repo}`,
-        error,
-      );
+      this.logger.error(`Failed to fetch repo details for ${owner} / ${repo}`, error);
       throw error;
     }
   }
 
-  async getCommitActivity(
-    owner: string,
-    repo: string,
-  ): Promise<GithubCommitActivity[]> {
+  async getCommitActivity(owner: string, repo: string): Promise<GithubCommitActivity[]> {
     try {
       const { data } = await this.octokit.repos.listCommits({
         owner,
@@ -205,9 +191,7 @@ export class HttpGithubRepository implements GithubRepository, OnModuleInit {
         url: commit.html_url,
       }));
     } catch (error: any) {
-      this.logger.warn(
-        `Could not fetch commits for ${owner} / ${repo}: ${error.message} `,
-      );
+      this.logger.warn(`Could not fetch commits for ${owner} / ${repo}: ${error.message} `);
       return [];
     }
   }
@@ -237,16 +221,12 @@ export class HttpGithubRepository implements GithubRepository, OnModuleInit {
         html_url: c.html_url || '',
       }));
     } catch (error: any) {
-      this.logger.warn(
-        `Could not fetch contributors for ${owner} / ${repo}: ${error.message} `,
-      );
+      this.logger.warn(`Could not fetch contributors for ${owner} / ${repo}: ${error.message} `);
       return [];
     }
   }
 
-  async getUserContributionStats(
-    username: string,
-  ): Promise<GithubContributionStats> {
+  async getUserContributionStats(username: string): Promise<GithubContributionStats> {
     try {
       const query = `
         query($login: String!) {
@@ -279,16 +259,13 @@ export class HttpGithubRepository implements GithubRepository, OnModuleInit {
       // The GraphQL response body is in `response.data`.
       // If GraphQL succeeded, `response.data` has `{ data: { user: ... } }`.
 
-      this.logger.log(
-        `GraphQL Response for ${username}: ${JSON.stringify(response.data)}`,
-      );
+      this.logger.log(`GraphQL Response for ${username}: ${JSON.stringify(response.data)}`);
 
       if (!response.data?.data?.user) {
         throw new Error('User not found in GraphQL response');
       }
 
-      const calendar =
-        response.data.data.user.contributionsCollection.contributionCalendar;
+      const calendar = response.data.data.user.contributionsCollection.contributionCalendar;
 
       return {
         totalContributions: calendar.totalContributions,
@@ -326,9 +303,7 @@ export class HttpGithubRepository implements GithubRepository, OnModuleInit {
         updated_at: repo.updated_at || new Date().toISOString(),
       }));
     } catch (error: any) {
-      this.logger.warn(
-        `Failed to fetch repos for user ${username}: ${error.message}`,
-      );
+      this.logger.warn(`Failed to fetch repos for user ${username}: ${error.message}`);
       return [];
     }
   }

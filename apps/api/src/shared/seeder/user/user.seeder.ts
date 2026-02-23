@@ -2,14 +2,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import {
-  User,
-  UserDocument,
-} from 'src/contexts/iam/users/infrastructure/schemas/iam-user.schema';
-import {
-  Role,
-  RoleDocument,
-} from 'src/contexts/iam/roles/infrastructure/schemas/iam-role.schema';
+import { User, UserDocument } from 'src/contexts/iam/users/infrastructure/schemas/iam-user.schema';
+import { Role, RoleDocument } from 'src/contexts/iam/roles/infrastructure/schemas/iam-role.schema';
 import { RoleEnum } from '@shared/enums'; // nếu có enum Role
 
 @Injectable()

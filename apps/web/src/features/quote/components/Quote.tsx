@@ -1,18 +1,22 @@
 "use client";
 
-import { useState, useMemo } from "react";
 import { Plus, Search, Filter, Leaf } from "lucide-react";
-import type { MoodType } from "@/shared/types/journal";
-import type { Quote } from "@/shared/types/quote";
-import { cn } from "@/shared/lib/utils";
-import { useQuotes, useCreateQuote, useDeleteQuote, useUpdateQuote } from "../hooks/useQuote";
+import { useState, useMemo } from "react";
 import { toast } from "sonner";
+
+import { cn } from "@/shared/lib/utils";
+import type { MoodType } from "@/shared/types/journal";
+import type { Quote as QuoteType } from "@/shared/types/quote";
+
 import { SEASON_CONFIG, getSeasonFromMood } from "../../memory/config/seasons";
+import { useQuotes, useCreateQuote, useDeleteQuote, useUpdateQuote } from "../hooks/useQuote";
+
+
+import { DailyInspiration } from "./DailyInspiration";
 import { MoodAmbience } from "./MoodAmbience";
 import { QuoteCard } from "./QuoteCard";
 import { QuoteDetailPanel } from "./QuoteDetailPanel";
 import { QuoteModal, EMOTION_OPTIONS } from "./QuoteModal";
-import { DailyInspiration } from "./DailyInspiration";
 
 export function Quote() {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useQuotes();
@@ -26,7 +30,7 @@ export function Quote() {
   const [filterMood, setFilterMood] = useState<MoodType | "all">("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [isAdding, setIsAdding] = useState(false);
-  const [editingQuote, setEditingQuote] = useState<Quote | null>(null);
+  const [editingQuote, setEditingQuote] = useState<QuoteType | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const filteredQuotes = quotes

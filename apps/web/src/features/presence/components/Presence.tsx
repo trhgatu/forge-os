@@ -1,9 +1,12 @@
 "use client";
 
-import React from "react";
 import { Radar, Eye } from "lucide-react";
-import { CosmicRadar } from "./CosmicRadar";
+import React from "react";
+
 import { usePresence } from "../hooks/usePresence";
+
+import { CosmicRadar } from "./CosmicRadar";
+
 
 export const Presence: React.FC = () => {
   const { echoes, stars } = usePresence();

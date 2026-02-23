@@ -1,10 +1,4 @@
-import {
-  ExceptionFilter,
-  Catch,
-  ArgumentsHost,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { v4 as uuidv4 } from 'uuid';
 import { ErrorCode } from '../constants/error-codes';
@@ -55,13 +49,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
       httpStatus = exception.getStatus();
       const responseBody = exception.getResponse();
 
-      if (
-        typeof responseBody === 'object' &&
-        responseBody !== null &&
-        'message' in responseBody
-      ) {
-        message =
-          (responseBody as NestExceptionResponse).message || responseBody;
+      if (typeof responseBody === 'object' && responseBody !== null && 'message' in responseBody) {
+        message = (responseBody as NestExceptionResponse).message || responseBody;
       } else {
         message = responseBody as string | object;
       }
@@ -69,8 +58,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       errorCode = ErrorCode.VALIDATION_ERROR; // Default fallback for HttpExceptions
 
       // Map standard NestJS exceptions to codes if needed
-      if (httpStatus === HttpStatus.UNAUTHORIZED)
-        errorCode = ErrorCode.UNAUTHORIZED;
+      if (httpStatus === HttpStatus.UNAUTHORIZED) errorCode = ErrorCode.UNAUTHORIZED;
       if (httpStatus === HttpStatus.FORBIDDEN) errorCode = ErrorCode.FORBIDDEN;
 
       if (httpStatus === HttpStatus.NOT_FOUND) {
@@ -114,12 +102,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     // 4. Log Error
     const logContext = `GlobalFilter [${method} ${path}]`;
     if (httpStatus >= 500) {
-      this.logger.error(
-        `[${errorCode}] ${JSON.stringify(message)}`,
-        stack,
-        logContext,
-        traceId,
-      );
+      this.logger.error(`[${errorCode}] ${JSON.stringify(message)}`, stack, logContext, traceId);
     } else {
       this.logger.warn(
         `[${errorCode}] ${JSON.stringify(message)} [traceId=${traceId}]`,

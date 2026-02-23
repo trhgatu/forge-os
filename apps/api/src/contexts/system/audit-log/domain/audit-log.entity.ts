@@ -43,9 +43,7 @@ export class AuditLog extends AggregateRoot {
     this._updatedAt = props.updatedAt;
   }
 
-  static create(
-    props: Omit<AuditLogProps, 'id' | 'createdAt' | 'updatedAt'>,
-  ): AuditLog {
+  static create(props: Omit<AuditLogProps, 'id' | 'createdAt' | 'updatedAt'>): AuditLog {
     return new AuditLog({
       ...props,
       id: AuditLogId.create(),

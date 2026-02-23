@@ -1,4 +1,4 @@
-import React from "react";
+import { formatDistanceToNow } from "date-fns";
 import {
   GitBranch,
   Activity,
@@ -8,8 +8,10 @@ import {
   AlertTriangle,
   FileEdit,
 } from "lucide-react";
+import React from "react";
+
 import { cn } from "@/shared/lib/utils";
-import { formatDistanceToNow } from "date-fns";
+
 
 export interface Log {
   id?: string;

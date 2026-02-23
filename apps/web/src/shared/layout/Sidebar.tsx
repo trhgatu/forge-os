@@ -1,11 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { View } from "@/shared/types/os";
-import { cn } from "@/shared/lib/utils";
-import { useLanguage, useSound, SoundType } from "@/contexts";
+import type {
+  LucideIcon} from "lucide-react";
 import {
   LayoutDashboard,
   BrainCircuit,
@@ -40,11 +36,20 @@ import {
   Inbox,
   Hammer,
   Film,
-  LucideIcon,
   ChevronDown,
   WindIcon,
 } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import React, { useState, useEffect, useRef } from "react";
+
+import type { SoundType } from "@/contexts";
+import { useLanguage, useSound } from "@/contexts";
 import XPBar from "@/features/gamification/components/XPBar";
+import { cn } from "@/shared/lib/utils";
+import { View } from "@/shared/types/os";
+
+
 
 interface NavItem {
   id: View;
@@ -158,7 +163,6 @@ const SidebarGroup: React.FC<{
 
   useEffect(() => {
     if (hasActiveItem) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsCollapsed(false);
     }
   }, [hasActiveItem]);

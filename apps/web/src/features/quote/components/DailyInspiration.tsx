@@ -1,10 +1,14 @@
 "use client";
 
-import { useDailyQuote } from "../hooks/useQuote";
-import { cn } from "@/shared/lib/utils";
-import { Sparkles, Quote as QuoteIcon } from "lucide-react";
-import { SEASON_CONFIG, getSeasonFromMood } from "../../memory/config/seasons";
 import { format } from "date-fns";
+import { Sparkles, Quote as QuoteIcon } from "lucide-react";
+
+import { cn } from "@/shared/lib/utils";
+
+import { SEASON_CONFIG, getSeasonFromMood } from "../../memory/config/seasons";
+import { useDailyQuote } from "../hooks/useQuote";
+
+
 
 export function DailyInspiration() {
   const { data: quote, isLoading } = useDailyQuote();

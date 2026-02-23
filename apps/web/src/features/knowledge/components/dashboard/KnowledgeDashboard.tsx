@@ -1,13 +1,16 @@
 "use client";
 
-import React from "react";
-import { useKnowledge } from "@/contexts/KnowledgeContext";
-import { SearchWidget } from "./SearchWidget";
-import { DiscoveredWidget } from "./DiscoveredWidget";
-import { StatsWidget } from "./StatsWidget";
-import { DiscoveryCarousel } from "./DiscoveryCarousel";
 import { Globe, Layers, Zap } from "lucide-react";
+import React from "react";
+
+import { useKnowledge } from "@/contexts/KnowledgeContext";
 import { GlassCard } from "@/shared/components/ui/GlassCard";
+
+import { DiscoveredWidget } from "./DiscoveredWidget";
+import { DiscoveryCarousel } from "./DiscoveryCarousel";
+import { SearchWidget } from "./SearchWidget";
+import { StatsWidget } from "./StatsWidget";
+
 
 export const KnowledgeDashboard: React.FC = () => {
   const { history, selectConcept } = useKnowledge();

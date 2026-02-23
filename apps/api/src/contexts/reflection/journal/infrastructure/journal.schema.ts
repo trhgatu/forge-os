@@ -1,11 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { MoodType } from '@shared/enums';
-import {
-  JournalType,
-  JournalStatus,
-  JournalRelationType,
-} from '../domain/enums';
+import { JournalType, JournalStatus, JournalRelationType } from '../domain/enums';
 
 import { SoftDeletePlugin } from '@shared/database/mongo/plugins/soft-delete.plugin';
 

@@ -1,16 +1,16 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+
+import type { PaginatedResponse } from "@/shared/types/api";
+
 import { journalService } from "../services/journalService";
 import type { CreateJournalDto, JournalFilter, JournalEntry } from "../types";
-import type { PaginatedResponse } from "@/shared/types/api";
-import { toast } from "sonner";
 
 export const useJournals = (filter?: JournalFilter) => {
   return useQuery({
     queryKey: ["journals", filter], // Add filter back for cache isolation
     queryFn: async () => {
-      console.log("🔍 FETCH: Fetching journals with filter:", filter);
       const result = await journalService.getAll(filter);
-      console.log("📥 FETCH: Received", result.data.length, "journals");
       return result;
     },
     staleTime: 0, // Always consider data stale
@@ -81,23 +81,14 @@ export const useDeleteJournal = () => {
 
   return useMutation({
     mutationFn: (id: string) => {
-      console.log("🗑️ DELETE: Starting deletion for ID:", id);
       return journalService.delete(id);
     },
     onSuccess: () => {
-      console.log("✅ DELETE: Success, invalidating queries...");
-
-      // Log current cache state before invalidation
-      const cacheData = queryClient.getQueriesData({ queryKey: ["journals"] });
-      console.log("📦 CACHE BEFORE INVALIDATE:", cacheData);
-
       queryClient.invalidateQueries({ queryKey: ["journals"] });
       queryClient.invalidateQueries({ queryKey: ["timeline"] });
-
-      console.log("🔄 DELETE: Invalidation triggered");
     },
     onError: (error) => {
-      console.error("❌ DELETE ERROR:", error);
+      console.error(error);
       toast.error("Failed to delete journal entry");
     },
   });

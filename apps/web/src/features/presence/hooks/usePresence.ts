@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { VisitorEcho } from "../types";
+
 import { socketService } from "@/services/socketService";
+
+import type { VisitorEcho } from "../types";
 
 // Star generation (Visuals only, can stay static)
 const generateStars = (count: number) => {

@@ -1,17 +1,19 @@
 "use client";
 
-import { toast } from "sonner";
-import { useState } from "react";
 import { Plus } from "lucide-react";
-import { cn } from "@/shared/lib/utils";
+import { useState } from "react";
+import { toast } from "sonner";
 
+import { cn } from "@/shared/lib/utils";
 import type { TimelineType } from "@/shared/types/timeline";
 
 import { TYPE_CONFIG } from "../config";
-import TimelineNode from "./TimelineNode";
-import TimelineCard from "./TimelineCard";
-import ContextPanel from "./ContextPanel";
 import { useTimeline } from "../hooks/useTimeline";
+
+import ContextPanel from "./ContextPanel";
+import TimelineCard from "./TimelineCard";
+import TimelineNode from "./TimelineNode";
+
 /* import { analyzeTimelineItem } from "@/services/geminiService"; */
 
 export const Timeline = () => {

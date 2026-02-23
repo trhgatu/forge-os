@@ -1,7 +1,8 @@
 "use client";
 
-import KnowledgeContent from "./KnowledgeContent";
 import { KnowledgeProvider } from "../../../contexts/KnowledgeContext";
+
+import KnowledgeContent from "./KnowledgeContent";
 
 export function Knowledge() {
   return (

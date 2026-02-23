@@ -1,14 +1,16 @@
 // features/nova/components/NovaGuide.tsx
 "use client";
 
-import { useState } from "react";
 import { Activity, Bot, ChevronRight, Radio, X } from "lucide-react";
+import { useState } from "react";
 
-import type { View } from "@/shared/types/os";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/shared/lib/utils";
+import type { View } from "@/shared/types/os";
+
 import { useNovaMessage } from "../hooks/useNovaMessage";
 import { useTypewriter } from "../hooks/useTypewriter";
+
 import { NovaVisualizer } from "./NovaVisualizer";
 
 interface NovaGuideProps {

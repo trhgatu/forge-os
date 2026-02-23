@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import { X } from "lucide-react";
+import { useState } from "react";
 
+import { cn } from "@/shared/lib/utils";
 import type { MoodType } from "@/shared/types";
 import type { MoodEntry } from "@/shared/types/mood";
-import { CreateMoodDto } from "../services/moodService";
+
 import { MOOD_CONFIG } from "../config";
-import { cn } from "@/shared/lib/utils";
+import type { CreateMoodDto } from "../services/moodService";
 
 interface MoodModalProps {
   initialData?: MoodEntry;

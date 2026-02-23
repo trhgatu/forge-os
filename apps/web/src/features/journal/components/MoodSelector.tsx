@@ -1,8 +1,8 @@
 "use client";
 
-import { MoodType } from "@/shared/types";
-import { cn } from "@/shared/lib/utils";
 import { MOOD_COLORS } from "@/shared/constants";
+import { cn } from "@/shared/lib/utils";
+import type { MoodType } from "@/shared/types";
 
 export function MoodSelector({
   mood,

@@ -27,9 +27,7 @@ export class DeleteProjectHandler implements ICommandHandler<DeleteProjectComman
 
     await this.projectRepository.softDelete(id);
 
-    this.eventBus.publish(
-      new ProjectDeletedEvent(id.toString(), 'system', new Date()),
-    );
+    this.eventBus.publish(new ProjectDeletedEvent(id.toString(), 'system', new Date()));
 
     this.logger.warn(
       `Project soft-deleted: ${id.toString()} (Title: "${project.title}")`,

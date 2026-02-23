@@ -17,25 +17,20 @@ export class GetAllProjectsHandler implements IQueryHandler<GetAllProjectsQuery>
     private readonly logger: LoggerService,
   ) {}
 
-  async execute(
-    query: GetAllProjectsQuery,
-  ): Promise<PaginatedResponse<ProjectResponse>> {
+  async execute(query: GetAllProjectsQuery): Promise<PaginatedResponse<ProjectResponse>> {
     const { payload } = query;
     const { page = 1, limit = 10 } = payload;
 
     const safeKeyword = payload.keyword || '';
     const safeStatus = payload.status || '';
     const safeTags = [...(payload.tags || [])].sort().join(',');
-    const safeIsDeleted =
-      payload.isDeleted !== undefined ? String(payload.isDeleted) : '';
-    const safeIsPinned =
-      payload.isPinned !== undefined ? String(payload.isPinned) : '';
+    const safeIsDeleted = payload.isDeleted !== undefined ? String(payload.isDeleted) : '';
+    const safeIsPinned = payload.isPinned !== undefined ? String(payload.isPinned) : '';
     const p = page;
     const l = limit;
     const cacheKey = `projects:list:${p}:${l}:${safeKeyword}:${safeStatus}:${safeTags}:${safeIsDeleted}:${safeIsPinned}`;
 
-    const cached =
-      await this.cacheService.get<PaginatedResponse<ProjectResponse>>(cacheKey);
+    const cached = await this.cacheService.get<PaginatedResponse<ProjectResponse>>(cacheKey);
 
     if (cached) {
       this.logger.debug(`Cache hit for ${cacheKey}`);

@@ -1,5 +1,6 @@
 import { apiClient } from "@/services/apiClient";
-import { Project, ContributionStats, UserProfile, PaginatedResponse } from "../types";
+
+import type { Project, ContributionStats, UserProfile, PaginatedResponse, HybridStats, GithubRepo } from "../types";
 
 export const forgeApi = {
   getProjects: () =>
@@ -17,7 +18,7 @@ export const forgeApi = {
     apiClient.post<Project>(`/engineering/projects/${id}/sync`).then((res) => res.data),
   getProjectGithubStats: (projectId: string) =>
     apiClient
-      .get<import("../types").HybridStats>(`/engineering/projects/${projectId}/github-stats`)
+      .get<HybridStats>(`/engineering/projects/${projectId}/github-stats`)
       .then((res) => res.data),
   getProjectReadme: (projectId: string) =>
     apiClient
@@ -46,7 +47,7 @@ export const forgeApi = {
       .then((res) => res.data),
   getGithubRepos: (username: string) =>
     apiClient
-      .get<import("../types").GithubRepo[]>(`/engineering/projects/github/repos/${username}`)
+      .get<GithubRepo[]>(`/engineering/projects/github/repos/${username}`)
       .then((res) => res.data),
   connectAccount: (data: {
     provider: string;

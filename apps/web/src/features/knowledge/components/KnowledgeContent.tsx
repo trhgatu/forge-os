@@ -2,9 +2,11 @@
 "use client";
 
 import React from "react";
+
 import { useKnowledge } from "../../../contexts/KnowledgeContext";
-import { KnowledgeDetail } from "./KnowledgeDetail";
+
 import { KnowledgeDashboard } from "./dashboard/KnowledgeDashboard";
+import { KnowledgeDetail } from "./KnowledgeDetail";
 
 const KnowledgeContent: React.FC = () => {
   const { activeConcept, clearActive } = useKnowledge();

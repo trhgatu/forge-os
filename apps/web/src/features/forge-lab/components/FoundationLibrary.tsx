@@ -1,9 +1,12 @@
-import React from "react";
 import { Book, Search, ArrowRight, Bookmark, Plus, Users } from "lucide-react";
+import React from "react";
+
 import { GlassCard } from "@/shared/components/ui/GlassCard";
-import { Foundation } from "../types";
-import { FoundationDetail } from "./FoundationDetail";
 import { cn } from "@/shared/lib/utils";
+
+import type { Foundation } from "../types";
+
+import { FoundationDetail } from "./FoundationDetail";
 
 interface FoundationLibraryProps {
   foundations: Foundation[];

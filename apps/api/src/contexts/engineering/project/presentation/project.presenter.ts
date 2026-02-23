@@ -29,9 +29,7 @@ export class ProjectPresenter {
       createdAt: new Date(entity.createdAt).toISOString(),
       updatedAt: new Date(entity.updatedAt).toISOString(),
       isDeleted: entity.isProjectDeleted,
-      deletedAt: entity.deletedDate
-        ? new Date(entity.deletedDate).toISOString()
-        : null,
+      deletedAt: entity.deletedDate ? new Date(entity.deletedDate).toISOString() : null,
 
       // Frontend Compatibility
       technologies: entity.metadata?.technologies || [],
@@ -40,9 +38,7 @@ export class ProjectPresenter {
             ...entity.metadata.currentMilestone,
             dueDate:
               (entity.metadata.currentMilestone.dueDate as any) instanceof Date
-                ? (
-                    entity.metadata.currentMilestone.dueDate as any
-                  ).toISOString()
+                ? (entity.metadata.currentMilestone.dueDate as any).toISOString()
                 : entity.metadata.currentMilestone.dueDate,
           }
         : undefined,
@@ -52,10 +48,7 @@ export class ProjectPresenter {
     };
   }
 
-  static toSummaryResponse(
-    entity: Project,
-    baseUrl: string,
-  ): ProjectSummaryResponse {
+  static toSummaryResponse(entity: Project, baseUrl: string): ProjectSummaryResponse {
     return {
       id: entity.id.toString(),
       title: entity.title,
@@ -68,9 +61,7 @@ export class ProjectPresenter {
         entity.links?.map((link) => ({
           title: link.title,
           url: link.url,
-          icon: (link.icon === 'github' ? 'github' : 'link') as
-            | 'github'
-            | 'link',
+          icon: (link.icon === 'github' ? 'github' : 'link') as 'github' | 'link',
         })) || [],
       githubStats: {
         stars: entity.githubStats?.stars || 0,

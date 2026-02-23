@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
 import type { View } from "@/shared/types/os";
+
 import { NOVA_MESSAGES } from "../config/messages";
 
 export function useNovaMessage(view: View, languageCode: string, delayMs = 800) {

@@ -1,12 +1,18 @@
-import React, { useEffect, useState, useRef } from "react";
 import { Sparkles, Flame } from "lucide-react";
-import { gamificationService } from "../services/gamificationService";
-import { UserStats } from "../types";
-import { LevelUpModal } from "./LevelUpModal";
+import React, { useEffect, useState, useRef } from "react";
+
+import { useLanguage } from "@/contexts";
 import { cn } from "@/shared/lib/utils";
 import { useAuthStore } from "@/shared/store/authStore";
+
 import { useGamificationSocket } from "../hooks/useGamificationSocket";
-import { useLanguage } from "@/contexts";
+import { gamificationService } from "../services/gamificationService";
+import type { UserStats } from "../types";
+
+import { LevelUpModal } from "./LevelUpModal";
+
+
+
 
 interface XPBarProps {
   compact?: boolean;

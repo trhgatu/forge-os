@@ -1,8 +1,11 @@
+import { FileText, RefreshCw } from "lucide-react";
 import React from "react";
 import ReactMarkdown from "react-markdown";
-import { FileText, RefreshCw } from "lucide-react";
-import { Project } from "../../../types";
+
 import { GlassCard } from "@/shared/components/ui/GlassCard";
+
+import type { Project } from "../../../types";
+
 
 interface ProjectReadmeTabProps {
   project: Project;

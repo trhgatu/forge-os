@@ -1,6 +1,7 @@
 import { apiClient } from "@/services/apiClient";
-import type { BackendResponse } from "@/shared/types/api";
 import type { User } from "@/shared/store/authStore";
+import type { BackendResponse } from "@/shared/types/api";
+
 import type { LoginResponse, RawUser } from "../types";
 
 export const authService = {

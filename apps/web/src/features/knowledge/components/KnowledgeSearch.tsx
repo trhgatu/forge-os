@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
 import { Search, Loader2, CornerDownLeft, Globe, Sparkles } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+
 import { useKnowledge } from "@/contexts";
-import { cn } from "@/shared/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { KnowledgeConcept } from "@/shared/types";
+import { cn } from "@/shared/lib/utils";
+import type { KnowledgeConcept } from "@/shared/types";
 
 export const KnowledgeSearch: React.FC = () => {
   const { search, searchResults, selectConcept, isLoading, clearResults } = useKnowledge();

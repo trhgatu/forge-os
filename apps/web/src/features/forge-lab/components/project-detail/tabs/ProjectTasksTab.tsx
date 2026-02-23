@@ -1,8 +1,11 @@
-import React, { useState } from "react";
 import { ListTodo, GitBranch, Plus, ArrowLeft } from "lucide-react";
-import { Project } from "../../../types";
+import React, { useState } from "react";
+
+
 import { GlassCard } from "@/shared/components/ui/GlassCard";
 import { cn } from "@/shared/lib/utils";
+
+import type { Project } from "../../../types";
 
 interface ProjectTasksTabProps {
   project: Project;

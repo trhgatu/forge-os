@@ -1,7 +1,9 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
-import { ForgeLabContextType, ForgeTab, Project, Foundation, ResearchTrail } from "../types";
+import type { ReactNode } from "react";
+import React, { createContext, useContext, useState } from "react";
+
+import type { ForgeLabContextType, ForgeTab, Project, Foundation, ResearchTrail } from "../types";
 
 const ForgeLabContext = createContext<ForgeLabContextType | undefined>(undefined);
 

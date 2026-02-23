@@ -1,7 +1,9 @@
 import React from "react";
+
 import { cn } from "@/shared/lib/utils";
-import { SEASON_CONFIG, getSeasonFromMood } from "../../memory/config/seasons";
 import type { MoodType } from "@/shared/types/journal";
+
+import { SEASON_CONFIG, getSeasonFromMood } from "../../memory/config/seasons";
 
 interface MoodAmbienceProps {
   mood: MoodType | "all";

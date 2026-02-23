@@ -1,9 +1,11 @@
 "use client";
 
-import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getRandomQuote } from "@/features/quote/services/quoteService";
 import { Quote, Sparkles } from "lucide-react";
+import React from "react";
+
+import { getRandomQuote } from "@/features/quote/services/quoteService";
+
 
 // Let's assume I will export WidgetShell from Dashboard.tsx for now.
 import { WidgetShell } from "./Dashboard";

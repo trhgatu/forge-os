@@ -1,7 +1,9 @@
 "use client";
 
 import React from "react";
-import { VisitorEcho } from "../types";
+
+import type { VisitorEcho } from "../types";
+
 import { RadarBlip } from "./RadarBlip";
 
 export const CosmicRadar: React.FC<{ echoes: VisitorEcho[] }> = ({ echoes }) => {

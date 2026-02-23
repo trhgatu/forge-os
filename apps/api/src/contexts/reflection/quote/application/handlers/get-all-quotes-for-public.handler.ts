@@ -16,17 +16,14 @@ export class GetAllQuotesForPublicHandler implements IQueryHandler<GetAllQuotesF
     private readonly cacheService: CacheService,
   ) {}
 
-  async execute(
-    query: GetAllQuotesForPublicQuery,
-  ): Promise<PaginatedResponse<QuoteResponse>> {
+  async execute(query: GetAllQuotesForPublicQuery): Promise<PaginatedResponse<QuoteResponse>> {
     const { payload, lang } = query;
 
     const { page = 1, limit = 10 } = payload;
 
     const cacheKey = QuoteCacheKeys.GET_ALL_PUBLIC(page, limit, payload);
 
-    const cached =
-      await this.cacheService.get<PaginatedResult<QuoteResponse>>(cacheKey);
+    const cached = await this.cacheService.get<PaginatedResult<QuoteResponse>>(cacheKey);
     if (cached) return cached;
 
     const quotes = await this.quoteRepo.findAll({

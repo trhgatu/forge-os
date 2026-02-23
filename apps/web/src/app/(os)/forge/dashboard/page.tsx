@@ -1,9 +1,10 @@
 "use client";
 
-import { useNovaView } from "@/contexts";
-import { View } from "@/shared/types/os";
 import { useEffect } from "react";
+
+import { useNovaView } from "@/contexts";
 import { Dashboard } from "@/features/dashboard/components/Dashboard";
+import { View } from "@/shared/types/os";
 
 export default function Page() {
   const { setCurrentView } = useNovaView();

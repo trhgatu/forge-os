@@ -1,5 +1,6 @@
 import { apiClient } from "@/services/apiClient";
-import { UserStats } from "../types";
+
+import type { UserStats } from "../types";
 
 export const gamificationService = {
   getStats: async (): Promise<UserStats | null> => {

@@ -1,4 +1,4 @@
-import { MoodType } from "@/shared/types/journal";
+import type { MoodType, JournalAnalysis } from "@/shared/types/journal";
 
 export enum JournalStatus {
   PRIVATE = "private",
@@ -28,7 +28,7 @@ export interface JournalEntry {
   updatedAt: string;
   date: Date; // Converted Date object for Calendar/UI
   isDraft?: boolean; // For UI state
-  analysis?: import("@/shared/types/journal").JournalAnalysis; // Placeholder for AI result
+  analysis?: JournalAnalysis; // Placeholder for AI result
 }
 
 // DTO for Create

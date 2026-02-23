@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
 import { Sparkles, Zap } from "lucide-react";
+import React, { useEffect, useState } from "react";
+
 import * as quoteService from "@/features/quote/services/quoteService";
-import { Quote } from "@/shared/types/quote";
+import type { Quote } from "@/shared/types/quote";
 
 export const NovaBannerWidget: React.FC = () => {
     const [quote, setQuote] = useState<Quote | null>(null);

@@ -1,9 +1,11 @@
 "use client";
 
 import React from "react";
-import { VisitorEcho } from "../types";
-import { ECHO_COLORS, ROLE_COLORS } from "../constants/colors";
+
 import { cn } from "@/shared/lib/utils";
+
+import { ECHO_COLORS, ROLE_COLORS } from "../constants/colors";
+import type { VisitorEcho } from "../types";
 
 export const RadarBlip: React.FC<{ echo: VisitorEcho }> = ({ echo }) => {
   // Removed auto-fade logic to keep active users visible

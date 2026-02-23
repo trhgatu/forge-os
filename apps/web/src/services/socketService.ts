@@ -1,11 +1,12 @@
-import { Socket, Manager } from "socket.io-client";
+import type { Socket } from "socket.io-client";
+import { Manager } from "socket.io-client";
 
 class SocketService {
   private manager: Manager | null = null;
   private sockets: Map<string, Socket> = new Map();
   private static instance: SocketService;
 
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): SocketService {
     if (!SocketService.instance) {
@@ -73,10 +74,11 @@ class SocketService {
         },
         extraHeaders: token
           ? {
-              Authorization: `Bearer ${token}`,
-            }
+            Authorization: `Bearer ${token}`,
+          }
           : {},
       };
+
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       this.manager = new Manager(url, managerOptions as any);
@@ -109,6 +111,7 @@ class SocketService {
       });
 
       socket.on("connect", () => {
+        // eslint-disable-next-line no-console
         console.log(
           `[SocketService] Combined Connection Active for [${namespace}]. ID:`,
           socket.id
@@ -116,6 +119,7 @@ class SocketService {
       });
 
       socket.on("disconnect", () => {
+        // eslint-disable-next-line no-console
         console.log(`[SocketService] Disconnected from [${namespace}]`);
       });
 

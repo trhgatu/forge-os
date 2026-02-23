@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Rajdhani, Playfair_Display, Dancing_Script } from "next/font/google";
 import { Toaster } from "sonner";
+
 import { PresenceTracker } from "@/features/presence/components/PresenceTracker";
 import "./globals.css";
 

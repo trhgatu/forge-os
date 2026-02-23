@@ -1,8 +1,10 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { getTimeline } from "../services/timelineService";
+
 import { useLanguage } from "@/contexts/LanguageContext"; // Assuming implementation
 import type { PaginatedResponse } from "@/shared/types";
 import type { TimelineItem } from "@/shared/types/timeline";
+
+import { getTimeline } from "../services/timelineService";
 
 export const TIMELINE_QUERY_KEY = ["timeline"];
 

@@ -1,12 +1,14 @@
+import type {
+  LucideIcon} from "lucide-react";
 import {
   Image as ImageIcon,
   BookOpen,
   Quote,
   Activity,
   Flag,
-  Sparkles,
-  LucideIcon,
+  Sparkles
 } from "lucide-react";
+
 import type { TimelineType, MoodType } from "@/shared/types";
 
 export const TYPE_CONFIG: Record<TimelineType, { icon: LucideIcon; color: string; label: string }> =

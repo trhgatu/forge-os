@@ -1,6 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { moodService, CreateMoodDto, MoodFilter } from "../services/moodService";
 import { toast } from "sonner";
+
+import type { CreateMoodDto, MoodFilter } from "../services/moodService";
+import { moodService } from "../services/moodService";
+
 
 export const useMoods = (filter?: MoodFilter) => {
   return useQuery({

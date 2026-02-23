@@ -43,6 +43,7 @@ export const getTimeline = async (
         ...base,
         title: item.title,
         content: item.content,
+
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         mood: (item.mood as any) || "neutral",
         imageUrl: item.imageUrl,
@@ -52,6 +53,7 @@ export const getTimeline = async (
         ...base,
         title: item.title,
         content: item.content,
+
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         mood: (item.mood as any) || "neutral",
       } as TimelineItem;
@@ -60,6 +62,7 @@ export const getTimeline = async (
         ...base,
         title: `Mood Log: ${item.mood || "neutral"}`,
         content: item.note || "No note provided.",
+
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         mood: (item.mood as any) || "neutral",
       } as TimelineItem;

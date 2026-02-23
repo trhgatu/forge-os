@@ -54,9 +54,6 @@ import { GamificationModule } from '@root/contexts/gamification/gamification.mod
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(CreateAuditLogMiddleware)
-      .exclude('auth/(.*)', 'audit-logs')
-      .forRoutes('*');
+    consumer.apply(CreateAuditLogMiddleware).exclude('auth/(.*)', 'audit-logs').forRoutes('*');
   }
 }

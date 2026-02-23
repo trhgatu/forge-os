@@ -18,10 +18,7 @@ import {
   SoftDeleteMemoryCommand,
   RestoreMemoryCommand,
 } from '../../application/commands';
-import {
-  GetAllMemoriesQuery,
-  GetMemoryByIdQuery,
-} from '../../application/queries';
+import { GetAllMemoriesQuery, GetMemoryByIdQuery } from '../../application/queries';
 import { MemoryId } from '../../domain/value-objects/memory-id.vo';
 import { JwtAuthGuard } from 'src/contexts/iam/auth/application/guards';
 import { PermissionsGuard } from '@shared/guards/permissions.guard';
@@ -51,17 +48,13 @@ export class MemoryAdminController {
   @Get(':id')
   @Permissions(PermissionEnum.READ_MEMORY)
   findById(@Param('id') id: string, @Query('lang') lang?: string) {
-    return this.queryBus.execute(
-      new GetMemoryByIdQuery(MemoryId.create(id), lang ?? 'en'),
-    );
+    return this.queryBus.execute(new GetMemoryByIdQuery(MemoryId.create(id), lang ?? 'en'));
   }
 
   @Patch(':id')
   @Permissions(PermissionEnum.UPDATE_MEMORY)
   update(@Param('id') id: string, @Body() dto: UpdateMemoryDto) {
-    return this.commandBus.execute(
-      new UpdateMemoryCommand(MemoryId.create(id), dto),
-    );
+    return this.commandBus.execute(new UpdateMemoryCommand(MemoryId.create(id), dto));
   }
 
   @Delete(':id')
@@ -76,8 +69,6 @@ export class MemoryAdminController {
   @Patch(':id/restore')
   @Permissions(PermissionEnum.RESTORE_MEMORY)
   restore(@Param('id') id: string) {
-    return this.commandBus.execute(
-      new RestoreMemoryCommand(MemoryId.create(id)),
-    );
+    return this.commandBus.execute(new RestoreMemoryCommand(MemoryId.create(id)));
   }
 }

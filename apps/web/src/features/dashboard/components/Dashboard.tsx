@@ -1,9 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
 /* import { getDailyInsight } from "@/services/geminiService"; */
 /* import { getDailyInsight } from "@/services/geminiService"; */
-import { cn } from "@/shared/lib/utils";
 
 import {
   Clock,
@@ -18,10 +16,12 @@ import {
   Maximize2,
   CheckCircle2,
 } from "lucide-react";
-
+import React, { useState, useEffect } from "react";
 import { AreaChart, Area, Tooltip, ResponsiveContainer } from "recharts";
 
 import { AGENTS } from "@/features/chamber/components/AgentDock";
+import { cn } from "@/shared/lib/utils";
+
 import { QuoteOfTheDayWidget } from "./QuoteOfTheDayWidget";
 
 const MOOD_DATA = [

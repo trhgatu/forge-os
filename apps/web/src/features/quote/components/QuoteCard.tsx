@@ -1,7 +1,9 @@
-import React, { useState } from "react";
 import { Heart } from "lucide-react";
-import type { Quote } from "@/shared/types/quote";
+import React, { useState } from "react";
+
 import { cn } from "@/shared/lib/utils";
+import type { Quote } from "@/shared/types/quote";
+
 import { SEASON_CONFIG, getSeasonFromMood } from "../../memory/config/seasons";
 
 interface QuoteCardProps {
@@ -34,7 +36,7 @@ export function QuoteCard({ quote, onClick, onToggleFav, onEdit, onDelete }: Quo
     setShowContextMenu(true);
   };
 
-  const [pressTimer, setPressTimer] = useState<NodeJS.Timeout | null>(null);
+  const [pressTimer, setPressTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
 
   const handleMouseDown = () => {
     const timer = setTimeout(() => {

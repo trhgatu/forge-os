@@ -1,9 +1,10 @@
 "use client";
 
 import { Search, Plus, Trash2 } from "lucide-react";
-import { JournalEntry } from "@/features/journal/types";
-import { cn } from "@/shared/lib/utils";
+
+import type { JournalEntry } from "@/features/journal/types";
 import { MOOD_COLORS } from "@/shared/constants";
+import { cn } from "@/shared/lib/utils";
 export function JournalSidebar({
   entries,
   selectedId,

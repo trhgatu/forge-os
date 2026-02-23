@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { socketService } from "@/services/socketService";
+import type React from "react";
+import { useEffect } from "react";
 
+import { socketService } from "@/services/socketService";
 import { useAuthStore } from "@/shared/store/authStore";
 
 export const PresenceTracker: React.FC = () => {

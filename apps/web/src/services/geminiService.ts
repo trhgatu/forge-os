@@ -1,4 +1,5 @@
-import { GoogleGenAI, Chat } from "@google/genai";
+import type { Chat } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 
 const ai = new GoogleGenAI({ apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY });
 

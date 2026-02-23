@@ -70,12 +70,7 @@ export class UserController {
     // If User decorator provides the full user or just ID, adjust accordingly.
     // Assuming user object has 'id'.
     return this.commandBus.execute(
-      new ConnectAccountCommand(
-        String(user.id),
-        dto.provider,
-        dto.identifier,
-        dto.metadata,
-      ),
+      new ConnectAccountCommand(String(user.id), dto.provider, dto.identifier, dto.metadata),
     );
   }
 }

@@ -1,8 +1,8 @@
-import type { Quote } from "@/shared/types/quote";
 import { apiClient } from "@/services/apiClient";
 import type { PaginatedResponse } from "@/shared/types";
-import { QuoteDto, CreateQuoteDto, QuoteFilter } from "@/shared/types/dto/quote.dto";
-import { MoodType } from "@/shared/types/journal";
+import type { QuoteDto, CreateQuoteDto, QuoteFilter } from "@/shared/types/dto/quote.dto";
+import type { MoodType } from "@/shared/types/journal";
+import type { Quote } from "@/shared/types/quote";
 
 const mapDtoToQuote = (dto: QuoteDto): Quote => ({
   id: dto.id,

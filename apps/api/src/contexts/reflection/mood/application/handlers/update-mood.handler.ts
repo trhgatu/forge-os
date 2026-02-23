@@ -6,10 +6,7 @@ import { MoodPresenter } from '../../presentation/mood.presenter';
 import { MoodResponse } from '../../presentation/dto/mood.response';
 
 @CommandHandler(UpdateMoodCommand)
-export class UpdateMoodHandler implements ICommandHandler<
-  UpdateMoodCommand,
-  MoodResponse
-> {
+export class UpdateMoodHandler implements ICommandHandler<UpdateMoodCommand, MoodResponse> {
   constructor(
     @Inject('MoodRepository')
     private readonly moodRepo: MoodRepository,

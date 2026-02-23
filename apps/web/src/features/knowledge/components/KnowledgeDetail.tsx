@@ -1,14 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
 import { BookOpen, Hammer, Network, ArrowLeft, Share2, Bookmark, MoreVertical } from "lucide-react";
+import React, { useState } from "react";
 
 import { cn } from "@/shared/lib/utils";
 import type { KnowledgeConcept } from "@/shared/types";
 
-import { SourceTab } from "./detail/tabs/SourceTab";
 import { AnvilTab } from "./detail/tabs/AnvilTab";
 import { NexusTab } from "./detail/tabs/NexusTab";
+import { SourceTab } from "./detail/tabs/SourceTab";
 
 interface KnowledgeDetailProps {
   concept: KnowledgeConcept;

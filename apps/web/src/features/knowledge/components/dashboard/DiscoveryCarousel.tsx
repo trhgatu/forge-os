@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, ArrowRight, RefreshCcw } from "lucide-react";
-import { GlassCard } from "@/shared/components/ui/GlassCard";
+import React, { useEffect, useState } from "react";
 
 import { useKnowledge } from "@/contexts";
+import { GlassCard } from "@/shared/components/ui/GlassCard";
 
 export const DiscoveryCarousel: React.FC = () => {
   const { discoveryItems, loadDiscovery, selectConcept, isLoading } = useKnowledge();

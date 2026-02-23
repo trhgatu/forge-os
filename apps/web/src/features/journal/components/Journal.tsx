@@ -1,21 +1,23 @@
 "use client";
 
 import { useState, useEffect, useMemo, useRef } from "react";
-
-import { JournalEntry, JournalStatus, JournalType } from "@/features/journal/types";
 import { toast } from "sonner";
+
+import type { JournalEntry } from "@/features/journal/types";
+import { JournalStatus, JournalType } from "@/features/journal/types";
+import { useDebounce } from "@/shared/hooks/useDebounce";
+
 import {
   useJournals,
   useCreateJournal,
   useUpdateJournal,
   useDeleteJournal,
 } from "../hooks/useJournal";
-import { useDebounce } from "@/shared/hooks/useDebounce";
 import { analyzeJournalEntry } from "../services/analyze";
 
-import { JournalSidebar } from "./JournalSidebar";
-import { JournalEditor } from "./JournalEditor";
 import { JournalContextPanel } from "./JournalContextPanel";
+import { JournalEditor } from "./JournalEditor";
+import { JournalSidebar } from "./JournalSidebar";
 
 export function Journal() {
   // --- Data & Hooks ---
@@ -105,6 +107,7 @@ export function Journal() {
         type: JournalType.THOUGHT,
         tags: [],
       });
+      // eslint-disable-next-line no-console
       console.log("Created new entry:", newEntry);
 
       // Select the new entry after creation

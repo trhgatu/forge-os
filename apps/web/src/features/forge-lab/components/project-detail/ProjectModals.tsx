@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
 import { X, AlertTriangle, Loader2 } from "lucide-react";
+import React, { useState, useEffect } from "react";
+
 import { GlassCard } from "@/shared/components/ui/GlassCard";
 import { Switch } from "@/shared/components/ui/Switch";
-import { Project } from "../../types";
+
+import type { Project } from "../../types";
 
 interface ModalProps {
   isOpen: boolean;

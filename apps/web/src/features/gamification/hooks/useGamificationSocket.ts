@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { toast } from "sonner";
+
 import { socketService } from "@/services/socketService";
 import { useAuthStore } from "@/shared/store/authStore";
 
@@ -28,7 +29,6 @@ export const useGamificationSocket = (
 
     // Connect via Singleton Service (Multiplexed)
     const socketInstance = socketService.connect("/gamification");
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSocket(socketInstance);
 
     const handleXpAwarded = (data: XpAwardedData) => {

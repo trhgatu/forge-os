@@ -1,4 +1,4 @@
-import { ConnectionRole, EchoTypeVisitor } from "../types";
+import type { ConnectionRole, EchoTypeVisitor } from "../types";
 
 export const ECHO_COLORS: Record<EchoTypeVisitor, string> = {
   anonymous: "bg-blue-400/50 shadow-[0_0_10px_#60A5FA]",

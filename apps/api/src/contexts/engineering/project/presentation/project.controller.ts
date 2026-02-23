@@ -94,11 +94,7 @@ export class ProjectController {
     const project = (await this.queryBus.execute(
       new GetProjectByIdQuery(ProjectId.create(id)),
     )) as Project;
-    return ProjectPresenter.toLogsResponse(
-      project,
-      Number(page),
-      Number(limit),
-    );
+    return ProjectPresenter.toLogsResponse(project, Number(page), Number(limit));
   }
 
   @Post()
@@ -125,9 +121,7 @@ export class ProjectController {
   @Delete(':id')
   @Permissions(PermissionEnum.DELETE_PROJECT)
   async remove(@Param('id') id: string) {
-    await this.commandBus.execute(
-      new DeleteProjectCommand(ProjectId.create(id)),
-    );
+    await this.commandBus.execute(new DeleteProjectCommand(ProjectId.create(id)));
     return { success: true };
   }
 

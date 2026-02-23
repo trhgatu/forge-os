@@ -20,11 +20,7 @@ export class Quote {
     private deletedAt?: Date,
   ) {}
 
-  static create(
-    props: Omit<QuoteProps, 'createdAt' | 'updatedAt'>,
-    id: QuoteId,
-    now: Date,
-  ): Quote {
+  static create(props: Omit<QuoteProps, 'createdAt' | 'updatedAt'>, id: QuoteId, now: Date): Quote {
     return new Quote(id, {
       ...props,
       tags: props.tags ?? [],
@@ -51,9 +47,7 @@ export class Quote {
     );
   }
 
-  updateInfo(
-    props: Partial<Omit<QuoteProps, 'createdAt' | 'updatedAt'>>,
-  ): void {
+  updateInfo(props: Partial<Omit<QuoteProps, 'createdAt' | 'updatedAt'>>): void {
     if (props.content) {
       for (const [lang, val] of props.content.entries()) {
         this.props.content.set(lang, val);

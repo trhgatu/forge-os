@@ -1,10 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CqrsModule } from '@nestjs/cqrs';
-import {
-  Permission,
-  PermissionSchema,
-} from './infrastructure/schemas/iam-permission.schema';
+import { Permission, PermissionSchema } from './infrastructure/schemas/iam-permission.schema';
 import { PermissionController } from './presentation/controllers/permission.controller';
 import { SharedModule } from '@shared/shared.module';
 import { PermissionRepository } from './application/ports/permission.repository';
@@ -30,9 +27,7 @@ const EventHandlers = [InvalidatePermissionCacheHandler];
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      { name: Permission.name, schema: PermissionSchema },
-    ]),
+    MongooseModule.forFeature([{ name: Permission.name, schema: PermissionSchema }]),
     CqrsModule,
     SharedModule,
   ],

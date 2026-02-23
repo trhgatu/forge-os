@@ -1,10 +1,4 @@
-import {
-  IsArray,
-  IsBooleanString,
-  IsNumberString,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsArray, IsBooleanString, IsNumberString, IsOptional, IsString } from 'class-validator';
 
 export class QueryMoodDto {
   @IsOptional()

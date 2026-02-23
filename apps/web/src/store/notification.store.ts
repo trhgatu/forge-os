@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { NotificationType, NotificationSource } from "@/types"; // Need to ensure types exist
+
+import type { NotificationType, NotificationSource } from "@/types"; // Need to ensure types exist
 
 export interface NotificationItem {
   id: string;

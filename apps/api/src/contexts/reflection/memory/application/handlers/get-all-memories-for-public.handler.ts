@@ -17,17 +17,14 @@ export class GetAllMemoriesForPublicHandler implements IQueryHandler<GetAllMemor
     private readonly cacheService: CacheService,
   ) {}
 
-  async execute(
-    query: GetAllMemoriesForPublicQuery,
-  ): Promise<PaginatedResponse<MemoryResponse>> {
+  async execute(query: GetAllMemoriesForPublicQuery): Promise<PaginatedResponse<MemoryResponse>> {
     const { payload } = query;
 
     const { page = 1, limit = 10 } = payload;
 
     const cacheKey = `memories:public:p${page}:l${limit}:${JSON.stringify(payload)}`;
 
-    const cached =
-      await this.cacheService.get<PaginatedResult<MemoryResponse>>(cacheKey);
+    const cached = await this.cacheService.get<PaginatedResult<MemoryResponse>>(cacheKey);
     if (cached) return cached;
 
     const memories = await this.memoryRepo.findAll({
@@ -37,9 +34,7 @@ export class GetAllMemoriesForPublicHandler implements IQueryHandler<GetAllMemor
 
     const response = {
       meta: memories.meta,
-      data: memories.data.map((memory) =>
-        MemoryPresenter.toResponse(memory, payload.lang || 'en'),
-      ),
+      data: memories.data.map((memory) => MemoryPresenter.toResponse(memory, payload.lang || 'en')),
     };
 
     await this.cacheService.set(cacheKey, response, 60);

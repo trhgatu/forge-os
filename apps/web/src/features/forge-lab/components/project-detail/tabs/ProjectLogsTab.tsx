@@ -1,6 +1,8 @@
 import React from "react";
-import { Project } from "../../../types";
+
 import { cn } from "@/shared/lib/utils";
+
+import type { Project } from "../../../types";
 
 interface ProjectLogsTabProps {
   project: Project;
