@@ -6,9 +6,10 @@ import { JournalPresenter } from '../../presentation/journal.presenter';
 import { JournalResponse } from '../../presentation/dto/journal.response';
 
 @QueryHandler(GetJournalByIdForPublicQuery)
-export class GetJournalByIdForPublicHandler
-  implements IQueryHandler<GetJournalByIdForPublicQuery, JournalResponse>
-{
+export class GetJournalByIdForPublicHandler implements IQueryHandler<
+  GetJournalByIdForPublicQuery,
+  JournalResponse
+> {
   constructor(private readonly journalRepo: JournalRepository) {}
 
   async execute(query: GetJournalByIdForPublicQuery): Promise<JournalResponse> {

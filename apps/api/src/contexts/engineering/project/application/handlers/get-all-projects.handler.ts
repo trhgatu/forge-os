@@ -9,9 +9,7 @@ import { ProjectPresenter } from '../../presentation/project.presenter';
 import { ProjectResponse } from '../../presentation/dto/project.response';
 
 @QueryHandler(GetAllProjectsQuery)
-export class GetAllProjectsHandler
-  implements IQueryHandler<GetAllProjectsQuery>
-{
+export class GetAllProjectsHandler implements IQueryHandler<GetAllProjectsQuery> {
   constructor(
     @Inject('ProjectRepository')
     private readonly projectRepository: ProjectRepository,

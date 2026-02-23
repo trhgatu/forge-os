@@ -10,9 +10,7 @@ import { PaginatedResult } from '@shared/types/paginated-result';
 import { QuoteCacheKeys } from '../../infrastructure/cache/quote-cache.keys';
 
 @QueryHandler(GetAllQuotesForPublicQuery)
-export class GetAllQuotesForPublicHandler
-  implements IQueryHandler<GetAllQuotesForPublicQuery>
-{
+export class GetAllQuotesForPublicHandler implements IQueryHandler<GetAllQuotesForPublicQuery> {
   constructor(
     private readonly quoteRepo: QuoteRepository,
     private readonly cacheService: CacheService,

@@ -7,9 +7,10 @@ import { QuotePresenter } from '../../presentation/quote.presenter';
 import { QuoteResponse } from '../../presentation/dto/quote.response';
 
 @CommandHandler(UpdateQuoteCommand)
-export class UpdateQuoteHandler
-  implements ICommandHandler<UpdateQuoteCommand, QuoteResponse>
-{
+export class UpdateQuoteHandler implements ICommandHandler<
+  UpdateQuoteCommand,
+  QuoteResponse
+> {
   constructor(
     private readonly quoteRepo: QuoteRepository,
     private readonly eventBus: EventBus,

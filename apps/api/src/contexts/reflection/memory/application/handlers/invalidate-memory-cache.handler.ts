@@ -4,9 +4,7 @@ import { CacheService } from '@shared/services/cache.service';
 import { LoggerService } from '@shared/logging/logger.service';
 
 @EventsHandler(MemoryModifiedEvent)
-export class InvalidateMemoryCacheHandler
-  implements IEventHandler<MemoryModifiedEvent>
-{
+export class InvalidateMemoryCacheHandler implements IEventHandler<MemoryModifiedEvent> {
   constructor(
     private readonly cacheService: CacheService,
     private readonly logger: LoggerService,

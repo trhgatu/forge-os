@@ -6,9 +6,7 @@ import { GithubRepo } from '../../domain/project.interfaces';
 import { LoggerService } from '@shared/logging/logger.service';
 
 @QueryHandler(GetGithubReposQuery)
-export class GetGithubReposHandler
-  implements IQueryHandler<GetGithubReposQuery>
-{
+export class GetGithubReposHandler implements IQueryHandler<GetGithubReposQuery> {
   constructor(
     @Inject('GithubRepository')
     private readonly githubRepository: GithubRepository,

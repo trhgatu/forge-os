@@ -6,9 +6,10 @@ import { MemoryResponse } from '../../presentation/dto/memory.response';
 import { MemoryPresenter } from '../../presentation/memory.presenter';
 
 @QueryHandler(GetMemoryByIdForPublicQuery)
-export class GetMemoryByIdForPublicHandler
-  implements IQueryHandler<GetMemoryByIdForPublicQuery, MemoryResponse>
-{
+export class GetMemoryByIdForPublicHandler implements IQueryHandler<
+  GetMemoryByIdForPublicQuery,
+  MemoryResponse
+> {
   constructor(
     @Inject('MemoryRepository')
     private readonly memoryRepo: MemoryRepository,

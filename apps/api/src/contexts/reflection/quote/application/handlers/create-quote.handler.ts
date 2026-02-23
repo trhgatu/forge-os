@@ -9,9 +9,10 @@ import { QuoteModifiedEvent } from '../events/quote-modified.event';
 import { QuoteStatus } from '@shared/enums';
 
 @CommandHandler(CreateQuoteCommand)
-export class CreateQuoteHandler
-  implements ICommandHandler<CreateQuoteCommand, QuoteResponse>
-{
+export class CreateQuoteHandler implements ICommandHandler<
+  CreateQuoteCommand,
+  QuoteResponse
+> {
   constructor(
     private readonly quoteRepo: QuoteRepository,
     private readonly eventBus: EventBus,

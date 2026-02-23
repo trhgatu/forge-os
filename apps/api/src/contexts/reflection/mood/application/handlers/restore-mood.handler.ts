@@ -4,9 +4,10 @@ import { Inject } from '@nestjs/common';
 import { MoodRepository } from '../ports/mood.repository';
 
 @CommandHandler(RestoreMoodCommand)
-export class RestoreMoodHandler
-  implements ICommandHandler<RestoreMoodCommand, void>
-{
+export class RestoreMoodHandler implements ICommandHandler<
+  RestoreMoodCommand,
+  void
+> {
   constructor(
     @Inject('MoodRepository')
     private readonly moodRepo: MoodRepository,

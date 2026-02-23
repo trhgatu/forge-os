@@ -12,8 +12,6 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 
-import { Request } from 'express';
-
 import { GetAllProjectsQuery } from '../application/queries/get-all-projects.query';
 import { GetProjectByIdQuery } from '../application/queries/get-project-by-id.query';
 import { QueryProjectDto } from './dto/query-project.dto';

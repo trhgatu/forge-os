@@ -5,9 +5,7 @@ import { PermissionNotFoundException } from '../../../auth/domain/exceptions/iam
 import { PermissionModifiedEvent } from '../events/permission-modified.event';
 
 @CommandHandler(RestorePermissionCommand)
-export class RestorePermissionHandler
-  implements ICommandHandler<RestorePermissionCommand>
-{
+export class RestorePermissionHandler implements ICommandHandler<RestorePermissionCommand> {
   constructor(
     private readonly permissionRepository: PermissionRepository,
     private readonly eventBus: EventBus,

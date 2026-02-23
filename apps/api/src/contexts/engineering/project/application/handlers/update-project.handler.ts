@@ -8,9 +8,7 @@ import { ProjectUpdatedEvent } from '../../domain/events/project-updated.event';
 import { CacheService } from '@shared/services';
 
 @CommandHandler(UpdateProjectCommand)
-export class UpdateProjectHandler
-  implements ICommandHandler<UpdateProjectCommand>
-{
+export class UpdateProjectHandler implements ICommandHandler<UpdateProjectCommand> {
   // private readonly logger = new Logger(UpdateProjectHandler.name);
 
   constructor(

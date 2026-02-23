@@ -15,6 +15,7 @@ export class MoodMapper {
         createdAt: doc.createdAt,
         updatedAt: doc.updatedAt,
       },
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       MoodId.create(doc._id as any),
     );
   }

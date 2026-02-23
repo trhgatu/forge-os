@@ -4,9 +4,7 @@ import { PermissionRepository } from '../ports/permission.repository';
 import { CacheService } from '@shared/services/cache.service';
 
 @QueryHandler(GetPermissionsQuery)
-export class GetPermissionsHandler
-  implements IQueryHandler<GetPermissionsQuery>
-{
+export class GetPermissionsHandler implements IQueryHandler<GetPermissionsQuery> {
   constructor(
     private readonly permissionRepository: PermissionRepository,
     private readonly cacheService: CacheService,

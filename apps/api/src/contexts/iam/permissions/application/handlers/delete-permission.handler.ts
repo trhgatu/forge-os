@@ -5,9 +5,7 @@ import { PermissionNotFoundException } from 'src/contexts/iam/auth/domain/except
 import { PermissionModifiedEvent } from '../events/permission-modified.event';
 
 @CommandHandler(DeletePermissionCommand)
-export class DeletePermissionHandler
-  implements ICommandHandler<DeletePermissionCommand>
-{
+export class DeletePermissionHandler implements ICommandHandler<DeletePermissionCommand> {
   constructor(
     private readonly permissionRepository: PermissionRepository,
     private readonly eventBus: EventBus,

@@ -4,9 +4,7 @@ import { PermissionRepository } from '../ports/permission.repository';
 import { PermissionNotFoundException } from 'src/contexts/iam/auth/domain/exceptions/iam.exceptions';
 
 @CommandHandler(UpdatePermissionCommand)
-export class UpdatePermissionHandler
-  implements ICommandHandler<UpdatePermissionCommand>
-{
+export class UpdatePermissionHandler implements ICommandHandler<UpdatePermissionCommand> {
   constructor(private readonly permissionRepository: PermissionRepository) {}
 
   async execute(command: UpdatePermissionCommand) {

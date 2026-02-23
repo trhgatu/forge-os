@@ -7,9 +7,10 @@ import { MemoryPresenter } from '../../presentation/memory.presenter';
 import { MemoryResponse } from '../../presentation/dto/memory.response';
 
 @CommandHandler(SoftDeleteMemoryCommand)
-export class SoftDeleteMemoryHandler
-  implements ICommandHandler<SoftDeleteMemoryCommand, MemoryResponse>
-{
+export class SoftDeleteMemoryHandler implements ICommandHandler<
+  SoftDeleteMemoryCommand,
+  MemoryResponse
+> {
   constructor(
     @Inject('MemoryRepository')
     private readonly memoryRepo: MemoryRepository,

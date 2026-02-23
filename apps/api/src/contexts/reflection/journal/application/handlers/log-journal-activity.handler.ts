@@ -3,9 +3,7 @@ import { JournalModifiedEvent } from '../events/journal-modified.event';
 import { LoggerService } from '@shared/logging/logger.service';
 
 @EventsHandler(JournalModifiedEvent)
-export class LogJournalActivityHandler
-  implements IEventHandler<JournalModifiedEvent>
-{
+export class LogJournalActivityHandler implements IEventHandler<JournalModifiedEvent> {
   constructor(private readonly logger: LoggerService) {}
 
   handle(event: JournalModifiedEvent) {

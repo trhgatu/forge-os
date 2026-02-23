@@ -7,9 +7,7 @@ import { PermissionRepository } from '../ports/permission.repository';
 import { PermissionNotFoundException } from 'src/contexts/iam/auth/domain/exceptions/iam.exceptions';
 
 @QueryHandler(GetPermissionByIdQuery)
-export class GetPermissionByIdHandler
-  implements IQueryHandler<GetPermissionByIdQuery>
-{
+export class GetPermissionByIdHandler implements IQueryHandler<GetPermissionByIdQuery> {
   constructor(private readonly permissionRepository: PermissionRepository) {}
 
   async execute(query: GetPermissionByIdQuery) {

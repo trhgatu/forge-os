@@ -9,9 +9,10 @@ import { MoodPresenter } from '../../presentation/mood.presenter';
 import { MoodResponse } from '../../presentation/dto/mood.response';
 
 @CommandHandler(CreateMoodCommand)
-export class CreateMoodHandler
-  implements ICommandHandler<CreateMoodCommand, MoodResponse>
-{
+export class CreateMoodHandler implements ICommandHandler<
+  CreateMoodCommand,
+  MoodResponse
+> {
   constructor(
     @Inject('MoodRepository')
     private readonly moodRepo: MoodRepository,

@@ -7,9 +7,10 @@ import { JournalPresenter } from '../../presentation/journal.presenter';
 import { JournalResponse } from '../../presentation/dto/journal.response';
 
 @CommandHandler(RestoreJournalCommand)
-export class RestoreJournalHandler
-  implements ICommandHandler<RestoreJournalCommand, JournalResponse>
-{
+export class RestoreJournalHandler implements ICommandHandler<
+  RestoreJournalCommand,
+  JournalResponse
+> {
   constructor(
     private readonly journalRepo: JournalRepository,
     private readonly eventBus: EventBus,

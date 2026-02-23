@@ -6,9 +6,7 @@ import { MemoryModifiedEvent } from '../events/memory-modified.event';
 import { Inject, NotFoundException } from '@nestjs/common';
 
 @CommandHandler(DeleteMemoryCommand)
-export class DeleteMemoryHandler
-  implements ICommandHandler<DeleteMemoryCommand>
-{
+export class DeleteMemoryHandler implements ICommandHandler<DeleteMemoryCommand> {
   constructor(
     @Inject('MemoryRepository') private readonly memoryRepo: MemoryRepository,
     private readonly eventBus: EventBus,

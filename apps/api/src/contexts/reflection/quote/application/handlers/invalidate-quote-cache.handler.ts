@@ -5,9 +5,7 @@ import { LoggerService } from '@shared/logging/logger.service';
 import { QuoteCacheKeys } from '../../infrastructure/cache/quote-cache.keys';
 
 @EventsHandler(QuoteModifiedEvent)
-export class InvalidateQuoteCacheHandler
-  implements IEventHandler<QuoteModifiedEvent>
-{
+export class InvalidateQuoteCacheHandler implements IEventHandler<QuoteModifiedEvent> {
   constructor(
     private readonly cacheService: CacheService,
     private readonly logger: LoggerService,

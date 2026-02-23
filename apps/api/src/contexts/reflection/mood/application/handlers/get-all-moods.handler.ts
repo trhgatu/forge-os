@@ -7,9 +7,10 @@ import { PaginatedResult } from '@shared/types/paginated-result';
 import { MoodResponse } from '../../presentation/dto/mood.response';
 
 @QueryHandler(GetAllMoodsQuery)
-export class GetAllMoodsHandler
-  implements IQueryHandler<GetAllMoodsQuery, PaginatedResult<MoodResponse>>
-{
+export class GetAllMoodsHandler implements IQueryHandler<
+  GetAllMoodsQuery,
+  PaginatedResult<MoodResponse>
+> {
   constructor(
     @Inject('MoodRepository')
     private readonly moodRepo: MoodRepository,

@@ -4,9 +4,7 @@ import { CacheService } from '@shared/services/cache.service';
 import { LoggerService } from '@shared/logging/logger.service';
 
 @EventsHandler(RoleModifiedEvent)
-export class InvalidateRoleCacheHandler
-  implements IEventHandler<RoleModifiedEvent>
-{
+export class InvalidateRoleCacheHandler implements IEventHandler<RoleModifiedEvent> {
   constructor(
     private readonly cacheService: CacheService,
     private readonly logger: LoggerService,

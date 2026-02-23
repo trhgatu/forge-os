@@ -4,9 +4,7 @@ import { CacheService } from '@shared/services/cache.service';
 import { LoggerService } from '@shared/logging/logger.service';
 
 @EventsHandler(PermissionModifiedEvent)
-export class InvalidatePermissionCacheHandler
-  implements IEventHandler<PermissionModifiedEvent>
-{
+export class InvalidatePermissionCacheHandler implements IEventHandler<PermissionModifiedEvent> {
   constructor(
     private readonly cacheService: CacheService,
     private readonly logger: LoggerService,

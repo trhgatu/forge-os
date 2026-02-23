@@ -7,9 +7,10 @@ import { MemoryPresenter } from '../../presentation/memory.presenter';
 import { MemoryResponse } from '../../presentation/dto/memory.response';
 
 @CommandHandler(UpdateMemoryCommand)
-export class UpdateMemoryHandler
-  implements ICommandHandler<UpdateMemoryCommand, MemoryResponse>
-{
+export class UpdateMemoryHandler implements ICommandHandler<
+  UpdateMemoryCommand,
+  MemoryResponse
+> {
   constructor(
     @Inject('MemoryRepository')
     private readonly memoryRepo: MemoryRepository,

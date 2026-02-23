@@ -7,9 +7,10 @@ import { JournalPresenter } from '../../presentation/journal.presenter';
 import { JournalResponse } from '../../presentation/dto/journal.response';
 
 @CommandHandler(SoftDeleteJournalCommand)
-export class SoftDeleteJournalHandler
-  implements ICommandHandler<SoftDeleteJournalCommand, JournalResponse>
-{
+export class SoftDeleteJournalHandler implements ICommandHandler<
+  SoftDeleteJournalCommand,
+  JournalResponse
+> {
   constructor(
     private readonly journalRepo: JournalRepository,
     private readonly eventBus: EventBus,

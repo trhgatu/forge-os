@@ -11,9 +11,10 @@ import { JournalStatus } from '../../domain/enums/journal-status.enum';
 import { JournalType } from '../../domain/enums/journal-type.enum';
 
 @CommandHandler(CreateJournalCommand)
-export class CreateJournalHandler
-  implements ICommandHandler<CreateJournalCommand, JournalResponse>
-{
+export class CreateJournalHandler implements ICommandHandler<
+  CreateJournalCommand,
+  JournalResponse
+> {
   constructor(
     private readonly journalRepo: JournalRepository,
     private readonly eventBus: EventBus,

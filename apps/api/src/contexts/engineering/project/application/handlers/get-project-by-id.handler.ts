@@ -6,9 +6,7 @@ import { Project } from '../../domain/project.entity';
 import { LoggerService } from '@shared/logging/logger.service';
 
 @QueryHandler(GetProjectByIdQuery)
-export class GetProjectByIdHandler
-  implements IQueryHandler<GetProjectByIdQuery>
-{
+export class GetProjectByIdHandler implements IQueryHandler<GetProjectByIdQuery> {
   // private readonly logger = new Logger(GetProjectByIdHandler.name);
 
   constructor(

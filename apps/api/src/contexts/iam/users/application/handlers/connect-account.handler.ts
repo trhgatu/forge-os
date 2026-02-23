@@ -5,9 +5,7 @@ import { Logger } from '@nestjs/common';
 import { UserNotFoundException } from '../../domain/exceptions/user-not-found.exception';
 
 @CommandHandler(ConnectAccountCommand)
-export class ConnectAccountHandler
-  implements ICommandHandler<ConnectAccountCommand>
-{
+export class ConnectAccountHandler implements ICommandHandler<ConnectAccountCommand> {
   private readonly logger = new Logger(ConnectAccountHandler.name);
 
   constructor(private readonly userRepository: UserRepository) {}

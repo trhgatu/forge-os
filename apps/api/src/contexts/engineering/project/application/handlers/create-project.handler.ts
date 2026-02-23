@@ -12,9 +12,10 @@ import { ProjectCreatedEvent } from '../../domain/events/project-created.event';
 import { LoggerService } from '@shared/logging/logger.service';
 
 @CommandHandler(CreateProjectCommand)
-export class CreateProjectHandler
-  implements ICommandHandler<CreateProjectCommand, ProjectResponse>
-{
+export class CreateProjectHandler implements ICommandHandler<
+  CreateProjectCommand,
+  ProjectResponse
+> {
   constructor(
     @Inject('ProjectRepository')
     private readonly projectRepository: ProjectRepository,

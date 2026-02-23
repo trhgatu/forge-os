@@ -6,9 +6,10 @@ import { QuoteResponse } from '../../presentation/dto/quote.response';
 import { QuotePresenter } from '../../presentation/quote.presenter';
 
 @QueryHandler(GetQuoteByIdQuery)
-export class GetQuoteByIdHandler
-  implements IQueryHandler<GetQuoteByIdQuery, QuoteResponse>
-{
+export class GetQuoteByIdHandler implements IQueryHandler<
+  GetQuoteByIdQuery,
+  QuoteResponse
+> {
   constructor(private readonly quoteRepo: QuoteRepository) {}
 
   async execute(query: GetQuoteByIdQuery): Promise<QuoteResponse> {

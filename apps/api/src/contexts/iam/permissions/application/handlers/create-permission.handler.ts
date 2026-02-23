@@ -4,9 +4,7 @@ import { PermissionModifiedEvent } from '../events/permission-modified.event';
 import { PermissionRepository } from '../ports/permission.repository';
 
 @CommandHandler(CreatePermissionCommand)
-export class CreatePermissionHandler
-  implements ICommandHandler<CreatePermissionCommand>
-{
+export class CreatePermissionHandler implements ICommandHandler<CreatePermissionCommand> {
   constructor(
     private readonly permissionRepository: PermissionRepository,
     private readonly eventBus: EventBus,

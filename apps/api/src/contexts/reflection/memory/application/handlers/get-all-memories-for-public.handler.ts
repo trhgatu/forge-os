@@ -9,9 +9,7 @@ import { PaginatedResponse } from '@shared/types/paginated-response';
 import { MemoryResponse } from '../../presentation/dto/memory.response';
 
 @QueryHandler(GetAllMemoriesForPublicQuery)
-export class GetAllMemoriesForPublicHandler
-  implements IQueryHandler<GetAllMemoriesForPublicQuery>
-{
+export class GetAllMemoriesForPublicHandler implements IQueryHandler<GetAllMemoriesForPublicQuery> {
   constructor(
     @Inject('MemoryRepository')
     private readonly memoryRepo: MemoryRepository,

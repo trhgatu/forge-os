@@ -13,9 +13,7 @@ import { JournalResponse } from '../../presentation/dto/journal.response';
 import { JournalCacheKeys } from '../../infrastructure/cache/journal-cache.keys';
 
 @QueryHandler(GetAllJournalsForPublicQuery)
-export class GetAllJournalsForPublicHandler
-  implements IQueryHandler<GetAllJournalsForPublicQuery>
-{
+export class GetAllJournalsForPublicHandler implements IQueryHandler<GetAllJournalsForPublicQuery> {
   constructor(
     private readonly journalRepo: JournalRepository,
     private readonly cacheService: CacheService,

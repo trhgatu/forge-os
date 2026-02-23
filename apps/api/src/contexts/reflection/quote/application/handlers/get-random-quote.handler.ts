@@ -4,9 +4,7 @@ import { QuoteRepository } from '../ports/quote.repository';
 import { QuotePresenter } from '../../presentation/quote.presenter';
 
 @QueryHandler(GetRandomQuoteQuery)
-export class GetRandomQuoteHandler
-  implements IQueryHandler<GetRandomQuoteQuery>
-{
+export class GetRandomQuoteHandler implements IQueryHandler<GetRandomQuoteQuery> {
   constructor(private readonly repository: QuoteRepository) {}
 
   async execute(query: GetRandomQuoteQuery) {

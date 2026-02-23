@@ -8,9 +8,7 @@ import { CacheService } from '@shared/services';
 // import { ProjectId } from '../../domain/value-objects/project-id.vo'; // Unused now
 
 @CommandHandler(DeleteProjectCommand)
-export class DeleteProjectHandler
-  implements ICommandHandler<DeleteProjectCommand>
-{
+export class DeleteProjectHandler implements ICommandHandler<DeleteProjectCommand> {
   constructor(
     @Inject('ProjectRepository')
     private readonly projectRepository: ProjectRepository,

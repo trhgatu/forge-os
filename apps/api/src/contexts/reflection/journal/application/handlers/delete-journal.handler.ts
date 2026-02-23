@@ -6,9 +6,7 @@ import { JournalRepository } from '../ports/journal.repository';
 import { JournalModifiedEvent } from '../events/journal-modified.event';
 
 @CommandHandler(DeleteJournalCommand)
-export class DeleteJournalHandler
-  implements ICommandHandler<DeleteJournalCommand>
-{
+export class DeleteJournalHandler implements ICommandHandler<DeleteJournalCommand> {
   constructor(
     private readonly journalRepo: JournalRepository,
     private readonly eventBus: EventBus,

@@ -4,9 +4,10 @@ import { Inject } from '@nestjs/common';
 import { MoodRepository } from '../ports/mood.repository';
 
 @CommandHandler(SoftDeleteMoodCommand)
-export class SoftDeleteMoodHandler
-  implements ICommandHandler<SoftDeleteMoodCommand, void>
-{
+export class SoftDeleteMoodHandler implements ICommandHandler<
+  SoftDeleteMoodCommand,
+  void
+> {
   constructor(
     @Inject('MoodRepository')
     private readonly moodRepo: MoodRepository,

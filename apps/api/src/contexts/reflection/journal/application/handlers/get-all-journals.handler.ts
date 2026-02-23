@@ -8,9 +8,7 @@ import { JournalResponse } from '../../presentation/dto/journal.response';
 import { JournalCacheKeys } from '../../infrastructure/cache/journal-cache.keys';
 
 @QueryHandler(GetAllJournalsQuery)
-export class GetAllJournalsHandler
-  implements IQueryHandler<GetAllJournalsQuery>
-{
+export class GetAllJournalsHandler implements IQueryHandler<GetAllJournalsQuery> {
   constructor(
     private readonly journalRepo: JournalRepository,
     private readonly cacheService: CacheService,

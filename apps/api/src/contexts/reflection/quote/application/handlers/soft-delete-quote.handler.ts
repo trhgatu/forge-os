@@ -7,9 +7,10 @@ import { QuotePresenter } from '../../presentation/quote.presenter';
 import { QuoteResponse } from '../../presentation/dto/quote.response';
 
 @CommandHandler(SoftDeleteQuoteCommand)
-export class SoftDeleteQuoteHandler
-  implements ICommandHandler<SoftDeleteQuoteCommand, QuoteResponse>
-{
+export class SoftDeleteQuoteHandler implements ICommandHandler<
+  SoftDeleteQuoteCommand,
+  QuoteResponse
+> {
   constructor(
     private readonly quoteRepo: QuoteRepository,
     private readonly eventBus: EventBus,

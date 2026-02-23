@@ -14,18 +14,21 @@ import { EventBus } from '@nestjs/cqrs';
 import { MemoryStatus, MoodType } from '@shared/enums';
 
 @CommandHandler(CreateMemoryCommand)
-export class CreateMemoryHandler
-  implements ICommandHandler<CreateMemoryCommand, MemoryResponse> {
+export class CreateMemoryHandler implements ICommandHandler<
+  CreateMemoryCommand,
+  MemoryResponse
+> {
   constructor(
     @Inject('MemoryRepository')
     private readonly memoryRepo: MemoryRepository,
     private readonly eventBus: EventBus,
-  ) { }
+  ) {}
 
   async execute(command: CreateMemoryCommand): Promise<MemoryResponse> {
     const { payload, lang } = command;
 
     const now = new Date();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const id = MemoryId.create(new ObjectId() as any);
 
     const memory = Memory.create(
