@@ -7,7 +7,10 @@ on:
       - develop
     paths:
       - 'apps/api/**'
-      - '.github/workflows/**'
+      - 'packages/**'
+      - '.github/workflows/cd.yml'
+      - 'package.json'
+      - 'pnpm-workspace.yaml'
 
 jobs:
   deploy:
@@ -29,10 +32,14 @@ jobs:
       - name: 🏗️ Build and push image
         uses: docker/build-push-action@v5
         with:
-          context: ./apps/api
+          context: .
           file: ./apps/api/Dockerfile
           push: true
-          tags: trhgatu/forge-os-backend:${{ github.ref_name }}
+          tags: |
+            trhgatu/forge-os-backend:${{ github.ref_name }}
+            trhgatu/forge-os-backend:latest
+          cache-from: type=registry,ref=trhgatu/forge-os-backend:buildcache
+          cache-to: type=registry,ref=trhgatu/forge-os-backend:buildcache,mode=max
 
       - name: 🚀 Trigger redeploy on Render
         run: |
@@ -40,6 +47,4 @@ jobs:
             curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_PROD }}
           elif [[ "${{ github.ref_name }}" == "develop" ]]; then
             curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_DEV }}
-          else
-            echo "No Render webhook configured for this branch."
           fi
