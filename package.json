@@ -10,6 +10,8 @@
     "prepare": "husky"
   },
   "devDependencies": {
+    "@types/node": "^25.3.0",
+    "globals": "^17.3.0",
     "prettier": "^3.7.4",
     "turbo": "^2.8.10",
     "typescript": "5.9.2"
