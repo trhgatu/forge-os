@@ -4,7 +4,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { LoggerService } from './shared/logging/logger.service';
 import { AllExceptionsFilter } from './shared/filters/all-exceptions.filter';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { initRedis } from '@config/redis.config';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
   const logger = app.get(LoggerService);
@@ -13,7 +13,7 @@ async function bootstrap() {
   const httpAdapter = app.get(HttpAdapterHost);
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapter, logger));
 
-  await initRedis();
+
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.setGlobalPrefix('api/v1');
 

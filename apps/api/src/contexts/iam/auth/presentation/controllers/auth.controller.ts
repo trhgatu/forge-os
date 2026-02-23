@@ -11,7 +11,7 @@ import { extractBearerToken } from '@shared/utils/extract-bearer-token';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Post('register')
   register(@Body() dto: RegisterDto) {
@@ -33,8 +33,6 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   async getMe(@GetUser() user: any) {
-    // user is already a Domain Entity with role populated by JwtStrategy
-
     return {
       status: 'success',
       message: 'Get current user successfully',
@@ -42,7 +40,7 @@ export class AuthController {
         id: user.id.toString(),
         name: user.name,
         email: user.email,
-        role: user.role, // Use the populated role object
+        role: user.role,
       },
     };
   }

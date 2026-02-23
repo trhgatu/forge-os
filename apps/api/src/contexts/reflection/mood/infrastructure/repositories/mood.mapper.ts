@@ -15,7 +15,7 @@ export class MoodMapper {
         createdAt: doc.createdAt,
         updatedAt: doc.updatedAt,
       },
-      MoodId.create(doc._id),
+      MoodId.create(doc._id as any),
     );
   }
 

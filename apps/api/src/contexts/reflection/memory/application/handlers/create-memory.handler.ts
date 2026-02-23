@@ -15,19 +15,18 @@ import { MemoryStatus, MoodType } from '@shared/enums';
 
 @CommandHandler(CreateMemoryCommand)
 export class CreateMemoryHandler
-  implements ICommandHandler<CreateMemoryCommand, MemoryResponse>
-{
+  implements ICommandHandler<CreateMemoryCommand, MemoryResponse> {
   constructor(
     @Inject('MemoryRepository')
     private readonly memoryRepo: MemoryRepository,
     private readonly eventBus: EventBus,
-  ) {}
+  ) { }
 
   async execute(command: CreateMemoryCommand): Promise<MemoryResponse> {
     const { payload, lang } = command;
 
     const now = new Date();
-    const id = MemoryId.create(new ObjectId());
+    const id = MemoryId.create(new ObjectId() as any);
 
     const memory = Memory.create(
       {

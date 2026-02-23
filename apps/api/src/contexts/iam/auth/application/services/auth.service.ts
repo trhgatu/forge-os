@@ -16,7 +16,7 @@ export class AuthService {
     private readonly userRepository: UserRepository,
     private readonly roleRepository: RoleRepository,
     private readonly jwtService: JwtService,
-  ) {}
+  ) { }
 
   async register(dto: RegisterDto) {
     const existingUser = await this.userRepository.findByEmail(dto.email);
@@ -88,11 +88,11 @@ export class AuthService {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
         secret: process.env.JWT_SECRET,
-        expiresIn: process.env.JWT_EXPIRES_IN || '15m',
+        expiresIn: (process.env.JWT_EXPIRES_IN || '15m') as any,
       }),
       this.jwtService.signAsync(payload, {
         secret: process.env.JWT_REFRESH_SECRET,
-        expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
+        expiresIn: (process.env.JWT_REFRESH_EXPIRES_IN || '7d') as any,
       }),
     ]);
 
