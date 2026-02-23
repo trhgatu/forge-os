@@ -11,7 +11,7 @@ Content-Type: application/json
 ### Store Token
 @token = {{login.response.body.accessToken}}
 
-### Create Mood (Admin)
+### Create Mood (admin)
 POST http://localhost:3000/api/v1/admin/moods
 Content-Type: application/json
 Authorization: Bearer {{token}}
