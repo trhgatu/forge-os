@@ -1,50 +1,37 @@
+# dependencies
 node_modules
-.pnp
-.pnp.js
-.turbo
-.vercel
-.temp
-.tmp
+.pnpm-debug.log*
+.yarn
 
-**/.env
-**/.env.local
-**/.env.development.local
-**/.env.test.local
-**/.env.production.local
-*.pem
-
+# build outputs
 dist
 .next/
 out/
 build
 /coverage
-/.nyc_output
+.turbo
 
-logs
+# environment files
+.env*
+!.env.example
+
+# debug & logs
 *.log
 npm-debug.log*
-pnpm-debug.log*
 yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
-pids
-*.pid
-*.seed
-*.pid.lock
-report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
-.DS_Store
-Thumbs.db
-.idea
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
-
+# IDEs
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+.idea
+.DS_Store
+
+# Vercel
+.vercel
+
+# Next.js specific
+next-env.d.ts
+*.tsbuildinfo
