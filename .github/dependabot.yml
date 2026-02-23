@@ -8,17 +8,28 @@ updates:
       time: "09:00"
       timezone: "Asia/Ho_Chi_Minh"
     open-pull-requests-limit: 5
+    labels:
+      - "root"
+      - "dependencies"
 
-    groups:
-      dependencies:
-        patterns:
-          - "*"
+  - package-ecosystem: "npm"
+    directory: "/apps/api"
+    schedule:
+      interval: "weekly"
     labels:
       - "backend"
       - "dependencies"
 
+  - package-ecosystem: "npm"
+    directory: "/apps/web"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "frontend"
+      - "dependencies"
+
   - package-ecosystem: "docker"
-    directory: "/"
+    directory: "/apps/api"
     schedule:
       interval: "weekly"
     labels:

@@ -1,10 +1,13 @@
-name: CD - Deploy to Docker Hub
+name: CD - Deploy Backend to Docker Hub
 
 on:
   push:
     branches:
       - main
       - develop
+    paths:
+      - 'apps/api/**'
+      - '.github/workflows/**'
 
 jobs:
   deploy:
@@ -26,7 +29,8 @@ jobs:
       - name: 🏗️ Build and push image
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./apps/api
+          file: ./apps/api/Dockerfile
           push: true
           tags: trhgatu/forge-os-backend:${{ github.ref_name }}
 

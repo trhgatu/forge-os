@@ -1,0 +1,10 @@
+{
+  "apps/api/src/**/*.ts": [
+    "pnpm --filter @forge/api lint",
+    "prettier --write"
+  ],
+  "apps/api/test/**/*.ts": [
+    "pnpm --filter @forge/api lint",
+    "prettier --write"
+  ]
+}

@@ -1,10 +1,17 @@
-name: CI - Lint & Docker Build
+name: CI - Backend Lint & Build Test
 
 on:
   push:
     branches: ['**']
+    paths:
+      - 'apps/api/**'
+      - 'packages/**'
+      - '.github/workflows/ci.yml'
   pull_request:
     branches: ['**']
+    paths:
+      - 'apps/api/**'
+
 jobs:
   lint-and-build:
     runs-on: ubuntu-latest
@@ -13,16 +20,22 @@ jobs:
       - name: 📥 Checkout source code
         uses: actions/checkout@v4
 
+      - name: 🔧 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
       - name: 🔧 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
+          cache: 'pnpm'
 
       - name: 📦 Install dependencies
-        run: npm install
+        run: pnpm install --frozen-lockfile
 
       - name: 🧹 Run linter
-        run: npm run lint
+        run: pnpm turbo lint --filter=@forge/api
 
       - name: 🐳 Docker build test
-        run: docker build -t forge-os-backend .
+        run: docker build -t forge-os-backend ./apps/api
