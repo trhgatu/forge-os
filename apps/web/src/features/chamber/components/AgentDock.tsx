@@ -6,9 +6,6 @@ import React from "react";
 import { cn } from "@/shared/lib/utils";
 import type { Agent } from "@/shared/types";
 
-// =============================================
-// TAILWIND v4 FIX – MAPPING TEXT-COLOR → REAL COLORS
-// =============================================
 const AGENT_COLORS: Record<string, { border: string; bg: string; visualizer: string }> = {
   "text-forge-cyan": {
     border: "border-forge-cyan/30",
@@ -84,9 +81,6 @@ export const AGENTS: Agent[] = [
   },
 ];
 
-// =============================================
-// COMPONENT
-// =============================================
 interface AgentDockProps {
   isOpen: boolean;
   activeAgentIds?: string[];

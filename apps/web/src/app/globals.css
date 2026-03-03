@@ -12,6 +12,7 @@
   --font-mono: "JetBrains Mono", monospace;
   --font-quote: var(--font-playfair), serif;
   --font-handwriting: var(--font-dancing), cursive;
+  --font-lato: var(--font-lato), sans-serif;
 
   --ease-spring-out: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-spring-in: cubic-bezier(0.4, 0, 0.2, 1);
@@ -21,6 +22,7 @@
    KEYFRAMES (Tailwind v4)
 ----------------------------- */
 @keyframes float {
+
   0%,
   100% {
     transform: translateY(0);
@@ -56,6 +58,7 @@
    BASE STYLES
 ----------------------------- */
 @layer base {
+
   html,
   body {
     margin: 0;
@@ -168,6 +171,7 @@
 
 /* Floating Animation for Quote Garden */
 @keyframes float {
+
   0%,
   100% {
     transform: translateY(0px);
@@ -180,4 +184,10 @@
 
 .animate-float {
   animation: float ease-in-out infinite;
+}
+
+@layer utilities {
+  .font-lato {
+    font-family: var(--font-lato);
+  }
 }

@@ -1,7 +1,8 @@
 "use client";
 
 import type {
-  LucideIcon} from "lucide-react";
+  LucideIcon
+} from "lucide-react";
 import {
   LayoutDashboard,
   BrainCircuit,
@@ -154,7 +155,6 @@ const SidebarGroup: React.FC<{
   playSound: (sound: SoundType) => void;
   t: (key: string) => string;
 }> = ({ group, isSidebarExpanded, items, pathname, playSound, t }) => {
-  // Default expanded if it contains active item OR is 'Main'/'Meta'
   const hasActiveItem = items.some((i) => pathname.startsWith(getPathForView(i.id)));
   const [isCollapsed, setIsCollapsed] = useState(() => {
     if (group === "Main" || group === "Meta") return false;
@@ -172,19 +172,10 @@ const SidebarGroup: React.FC<{
     setIsCollapsed(!isCollapsed);
   };
 
-  // If sidebar is minimized, we generally want to show icons or just hide the grouping effect visually?
-  // Actually, usually minimized sidebar just shows a flat list of icons.
-  // Accordion interaction inside a 80px sidebar is weird.
-  // Logic: If !isSidebarExpanded, show ALL items always (ignore collapse), but hide Header Text.
-
-  // BUT user might want to collapse groups even in mini sidebar? No, that hides icons.
-  // Let's assume when minimized, we show everything.
-
   const effectiveCollapsed = isSidebarExpanded ? isCollapsed : false;
 
   return (
     <div className="relative">
-      {/* Group Label / Toggle */}
       <button
         onClick={toggle}
         disabled={!isSidebarExpanded}
@@ -195,7 +186,7 @@ const SidebarGroup: React.FC<{
             : "justify-center opacity-0 -translate-x-2 pointer-events-none h-0 mb-0 overflow-hidden"
         )}
       >
-        <span className="text-sm font-[family-name:var(--font-rajdhani)] font-bold text-gray-500 uppercase tracking-[0.15em] group-hover/header:text-forge-cyan transition-colors">
+        <span className="text-sm  font-bold text-gray-500 uppercase tracking-[0.15em] group-hover/header:text-forge-cyan transition-colors">
           {t(`group.${group.toLowerCase()}`)}
         </span>
         <div
@@ -207,8 +198,6 @@ const SidebarGroup: React.FC<{
           <ChevronDown size={12} />
         </div>
       </button>
-
-      {/* Items Container */}
       <div
         className={cn(
           "space-y-1 overflow-hidden transition-all duration-500 ease-in-out",
@@ -235,12 +224,9 @@ const SidebarGroup: React.FC<{
                 isSidebarExpanded ? "justify-start gap-3" : "justify-center"
               )}
             >
-              {/* Active Indicator Pill */}
               {isActive && (
                 <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full bg-forge-cyan shadow-[0_0_10px_#22D3EE] transition-all duration-700" />
               )}
-
-              {/* Icon */}
               <Icon
                 size={20}
                 className={cn(
@@ -250,10 +236,9 @@ const SidebarGroup: React.FC<{
                 )}
               />
 
-              {/* Label */}
               <span
                 className={cn(
-                  "whitespace-nowrap transition-all duration-300 ease-spring-out origin-left",
+                  "whitespace-nowrap transition-all duration-300 ease-spring-out origin-left font-lato",
                   isSidebarExpanded
                     ? "opacity-100 translate-x-0 w-auto delay-75"
                     : "opacity-0 -translate-x-4 w-0"
@@ -291,12 +276,11 @@ export const Sidebar: React.FC = () => {
     <aside
       className={cn(
         "relative h-full z-50 flex flex-col",
-        "border-r border-white/5 bg-black/40 backdrop-blur-2xl",
+        "border-r border-white/5 bg-black/40 backdrop-blur-2xl font-lato",
         "transition-[width] duration-500 ease-spring-out will-change-[width,transform]",
         isExpanded ? "w-72" : "w-20"
       )}
     >
-      {/* Header */}
       <div
         className={cn(
           "flex items-center p-6 mb-2 transition-all duration-500",
@@ -323,14 +307,13 @@ export const Sidebar: React.FC = () => {
             isExpanded ? "opacity-100 translate-x-0 w-auto" : "opacity-0 -translate-x-4 w-0"
           )}
         >
-          <span className="font-[family-name:var(--font-rajdhani)] font-bold text-xl tracking-wide text-white leading-none">
+          <span className="font-bold text-xl tracking-wide text-white leading-none">
             FORGE OS
           </span>
           <span className="text-[10px] font-mono mt-1 text-forge-cyan">v2.9.1-beta</span>
         </div>
       </div>
 
-      {/* Navigation Groups */}
       <nav
         ref={navContainerRef}
         className="flex-1 overflow-y-auto overflow-x-hidden px-3 py-2 space-y-6 scrollbar-hide"
@@ -350,7 +333,6 @@ export const Sidebar: React.FC = () => {
         })}
       </nav>
 
-      {/* XP Bar (Global Gamification) */}
       <div className="mt-auto border-t border-white/5 bg-black/20">
         <div
           className={cn(
@@ -361,10 +343,7 @@ export const Sidebar: React.FC = () => {
           <XPBar compact={!isExpanded} />
         </div>
       </div>
-
-      {/* Footer Controls */}
       <div className="p-4 border-t border-white/5 bg-black/20 space-y-2">
-        {/* Language Toggle */}
         <button
           onClick={toggleLanguage}
           onMouseEnter={() => playSound("hover")}
