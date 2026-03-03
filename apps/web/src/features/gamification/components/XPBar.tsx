@@ -11,9 +11,6 @@ import type { UserStats } from "../types";
 
 import { LevelUpModal } from "./LevelUpModal";
 
-
-
-
 interface XPBarProps {
   compact?: boolean;
 }
@@ -23,10 +20,8 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
   const [stats, setStats] = useState<UserStats | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Auth User
   const user = useAuthStore((state) => state.user);
 
-  // Level Up State
   const [showLevelUp, setShowLevelUp] = useState(false);
   const previousLevelRef = useRef<number | null>(null);
 
@@ -52,13 +47,11 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
     fetchStats();
   }, [fetchStats]);
 
-  // Update the hook usage to call the memoized function
   useGamificationSocket(user?.id, fetchStats);
 
   if (loading) return <div className="h-6 w-32 bg-white/5 rounded-full animate-pulse" />;
   if (!stats) return null;
 
-  // Calculate generic progress
   const currentLevelXp = Math.pow(stats.level - 1, 2) * 100;
   const nextLevelXp = Math.pow(stats.level, 2) * 100;
   const progress = Math.min(
@@ -69,7 +62,7 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
   return (
     <div
       className={cn(
-        "flex items-center gap-4 select-none transition-all duration-300",
+        "flex items-center gap-4 select-none transition-all duration-300 font-lato",
         compact
           ? "justify-center gap-0"
           : "p-3 bg-white/5 rounded-sm border border-white/5 hover:border-forge-cyan/30 shadow-lg group-hover:shadow-[0_0_15px_rgba(34,211,238,0.1)]"
@@ -95,10 +88,10 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
 
           {!compact && (
             <div className="flex flex-col leading-none">
-              <span className="text-[9px] text-forge-cyan/80 font-[family-name:var(--font-rajdhani)] uppercase tracking-widest mb-0.5">
+              <span className="text-[9px] text-forge-cyan/80 uppercase tracking-widest mb-0.5">
                 {t("gamification.level")}
               </span>
-              <span className="text-xl font-bold text-white font-[family-name:var(--font-rajdhani)] tracking-wide drop-shadow-md">
+              <span className="text-xl font-bold text-white tracking-wide drop-shadow-md">
                 {String(stats.level).padStart(2, "0")}
               </span>
             </div>
@@ -110,7 +103,7 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
           {/* Header Strip */}
           <div className="bg-zinc-900/90 px-4 py-2 border-b border-white/10 flex justify-between items-center relative overflow-hidden">
             <div className="absolute inset-0 bg-linear-to-r from-forge-cyan/10 to-transparent opacity-50" />
-            <span className="text-sm font-[family-name:var(--font-rajdhani)] text-forge-cyan uppercase tracking-[0.2em] relative z-10 font-bold">
+            <span className="text-sm text-forge-cyan uppercase tracking-[0.2em] relative z-10 font-bold">
               {t("gamification.operator_stats")}
             </span>
             <div className="flex gap-1.5 relative z-10">
@@ -126,10 +119,10 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
 
             {/* Title Section */}
             <div className="relative flex items-center justify-between border-b border-white/5 pb-3">
-              <span className="text-[10px] text-gray-500 uppercase tracking-wider font-[family-name:var(--font-rajdhani)]">
+              <span className="text-[10px] text-gray-500 uppercase tracking-wider">
                 {t("gamification.rank_designation")}
               </span>
-              <span className="text-xs text-white font-bold uppercase tracking-wide px-3 py-1 bg-forge-cyan/10 border border-forge-cyan/20 rounded-sm text-forge-cyan font-[family-name:var(--font-rajdhani)]">
+              <span className="text-xs text-white font-bold uppercase tracking-wide px-3 py-1 bg-forge-cyan/10 border border-forge-cyan/20 rounded-sm text-forge-cyan">
                 {stats.title}
               </span>
             </div>
@@ -137,10 +130,10 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
             {/* XP Section */}
             <div className="space-y-2 relative">
               <div className="flex justify-between items-end">
-                <span className="text-[10px] text-gray-500 uppercase tracking-widest font-[family-name:var(--font-rajdhani)]">
+                <span className="text-[10px] text-gray-500 uppercase tracking-widest">
                   {t("gamification.experience_log")}
                 </span>
-                <span className="text-sm font-[family-name:var(--font-rajdhani)] text-forge-cyan font-bold">
+                <span className="text-sm text-forge-cyan font-bold">
                   {Math.floor(stats.xp)} <span className="text-gray-600 font-normal">/</span>{" "}
                   {nextLevelXp} XP
                 </span>
@@ -161,7 +154,7 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
             <div className="pt-2 flex justify-between items-center relative">
               <div className="flex items-center gap-2 text-xs text-amber-500 font-mono bg-amber-500/10 px-2 py-1 rounded-sm border border-amber-500/20">
                 <Flame size={12} fill="currentColor" className="animate-pulse" />
-                <span className="font-bold font-[family-name:var(--font-rajdhani)] tracking-wide">
+                <span className="font-bold tracking-wide">
                   {stats.streak} {t("gamification.day_streak").toUpperCase()}
                 </span>
               </div>
