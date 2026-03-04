@@ -1,13 +1,12 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
-import type { CreateMoodDto, MoodFilter } from "../services/moodService";
-import { moodService } from "../services/moodService";
-
+import type { CreateMoodDto, MoodFilter } from '../services/moodService';
+import { moodService } from '../services/moodService';
 
 export const useMoods = (filter?: MoodFilter) => {
   return useQuery({
-    queryKey: ["moods", filter],
+    queryKey: ['moods', filter],
     queryFn: () => moodService.getAll(filter),
   });
 };
@@ -18,13 +17,13 @@ export const useCreateMood = () => {
   return useMutation({
     mutationFn: (data: CreateMoodDto) => moodService.create(data),
     onSuccess: () => {
-      toast.success("Mood logged successfully");
-      queryClient.invalidateQueries({ queryKey: ["moods"] });
-      queryClient.invalidateQueries({ queryKey: ["timeline"] });
+      toast.success('Mood logged successfully');
+      queryClient.invalidateQueries({ queryKey: ['moods'] });
+      queryClient.invalidateQueries({ queryKey: ['timeline'] });
     },
     onError: (error) => {
       console.error(error);
-      toast.error("Failed to log mood");
+      toast.error('Failed to log mood');
     },
   });
 };
@@ -36,13 +35,13 @@ export const useUpdateMood = () => {
     mutationFn: ({ id, data }: { id: string; data: Partial<CreateMoodDto> }) =>
       moodService.update(id, data),
     onSuccess: () => {
-      toast.success("Mood updated successfully");
-      queryClient.invalidateQueries({ queryKey: ["moods"] });
-      queryClient.invalidateQueries({ queryKey: ["timeline"] });
+      toast.success('Mood updated successfully');
+      queryClient.invalidateQueries({ queryKey: ['moods'] });
+      queryClient.invalidateQueries({ queryKey: ['timeline'] });
     },
     onError: (error) => {
       console.error(error);
-      toast.error("Failed to update mood");
+      toast.error('Failed to update mood');
     },
   });
 };
@@ -54,11 +53,11 @@ export const useDeleteMood = () => {
     mutationFn: (id: string) => moodService.delete(id),
     onSuccess: () => {
       // toast.success("Mood deleted"); // Handled in UI component for custom message
-      queryClient.invalidateQueries({ queryKey: ["moods"] });
-      queryClient.invalidateQueries({ queryKey: ["timeline"] });
+      queryClient.invalidateQueries({ queryKey: ['moods'] });
+      queryClient.invalidateQueries({ queryKey: ['timeline'] });
     },
     onError: () => {
-      toast.error("Failed to delete mood");
+      toast.error('Failed to delete mood');
     },
   });
 };

@@ -1,92 +1,86 @@
-"use client";
+'use client';
 
-import { Cpu, Sparkles, Binary, BrainCircuit, MoreHorizontal, Activity } from "lucide-react";
-import React from "react";
+import { Cpu, Sparkles, Binary, BrainCircuit, MoreHorizontal, Activity } from 'lucide-react';
+import React from 'react';
 
-import { cn } from "@/shared/lib/utils";
-import type { Agent } from "@/shared/types";
+import { cn } from '@/shared/lib/utils';
+import type { Agent } from '@/shared/types';
 
-// =============================================
-// TAILWIND v4 FIX – MAPPING TEXT-COLOR → REAL COLORS
-// =============================================
 const AGENT_COLORS: Record<string, { border: string; bg: string; visualizer: string }> = {
-  "text-forge-cyan": {
-    border: "border-forge-cyan/30",
-    bg: "bg-forge-cyan/20",
-    visualizer: "bg-forge-cyan",
+  'text-forge-cyan': {
+    border: 'border-forge-cyan/30',
+    bg: 'bg-forge-cyan/20',
+    visualizer: 'bg-forge-cyan',
   },
-  "text-amber-400": {
-    border: "border-amber-400/30",
-    bg: "bg-amber-400/20",
-    visualizer: "bg-amber-400",
+  'text-amber-400': {
+    border: 'border-amber-400/30',
+    bg: 'bg-amber-400/20',
+    visualizer: 'bg-amber-400',
   },
-  "text-fuchsia-400": {
-    border: "border-fuchsia-400/30",
-    bg: "bg-fuchsia-400/20",
-    visualizer: "bg-fuchsia-400",
+  'text-fuchsia-400': {
+    border: 'border-fuchsia-400/30',
+    bg: 'bg-fuchsia-400/20',
+    visualizer: 'bg-fuchsia-400',
   },
-  "text-emerald-400": {
-    border: "border-emerald-400/30",
-    bg: "bg-emerald-400/20",
-    visualizer: "bg-emerald-400",
+  'text-emerald-400': {
+    border: 'border-emerald-400/30',
+    bg: 'bg-emerald-400/20',
+    visualizer: 'bg-emerald-400',
   },
 };
 
 export const AGENTS: Agent[] = [
   {
-    id: "nexus",
-    name: "Nexus",
-    role: "System Core",
-    status: "speaking",
+    id: 'nexus',
+    name: 'Nexus',
+    role: 'System Core',
+    status: 'speaking',
     icon: Cpu,
-    color: "text-forge-cyan",
-    bg: "bg-cyan-950/30",
-    border: "border-forge-cyan/30",
-    gradient: "from-cyan-500 to-blue-600",
+    color: 'text-forge-cyan',
+    bg: 'bg-cyan-950/30',
+    border: 'border-forge-cyan/30',
+    gradient: 'from-cyan-500 to-blue-600',
     systemPrompt:
-      "You are Nexus, the core system of Forge OS. Be helpful, concise, and act as a moderator.",
+      'You are Nexus, the core system of Forge OS. Be helpful, concise, and act as a moderator.',
   },
   {
-    id: "socrates",
-    name: "Socrates",
-    role: "Deep Reasoning",
-    status: "idle",
+    id: 'socrates',
+    name: 'Socrates',
+    role: 'Deep Reasoning',
+    status: 'idle',
     icon: BrainCircuit,
-    color: "text-amber-400",
-    bg: "bg-amber-400/20",
-    border: "border-amber-400/30",
-    gradient: "from-amber-500 to-orange-600",
-    systemPrompt: "You are Socrates. You challenge assumptions with philosophy and logic.",
+    color: 'text-amber-400',
+    bg: 'bg-amber-400/20',
+    border: 'border-amber-400/30',
+    gradient: 'from-amber-500 to-orange-600',
+    systemPrompt: 'You are Socrates. You challenge assumptions with philosophy and logic.',
   },
   {
-    id: "muse",
-    name: "Muse",
-    role: "Creative Engine",
-    status: "idle",
+    id: 'muse',
+    name: 'Muse',
+    role: 'Creative Engine',
+    status: 'idle',
     icon: Sparkles,
-    color: "text-fuchsia-400",
-    bg: "bg-fuchsia-400/20",
-    border: "border-fuchsia-400/30",
-    gradient: "from-fuchsia-500 to-pink-600",
-    systemPrompt: "You are Muse. You think poetically, emotionally, and in metaphors.",
+    color: 'text-fuchsia-400',
+    bg: 'bg-fuchsia-400/20',
+    border: 'border-fuchsia-400/30',
+    gradient: 'from-fuchsia-500 to-pink-600',
+    systemPrompt: 'You are Muse. You think poetically, emotionally, and in metaphors.',
   },
   {
-    id: "cipher",
-    name: "Cipher",
-    role: "Logic & Code",
-    status: "offline",
+    id: 'cipher',
+    name: 'Cipher',
+    role: 'Logic & Code',
+    status: 'offline',
     icon: Binary,
-    color: "text-emerald-400",
-    bg: "bg-emerald-400/20",
-    border: "border-emerald-400/30",
-    gradient: "from-emerald-500 to-teal-600",
-    systemPrompt: "You are Cipher. You speak like an engineer: technical, precise, efficient.",
+    color: 'text-emerald-400',
+    bg: 'bg-emerald-400/20',
+    border: 'border-emerald-400/30',
+    gradient: 'from-emerald-500 to-teal-600',
+    systemPrompt: 'You are Cipher. You speak like an engineer: technical, precise, efficient.',
   },
 ];
 
-// =============================================
-// COMPONENT
-// =============================================
 interface AgentDockProps {
   isOpen: boolean;
   activeAgentIds?: string[];
@@ -96,9 +90,9 @@ export const AgentDock: React.FC<AgentDockProps> = ({ isOpen, activeAgentIds = [
   return (
     <div
       className={cn(
-        "relative h-full flex flex-col bg-black/40 backdrop-blur-2xl border-l border-white/5 shadow-2xl",
-        "transition-all duration-500 ease-spring-out overflow-hidden",
-        isOpen ? "w-80 opacity-100" : "w-0 opacity-0"
+        'relative h-full flex flex-col bg-black/40 backdrop-blur-2xl border-l border-white/5 shadow-2xl',
+        'transition-all duration-500 ease-spring-out overflow-hidden',
+        isOpen ? 'w-80 opacity-100' : 'w-0 opacity-0',
       )}
     >
       <div className="w-80 h-full flex flex-col relative">
@@ -120,31 +114,31 @@ export const AgentDock: React.FC<AgentDockProps> = ({ isOpen, activeAgentIds = [
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {AGENTS.map((agent, index) => {
             const isSpeaking = activeAgentIds.includes(agent.id);
-            const isOffline = agent.status === "offline";
+            const isOffline = agent.status === 'offline';
             const Icon = agent.icon;
 
-            const colorMap = AGENT_COLORS[agent.color] ?? AGENT_COLORS["text-emerald-400"]; // fallback để tránh crash
+            const colorMap = AGENT_COLORS[agent.color] ?? AGENT_COLORS['text-emerald-400']; // fallback để tránh crash
 
             return (
               <div
                 key={agent.id}
                 className={cn(
-                  "group relative p-4 rounded-2xl border border-white/5 bg-white/2",
-                  "hover:bg-white/6 hover:border-white/10 hover:shadow-lg hover:-translate-y-1",
-                  "transition-all duration-500 cursor-pointer"
+                  'group relative p-4 rounded-2xl border border-white/5 bg-white/2',
+                  'hover:bg-white/6 hover:border-white/10 hover:shadow-lg hover:-translate-y-1',
+                  'transition-all duration-500 cursor-pointer',
                 )}
                 style={{
-                  transitionDelay: isOpen ? `${index * 50}ms` : "0ms",
+                  transitionDelay: isOpen ? `${index * 50}ms` : '0ms',
                   opacity: isOpen ? 1 : 0,
-                  transform: isOpen ? "translateX(0)" : "translateX(20px)",
+                  transform: isOpen ? 'translateX(0)' : 'translateX(20px)',
                 }}
               >
                 {/* ACTIVE BORDER */}
                 {isSpeaking && (
                   <div
                     className={cn(
-                      "absolute inset-0 rounded-2xl border shadow-[0_0_20px_rgba(0,0,0,0.2)]",
-                      agent.border
+                      'absolute inset-0 rounded-2xl border shadow-[0_0_20px_rgba(0,0,0,0.2)]',
+                      agent.border,
                     )}
                   />
                 )}
@@ -156,16 +150,16 @@ export const AgentDock: React.FC<AgentDockProps> = ({ isOpen, activeAgentIds = [
                     {isSpeaking && (
                       <div
                         className={cn(
-                          "absolute inset-0 -m-2 rounded-full border animate-ripple",
-                          agent.border
+                          'absolute inset-0 -m-2 rounded-full border animate-ripple',
+                          agent.border,
                         )}
                       />
                     )}
 
                     <div
                       className={cn(
-                        "w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg bg-linear-to-br",
-                        isOffline ? "from-gray-800 to-gray-900" : agent.gradient
+                        'w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg bg-linear-to-br',
+                        isOffline ? 'from-gray-800 to-gray-900' : agent.gradient,
                       )}
                     >
                       <Icon size={20} className="text-white" />
@@ -175,8 +169,8 @@ export const AgentDock: React.FC<AgentDockProps> = ({ isOpen, activeAgentIds = [
                     <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-forge-bg rounded-full border border-white/10 flex items-center justify-center">
                       <div
                         className={cn(
-                          "w-2 h-2 rounded-full",
-                          isOffline ? "bg-gray-600" : isSpeaking ? "bg-green-500" : "bg-yellow-400"
+                          'w-2 h-2 rounded-full',
+                          isOffline ? 'bg-gray-600' : isSpeaking ? 'bg-green-500' : 'bg-yellow-400',
                         )}
                       />
                     </div>
@@ -187,8 +181,8 @@ export const AgentDock: React.FC<AgentDockProps> = ({ isOpen, activeAgentIds = [
                     <div className="flex items-center justify-between">
                       <h4
                         className={cn(
-                          "font-medium text-sm",
-                          isOffline ? "text-gray-500" : "text-white"
+                          'font-medium text-sm',
+                          isOffline ? 'text-gray-500' : 'text-white',
                         )}
                       >
                         {agent.name}
@@ -205,7 +199,7 @@ export const AgentDock: React.FC<AgentDockProps> = ({ isOpen, activeAgentIds = [
                     {[...Array(12)].map((_, i) => (
                       <div
                         key={i}
-                        className={cn("w-1 rounded-full", colorMap.visualizer)}
+                        className={cn('w-1 rounded-full', colorMap.visualizer)}
                         style={{
                           height: `${Math.random() * 100}%`,
                           animation: `pulse 1s infinite ${i * 0.15}s`,

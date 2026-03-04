@@ -1,1 +1,1 @@
-export { NovaGuide } from "./components/NovaGuide";
+export { NovaGuide } from './components/NovaGuide';

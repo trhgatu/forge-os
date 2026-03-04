@@ -1,15 +1,14 @@
-import { Plus, GitBranch, Link as LinkIcon, PenTool, FileText } from "lucide-react";
-import React from "react";
+import { Plus, GitBranch, Link as LinkIcon, PenTool, FileText } from 'lucide-react';
+import React from 'react';
 
-import { GlassCard } from "@/shared/components/ui/GlassCard";
+import { GlassCard } from '@/shared/components/ui/GlassCard';
 
-import type { Project } from "../../../types";
-
+import type { Project } from '../../../types';
 
 interface ProjectLink {
   title: string;
   url: string;
-  icon?: "github" | "figma" | "doc" | "link";
+  icon?: 'github' | 'figma' | 'doc' | 'link';
 }
 
 interface ProjectResourcesTabProps {
@@ -39,15 +38,15 @@ export const ProjectResourcesTab: React.FC<ProjectResourcesTabProps> = ({
           className="group hover:bg-white/10 cursor-pointer transition-colors relative overflow-hidden"
         >
           <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-100 transition-opacity -rotate-12 translate-x-2 -translate-y-2">
-            {link.icon === "github" ? <GitBranch size={64} /> : <LinkIcon size={64} />}
+            {link.icon === 'github' ? <GitBranch size={64} /> : <LinkIcon size={64} />}
           </div>
           <div className="flex flex-col h-full justify-between">
             <div className="p-2 w-fit rounded-lg bg-white/5 text-gray-400 group-hover:text-white transition-colors mb-4">
-              {link.icon === "github" ? (
+              {link.icon === 'github' ? (
                 <GitBranch size={24} />
-              ) : link.icon === "figma" ? (
+              ) : link.icon === 'figma' ? (
                 <PenTool size={24} />
-              ) : link.icon === "doc" ? (
+              ) : link.icon === 'doc' ? (
                 <FileText size={24} />
               ) : (
                 <LinkIcon size={24} />

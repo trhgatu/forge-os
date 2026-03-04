@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 
 interface UseTypewriterOptions {
   minSpeed?: number;
@@ -8,7 +8,7 @@ interface UseTypewriterOptions {
 }
 
 export function useTypewriter(text: string | null, options?: UseTypewriterOptions) {
-  const [displayed, setDisplayed] = useState("");
+  const [displayed, setDisplayed] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const timeoutRef = useRef<number | null>(null);
 
@@ -19,7 +19,7 @@ export function useTypewriter(text: string | null, options?: UseTypewriterOption
   useEffect(() => {
     if (!text) {
       queueMicrotask(() => {
-        setDisplayed("");
+        setDisplayed('');
         setIsTyping(false);
       });
       return;
@@ -28,7 +28,7 @@ export function useTypewriter(text: string | null, options?: UseTypewriterOption
     let index = 0;
 
     queueMicrotask(() => {
-      setDisplayed("");
+      setDisplayed('');
       setIsTyping(true);
     });
 

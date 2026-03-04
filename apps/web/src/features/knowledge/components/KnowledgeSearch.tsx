@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { Search, Loader2, CornerDownLeft, Globe, Sparkles } from "lucide-react";
-import React, { useState, useEffect, useRef } from "react";
+import { Search, Loader2, CornerDownLeft, Globe, Sparkles } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
 
-import { useKnowledge } from "@/contexts";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { cn } from "@/shared/lib/utils";
-import type { KnowledgeConcept } from "@/shared/types";
+import { useKnowledge } from '@/contexts';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { cn } from '@/shared/lib/utils';
+import type { KnowledgeConcept } from '@/shared/types';
 
 export const KnowledgeSearch: React.FC = () => {
   const { search, searchResults, selectConcept, isLoading, clearResults } = useKnowledge();
   const { language } = useLanguage();
 
-  const [query, setQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [query, setQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -40,14 +40,14 @@ export const KnowledgeSearch: React.FC = () => {
         setIsFocused(false);
       }
     };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
   }, []);
 
   const handleSelect = (concept: KnowledgeConcept) => {
     selectConcept(concept);
-    setQuery("");
-    setDebouncedQuery("");
+    setQuery('');
+    setDebouncedQuery('');
     setIsFocused(false);
   };
 
@@ -60,15 +60,15 @@ export const KnowledgeSearch: React.FC = () => {
         {/* Glow */}
         <div
           className={cn(
-            "absolute -inset-0.5 bg-linear-to-r from-forge-cyan via-purple-500 to-forge-accent rounded-2xl opacity-20 blur-md transition-all",
-            isFocused ? "opacity-60 blur-xl" : ""
+            'absolute -inset-0.5 bg-linear-to-r from-forge-cyan via-purple-500 to-forge-accent rounded-2xl opacity-20 blur-md transition-all',
+            isFocused ? 'opacity-60 blur-xl' : '',
           )}
         />
 
         <div
           className={cn(
-            "relative bg-[#050508] border transition-all rounded-2xl flex items-center p-2 shadow-2xl",
-            isFocused ? "border-forge-cyan/40" : "border-white/10"
+            'relative bg-[#050508] border transition-all rounded-2xl flex items-center p-2 shadow-2xl',
+            isFocused ? 'border-forge-cyan/40' : 'border-white/10',
           )}
         >
           <div className="pl-4 pr-4 text-gray-500">
@@ -77,7 +77,7 @@ export const KnowledgeSearch: React.FC = () => {
             ) : (
               <Search
                 size={24}
-                className={cn("transition-colors", isFocused ? "text-forge-cyan" : "text-gray-500")}
+                className={cn('transition-colors', isFocused ? 'text-forge-cyan' : 'text-gray-500')}
               />
             )}
           </div>
@@ -88,9 +88,9 @@ export const KnowledgeSearch: React.FC = () => {
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => setIsFocused(true)}
             placeholder={
-              language === "vi"
-                ? "Truy cập Mạng lưới Tri thức..."
-                : "Access Global Knowledge Grid..."
+              language === 'vi'
+                ? 'Truy cập Mạng lưới Tri thức...'
+                : 'Access Global Knowledge Grid...'
             }
             className="flex-1 bg-transparent border-none text-white text-xl placeholder-gray-600 focus:outline-none py-4 font-display font-light tracking-wide"
             autoComplete="off"
@@ -137,10 +137,10 @@ export const KnowledgeSearch: React.FC = () => {
                   {result.language && (
                     <span
                       className={cn(
-                        "text-[9px] font-bold px-1.5 py-0.5 rounded border uppercase tracking-wider opacity-60",
-                        result.language === "vi"
-                          ? "bg-red-500/10 text-red-200 border-red-500/20"
-                          : "bg-blue-500/10 text-blue-200 border-blue-500/20"
+                        'text-[9px] font-bold px-1.5 py-0.5 rounded border uppercase tracking-wider opacity-60',
+                        result.language === 'vi'
+                          ? 'bg-red-500/10 text-red-200 border-red-500/20'
+                          : 'bg-blue-500/10 text-blue-200 border-blue-500/20',
                       )}
                     >
                       {result.language}
@@ -153,7 +153,7 @@ export const KnowledgeSearch: React.FC = () => {
                   />
                 </div>
 
-                <p className="text-sm text-gray-500 line-clamp-1">{result.summary || "..."}</p>
+                <p className="text-sm text-gray-500 line-clamp-1">{result.summary || '...'}</p>
               </div>
             </div>
           ))}

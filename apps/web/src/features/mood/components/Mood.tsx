@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { Plus, Sparkles } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
+import { Plus, Sparkles } from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
-import { useAuthStore } from "@/shared/store/authStore";
-import type { MoodAnalysis, MoodEntry } from "@/shared/types/mood";
+import { useAuthStore } from '@/shared/store/authStore';
+import type { MoodAnalysis, MoodEntry } from '@/shared/types/mood';
 
-import { useMoods, useCreateMood, useUpdateMood, useDeleteMood } from "../hooks/useMood";
-import type { CreateMoodDto } from "../services/moodService";
+import { useMoods, useCreateMood, useUpdateMood, useDeleteMood } from '../hooks/useMood';
+import type { CreateMoodDto } from '../services/moodService';
 
-import { InsightPanel } from "./InsightPanel";
-import { MoodChart } from "./MoodChart";
-import { MoodHistoryList } from "./MoodHistoryList";
-import { MoodModal } from "./MoodModal";
+import { InsightPanel } from './InsightPanel';
+import { MoodChart } from './MoodChart';
+import { MoodHistoryList } from './MoodHistoryList';
+import { MoodModal } from './MoodModal';
 
 export function Mood() {
   // Real Data Hook
@@ -42,7 +42,7 @@ export function Mood() {
       }
       setEditingMood(undefined); // Reset
     } catch (error) {
-      console.error("Failed to save mood:", error);
+      console.error('Failed to save mood:', error);
       // Toast is handled by hook onError, so just catching prevents crash
     }
   };
@@ -55,7 +55,6 @@ export function Mood() {
   // Removed misplaced import
 
   const handleDelete = (id: string) => {
-
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     toast.custom((t: any) => (
       <div className="flex flex-col gap-2 rounded-xl border border-red-500/20 bg-black/90 p-4 text-sm text-white shadow-xl backdrop-blur-md">
@@ -66,7 +65,7 @@ export function Mood() {
             onClick={() => {
               toast.dismiss(t);
               deleteMood.mutate(id, {
-                onSuccess: () => toast.success("Emotion dissolved."),
+                onSuccess: () => toast.success('Emotion dissolved.'),
               });
             }}
             className="rounded-md bg-red-500/20 px-3 py-1.5 text-red-200 transition-colors hover:bg-red-500/30"
@@ -98,13 +97,13 @@ export function Mood() {
       await new Promise((r) => setTimeout(r, 700));
 
       const mock: MoodAnalysis = {
-        prediction: "Your emotional field is stabilizing this week.",
-        overallTrend: "Positive Shift",
-        triggers: ["Work", "Creativity", "Routine"],
+        prediction: 'Your emotional field is stabilizing this week.',
+        overallTrend: 'Positive Shift',
+        triggers: ['Work', 'Creativity', 'Routine'],
         insight:
           "You're showing a strong bounce-back pattern after periods of pressure. Creative activities seem to anchor your emotional baseline.",
         actionableStep:
-          "Try scheduling a small creative ritual every morning to maintain the upward trend.",
+          'Try scheduling a small creative ritual every morning to maintain the upward trend.',
       };
 
       setAnalysis(mock);
@@ -135,7 +134,7 @@ export function Mood() {
               disabled={isAnalyzing}
               className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-gray-300 transition-all hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <Sparkles size={16} className={isAnalyzing ? "animate-spin" : "text-forge-accent"} />
+              <Sparkles size={16} className={isAnalyzing ? 'animate-spin' : 'text-forge-accent'} />
               Analyze Cycles
             </button>
 

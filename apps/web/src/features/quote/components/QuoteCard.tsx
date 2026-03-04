@@ -1,10 +1,10 @@
-import { Heart } from "lucide-react";
-import React, { useState } from "react";
+import { Heart } from 'lucide-react';
+import React, { useState } from 'react';
 
-import { cn } from "@/shared/lib/utils";
-import type { Quote } from "@/shared/types/quote";
+import { cn } from '@/shared/lib/utils';
+import type { Quote } from '@/shared/types/quote';
 
-import { SEASON_CONFIG, getSeasonFromMood } from "../../memory/config/seasons";
+import { SEASON_CONFIG, getSeasonFromMood } from '../../memory/config/seasons';
 
 interface QuoteCardProps {
   quote: Quote;
@@ -55,8 +55,8 @@ export function QuoteCard({ quote, onClick, onToggleFav, onEdit, onDelete }: Quo
   React.useEffect(() => {
     const handleClickOutside = () => setShowContextMenu(false);
     if (showContextMenu) {
-      document.addEventListener("click", handleClickOutside);
-      return () => document.removeEventListener("click", handleClickOutside);
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
     }
   }, [showContextMenu]);
 
@@ -92,8 +92,8 @@ export function QuoteCard({ quote, onClick, onToggleFav, onEdit, onDelete }: Quo
         {/* 2. Mood Blob (Very Subtle) */}
         <div
           className={cn(
-            "absolute -top-[50%] -right-[50%] w-[100%] h-[100%] rounded-full opacity-0 group-hover:opacity-[0.05] transition-opacity duration-700 blur-[80px] pointer-events-none",
-            config.particleColor.replace("bg-", "bg-")
+            'absolute -top-[50%] -right-[50%] w-[100%] h-[100%] rounded-full opacity-0 group-hover:opacity-[0.05] transition-opacity duration-700 blur-[80px] pointer-events-none',
+            config.particleColor.replace('bg-', 'bg-'),
           )}
         />
 
@@ -108,7 +108,7 @@ export function QuoteCard({ quote, onClick, onToggleFav, onEdit, onDelete }: Quo
           <div className="flex items-center justify-between mb-4 opacity-50 group-hover:opacity-100 transition-opacity duration-300">
             <div className="flex items-center gap-2">
               <div
-                className={cn("w-1.5 h-1.5 rounded-full", config.accent.replace("text-", "bg-"))}
+                className={cn('w-1.5 h-1.5 rounded-full', config.accent.replace('text-', 'bg-'))}
               />
               <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-white/40">
                 {quote.mood}
@@ -134,7 +134,7 @@ export function QuoteCard({ quote, onClick, onToggleFav, onEdit, onDelete }: Quo
           <div className="mt-6 flex items-center justify-between pt-4 border-t border-transparent group-hover:border-white/5 transition-colors duration-500">
             <div className="flex flex-col">
               <cite className="text-sm font-sans font-medium text-white/50 not-italic group-hover:text-white/80 transition-colors">
-                — {quote.author || "Unknown"}
+                — {quote.author || 'Unknown'}
               </cite>
             </div>
 
@@ -162,10 +162,10 @@ export function QuoteCard({ quote, onClick, onToggleFav, onEdit, onDelete }: Quo
           >
             <Heart
               size={12}
-              fill={quote.isFavorite ? "currentColor" : "none"}
-              className={quote.isFavorite ? "text-fuchsia-400" : ""}
+              fill={quote.isFavorite ? 'currentColor' : 'none'}
+              className={quote.isFavorite ? 'text-fuchsia-400' : ''}
             />
-            {quote.isFavorite ? "Unfavorite" : "Favorite"}
+            {quote.isFavorite ? 'Unfavorite' : 'Favorite'}
           </button>
           <button
             onClick={(e) => {

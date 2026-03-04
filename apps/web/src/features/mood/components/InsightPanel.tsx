@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { Activity, Sparkles } from "lucide-react";
+import { Activity, Sparkles } from 'lucide-react';
 
-import type { MoodAnalysis } from "@/shared/types/mood";
+import type { MoodAnalysis } from '@/shared/types/mood';
 
 interface InsightPanelProps {
   analysis: MoodAnalysis | null;

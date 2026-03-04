@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import type { ReactNode } from "react";
-import React, { createContext, useContext, useRef, useState, useEffect } from "react";
+import type { ReactNode } from 'react';
+import React, { createContext, useContext, useRef, useState, useEffect } from 'react';
 
-export type SoundType = "click" | "hover" | "success" | "error" | "on" | "off";
+export type SoundType = 'click' | 'hover' | 'success' | 'error' | 'on' | 'off';
 
 interface SoundContextType {
   playSound: (type: SoundType) => void;
@@ -18,7 +18,7 @@ export function SoundProvider({ children }: { children: ReactNode }) {
   const audioCtxRef = useRef<AudioContext | null>(null);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
       const Ctx =
         window.AudioContext ?? (window.webkitAudioContext ? window.webkitAudioContext : undefined);
 
@@ -37,12 +37,12 @@ export function SoundProvider({ children }: { children: ReactNode }) {
     type: OscillatorType,
     duration: number,
     vol: number,
-    ramp?: number
+    ramp?: number,
   ) => {
     const ctx = audioCtxRef.current;
     if (!ctx || !isEnabled) return;
 
-    if (ctx.state === "suspended") ctx.resume();
+    if (ctx.state === 'suspended') ctx.resume();
 
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -68,25 +68,25 @@ export function SoundProvider({ children }: { children: ReactNode }) {
     if (!isEnabled) return;
 
     switch (type) {
-      case "click":
-        playTone(420, "sine", 0.06, 0.15, 840);
+      case 'click':
+        playTone(420, 'sine', 0.06, 0.15, 840);
         break;
-      case "hover":
-        playTone(1400, "triangle", 0.03, 0.04, 2400);
+      case 'hover':
+        playTone(1400, 'triangle', 0.03, 0.04, 2400);
         break;
-      case "success":
-        playTone(440, "sine", 0.4, 0.12);
-        setTimeout(() => playTone(554, "sine", 0.4, 0.12), 60);
-        setTimeout(() => playTone(659, "sine", 0.4, 0.12), 120);
+      case 'success':
+        playTone(440, 'sine', 0.4, 0.12);
+        setTimeout(() => playTone(554, 'sine', 0.4, 0.12), 60);
+        setTimeout(() => playTone(659, 'sine', 0.4, 0.12), 120);
         break;
-      case "error":
-        playTone(160, "sawtooth", 0.3, 0.1, 80);
+      case 'error':
+        playTone(160, 'sawtooth', 0.3, 0.1, 80);
         break;
-      case "on":
-        playTone(500, "sine", 0.2, 0.1, 900);
+      case 'on':
+        playTone(500, 'sine', 0.2, 0.1, 900);
         break;
-      case "off":
-        playTone(900, "triangle", 0.2, 0.1, 300);
+      case 'off':
+        playTone(900, 'triangle', 0.2, 0.1, 300);
         break;
     }
   };
@@ -95,7 +95,7 @@ export function SoundProvider({ children }: { children: ReactNode }) {
     const next = !isEnabled;
     setIsEnabled(next);
 
-    if (next) setTimeout(() => playSound("on"), 30);
+    if (next) setTimeout(() => playSound('on'), 30);
   };
 
   return (
@@ -107,6 +107,6 @@ export function SoundProvider({ children }: { children: ReactNode }) {
 
 export function useSound() {
   const ctx = useContext(SoundContext);
-  if (!ctx) throw new Error("useSound must be used within SoundProvider");
+  if (!ctx) throw new Error('useSound must be used within SoundProvider');
   return ctx;
 }

@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
-import { socketService } from "@/services/socketService";
+import { socketService } from '@/services/socketService';
 
-import type { VisitorEcho } from "../types";
+import type { VisitorEcho } from '../types';
 
 // Star generation (Visuals only, can stay static)
 const generateStars = (count: number) => {
@@ -20,7 +20,7 @@ const generateStars = (count: number) => {
 // DTO for incoming data
 interface RawVisitorEcho {
   id: string;
-  type: "anonymous" | "known" | "connection";
+  type: 'anonymous' | 'known' | 'connection';
   pageVisited: string;
   timestamp: string; // Socket sends dates as strings usually
 }
@@ -34,7 +34,7 @@ export const usePresence = () => {
     const socket = socketService.connect('/presence');
 
     if (!socket) {
-      console.warn("usePresence: Failed to get socket instance");
+      console.warn('usePresence: Failed to get socket instance');
       return;
     }
 
@@ -48,8 +48,8 @@ export const usePresence = () => {
         // Forge -> 180deg (Left)
         // Profile -> 0deg (Right)
         let angle = Math.random() * 360;
-        if (visitorFunc.pageVisited === "/") angle = 90;
-        else if (visitorFunc.pageVisited?.includes("forge")) angle = 180;
+        if (visitorFunc.pageVisited === '/') angle = 90;
+        else if (visitorFunc.pageVisited?.includes('forge')) angle = 180;
 
         // Map timestamp to Distance (Newer = Closer)
         const age = Date.now() - new Date(visitorFunc.timestamp).getTime();
@@ -60,10 +60,10 @@ export const usePresence = () => {
           type: visitorFunc.type,
           distance: distance,
           angle: angle,
-          connectionRole: visitorFunc.type === "connection" ? "Companion" : undefined,
+          connectionRole: visitorFunc.type === 'connection' ? 'Companion' : undefined,
           lastSeen: new Date(visitorFunc.timestamp),
           timestamp: new Date(visitorFunc.timestamp), // Map required timestamp
-          seasonContext: "Void", // Default or map from server if available
+          seasonContext: 'Void', // Default or map from server if available
           duration: 0, // Default
           pageVisited: visitorFunc.pageVisited, // Map from server
         } as VisitorEcho;
@@ -72,10 +72,10 @@ export const usePresence = () => {
       setEchoes(visualEchoes);
     };
 
-    socket.on("presence_update", handlePresenceUpdate);
+    socket.on('presence_update', handlePresenceUpdate);
 
     return () => {
-      socket.off("presence_update", handlePresenceUpdate);
+      socket.off('presence_update', handlePresenceUpdate);
     };
   }, []);
 

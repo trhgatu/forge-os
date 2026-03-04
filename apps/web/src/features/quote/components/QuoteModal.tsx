@@ -1,24 +1,24 @@
-import { X } from "lucide-react";
-import React, { useState } from "react";
+import { X } from 'lucide-react';
+import React, { useState } from 'react';
 
-import { cn } from "@/shared/lib/utils";
-import type { MoodType } from "@/shared/types/journal";
-import type { Quote } from "@/shared/types/quote";
+import { cn } from '@/shared/lib/utils';
+import type { MoodType } from '@/shared/types/journal';
+import type { Quote } from '@/shared/types/quote';
 
 export const EMOTION_OPTIONS: MoodType[] = [
-  "joy",
-  "calm",
-  "inspired",
-  "neutral",
-  "sad",
-  "anxious",
-  "focused",
-  "nostalgic",
+  'joy',
+  'calm',
+  'inspired',
+  'neutral',
+  'sad',
+  'anxious',
+  'focused',
+  'nostalgic',
 ];
 
 export function QuoteModal({
   quote,
-  initialText = "",
+  initialText = '',
   onClose,
   onSave,
 }: {
@@ -31,13 +31,13 @@ export function QuoteModal({
     source?: string,
     tags?: string[],
     isFavorite?: boolean,
-    mood?: MoodType
+    mood?: MoodType,
   ) => void;
 }) {
   const [text, setText] = useState(quote?.text || initialText);
-  const [author, setAuthor] = useState(quote?.author || (initialText ? "Self" : ""));
-  const [source, setSource] = useState(quote?.source || "");
-  const [mood, setMood] = useState<MoodType>(quote?.mood || "neutral");
+  const [author, setAuthor] = useState(quote?.author || (initialText ? 'Self' : ''));
+  const [source, setSource] = useState(quote?.source || '');
+  const [mood, setMood] = useState<MoodType>(quote?.mood || 'neutral');
   const [tags] = useState<string[]>(quote?.tags || []);
   const [isFavorite] = useState(quote?.isFavorite || false);
 
@@ -53,7 +53,7 @@ export function QuoteModal({
         {/* Header */}
         <div className="flex items-center justify-between border-b border-white/5 px-6 py-4">
           <h3 className="font-display text-lg font-bold tracking-wide text-white">
-            {quote ? "Update Wisdom" : "Preserve Wisdom"}
+            {quote ? 'Update Wisdom' : 'Preserve Wisdom'}
           </h3>
           <div className="flex items-center gap-2">
             <button
@@ -68,7 +68,7 @@ export function QuoteModal({
               onClick={handleSave}
               className="rounded-lg bg-white px-4 py-1.5 text-xs font-bold text-black transition-all hover:bg-gray-200 hover:shadow-[0_0_15px_rgba(255,255,255,0.2)]"
             >
-              {quote ? "Update" : "Archive"}
+              {quote ? 'Update' : 'Archive'}
             </button>
           </div>
         </div>
@@ -100,10 +100,10 @@ export function QuoteModal({
                     type="button"
                     onClick={() => setMood(option)}
                     className={cn(
-                      "rounded px-3 py-1.5 text-xs capitalize transition-all border",
+                      'rounded px-3 py-1.5 text-xs capitalize transition-all border',
                       mood === option
-                        ? "border-white bg-white text-black font-bold shadow-lg"
-                        : "border-white/5 bg-white/5 text-gray-400 hover:border-white/20 hover:text-white"
+                        ? 'border-white bg-white text-black font-bold shadow-lg'
+                        : 'border-white/5 bg-white/5 text-gray-400 hover:border-white/20 hover:text-white',
                     )}
                   >
                     {option}

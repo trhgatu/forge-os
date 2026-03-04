@@ -1,7 +1,7 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
-import type { NotificationType, NotificationSource } from "@/types"; // Need to ensure types exist
+import type { NotificationType, NotificationSource } from '@/types'; // Need to ensure types exist
 
 export interface NotificationItem {
   id: string;
@@ -59,7 +59,7 @@ export const useNotificationStore = create<NotificationState>()(
             items: [newItem, ...state.items],
           };
 
-          if (type === "whisper") {
+          if (type === 'whisper') {
             updates.activeWhispers = [newItem, ...state.activeWhispers];
           }
 
@@ -82,10 +82,10 @@ export const useNotificationStore = create<NotificationState>()(
       toggleCenter: () => set((state) => ({ isCenterOpen: !state.isCenterOpen })),
     }),
     {
-      name: "forge-notification-storage",
+      name: 'forge-notification-storage',
       partialize: (state) => ({
         items: state.items, // Persist history
       }),
-    }
-  )
+    },
+  ),
 );

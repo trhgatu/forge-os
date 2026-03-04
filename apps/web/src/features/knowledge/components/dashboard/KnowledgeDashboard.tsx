@@ -1,16 +1,15 @@
-"use client";
+'use client';
 
-import { Globe, Layers, Zap } from "lucide-react";
-import React from "react";
+import { Globe, Layers, Zap } from 'lucide-react';
+import React from 'react';
 
-import { useKnowledge } from "@/contexts/KnowledgeContext";
-import { GlassCard } from "@/shared/components/ui/GlassCard";
+import { useKnowledge } from '@/contexts/KnowledgeContext';
+import { GlassCard } from '@/shared/components/ui/GlassCard';
 
-import { DiscoveredWidget } from "./DiscoveredWidget";
-import { DiscoveryCarousel } from "./DiscoveryCarousel";
-import { SearchWidget } from "./SearchWidget";
-import { StatsWidget } from "./StatsWidget";
-
+import { DiscoveredWidget } from './DiscoveredWidget';
+import { DiscoveryCarousel } from './DiscoveryCarousel';
+import { SearchWidget } from './SearchWidget';
+import { StatsWidget } from './StatsWidget';
 
 export const KnowledgeDashboard: React.FC = () => {
   const { history, selectConcept } = useKnowledge();
@@ -61,7 +60,7 @@ export const KnowledgeDashboard: React.FC = () => {
               Sectors
             </div>
             <div className="flex flex-wrap gap-2">
-              {["Technology", "Science", "History", "Philosophy", "Art", "Cosmos"].map((cat) => (
+              {['Technology', 'Science', 'History', 'Philosophy', 'Art', 'Cosmos'].map((cat) => (
                 <span
                   key={cat}
                   className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/5 text-xs text-gray-400 hover:text-white hover:border-white/20 cursor-pointer transition-all"

@@ -1,1 +1,1 @@
-export * from "./mood-config";
+export * from './mood-config';

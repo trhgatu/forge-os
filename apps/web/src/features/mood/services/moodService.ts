@@ -1,6 +1,6 @@
-import { apiClient } from "@/services/apiClient";
-import type { PaginatedResponse } from "@/shared/types";
-import type { MoodEntry } from "@/shared/types/mood";
+import { apiClient } from '@/services/apiClient';
+import type { PaginatedResponse } from '@/shared/types';
+import type { MoodEntry } from '@/shared/types/mood';
 
 export interface CreateMoodDto {
   mood: string;
@@ -30,16 +30,16 @@ interface RawMoodItem {
 
 export const moodService = {
   getAll: async (filter?: MoodFilter): Promise<PaginatedResponse<MoodEntry>> => {
-    const res = await apiClient.get<PaginatedResponse<RawMoodItem>>("/moods", {
+    const res = await apiClient.get<PaginatedResponse<RawMoodItem>>('/moods', {
       params: filter,
     });
 
     // Map backend response to frontend model
     const mappedData: MoodEntry[] = res.data.data.map((item) => ({
       id: item.id,
-      mood: item.mood as MoodEntry["mood"], // Cast to MoodType
+      mood: item.mood as MoodEntry['mood'], // Cast to MoodType
       intensity: item.intensity ?? 5, // Default if missing
-      note: item.note || "",
+      note: item.note || '',
       tags: item.tags || [],
       date: new Date(item.loggedAt), // Map loggedAt -> date
     }));
@@ -51,12 +51,12 @@ export const moodService = {
   },
 
   create: async (data: CreateMoodDto): Promise<MoodEntry> => {
-    const res = await apiClient.post<RawMoodItem>("/admin/moods", data);
+    const res = await apiClient.post<RawMoodItem>('/admin/moods', data);
     return {
       id: res.data.id,
-      mood: res.data.mood as MoodEntry["mood"],
+      mood: res.data.mood as MoodEntry['mood'],
       intensity: res.data.intensity ?? 5,
-      note: res.data.note || "",
+      note: res.data.note || '',
       tags: res.data.tags || [],
       date: new Date(res.data.loggedAt),
     };
@@ -66,9 +66,9 @@ export const moodService = {
     const res = await apiClient.patch<RawMoodItem>(`/admin/moods/${id}`, data);
     return {
       id: res.data.id,
-      mood: res.data.mood as MoodEntry["mood"],
+      mood: res.data.mood as MoodEntry['mood'],
       intensity: res.data.intensity ?? 5,
-      note: res.data.note || "",
+      note: res.data.note || '',
       tags: res.data.tags || [],
       date: new Date(res.data.loggedAt),
     };

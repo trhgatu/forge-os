@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { BrainCircuit, ChevronRight, Sparkles, Hash } from "lucide-react";
+import { BrainCircuit, ChevronRight, Sparkles, Hash } from 'lucide-react';
 
-import { GlassCard } from "@/shared/components/ui/GlassCard";
-import { cn } from "@/shared/lib/utils";
-import type { JournalAnalysis } from "@/shared/types/journal";
+import { GlassCard } from '@/shared/components/ui/GlassCard';
+import { cn } from '@/shared/lib/utils';
+import type { JournalAnalysis } from '@/shared/types/journal';
 
 export function JournalContextPanel({ analysis }: { analysis?: JournalAnalysis }) {
   if (!analysis) {
@@ -43,12 +43,12 @@ export function JournalContextPanel({ analysis }: { analysis?: JournalAnalysis }
           <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
             <div
               className={cn(
-                "h-full rounded-full transition-all duration-1000",
+                'h-full rounded-full transition-all duration-1000',
                 analysis.sentimentScore > 7
-                  ? "bg-forge-cyan"
+                  ? 'bg-forge-cyan'
                   : analysis.sentimentScore < 4
-                    ? "bg-orange-500"
-                    : "bg-forge-accent"
+                    ? 'bg-orange-500'
+                    : 'bg-forge-accent',
               )}
               style={{ width: `${analysis.sentimentScore * 10}%` }}
             />

@@ -1,5 +1,5 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 interface User {
   id: string;
@@ -53,13 +53,13 @@ export const useAuthStore = create<AuthState>()(
       setIsLoading: (isLoading) => set({ isLoading }),
     }),
     {
-      name: "forge-auth-storage",
+      name: 'forge-auth-storage',
       partialize: (state) => ({
         accessToken: state.accessToken,
         refreshToken: state.refreshToken, // WARN: Vulnerable to XSS. Tracked in task.md (ID: 89) for migration to HttpOnly cookies.
         user: state.user,
         isAuthenticated: state.isAuthenticated,
       }),
-    }
-  )
+    },
+  ),
 );

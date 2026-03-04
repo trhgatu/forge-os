@@ -1,14 +1,12 @@
-"use client";
+'use client';
 
-import { format } from "date-fns";
-import { Sparkles, Quote as QuoteIcon } from "lucide-react";
+import { format } from 'date-fns';
+import { Sparkles, Quote as QuoteIcon } from 'lucide-react';
 
-import { cn } from "@/shared/lib/utils";
+import { cn } from '@/shared/lib/utils';
 
-import { SEASON_CONFIG, getSeasonFromMood } from "../../memory/config/seasons";
-import { useDailyQuote } from "../hooks/useQuote";
-
-
+import { SEASON_CONFIG, getSeasonFromMood } from '../../memory/config/seasons';
+import { useDailyQuote } from '../hooks/useQuote';
 
 export function DailyInspiration() {
   const { data: quote, isLoading } = useDailyQuote();
@@ -45,8 +43,8 @@ export function DailyInspiration() {
 
           <div
             className={cn(
-              "absolute -top-[100px] -right-[100px] w-[600px] h-[600px] rounded-full blur-[120px] opacity-10 transition-all duration-1000 pointer-events-none",
-              seasonConfig.particleColor.replace("bg-", "bg-")
+              'absolute -top-[100px] -right-[100px] w-[600px] h-[600px] rounded-full blur-[120px] opacity-10 transition-all duration-1000 pointer-events-none',
+              seasonConfig.particleColor.replace('bg-', 'bg-'),
             )}
           />
 
@@ -80,7 +78,7 @@ export function DailyInspiration() {
                     Current Date
                   </span>
                   <span className="text-lg text-white/80 font-mono font-light">
-                    {format(new Date(), "MMM dd, yyyy")}
+                    {format(new Date(), 'MMM dd, yyyy')}
                   </span>
                 </div>
                 <div className="flex flex-col gap-1">
@@ -105,12 +103,12 @@ export function DailyInspiration() {
                 <blockquote className="space-y-8">
                   <p
                     className={cn(
-                      "font-sans font-extralight text-transparent bg-clip-text bg-gradient-to-b from-white to-white/70 leading-tight tracking-tight whitespace-pre-wrap break-words transition-all duration-300",
+                      'font-sans font-extralight text-transparent bg-clip-text bg-gradient-to-b from-white to-white/70 leading-tight tracking-tight whitespace-pre-wrap break-words transition-all duration-300',
                       quote.text.length > 150
-                        ? "text-2xl md:text-3xl lg:text-4xl"
+                        ? 'text-2xl md:text-3xl lg:text-4xl'
                         : quote.text.length > 80
-                          ? "text-3xl md:text-4xl lg:text-5xl"
-                          : "text-3xl md:text-5xl lg:text-6xl"
+                          ? 'text-3xl md:text-4xl lg:text-5xl'
+                          : 'text-3xl md:text-5xl lg:text-6xl',
                     )}
                   >
                     &quot;{quote.text}&quot;
@@ -120,8 +118,8 @@ export function DailyInspiration() {
                     <div className="flex items-center gap-4">
                       <div
                         className={cn(
-                          "w-12 h-12 rounded-full flex items-center justify-center bg-white/5 border border-white/10 text-xl font-display font-bold text-white/50",
-                          seasonConfig.accent
+                          'w-12 h-12 rounded-full flex items-center justify-center bg-white/5 border border-white/10 text-xl font-display font-bold text-white/50',
+                          seasonConfig.accent,
                         )}
                       >
                         {quote.author.charAt(0)}

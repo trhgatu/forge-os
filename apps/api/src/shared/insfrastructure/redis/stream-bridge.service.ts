@@ -1,0 +1,86 @@
+import { Injectable, OnModuleInit, Inject, Logger } from '@nestjs/common';
+import { Redis } from 'ioredis';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
+
+@Injectable()
+export class StreamBridgeService implements OnModuleInit {
+  private readonly logger = new Logger(StreamBridgeService.name);
+  private readonly STREAM_KEY = 'forge:activities';
+  private readonly GROUP_NAME = 'bridge_group';
+  private readonly CONSUMER_NAME = `bridge_worker_${process.pid}`;
+
+  constructor(
+    @Inject('REDIS_CLIENT') private readonly redis: Redis,
+    @InjectQueue('xp_awarding') private readonly xpQueue: Queue,
+  ) {}
+
+  async onModuleInit() {
+    await this.setupGroup();
+    void this.pollStream();
+    this.logger.log('Stream Bridge is active and polling...');
+  }
+
+  private async setupGroup() {
+    try {
+      await this.redis.xgroup('CREATE', this.STREAM_KEY, this.GROUP_NAME, '$', 'MKSTREAM');
+    } catch (e: any) {
+      if (!e.message.includes('BUSYGROUP')) {
+        this.logger.error('Failed to setup Redis Group', e.stack);
+      }
+    }
+  }
+
+  private async pollStream(): Promise<void> {
+    while (true) {
+      try {
+        const result = (await this.redis.xreadgroup(
+          'GROUP',
+          this.GROUP_NAME,
+          this.CONSUMER_NAME,
+          'COUNT',
+          '10',
+          'BLOCK',
+          '5000',
+          'STREAMS',
+          this.STREAM_KEY,
+          '>',
+        )) as [string, [string, string[]][]][] | null;
+
+        if (!result || !Array.isArray(result)) continue;
+
+        for (const streamData of result) {
+          const [, messages] = streamData;
+
+          for (const message of messages) {
+            const [id, fields] = message;
+            const rawEvent = fields[1];
+
+            if (typeof rawEvent === 'string') {
+              const event = JSON.parse(rawEvent) as Record<string, any>;
+              await this.handleEvent(event);
+              await this.redis.xack(this.STREAM_KEY, this.GROUP_NAME, id);
+            }
+          }
+        }
+      } catch (error: unknown) {
+        const errorStack = error instanceof Error ? error.stack : String(error);
+        this.logger.error('Stream Bridge Polling Error', errorStack);
+        await new Promise((res) => setTimeout(res, 5000));
+      }
+    }
+  }
+
+  private async handleEvent(event: Record<string, any>): Promise<void> {
+    const pattern = String(event.pattern || '');
+    this.logger.debug(`Dispatching event to BullMQ: ${pattern}`);
+
+    if (pattern.startsWith('engineering.')) {
+      await this.xpQueue.add(pattern, event, {
+        removeOnComplete: true,
+        attempts: 3,
+        backoff: 5000,
+      });
+    }
+  }
+}

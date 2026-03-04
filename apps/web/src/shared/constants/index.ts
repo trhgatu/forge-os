@@ -1,2 +1,2 @@
-export * from "./translation";
-export * from "./mood";
+export * from './translation';
+export * from './mood';

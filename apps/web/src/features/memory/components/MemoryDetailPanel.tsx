@@ -1,19 +1,18 @@
-"use client";
+'use client';
 
-import { X, Sparkles, Calendar, Tag, Mic, Heart, ChevronRight, Trash2, Pencil } from "lucide-react";
-import Image from "next/image";
-import { useState } from "react";
-import { toast } from "sonner";
+import { X, Sparkles, Calendar, Tag, Mic, Heart, ChevronRight, Trash2, Pencil } from 'lucide-react';
+import Image from 'next/image';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
-import { ParticleCanvas } from "@/shared/components/effects/ParticleCanvas";
-import { cn } from "@/shared/lib/utils";
-import type { Memory } from "@/shared/types/memory";
+import { ParticleCanvas } from '@/shared/components/effects/ParticleCanvas';
+import { cn } from '@/shared/lib/utils';
+import type { Memory } from '@/shared/types/memory';
 
-import { SEASON_CONFIG, getSeasonFromMood } from "../config";
-import { useDeleteMemory, useUpdateMemory } from "../hooks/useMemories";
+import { SEASON_CONFIG, getSeasonFromMood } from '../config';
+import { useDeleteMemory, useUpdateMemory } from '../hooks/useMemories';
 
-
-import { CreateMemoryModal } from "./CreateMemoryModal";
+import { CreateMemoryModal } from './CreateMemoryModal';
 
 interface MemoryDetailPanelProps {
   memory: Memory | null;
@@ -48,10 +47,10 @@ export function MemoryDetailPanel({
               toast.dismiss(t);
               deleteMemory.mutate(memory.id, {
                 onSuccess: () => {
-                  toast.success("Memory faded away...");
+                  toast.success('Memory faded away...');
                   onClose();
                 },
-                onError: () => toast.error("Could not dissolve memory."),
+                onError: () => toast.error('Could not dissolve memory.'),
               });
             }}
             className="rounded-md bg-red-500/20 px-3 py-1.5 text-red-200 transition-colors hover:bg-red-500/30"
@@ -74,13 +73,13 @@ export function MemoryDetailPanel({
       { id: memory.id, payload: updatedData },
       {
         onSuccess: () => {
-          toast.success("Memory refined successfully.");
+          toast.success('Memory refined successfully.');
           setIsEditing(false);
         },
         onError: () => {
-          toast.error("Failed to refine memory.");
+          toast.error('Failed to refine memory.');
         },
-      }
+      },
     );
   };
 
@@ -91,9 +90,9 @@ export function MemoryDetailPanel({
         <ParticleCanvas mode={seasonConfig.texture} color={seasonConfig.particleColor} />
 
         {/* Soft Background Gradient */}
-        <div className={cn("pointer-events-none absolute inset-0 opacity-10", seasonConfig.bg)} />
+        <div className={cn('pointer-events-none absolute inset-0 opacity-10', seasonConfig.bg)} />
 
-        {seasonConfig.id === "Spring" && (
+        {seasonConfig.id === 'Spring' && (
           <div
             className="pointer-events-none absolute inset-0 opacity-5 mix-blend-overlay"
             style={{
@@ -109,8 +108,8 @@ export function MemoryDetailPanel({
             <div>
               <div
                 className={cn(
-                  "mb-2 flex items-center gap-2 text-xs font-medium uppercase tracking-[0.2em] font-serif",
-                  seasonConfig.accent
+                  'mb-2 flex items-center gap-2 text-xs font-medium uppercase tracking-[0.2em] font-serif',
+                  seasonConfig.accent,
                 )}
               >
                 <seasonConfig.icon size={14} />
@@ -172,10 +171,10 @@ export function MemoryDetailPanel({
               <span className="flex items-center gap-2">
                 <Calendar size={12} />
                 {memory.date.toLocaleDateString(undefined, {
-                  weekday: "long",
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
                 })}
               </span>
               <span className="h-3 w-px bg-stone-700/30" />
@@ -225,7 +224,7 @@ export function MemoryDetailPanel({
                     ) : (
                       <Mic size={12} />
                     )}
-                    {isAnalyzing ? "Analyzing..." : "Analyze"}
+                    {isAnalyzing ? 'Analyzing...' : 'Analyze'}
                   </button>
                 )}
               </div>
@@ -235,21 +234,21 @@ export function MemoryDetailPanel({
                   {/* Nova Whisper */}
                   <div
                     className={cn(
-                      "relative overflow-hidden rounded-xl border bg-stone-900/20 p-5",
-                      seasonConfig.border
+                      'relative overflow-hidden rounded-xl border bg-stone-900/20 p-5',
+                      seasonConfig.border,
                     )}
                   >
                     <div
                       className={cn(
-                        "pointer-events-none absolute inset-0 bg-gradient-to-br opacity-5",
-                        seasonConfig.gradient
+                        'pointer-events-none absolute inset-0 bg-gradient-to-br opacity-5',
+                        seasonConfig.gradient,
                       )}
                     />
                     <div className="relative z-10">
                       <div
                         className={cn(
-                          "mb-2 text-[10px] font-serif uppercase tracking-[0.2em]",
-                          seasonConfig.accent
+                          'mb-2 text-[10px] font-serif uppercase tracking-[0.2em]',
+                          seasonConfig.accent,
                         )}
                       >
                         Nova Whisper

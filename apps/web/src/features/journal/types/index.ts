@@ -1,18 +1,18 @@
-import type { MoodType, JournalAnalysis } from "@/shared/types/journal";
+import type { MoodType, JournalAnalysis } from '@/shared/types/journal';
 
 export enum JournalStatus {
-  PRIVATE = "private",
-  INTERNAL = "internal",
-  SHARED = "shared",
+  PRIVATE = 'private',
+  INTERNAL = 'internal',
+  SHARED = 'shared',
 }
 
 export enum JournalType {
-  DAILY = "daily",
-  THOUGHT = "thought",
-  INSIGHT = "insight",
-  CONVERSATION_LOG = "conversation_log",
-  EVENT = "event",
-  DREAM = "dream",
+  DAILY = 'daily',
+  THOUGHT = 'thought',
+  INSIGHT = 'insight',
+  CONVERSATION_LOG = 'conversation_log',
+  EVENT = 'event',
+  DREAM = 'dream',
 }
 
 // Frontend-facing entity
@@ -39,7 +39,7 @@ export interface CreateJournalDto {
   tags?: string[];
   type?: JournalType;
   status?: JournalStatus;
-  source?: "user" | "ai" | "system";
+  source?: 'user' | 'ai' | 'system';
 }
 
 // Response from Backend

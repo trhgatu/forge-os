@@ -1,9 +1,9 @@
-import { Hammer, Eye, Quote, X } from "lucide-react";
-import React, { useState } from "react";
+import { Hammer, Eye, Quote, X } from 'lucide-react';
+import React, { useState } from 'react';
 
-import { ForgeEditor } from "@/shared/components/editor/ForgeEditor";
-import { GlassCard } from "@/shared/components/ui/GlassCard";
-import { cn } from "@/shared/lib/utils";
+import { ForgeEditor } from '@/shared/components/editor/ForgeEditor';
+import { GlassCard } from '@/shared/components/ui/GlassCard';
+import { cn } from '@/shared/lib/utils';
 
 interface AnvilTabProps {
   extracts?: { id: string; text: string }[];
@@ -11,8 +11,8 @@ interface AnvilTabProps {
 }
 
 export const AnvilTab: React.FC<AnvilTabProps> = ({ extracts = [], onRemoveExtract }) => {
-  const [content, setContent] = useState("");
-  const [title, setTitle] = useState("New Artifact");
+  const [content, setContent] = useState('');
+  const [title, setTitle] = useState('New Artifact');
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSave = () => {
@@ -25,7 +25,7 @@ export const AnvilTab: React.FC<AnvilTabProps> = ({ extracts = [], onRemoveExtra
 
   const insertExtract = (text: string) => {
     setContent((prev) => {
-      const prefix = prev ? "\n" : "";
+      const prefix = prev ? '\n' : '';
       return `${prev}${prefix}> ${text}\n\n`;
     });
   };
@@ -119,16 +119,16 @@ export const AnvilTab: React.FC<AnvilTabProps> = ({ extracts = [], onRemoveExtra
             onClick={handleSave}
             disabled={isSaving}
             className={cn(
-              "flex items-center gap-2 px-6 py-3 rounded-xl font-bold bg-white text-black transition-all hover:bg-gray-200 disabled:opacity-50",
-              isSaving ? "cursor-wait" : ""
+              'flex items-center gap-2 px-6 py-3 rounded-xl font-bold bg-white text-black transition-all hover:bg-gray-200 disabled:opacity-50',
+              isSaving ? 'cursor-wait' : '',
             )}
           >
             {isSaving ? (
               <div className="w-5 h-5 rounded-full border-2 border-black border-t-transparent animate-spin" />
             ) : (
-              <Hammer size={18} className={isSaving ? "animate-bounce" : ""} />
+              <Hammer size={18} className={isSaving ? 'animate-bounce' : ''} />
             )}
-            <span>{isSaving ? "Forging..." : "Crystallize Artifact"}</span>
+            <span>{isSaving ? 'Forging...' : 'Crystallize Artifact'}</span>
           </button>
         </div>
       </div>

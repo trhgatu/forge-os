@@ -1,7 +1,7 @@
-import { apiClient } from "@/services/apiClient";
-import type { PaginatedResponse } from "@/shared/types";
-import type { MemoryDto } from "@/shared/types/dto/memory.dto";
-import type { Memory, CreateMemoryPayload } from "@/shared/types/memory";
+import { apiClient } from '@/services/apiClient';
+import type { PaginatedResponse } from '@/shared/types';
+import type { MemoryDto } from '@/shared/types/dto/memory.dto';
+import type { Memory, CreateMemoryPayload } from '@/shared/types/memory';
 
 const mapDtoToMemory = (dto: MemoryDto): Memory => ({
   id: dto.id,
@@ -10,7 +10,7 @@ const mapDtoToMemory = (dto: MemoryDto): Memory => ({
   mood: dto.mood,
   tags: dto.tags,
   date: new Date(dto.createdAt),
-  type: "moment",
+  type: 'moment',
   reflectionDepth: 0,
   analysis: undefined, // Analysis is not part of DTO yet
   imageUrl: undefined, // Image URL is not part of DTO yet
@@ -19,9 +19,9 @@ const mapDtoToMemory = (dto: MemoryDto): Memory => ({
 export const getMemories = async (
   lang?: string,
   page = 1,
-  limit = 12
+  limit = 12,
 ): Promise<PaginatedResponse<Memory>> => {
-  const res = await apiClient.get<PaginatedResponse<MemoryDto>>("/memories", {
+  const res = await apiClient.get<PaginatedResponse<MemoryDto>>('/memories', {
     params: { lang, page, limit },
   });
   const payload = res.data;
@@ -39,7 +39,7 @@ export const deleteMemory = async (id: string): Promise<void> => {
 export const updateMemory = async (
   id: string,
   payload: Partial<CreateMemoryPayload>,
-  language: string
+  language: string,
 ): Promise<Memory> => {
   // Backend expects i18n structure for updates too, similar to create
   const formattedPayload = {

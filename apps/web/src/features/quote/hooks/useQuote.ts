@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useInfiniteQuery, useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 
-import type { PaginatedResponse } from "@/shared/types";
-import type { QuoteFilter } from "@/shared/types/dto/quote.dto";
-import type { MoodType } from "@/shared/types/journal";
-import type { Quote } from "@/shared/types/quote";
+import type { PaginatedResponse } from '@/shared/types';
+import type { QuoteFilter } from '@/shared/types/dto/quote.dto';
+import type { MoodType } from '@/shared/types/journal';
+import type { Quote } from '@/shared/types/quote';
 
 import {
   getQuotes,
@@ -13,10 +13,9 @@ import {
   updateQuote,
   createQuote,
   getDailyQuote,
-} from "../services/quoteService";
+} from '../services/quoteService';
 
-
-export const QUOTE_QUERY_KEY = ["quotes"];
+export const QUOTE_QUERY_KEY = ['quotes'];
 
 export function useQuotes(filter?: QuoteFilter) {
   return useInfiniteQuery<PaginatedResponse<Quote>>({
@@ -93,11 +92,10 @@ export function useUpdateQuote() {
       mood?: string;
       status?: string;
     }) => {
-
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const payload: Record<string, any> = {};
       if (content) {
-        payload.content = typeof content === "string" ? { en: content } : content;
+        payload.content = typeof content === 'string' ? { en: content } : content;
       }
       if (author !== undefined) payload.author = author;
       if (source !== undefined) payload.source = source;
@@ -105,7 +103,7 @@ export function useUpdateQuote() {
       if (mood) payload.mood = mood;
 
       if (status) payload.status = status;
-      else if (isFavorite !== undefined) payload.status = isFavorite ? "favorite" : "internal";
+      else if (isFavorite !== undefined) payload.status = isFavorite ? 'favorite' : 'internal';
 
       return updateQuote(id, payload);
     },
@@ -117,7 +115,7 @@ export function useUpdateQuote() {
 
 export function useDailyQuote() {
   return useQuery({
-    queryKey: ["daily-quote"],
+    queryKey: ['daily-quote'],
     queryFn: getDailyQuote,
     staleTime: 1000 * 60 * 60, // 1 hour
   });

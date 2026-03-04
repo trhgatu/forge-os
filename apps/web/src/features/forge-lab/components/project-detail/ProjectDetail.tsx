@@ -11,11 +11,11 @@ import {
   Trash2,
   Loader2,
   RefreshCw,
-} from "lucide-react";
-import React, { useState } from "react";
-import { toast } from "sonner";
+} from 'lucide-react';
+import React, { useState } from 'react';
+import { toast } from 'sonner';
 
-import { cn } from "@/shared/lib/utils";
+import { cn } from '@/shared/lib/utils';
 
 import {
   useProject,
@@ -26,20 +26,17 @@ import {
   useUpdateProject,
   useDeleteProject,
   useSyncProject,
-} from "../../hooks/useProjects";
-import type { Project, GithubRepo } from "../../types";
-import { GlassCard } from "../ui/GlassCard";
+} from '../../hooks/useProjects';
+import type { Project, GithubRepo } from '../../types';
+import { GlassCard } from '../ui/GlassCard';
 
-
-import { EditProjectModal, DeleteConfirmModal } from "./ProjectModals";
-import { RepoPicker } from "./RepoPicker";
-import { ProjectLogsTab } from "./tabs/ProjectLogsTab";
-import { ProjectOverviewTab } from "./tabs/ProjectOverviewTab";
-import { ProjectReadmeTab } from "./tabs/ProjectReadmeTab";
-import { ProjectResourcesTab } from "./tabs/ProjectResourcesTab";
-import { ProjectTasksTab } from "./tabs/ProjectTasksTab";
-
-
+import { EditProjectModal, DeleteConfirmModal } from './ProjectModals';
+import { RepoPicker } from './RepoPicker';
+import { ProjectLogsTab } from './tabs/ProjectLogsTab';
+import { ProjectOverviewTab } from './tabs/ProjectOverviewTab';
+import { ProjectReadmeTab } from './tabs/ProjectReadmeTab';
+import { ProjectResourcesTab } from './tabs/ProjectResourcesTab';
+import { ProjectTasksTab } from './tabs/ProjectTasksTab';
 
 interface ProjectDetailProps {
   projectId: string;
@@ -49,7 +46,7 @@ interface ProjectDetailProps {
   onDelete?: (id: string) => Promise<void>;
 }
 
-type Tab = "overview" | "tasks" | "resources" | "logs" | "readme";
+type Tab = 'overview' | 'tasks' | 'resources' | 'logs' | 'readme';
 
 export const ProjectDetail: React.FC<ProjectDetailProps> = ({
   projectId,
@@ -58,7 +55,7 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
   onUpdate,
   onDelete,
 }) => {
-  const [activeTab, setActiveTab] = useState<Tab>("overview");
+  const [activeTab, setActiveTab] = useState<Tab>('overview');
 
   const {
     data: projectSummary,
@@ -68,16 +65,16 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
   const { data: projectStats } = useProjectGithubStats(projectId, true);
   const { data: projectReadme, isLoading: isReadmeLoading } = useProjectReadme(
     projectId,
-    activeTab === "readme"
+    activeTab === 'readme',
   );
   const { data: projectTaskBoard, isLoading: isTaskBoardLoading } = useProjectTaskBoard(
     projectId,
-    activeTab === "tasks"
+    activeTab === 'tasks',
   );
   const { data: projectLogs, isLoading: isLogsLoading } = useProjectLogs(
     projectId,
     1,
-    activeTab === "logs"
+    activeTab === 'logs',
   );
 
   const updateProjectMutation = useUpdateProject();
@@ -88,7 +85,7 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
   const [showRepoPicker, setShowRepoPicker] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [newLink, setNewLink] = useState({ title: "", url: "" });
+  const [newLink, setNewLink] = useState({ title: '', url: '' });
   const [editingResourceIndex, setEditingResourceIndex] = useState<number | null>(null);
 
   const project: Project | null = projectSummary
@@ -116,7 +113,7 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
     : null;
 
   const loading = isSummaryLoading;
-  const error = summaryError ? "Failed to load project details" : null;
+  const error = summaryError ? 'Failed to load project details' : null;
   const isSyncing = syncProjectMutation.isPending;
 
   // Effect removed - React Query handles fetching
@@ -164,7 +161,7 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
             <Activity size={48} className="mx-auto" />
           </div>
           <h2 className="text-xl font-bold text-white mb-2">Failed to Load Project</h2>
-          <p className="text-gray-400 mb-6">{error || "Project not found"}</p>
+          <p className="text-gray-400 mb-6">{error || 'Project not found'}</p>
           <button
             onClick={onBack}
             className="px-6 py-2 rounded-xl bg-forge-cyan/10 border border-forge-cyan/20 text-forge-cyan hover:bg-forge-cyan/20 transition-colors"
@@ -188,8 +185,8 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
     if (!project) return;
     try {
       const updatedLinks = [...(project.links || [])];
-      const iconType = newLink.url.includes("github") ? "github" : "link";
-      const linkData = { ...newLink, icon: iconType as "github" | "link" };
+      const iconType = newLink.url.includes('github') ? 'github' : 'link';
+      const linkData = { ...newLink, icon: iconType as 'github' | 'link' };
 
       if (editingResourceIndex !== null) {
         updatedLinks[editingResourceIndex] = linkData;
@@ -202,10 +199,10 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
         data: { links: updatedLinks },
       });
 
-      toast.success(editingResourceIndex !== null ? "Resource updated" : "Resource added");
+      toast.success(editingResourceIndex !== null ? 'Resource updated' : 'Resource added');
 
       setShowResourceModal(false);
-      setNewLink({ title: "", url: "" });
+      setNewLink({ title: '', url: '' });
       setEditingResourceIndex(null);
     } catch {
       // Error handled by mutation hook
@@ -223,10 +220,10 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
         data: { links: updatedLinks },
       });
 
-      toast.success("Resource deleted");
+      toast.success('Resource deleted');
 
       setShowResourceModal(false);
-      setNewLink({ title: "", url: "" });
+      setNewLink({ title: '', url: '' });
       setEditingResourceIndex(null);
     } catch {
       // Error handled by mutation hook
@@ -304,26 +301,26 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
               className="text-[10px] bg-white/10 hover:bg-white/20 px-2 py-0.5 rounded text-white transition-colors flex items-center gap-1 ml-2"
             >
               {isSyncing ? <Loader2 size={10} className="animate-spin" /> : <RefreshCw size={10} />}
-              {isSyncing ? "Syncing..." : "Sync GitHub"}
+              {isSyncing ? 'Syncing...' : 'Sync GitHub'}
             </button>
           </div>
 
           <div className="flex items-center gap-2 bg-[#09090b]/60 backdrop-blur-md p-1 rounded-full border border-white/10">
             {[
-              { id: "overview", icon: Layout, label: "Overview" },
-              { id: "tasks", icon: ListTodo, label: "Tasks" },
-              { id: "readme", icon: FileText, label: "Readme" },
-              { id: "resources", icon: LinkIcon, label: "Resources" },
-              { id: "logs", icon: History, label: "Logs" },
+              { id: 'overview', icon: Layout, label: 'Overview' },
+              { id: 'tasks', icon: ListTodo, label: 'Tasks' },
+              { id: 'readme', icon: FileText, label: 'Readme' },
+              { id: 'resources', icon: LinkIcon, label: 'Resources' },
+              { id: 'logs', icon: History, label: 'Logs' },
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as Tab)}
                 className={cn(
-                  "flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium transition-all",
+                  'flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium transition-all',
                   activeTab === tab.id
-                    ? "bg-white/10 text-white shadow-sm"
-                    : "text-gray-400 hover:text-white hover:bg-white/5"
+                    ? 'bg-white/10 text-white shadow-sm'
+                    : 'text-gray-400 hover:text-white hover:bg-white/5',
                 )}
               >
                 <tab.icon size={14} />
@@ -337,8 +334,8 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
       {/* Header / Mission Brief (Collapsed on other tabs) */}
       <div
         className={cn(
-          "mb-8 relative transition-all duration-500",
-          activeTab !== "overview" && "mb-4 opacity-80"
+          'mb-8 relative transition-all duration-500',
+          activeTab !== 'overview' && 'mb-4 opacity-80',
         )}
       >
         <div className="pl-6 border-l-2 border-forge-cyan/30">
@@ -367,7 +364,7 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
               )}
             </div>
           </div>
-          {activeTab === "overview" && (
+          {activeTab === 'overview' && (
             <p className="text-lg text-gray-400 font-light max-w-2xl animate-in fade-in slide-in-from-bottom-1 duration-500 border-l border-white/10 pl-4 mt-4 italic">
               &quot;{project.description}&quot;
             </p>
@@ -378,10 +375,10 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
       {/* CONTENT AREA */}
       <div className="min-h-[400px]">
         {/* 1. OVERVIEW TAB */}
-        {activeTab === "overview" && <ProjectOverviewTab project={project} />}
+        {activeTab === 'overview' && <ProjectOverviewTab project={project} />}
 
         {/* 2. README TAB */}
-        {activeTab === "readme" && (
+        {activeTab === 'readme' && (
           <ProjectReadmeTab
             project={project}
             onSync={handleSync}
@@ -391,20 +388,20 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
         )}
 
         {/* 3. TASKS TAB */}
-        {activeTab === "tasks" && (
+        {activeTab === 'tasks' && (
           <ProjectTasksTab project={project} isLoading={isTaskBoardLoading} />
         )}
 
         {/* 4. LOGS TAB */}
-        {activeTab === "logs" && <ProjectLogsTab project={project} isLoading={isLogsLoading} />}
+        {activeTab === 'logs' && <ProjectLogsTab project={project} isLoading={isLogsLoading} />}
 
         {/* 5. RESOURCES TAB */}
-        {activeTab === "resources" && (
+        {activeTab === 'resources' && (
           <ProjectResourcesTab
             project={project}
             onAdd={() => {
               setEditingResourceIndex(null);
-              setNewLink({ title: "", url: "" });
+              setNewLink({ title: '', url: '' });
               setShowResourceModal(true);
             }}
             onEdit={(link, index) => {
@@ -420,7 +417,7 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
           <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
             <GlassCard className="w-full max-w-md p-6 space-y-4">
               <h3 className="text-xl font-bold text-white mb-4">
-                {editingResourceIndex !== null ? "Edit Resource" : "Add Resource Link"}
+                {editingResourceIndex !== null ? 'Edit Resource' : 'Add Resource Link'}
               </h3>
               <div className="space-y-3">
                 <div className="flex justify-end -mb-2">
@@ -428,7 +425,7 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
                     onClick={() => setShowRepoPicker(true)}
                     className="text-xs text-forge-cyan hover:underline flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={!githubUsername}
-                    title={!githubUsername ? "Connect GitHub to import" : "Import repository"}
+                    title={!githubUsername ? 'Connect GitHub to import' : 'Import repository'}
                   >
                     <Github size={12} /> Import from GitHub
                   </button>
@@ -474,7 +471,7 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
                   <button
                     onClick={() => {
                       setShowResourceModal(false);
-                      setNewLink({ title: "", url: "" });
+                      setNewLink({ title: '', url: '' });
                       setEditingResourceIndex(null);
                     }}
                     className="px-4 py-2 rounded-lg text-gray-400 hover:bg-white/5 transition-colors"
@@ -486,7 +483,7 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
                     disabled={!newLink.title || !newLink.url}
                     className="px-4 py-2 rounded-lg bg-forge-cyan text-black font-bold hover:bg-forge-cyan/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {editingResourceIndex !== null ? "Save Changes" : "Add Link"}
+                    {editingResourceIndex !== null ? 'Save Changes' : 'Add Link'}
                   </button>
                 </div>
               </div>

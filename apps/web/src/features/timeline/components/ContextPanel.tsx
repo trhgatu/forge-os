@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { Calendar, Tag, Sparkles, X } from "lucide-react";
-import Image from "next/image";
+import { Calendar, Tag, Sparkles, X } from 'lucide-react';
+import Image from 'next/image';
 
-import { cn } from "@/shared/lib/utils";
-import type { TimelineItem } from "@/shared/types/timeline";
+import { cn } from '@/shared/lib/utils';
+import type { TimelineItem } from '@/shared/types/timeline';
 
-import { TYPE_CONFIG } from "../config/";
+import { TYPE_CONFIG } from '../config/';
 
 interface Props {
   item: TimelineItem | null;
@@ -95,11 +95,11 @@ export default function ContextPanel({ item, onClose, onAnalyze, isAnalyzing }: 
                 onClick={() => onAnalyze(item.id)}
                 disabled={isAnalyzing}
                 className={cn(
-                  "text-xs bg-forge-accent/10 hover:bg-forge-accent/20 text-forge-accent border border-forge-accent/20 px-3 py-1 rounded transition-all",
-                  isAnalyzing && "opacity-50 cursor-not-allowed"
+                  'text-xs bg-forge-accent/10 hover:bg-forge-accent/20 text-forge-accent border border-forge-accent/20 px-3 py-1 rounded transition-all',
+                  isAnalyzing && 'opacity-50 cursor-not-allowed',
                 )}
               >
-                {isAnalyzing ? "Processing..." : "Analyze"}
+                {isAnalyzing ? 'Processing...' : 'Analyze'}
               </button>
             )}
           </div>

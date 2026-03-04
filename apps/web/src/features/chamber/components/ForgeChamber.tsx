@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 /* import { streamChatResponse } from "@/lib/geminiService"; */
 import {
@@ -9,23 +9,23 @@ import {
   ToggleLeft,
   ToggleRight,
   Sparkles,
-} from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+} from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
 
 /* import type { GenerateContentResponse } from "@google/genai"; */
-import { AgentDock, AGENTS } from "@/features/chamber/components/AgentDock";
-import { cn } from "@/shared/lib/utils";
-import type { Message, AgentId, Agent } from "@/shared/types";
-import { GlassCard } from "@/shared/ui/GlassCard";
+import { AgentDock, AGENTS } from '@/features/chamber/components/AgentDock';
+import { cn } from '@/shared/lib/utils';
+import type { Message, AgentId, Agent } from '@/shared/types';
+import { GlassCard } from '@/shared/ui/GlassCard';
 
 export const ForgeChamber = () => {
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState('');
   const [messages /* setMessages */] = useState<Message[]>([
     {
-      id: "1",
-      role: "model",
-      agentId: "nexus",
-      text: "Forge Systems Online. I am ready to assist with your cognitive processes.",
+      id: '1',
+      role: 'model',
+      agentId: 'nexus',
+      text: 'Forge Systems Online. I am ready to assist with your cognitive processes.',
     },
   ]);
   const [isStreaming /* setIsStreaming */] = useState(false);
@@ -36,7 +36,7 @@ export const ForgeChamber = () => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   const getAgent = (id?: AgentId): Agent => AGENTS.find((a) => a.id === id) || AGENTS[0];
@@ -156,12 +156,12 @@ Respond to the user in your specific persona. Keep it under 100 words.`;
             <div className="flex items-center gap-3">
               <div
                 className={cn(
-                  "w-2 h-2 rounded-full shadow-[0_0_10px_currentColor] animate-pulse bg-current",
-                  isRoundtableMode ? "text-fuchsia-500" : "text-forge-cyan"
+                  'w-2 h-2 rounded-full shadow-[0_0_10px_currentColor] animate-pulse bg-current',
+                  isRoundtableMode ? 'text-fuchsia-500' : 'text-forge-cyan',
                 )}
               />
               <span className="font-mono text-sm text-gray-300 tracking-wider uppercase">
-                {isRoundtableMode ? "Roundtable Protocol" : "Nexus Core"}
+                {isRoundtableMode ? 'Roundtable Protocol' : 'Nexus Core'}
               </span>
             </div>
 
@@ -177,8 +177,8 @@ Respond to the user in your specific persona. Keep it under 100 words.`;
               )}
               <span
                 className={cn(
-                  "text-xs font-medium",
-                  isRoundtableMode ? "text-white" : "text-gray-500"
+                  'text-xs font-medium',
+                  isRoundtableMode ? 'text-white' : 'text-gray-500',
                 )}
               >
                 Multi-Agent
@@ -194,10 +194,10 @@ Respond to the user in your specific persona. Keep it under 100 words.`;
               type="button"
               onClick={() => setIsDockOpen((prev) => !prev)}
               className={cn(
-                "p-2 rounded-lg transition-all duration-300",
+                'p-2 rounded-lg transition-all duration-300',
                 isDockOpen
-                  ? "text-forge-cyan bg-forge-cyan/10"
-                  : "text-gray-500 hover:text-white hover:bg-white/5"
+                  ? 'text-forge-cyan bg-forge-cyan/10'
+                  : 'text-gray-500 hover:text-white hover:bg-white/5',
               )}
             >
               {isDockOpen ? <PanelRightClose size={18} /> : <PanelRightOpen size={18} />}
@@ -208,7 +208,7 @@ Respond to the user in your specific persona. Keep it under 100 words.`;
         {/* Messages Scroll Area */}
         <div className="flex-1 overflow-y-auto p-6 space-y-8 relative">
           {messages.map((msg) => {
-            const isUser = msg.role === "user";
+            const isUser = msg.role === 'user';
             const agent = isUser ? null : getAgent(msg.agentId);
             const Icon = agent?.icon || User;
 
@@ -216,20 +216,20 @@ Respond to the user in your specific persona. Keep it under 100 words.`;
               <div
                 key={msg.id}
                 className={cn(
-                  "flex gap-4 animate-in slide-in-from-bottom-2 duration-500",
-                  isUser ? "flex-row-reverse" : ""
+                  'flex gap-4 animate-in slide-in-from-bottom-2 duration-500',
+                  isUser ? 'flex-row-reverse' : '',
                 )}
               >
                 {/* Avatar */}
                 <div
                   className={cn(
-                    "w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-lg relative group",
+                    'w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-lg relative group',
                     isUser
-                      ? "bg-linear-to-br from-gray-700 to-black border border-white/10"
-                      : `bg-linear-to-br ${agent?.gradient} shadow-[0_0_15px_rgba(0,0,0,0.3)]`
+                      ? 'bg-linear-to-br from-gray-700 to-black border border-white/10'
+                      : `bg-linear-to-br ${agent?.gradient} shadow-[0_0_15px_rgba(0,0,0,0.3)]`,
                   )}
                 >
-                  <Icon size={16} className={isUser ? "text-gray-300" : "text-white"} />
+                  <Icon size={16} className={isUser ? 'text-gray-300' : 'text-white'} />
                   {!isUser && (
                     <div className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-black/80 backdrop-blur border border-white/10 rounded text-[10px] text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                       {agent?.name}
@@ -240,20 +240,20 @@ Respond to the user in your specific persona. Keep it under 100 words.`;
                 {/* Message Bubble */}
                 <div
                   className={cn(
-                    "max-w-[85%] md:max-w-[70%] p-5 rounded-2xl text-sm leading-relaxed shadow-sm relative backdrop-blur-md transition-all duration-300",
+                    'max-w-[85%] md:max-w-[70%] p-5 rounded-2xl text-sm leading-relaxed shadow-sm relative backdrop-blur-md transition-all duration-300',
                     isUser
-                      ? "bg-white/10 text-white rounded-tr-none border border-white/5 hover:bg-white/15"
+                      ? 'bg-white/10 text-white rounded-tr-none border border-white/5 hover:bg-white/15'
                       : `${agent?.bg} ${agent?.color.replace(
-                          "text-",
-                          "text-gray-100 "
-                        )} border ${agent?.border} rounded-tl-none hover:shadow-[0_0_20px_rgba(0,0,0,0.1)]`
+                          'text-',
+                          'text-gray-100 ',
+                        )} border ${agent?.border} rounded-tl-none hover:shadow-[0_0_20px_rgba(0,0,0,0.1)]`,
                   )}
                 >
                   {!isUser && isRoundtableMode && (
                     <div
                       className={cn(
-                        "text-[10px] font-bold uppercase tracking-wider mb-2 opacity-70",
-                        agent?.color
+                        'text-[10px] font-bold uppercase tracking-wider mb-2 opacity-70',
+                        agent?.color,
                       )}
                     >
                       {agent?.name}
@@ -264,7 +264,7 @@ Respond to the user in your specific persona. Keep it under 100 words.`;
 
                   {isStreaming &&
                     !isUser &&
-                    activeAgentIds.includes(agent?.id || "") &&
+                    activeAgentIds.includes(agent?.id || '') &&
                     msg.text.length > 0 && (
                       <span className="inline-block w-1.5 h-3 ml-1 bg-current animate-pulse align-middle" />
                     )}
@@ -296,7 +296,7 @@ Respond to the user in your specific persona. Keep it under 100 words.`;
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder={
-                  isRoundtableMode ? "Broadcast query to agent cluster..." : "Input neural query..."
+                  isRoundtableMode ? 'Broadcast query to agent cluster...' : 'Input neural query...'
                 }
                 className="flex-1 bg-transparent border-none text-white placeholder-gray-500 focus:ring-0 py-4 text-sm font-medium"
                 disabled={isStreaming}
@@ -306,10 +306,10 @@ Respond to the user in your specific persona. Keep it under 100 words.`;
                 type="submit"
                 disabled={!input.trim() || isStreaming}
                 className={cn(
-                  "m-2 p-2.5 rounded-xl transition-all duration-300",
+                  'm-2 p-2.5 rounded-xl transition-all duration-300',
                   input.trim() && !isStreaming
-                    ? "bg-forge-accent text-white shadow-[0_0_15px_rgba(124,58,237,0.4)] hover:scale-105"
-                    : "bg-white/5 text-gray-600 cursor-not-allowed"
+                    ? 'bg-forge-accent text-white shadow-[0_0_15px_rgba(124,58,237,0.4)] hover:scale-105'
+                    : 'bg-white/5 text-gray-600 cursor-not-allowed',
                 )}
               >
                 <Send size={16} />
@@ -320,8 +320,8 @@ Respond to the user in your specific persona. Keep it under 100 words.`;
           <div className="text-center mt-2 flex justify-center gap-4">
             <p className="text-[10px] text-gray-600 font-mono">
               {isRoundtableMode
-                ? "Cluster Processing Active • High Token Usage"
-                : "Nexus Core Active"}
+                ? 'Cluster Processing Active • High Token Usage'
+                : 'Nexus Core Active'}
             </p>
           </div>
         </div>

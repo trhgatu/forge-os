@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
 export function MarkdownPreview({ content }: { content: string }) {
   const parseInline = (text: string) => {
     const parts = text.split(/(\*\*.*?\*\*|\*.*?\*|`.*?`)/g);
     return parts.map((part, i) => {
-      if (part.startsWith("**"))
+      if (part.startsWith('**'))
         return (
           <strong key={i} className="text-white font-semibold">
             {part.slice(2, -2)}
           </strong>
         );
-      if (part.startsWith("*"))
+      if (part.startsWith('*'))
         return (
           <em key={i} className="text-gray-300">
             {part.slice(1, -1)}
           </em>
         );
-      if (part.startsWith("`"))
+      if (part.startsWith('`'))
         return (
           <code
             key={i}
@@ -31,10 +31,10 @@ export function MarkdownPreview({ content }: { content: string }) {
 
   return (
     <div className="space-y-6 text-gray-300 leading-relaxed font-sans text-lg selection:bg-forge-accent/30 selection:text-white">
-      {content.split("\n").map((line, idx) => {
+      {content.split('\n').map((line, idx) => {
         const t = line.trim();
 
-        if (t.startsWith("# "))
+        if (t.startsWith('# '))
           return (
             <h1
               key={idx}
@@ -44,7 +44,7 @@ export function MarkdownPreview({ content }: { content: string }) {
             </h1>
           );
 
-        if (t.startsWith("## "))
+        if (t.startsWith('## '))
           return (
             <h2
               key={idx}
@@ -55,7 +55,7 @@ export function MarkdownPreview({ content }: { content: string }) {
             </h2>
           );
 
-        if (t.startsWith("### "))
+        if (t.startsWith('### '))
           return (
             <h3
               key={idx}
@@ -65,7 +65,7 @@ export function MarkdownPreview({ content }: { content: string }) {
             </h3>
           );
 
-        if (t.startsWith("> "))
+        if (t.startsWith('> '))
           return (
             <div
               key={idx}
@@ -78,7 +78,7 @@ export function MarkdownPreview({ content }: { content: string }) {
             </div>
           );
 
-        if (t.startsWith("- "))
+        if (t.startsWith('- '))
           return (
             <div
               key={idx}
@@ -94,7 +94,7 @@ export function MarkdownPreview({ content }: { content: string }) {
           );
 
         // Horizontal Rule (---)
-        if (t === "---")
+        if (t === '---')
           return (
             <div
               key={idx}
@@ -102,7 +102,7 @@ export function MarkdownPreview({ content }: { content: string }) {
             />
           );
 
-        if (t === "") return <div key={idx} className="h-2" />;
+        if (t === '') return <div key={idx} className="h-2" />;
 
         return (
           <p key={idx} className="mb-2 text-gray-300/90 leading-relaxed font-light">

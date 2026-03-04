@@ -1,10 +1,10 @@
-import { Search, Loader2, Github, X, Star, Calendar } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { Search, Loader2, Github, X, Star, Calendar } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 
-import { GlassCard } from "@/shared/components/ui/GlassCard";
+import { GlassCard } from '@/shared/components/ui/GlassCard';
 
-import { forgeApi } from "../../api";
-import type { GithubRepo } from "../../types";
+import { forgeApi } from '../../api';
+import type { GithubRepo } from '../../types';
 
 interface RepoPickerProps {
   isOpen: boolean;
@@ -16,7 +16,7 @@ interface RepoPickerProps {
 export const RepoPicker: React.FC<RepoPickerProps> = ({ isOpen, onClose, onSelect, username }) => {
   const [repos, setRepos] = useState<GithubRepo[]>([]);
   const [loading, setLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -32,9 +32,9 @@ export const RepoPicker: React.FC<RepoPickerProps> = ({ isOpen, onClose, onSelec
           setRepos(data);
         }
       } catch (err) {
-        console.error("Failed to fetch repos", err);
+        console.error('Failed to fetch repos', err);
         if (isMounted) {
-          setError("Failed to load repositories.");
+          setError('Failed to load repositories.');
         }
       } finally {
         if (isMounted) {
@@ -53,7 +53,7 @@ export const RepoPicker: React.FC<RepoPickerProps> = ({ isOpen, onClose, onSelec
   }, [isOpen, username]);
 
   const filteredRepos = repos.filter((repo) =>
-    repo.name.toLowerCase().includes(searchQuery.toLowerCase())
+    repo.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   if (!isOpen) return null;
@@ -132,7 +132,7 @@ export const RepoPicker: React.FC<RepoPickerProps> = ({ isOpen, onClose, onSelec
                         )}
                       </div>
                       <div className="text-xs text-gray-500 truncate max-w-[400px]">
-                        {repo.description || "No description"}
+                        {repo.description || 'No description'}
                       </div>
                     </div>
                     <div className="flex items-center gap-4 text-gray-500 text-xs shrink-0 ml-4">

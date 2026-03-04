@@ -1,1 +1,1 @@
-export * from "./components/Memory";
+export * from './components/Memory';

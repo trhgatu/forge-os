@@ -1,16 +1,16 @@
-export type EchoTypeVisitor = "anonymous" | "known" | "connection";
+export type EchoTypeVisitor = 'anonymous' | 'known' | 'connection';
 
 export type ConnectionRole =
-  | "Catalyst"
-  | "Ghost"
-  | "Mirror"
-  | "Anchor"
-  | "Teacher"
-  | "Past Love"
-  | "Shadow"
-  | "Companion"
-  | "Healer"
-  | "Mystery";
+  | 'Catalyst'
+  | 'Ghost'
+  | 'Mirror'
+  | 'Anchor'
+  | 'Teacher'
+  | 'Past Love'
+  | 'Shadow'
+  | 'Companion'
+  | 'Healer'
+  | 'Mystery';
 
 export interface VisitorEcho {
   id: string;

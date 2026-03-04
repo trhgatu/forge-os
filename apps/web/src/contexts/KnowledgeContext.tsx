@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import React, { useCallback } from "react";
+import React, { useCallback } from 'react';
 
-import { useLanguage } from "@/contexts/LanguageContext";
-import type { KnowledgeConcept } from "@/shared/types";
-import { useKnowledgeStore } from "@/store/knowledge.store";
+import { useLanguage } from '@/contexts/LanguageContext';
+import type { KnowledgeConcept } from '@/shared/types';
+import { useKnowledgeStore } from '@/store/knowledge.store';
 
 interface KnowledgeProviderProps {
   children: React.ReactNode;
@@ -40,14 +40,14 @@ export const useKnowledge = () => {
     async (query: string) => {
       await searchAction(query, language);
     },
-    [searchAction, language]
+    [searchAction, language],
   );
 
   const selectConcept = useCallback(
     async (concept: KnowledgeConcept) => {
       await selectAction(concept, language);
     },
-    [selectAction, language]
+    [selectAction, language],
   );
 
   const loadDiscoveryWrapper = useCallback(async () => {

@@ -1,8 +1,8 @@
-import { Activity, GitBranch, Cpu, Zap } from "lucide-react";
-import React from "react";
+import { Activity, GitBranch, Cpu, Zap } from 'lucide-react';
+import React from 'react';
 
-import type { Project } from "@/features/forge-lab/types";
-import { cn } from "@/shared/lib/utils";
+import type { Project } from '@/features/forge-lab/types';
+import { cn } from '@/shared/lib/utils';
 
 interface SystemLogsWidgetProps {
   projects: Project[];
@@ -38,13 +38,13 @@ export const SystemLogsWidget: React.FC<SystemLogsWidgetProps> = ({ projects }) 
           >
             <div
               className={cn(
-                "absolute -left-[23px] top-0 w-6 h-6 rounded-full bg-[#0c0c0e] flex items-center justify-center border border-white/10 z-10 transition-colors shadow-lg shadow-black",
-                log.type === "update"
-                  ? "group-hover:border-forge-cyan/50"
-                  : "group-hover:border-purple-400/50"
+                'absolute -left-[23px] top-0 w-6 h-6 rounded-full bg-[#0c0c0e] flex items-center justify-center border border-white/10 z-10 transition-colors shadow-lg shadow-black',
+                log.type === 'update'
+                  ? 'group-hover:border-forge-cyan/50'
+                  : 'group-hover:border-purple-400/50',
               )}
             >
-              {log.type === "update" ? (
+              {log.type === 'update' ? (
                 <GitBranch
                   size={12}
                   className="text-gray-400 group-hover:text-forge-cyan transition-colors"
@@ -61,21 +61,21 @@ export const SystemLogsWidget: React.FC<SystemLogsWidgetProps> = ({ projects }) 
                 <span className="text-white font-medium">
                   {!isNaN(new Date(log.date).getTime())
                     ? new Date(log.date).toLocaleDateString()
-                    : "Unknown Date"}
+                    : 'Unknown Date'}
                 </span>
                 <span className="w-1 h-1 rounded-full bg-gray-600" />
                 <span>
                   {!isNaN(new Date(log.date).getTime())
                     ? new Date(log.date).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
+                        hour: '2-digit',
+                        minute: '2-digit',
                       })
-                    : "--:--"}
+                    : '--:--'}
                 </span>
               </div>
               <div className="p-3 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors flex items-start gap-3 cursor-pointer">
                 <div className="mt-0.5">
-                  {log.type === "update" ? (
+                  {log.type === 'update' ? (
                     <Cpu size={16} className="text-forge-cyan" />
                   ) : (
                     <Zap size={16} className="text-yellow-400" />
@@ -85,7 +85,7 @@ export const SystemLogsWidget: React.FC<SystemLogsWidgetProps> = ({ projects }) 
                   <div className="text-sm text-gray-300">
                     <span className="font-bold text-white">{log.projectTitle}</span>: {log.content}
                   </div>
-                  {log.type === "alert" && (
+                  {log.type === 'alert' && (
                     <div className="text-xs text-red-400 mt-1 flex items-center gap-1">
                       <Activity size={10} /> Critical system alert
                     </div>

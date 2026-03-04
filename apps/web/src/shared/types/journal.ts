@@ -1,18 +1,18 @@
 export type MoodType =
-  | "joy"
-  | "calm"
-  | "inspired"
-  | "neutral"
-  | "sad"
-  | "stressed"
-  | "lonely"
-  | "angry"
-  | "energetic"
-  | "empty"
-  | "focused"
-  | "anxious"
-  | "nostalgic"
-  | "tired";
+  | 'joy'
+  | 'calm'
+  | 'inspired'
+  | 'neutral'
+  | 'sad'
+  | 'stressed'
+  | 'lonely'
+  | 'angry'
+  | 'energetic'
+  | 'empty'
+  | 'focused'
+  | 'anxious'
+  | 'nostalgic'
+  | 'tired';
 
 export interface JournalAnalysis {
   sentimentScore: number;

@@ -1,4 +1,4 @@
-import type { MoodType } from "./journal";
+import type { MoodType } from './journal';
 
 export interface InsightData {
   quote: string;
@@ -16,11 +16,11 @@ export interface TopicCluster {
 
 export interface Pattern {
   id: string;
-  type: "behavior" | "emotional" | "cognitive";
+  type: 'behavior' | 'emotional' | 'cognitive';
   title: string;
   description: string;
   confidence: number;
-  impact: "positive" | "negative" | "neutral";
+  impact: 'positive' | 'negative' | 'neutral';
 }
 
 export interface LifeArc {

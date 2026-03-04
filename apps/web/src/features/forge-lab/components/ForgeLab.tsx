@@ -1,97 +1,96 @@
-"use client";
+'use client';
 
-import { LayoutDashboard, Layers, Book, Network, Plus } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import { LayoutDashboard, Layers, Book, Network, Plus } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
 
-import { cn } from "@/shared/lib/utils";
-import { useAuthStore } from "@/shared/store/authStore";
+import { cn } from '@/shared/lib/utils';
+import { useAuthStore } from '@/shared/store/authStore';
 
-import { forgeApi } from "../api";
+import { forgeApi } from '../api';
 import {
   useProjects,
   useCreateProject,
   useUpdateProject,
   useDeleteProject,
-} from "../hooks/useProjects";
-import type { ForgeTab, Project, Foundation, ResearchTrail } from "../types";
+} from '../hooks/useProjects';
+import type { ForgeTab, Project, Foundation, ResearchTrail } from '../types';
 
 // Components
-import { LabDashboard } from "./dashboard/LabDashboard";
-import { FoundationLibrary } from "./FoundationLibrary";
-import { CreateProjectModal } from "./project-detail/ProjectModals";
-import { ProjectForge } from "./ProjectForge";
-import { ResearchTrails } from "./ResearchTrails";
-
+import { LabDashboard } from './dashboard/LabDashboard';
+import { FoundationLibrary } from './FoundationLibrary';
+import { CreateProjectModal } from './project-detail/ProjectModals';
+import { ProjectForge } from './ProjectForge';
+import { ResearchTrails } from './ResearchTrails';
 
 const MOCK_FOUNDATIONS: Foundation[] = [
   {
-    id: "1",
-    title: "Core Principles",
-    type: "Doc",
+    id: '1',
+    title: 'Core Principles',
+    type: 'Doc',
     updatedAt: new Date(),
     description:
-      "The fundamental axioms that govern the Forge OS ecosystem, ensuring consistency and purpose across all modules.",
-    status: "stable",
-    version: "2.4.0",
-    author: { name: "Creator", avatar: "https://github.com/shadcn.png" },
+      'The fundamental axioms that govern the Forge OS ecosystem, ensuring consistency and purpose across all modules.',
+    status: 'stable',
+    version: '2.4.0',
+    author: { name: 'Creator', avatar: 'https://github.com/shadcn.png' },
     contributors: [
-      { name: "Architect", avatar: "" },
-      { name: "Designer", avatar: "" },
+      { name: 'Architect', avatar: '' },
+      { name: 'Designer', avatar: '' },
     ],
     metrics: {
       usageCount: 12,
       impactScore: 98,
-      complexity: "high",
+      complexity: 'high',
     },
     connectedNodes: [
-      { id: "p1", title: "Forge OS System", type: "project" },
-      { id: "p2", title: "Neural Core", type: "project" },
-      { id: "c1", title: "System Theory", type: "concept" },
+      { id: 'p1', title: 'Forge OS System', type: 'project' },
+      { id: 'p2', title: 'Neural Core', type: 'project' },
+      { id: 'c1', title: 'System Theory', type: 'concept' },
     ],
   },
   {
-    id: "2",
-    title: "Design Philosophy",
-    type: "Guide",
+    id: '2',
+    title: 'Design Philosophy',
+    type: 'Guide',
     updatedAt: new Date(Date.now() - 86400000 * 5),
     description:
-      "Visual language and interaction patterns for the interface. Defines glassmorphism, typography scale, and animation curves.",
-    status: "beta",
-    version: "1.0.0",
-    author: { name: "UI Lead", avatar: "" },
-    contributors: [{ name: "Frontend", avatar: "" }],
+      'Visual language and interaction patterns for the interface. Defines glassmorphism, typography scale, and animation curves.',
+    status: 'beta',
+    version: '1.0.0',
+    author: { name: 'UI Lead', avatar: '' },
+    contributors: [{ name: 'Frontend', avatar: '' }],
     metrics: {
       usageCount: 8,
       impactScore: 75,
-      complexity: "medium",
+      complexity: 'medium',
     },
-    connectedNodes: [{ id: "p1", title: "Forge OS System", type: "project" }],
+    connectedNodes: [{ id: 'p1', title: 'Forge OS System', type: 'project' }],
   },
   {
-    id: "3",
-    title: "Agent Protocols",
-    type: "Spec",
+    id: '3',
+    title: 'Agent Protocols',
+    type: 'Spec',
     updatedAt: new Date(Date.now() - 86400000 * 10),
     description:
-      "Communication standards between Nexus, Socrates, and Muse. Includes JSON schema definitions for inter-agent messaging.",
-    status: "stable",
-    version: "3.1.2",
-    author: { name: "AI Architect", avatar: "" },
+      'Communication standards between Nexus, Socrates, and Muse. Includes JSON schema definitions for inter-agent messaging.',
+    status: 'stable',
+    version: '3.1.2',
+    author: { name: 'AI Architect', avatar: '' },
     metrics: {
       usageCount: 24,
       impactScore: 99,
-      complexity: "high",
+      complexity: 'high',
     },
   },
 ];
 
 const MOCK_TRAILS: ResearchTrail[] = [
-  { id: "1", title: "AI Cognition", nodes: 12, updatedAt: new Date() },
+  { id: '1', title: 'AI Cognition', nodes: 12, updatedAt: new Date() },
 ];
 
 export const ForgeLab: React.FC = () => {
   // --- Local State (Journal Pattern) ---
-  const [activeTab, setActiveTab] = useState<ForgeTab>("dashboard");
+  const [activeTab, setActiveTab] = useState<ForgeTab>('dashboard');
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
   const [activeFoundation, setActiveFoundation] = useState<Foundation | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -134,10 +133,10 @@ export const ForgeLab: React.FC = () => {
         .getUser(authUser.id)
         .then((profile) => {
           if (!isMounted) return;
-          const gh = profile.connections?.find((c) => c.provider === "github");
+          const gh = profile.connections?.find((c) => c.provider === 'github');
           if (gh) setGithubUsername(gh.identifier);
         })
-        .catch((err) => console.error("Failed to load user profile", err));
+        .catch((err) => console.error('Failed to load user profile', err));
     } else {
       // Defer state update to avoid synchronous effect warning
       setTimeout(() => {
@@ -167,7 +166,7 @@ export const ForgeLab: React.FC = () => {
         // Force check matching ID or if we are deleting the currently viewed project
         if (activeProjectId === id) {
           setActiveProjectId(null);
-          setActiveTab("projects"); // Go back to list
+          setActiveTab('projects'); // Go back to list
         }
       },
     });
@@ -175,10 +174,10 @@ export const ForgeLab: React.FC = () => {
 
   // Constants
   const NAV_ITEMS = [
-    { id: "dashboard", label: "Overview", icon: LayoutDashboard },
-    { id: "projects", label: "Projects", icon: Layers },
-    { id: "foundations", label: "Foundations", icon: Book },
-    { id: "research", label: "Research", icon: Network },
+    { id: 'dashboard', label: 'Overview', icon: LayoutDashboard },
+    { id: 'projects', label: 'Projects', icon: Layers },
+    { id: 'foundations', label: 'Foundations', icon: Book },
+    { id: 'research', label: 'Research', icon: Network },
   ];
 
   const scrollContainerRef = React.useRef<HTMLDivElement>(null);
@@ -186,7 +185,7 @@ export const ForgeLab: React.FC = () => {
   // Scroll to top when changing views
   useEffect(() => {
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTo({ top: 0, behavior: "smooth" });
+      scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [activeTab, activeProjectId]);
 
@@ -205,7 +204,7 @@ export const ForgeLab: React.FC = () => {
           ref={scrollContainerRef}
           className="flex-1 overflow-y-auto scrollbar-hide relative z-10 pb-32"
         >
-          {activeTab === "dashboard" && (
+          {activeTab === 'dashboard' && (
             <LabDashboard
               projects={parsedProjects}
               foundations={MOCK_FOUNDATIONS}
@@ -214,7 +213,7 @@ export const ForgeLab: React.FC = () => {
               setActiveProjectId={setActiveProjectId}
             />
           )}
-          {activeTab === "projects" && (
+          {activeTab === 'projects' && (
             <ProjectForge
               projects={parsedProjects}
               activeProjectId={activeProjectId}
@@ -225,14 +224,14 @@ export const ForgeLab: React.FC = () => {
               onRequestCreate={() => setShowCreateModal(true)}
             />
           )}
-          {activeTab === "foundations" && (
+          {activeTab === 'foundations' && (
             <FoundationLibrary
               foundations={MOCK_FOUNDATIONS}
               activeFoundation={activeFoundation}
               setActiveFoundation={setActiveFoundation}
             />
           )}
-          {activeTab === "research" && <ResearchTrails />}
+          {activeTab === 'research' && <ResearchTrails />}
         </div>
       </div>
 
@@ -244,27 +243,27 @@ export const ForgeLab: React.FC = () => {
               key={item.id}
               onClick={() => setActiveTab(item.id as ForgeTab)}
               className={cn(
-                "relative flex items-center gap-2 px-4 py-3 rounded-full transition-all duration-500 group overflow-hidden",
+                'relative flex items-center gap-2 px-4 py-3 rounded-full transition-all duration-500 group overflow-hidden',
                 activeTab === item.id
-                  ? "bg-white/10 text-white shadow-inner"
-                  : "text-gray-500 hover:text-white hover:bg-white/5"
+                  ? 'bg-white/10 text-white shadow-inner'
+                  : 'text-gray-500 hover:text-white hover:bg-white/5',
               )}
             >
               <item.icon
                 size={20}
                 className={cn(
-                  "shrink-0 transition-colors z-10",
-                  activeTab === item.id ? "text-forge-cyan" : "group-hover:text-white"
+                  'shrink-0 transition-colors z-10',
+                  activeTab === item.id ? 'text-forge-cyan' : 'group-hover:text-white',
                 )}
               />
 
               {/* Expanding Label */}
               <span
                 className={cn(
-                  "text-sm font-medium transition-all duration-500 ease-spring-out overflow-hidden whitespace-nowrap z-10",
+                  'text-sm font-medium transition-all duration-500 ease-spring-out overflow-hidden whitespace-nowrap z-10',
                   activeTab === item.id
-                    ? "max-w-[150px] opacity-100 ml-1"
-                    : "max-w-0 opacity-0 group-hover:max-w-[150px] group-hover:opacity-100 group-hover:ml-1"
+                    ? 'max-w-[150px] opacity-100 ml-1'
+                    : 'max-w-0 opacity-0 group-hover:max-w-[150px] group-hover:opacity-100 group-hover:ml-1',
                 )}
               >
                 {item.label}

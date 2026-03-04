@@ -1,12 +1,11 @@
-"use client";
+'use client';
 
-import Image from "next/image";
+import Image from 'next/image';
 
-import { cn } from "@/shared/lib/utils";
-import type { Memory } from "@/shared/types/memory";
+import { cn } from '@/shared/lib/utils';
+import type { Memory } from '@/shared/types/memory';
 
-import { SEASON_CONFIG, getSeasonFromMood } from "../config";
-
+import { SEASON_CONFIG, getSeasonFromMood } from '../config';
 
 interface MemoryCardProps {
   memory: Memory;
@@ -22,16 +21,16 @@ export function MemoryCard({ memory, onClick }: MemoryCardProps) {
       type="button"
       onClick={onClick}
       className={cn(
-        "group relative w-full cursor-pointer transition-all duration-500 ease-out",
-        "hover:-translate-y-4 hover:scale-[1.02]",
-        "transform-gpu"
+        'group relative w-full cursor-pointer transition-all duration-500 ease-out',
+        'hover:-translate-y-4 hover:scale-[1.02]',
+        'transform-gpu',
       )}
     >
       {/* Polaroid Frame - like picking up a photo */}
       <div
         className="relative p-4 pb-16 shadow-lg rounded-sm transition-all duration-500 group-hover:shadow-[0_25px_50px_rgba(0,0,0,0.35)]"
         style={{
-          background: "linear-gradient(135deg, #fdfcfb 0%, #f7f5f2 100%)",
+          background: 'linear-gradient(135deg, #fdfcfb 0%, #f7f5f2 100%)',
         }}
       >
         {/* Subtle glow when lifted */}
@@ -62,7 +61,7 @@ export function MemoryCard({ memory, onClick }: MemoryCardProps) {
                 fill
                 className="object-cover transition-all duration-1000 group-hover:scale-110"
                 style={{
-                  filter: "sepia(0.15) contrast(1.1) brightness(0.95)",
+                  filter: 'sepia(0.15) contrast(1.1) brightness(0.95)',
                 }}
               />
               {/* Film grain overlay */}
@@ -79,13 +78,13 @@ export function MemoryCard({ memory, onClick }: MemoryCardProps) {
               className="absolute inset-0 flex items-center justify-center opacity-10"
               style={{
                 background: `radial-gradient(circle, ${
-                  season === "Spring"
-                    ? "#8b7355"
-                    : season === "Summer"
-                      ? "#d4a574"
-                      : season === "Autumn"
-                        ? "#a0522d"
-                        : "#708090"
+                  season === 'Spring'
+                    ? '#8b7355'
+                    : season === 'Summer'
+                      ? '#d4a574'
+                      : season === 'Autumn'
+                        ? '#a0522d'
+                        : '#708090'
                 }, transparent 70%)`,
               }}
             >
@@ -113,10 +112,10 @@ export function MemoryCard({ memory, onClick }: MemoryCardProps) {
 
           {/* Date - typewriter style */}
           <p className="font-mono text-[10px] text-gray-500 tracking-wide">
-            {memory.date.toLocaleDateString("en-US", {
-              month: "long",
-              day: "numeric",
-              year: "numeric",
+            {memory.date.toLocaleDateString('en-US', {
+              month: 'long',
+              day: 'numeric',
+              year: 'numeric',
             })}
           </p>
         </div>
@@ -125,29 +124,29 @@ export function MemoryCard({ memory, onClick }: MemoryCardProps) {
         <div className="absolute top-6 right-6">
           <div
             className={cn(
-              "relative flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest",
-              "backdrop-blur-sm shadow-lg border-2 transition-all duration-500",
-              "group-hover:scale-110 group-hover:rotate-6"
+              'relative flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest',
+              'backdrop-blur-sm shadow-lg border-2 transition-all duration-500',
+              'group-hover:scale-110 group-hover:rotate-6',
             )}
             style={{
-              background: "rgba(255, 255, 255, 0.7)",
+              background: 'rgba(255, 255, 255, 0.7)',
               borderColor:
-                season === "Spring"
-                  ? "#8b7355"
-                  : season === "Summer"
-                    ? "#d4a574"
-                    : season === "Autumn"
-                      ? "#a0522d"
-                      : "#708090",
+                season === 'Spring'
+                  ? '#8b7355'
+                  : season === 'Summer'
+                    ? '#d4a574'
+                    : season === 'Autumn'
+                      ? '#a0522d'
+                      : '#708090',
               color:
-                season === "Spring"
-                  ? "#8b7355"
-                  : season === "Summer"
-                    ? "#d4a574"
-                    : season === "Autumn"
-                      ? "#a0522d"
-                      : "#708090",
-              borderStyle: "dashed",
+                season === 'Spring'
+                  ? '#8b7355'
+                  : season === 'Summer'
+                    ? '#d4a574'
+                    : season === 'Autumn'
+                      ? '#a0522d'
+                      : '#708090',
+              borderStyle: 'dashed',
             }}
           >
             <config.icon size={11} />

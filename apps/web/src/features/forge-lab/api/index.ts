@@ -1,16 +1,23 @@
-import { apiClient } from "@/services/apiClient";
+import { apiClient } from '@/services/apiClient';
 
-import type { Project, ContributionStats, UserProfile, PaginatedResponse, HybridStats, GithubRepo } from "../types";
+import type {
+  Project,
+  ContributionStats,
+  UserProfile,
+  PaginatedResponse,
+  HybridStats,
+  GithubRepo,
+} from '../types';
 
 export const forgeApi = {
   getProjects: () =>
     apiClient
-      .get<PaginatedResponse<Project> | Project[]>("/engineering/projects")
+      .get<PaginatedResponse<Project> | Project[]>('/engineering/projects')
       .then((res) => res.data),
   getProject: (id: string) =>
     apiClient.get<Project>(`/engineering/projects/${id}`).then((res) => res.data),
   createProject: (data: Partial<Project>) =>
-    apiClient.post<Project>("/engineering/projects", data).then((res) => res.data),
+    apiClient.post<Project>('/engineering/projects', data).then((res) => res.data),
   updateProject: (id: string, data: Partial<Project>) =>
     apiClient.patch<Project>(`/engineering/projects/${id}`, data).then((res) => res.data),
   deleteProject: (id: string) => apiClient.delete<void>(`/engineering/projects/${id}`),
@@ -26,7 +33,7 @@ export const forgeApi = {
       .then((res) => res.data),
   getProjectTaskBoard: (projectId: string) =>
     apiClient
-      .get<Project["taskBoard"]>(`/engineering/projects/${projectId}/taskboard`)
+      .get<Project['taskBoard']>(`/engineering/projects/${projectId}/taskboard`)
       .then((res) => res.data),
   getProjectLogs: (projectId: string, page = 1, limit = 20) =>
     apiClient
@@ -35,7 +42,7 @@ export const forgeApi = {
           id: string;
           content: string;
           date: Date;
-          type: "update" | "milestone" | "issue" | "alert";
+          type: 'update' | 'milestone' | 'issue' | 'alert';
         }>
       >(`/engineering/projects/${projectId}/logs`, {
         params: { page, limit },
@@ -53,6 +60,6 @@ export const forgeApi = {
     provider: string;
     identifier: string;
     metadata?: Record<string, unknown>;
-  }) => apiClient.post<void>("/users/connect", data),
+  }) => apiClient.post<void>('/users/connect', data),
   getUser: (id: string) => apiClient.get<UserProfile>(`/users/${id}`).then((res) => res.data),
 };

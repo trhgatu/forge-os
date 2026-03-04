@@ -1,14 +1,14 @@
-import { apiClient } from "@/services/apiClient";
-import type { PaginatedResponse } from "@/shared/types/api";
-import type { MoodType } from "@/shared/types/journal";
+import { apiClient } from '@/services/apiClient';
+import type { PaginatedResponse } from '@/shared/types/api';
+import type { MoodType } from '@/shared/types/journal';
 
-import type { CreateJournalDto, JournalEntry, JournalFilter, RawJournalItem } from "../types";
-import { JournalStatus, JournalType } from "../types";
+import type { CreateJournalDto, JournalEntry, JournalFilter, RawJournalItem } from '../types';
+import { JournalStatus, JournalType } from '../types';
 
 export const journalService = {
   // Public endpoints for reading
   getAll: async (filter?: JournalFilter): Promise<PaginatedResponse<JournalEntry>> => {
-    const res = await apiClient.get<PaginatedResponse<RawJournalItem>>("/journals", {
+    const res = await apiClient.get<PaginatedResponse<RawJournalItem>>('/journals', {
       params: filter,
     });
 
@@ -52,12 +52,12 @@ export const journalService = {
   // Admin endpoints for mutations (require auth)
   create: async (data: CreateJournalDto): Promise<JournalEntry> => {
     try {
-      const res = await apiClient.post<RawJournalItem>("/admin/journals", data);
+      const res = await apiClient.post<RawJournalItem>('/admin/journals', data);
 
       const item = res.data;
 
       if (!item) {
-        throw new Error("Backend returned no data");
+        throw new Error('Backend returned no data');
       }
 
       return {
@@ -73,7 +73,7 @@ export const journalService = {
         date: new Date(item.createdAt),
       };
     } catch (error) {
-      console.error("Create Journal Error:", error);
+      console.error('Create Journal Error:', error);
       throw error;
     }
   },

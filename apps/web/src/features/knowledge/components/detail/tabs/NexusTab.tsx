@@ -1,7 +1,7 @@
-import { Network, Share2 } from "lucide-react";
-import React from "react";
+import { Network, Share2 } from 'lucide-react';
+import React from 'react';
 
-import { GlassCard } from "@/shared/components/ui/GlassCard";
+import { GlassCard } from '@/shared/components/ui/GlassCard';
 
 export const NexusTab: React.FC = () => {
   return (

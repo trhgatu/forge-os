@@ -1,6 +1,6 @@
-import type { MoodType } from "./journal";
+import type { MoodType } from './journal';
 
-export type MemoryType = "moment" | "milestone" | "insight" | "challenge";
+export type MemoryType = 'moment' | 'milestone' | 'insight' | 'challenge';
 
 export interface MemoryAnalysis {
   coreMeaning: string;
@@ -22,4 +22,4 @@ export interface Memory {
   reflectionDepth: number;
 }
 
-export type CreateMemoryPayload = Omit<Memory, "id" | "date" | "analysis" | "reflectionDepth">;
+export type CreateMemoryPayload = Omit<Memory, 'id' | 'date' | 'analysis' | 'reflectionDepth'>;

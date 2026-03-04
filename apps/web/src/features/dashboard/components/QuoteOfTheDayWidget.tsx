@@ -1,18 +1,17 @@
-"use client";
+'use client';
 
-import { useQuery } from "@tanstack/react-query";
-import { Quote, Sparkles } from "lucide-react";
-import React from "react";
+import { useQuery } from '@tanstack/react-query';
+import { Quote, Sparkles } from 'lucide-react';
+import React from 'react';
 
-import { getRandomQuote } from "@/features/quote/services/quoteService";
-
+import { getRandomQuote } from '@/features/quote/services/quoteService';
 
 // Let's assume I will export WidgetShell from Dashboard.tsx for now.
-import { WidgetShell } from "./Dashboard";
+import { WidgetShell } from './Dashboard';
 
 export const QuoteOfTheDayWidget = () => {
   const { data: quote, isLoading } = useQuery({
-    queryKey: ["quote-of-the-day"],
+    queryKey: ['quote-of-the-day'],
     queryFn: getRandomQuote,
     staleTime: 1000 * 60 * 60, // 1 hour
     refetchOnWindowFocus: false,
@@ -44,7 +43,7 @@ export const QuoteOfTheDayWidget = () => {
               <cite className="text-sm text-forge-cyan font-mono not-italic">— {quote.author}</cite>
 
               <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 border border-white/5 text-gray-400 capitalize">
-                {quote.mood || "Insight"}
+                {quote.mood || 'Insight'}
               </span>
             </div>
 

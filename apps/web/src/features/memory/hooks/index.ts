@@ -1,1 +1,1 @@
-export * from "./useMemories";
+export * from './useMemories';

@@ -1,12 +1,12 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from '@tanstack/react-query';
 
-import { useLanguage } from "@/contexts/LanguageContext"; // Assuming implementation
-import type { PaginatedResponse } from "@/shared/types";
-import type { TimelineItem } from "@/shared/types/timeline";
+import { useLanguage } from '@/contexts/LanguageContext'; // Assuming implementation
+import type { PaginatedResponse } from '@/shared/types';
+import type { TimelineItem } from '@/shared/types/timeline';
 
-import { getTimeline } from "../services/timelineService";
+import { getTimeline } from '../services/timelineService';
 
-export const TIMELINE_QUERY_KEY = ["timeline"];
+export const TIMELINE_QUERY_KEY = ['timeline'];
 
 export function useTimeline() {
   const { language } = useLanguage();

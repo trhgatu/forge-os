@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
 
-export type ParticleMode = "dust" | "shimmer" | "leaves" | "snow";
+export type ParticleMode = 'dust' | 'shimmer' | 'leaves' | 'snow';
 
 interface ParticleCanvasProps {
   mode: ParticleMode;
@@ -27,7 +27,7 @@ export function ParticleCanvas({ mode, color }: ParticleCanvasProps) {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
     let animationFrameId: number;
@@ -41,11 +41,11 @@ export function ParticleCanvas({ mode, color }: ParticleCanvasProps) {
     // The parent currently passes a tailwind class (e.g. "bg-emerald-100").
     // We need actual color values for Canvas.
     const getColorValue = (twClass: string): string => {
-      if (twClass.includes("emerald")) return "167, 243, 208"; // emerald-200
-      if (twClass.includes("amber")) return "253, 230, 138"; // amber-200
-      if (twClass.includes("orange")) return "253, 186, 116"; // orange-200
-      if (twClass.includes("white")) return "255, 255, 255";
-      return "255, 255, 255";
+      if (twClass.includes('emerald')) return '167, 243, 208'; // emerald-200
+      if (twClass.includes('amber')) return '253, 230, 138'; // amber-200
+      if (twClass.includes('orange')) return '253, 186, 116'; // orange-200
+      if (twClass.includes('white')) return '255, 255, 255';
+      return '255, 255, 255';
     };
 
     const particleColor = getColorValue(color);
@@ -58,9 +58,9 @@ export function ParticleCanvas({ mode, color }: ParticleCanvasProps) {
     };
 
     const createParticle = (init = false): Particle => {
-      const isSnow = mode === "snow";
-      const isLeaves = mode === "leaves";
-      const isShimmer = mode === "shimmer";
+      const isSnow = mode === 'snow';
+      const isLeaves = mode === 'leaves';
+      const isShimmer = mode === 'shimmer';
 
       return {
         x: Math.random() * width,
@@ -112,7 +112,7 @@ export function ParticleCanvas({ mode, color }: ParticleCanvasProps) {
         ctx.beginPath();
         ctx.fillStyle = `rgba(${particleColor}, ${p.alpha * 0.4})`;
 
-        if (mode === "shimmer") {
+        if (mode === 'shimmer') {
           // Glow effect for shimmer
           ctx.shadowBlur = 4;
           ctx.shadowColor = `rgba(${particleColor}, ${p.alpha})`;
@@ -128,13 +128,13 @@ export function ParticleCanvas({ mode, color }: ParticleCanvasProps) {
       animationFrameId = requestAnimationFrame(update);
     };
 
-    window.addEventListener("resize", resize);
+    window.addEventListener('resize', resize);
     resize();
     initParticles();
     update();
 
     return () => {
-      window.removeEventListener("resize", resize);
+      window.removeEventListener('resize', resize);
       cancelAnimationFrame(animationFrameId);
     };
   }, [mode, color]);

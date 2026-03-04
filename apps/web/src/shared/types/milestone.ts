@@ -1,6 +1,6 @@
-export type MilestoneType = "goal" | "habit" | "routine" | "project" | "freeform";
+export type MilestoneType = 'goal' | 'habit' | 'routine' | 'project' | 'freeform';
 
-export type MilestoneStatus = "pending" | "in_progress" | "completed" | "overdue";
+export type MilestoneStatus = 'pending' | 'in_progress' | 'completed' | 'overdue';
 
 export interface SubStep {
   id: string;

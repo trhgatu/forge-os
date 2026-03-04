@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
 
 interface Particle {
   x: number;
@@ -18,7 +18,7 @@ export function MemoryParticles() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
     // Set canvas size
@@ -27,7 +27,7 @@ export function MemoryParticles() {
       canvas.height = window.innerHeight;
     };
     resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
+    window.addEventListener('resize', resizeCanvas);
 
     // Create particles
     const particleCount = 50;
@@ -76,7 +76,7 @@ export function MemoryParticles() {
     animate();
 
     return () => {
-      window.removeEventListener("resize", resizeCanvas);
+      window.removeEventListener('resize', resizeCanvas);
       cancelAnimationFrame(animationId);
     };
   }, []);
@@ -85,7 +85,7 @@ export function MemoryParticles() {
     <canvas
       ref={canvasRef}
       className="pointer-events-none fixed inset-0 z-0"
-      style={{ mixBlendMode: "screen" }}
+      style={{ mixBlendMode: 'screen' }}
     />
   );
 }

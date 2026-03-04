@@ -1,17 +1,17 @@
 // features/nova/components/NovaGuide.tsx
-"use client";
+'use client';
 
-import { Activity, Bot, ChevronRight, Radio, X } from "lucide-react";
-import { useState } from "react";
+import { Activity, Bot, ChevronRight, Radio, X } from 'lucide-react';
+import { useState } from 'react';
 
-import { useLanguage } from "@/contexts/LanguageContext";
-import { cn } from "@/shared/lib/utils";
-import type { View } from "@/shared/types/os";
+import { useLanguage } from '@/contexts/LanguageContext';
+import { cn } from '@/shared/lib/utils';
+import type { View } from '@/shared/types/os';
 
-import { useNovaMessage } from "../hooks/useNovaMessage";
-import { useTypewriter } from "../hooks/useTypewriter";
+import { useNovaMessage } from '../hooks/useNovaMessage';
+import { useTypewriter } from '../hooks/useTypewriter';
 
-import { NovaVisualizer } from "./NovaVisualizer";
+import { NovaVisualizer } from './NovaVisualizer';
 
 interface NovaGuideProps {
   currentView: View;
@@ -34,10 +34,10 @@ export function NovaGuide({ currentView }: NovaGuideProps) {
       {/* Panel */}
       <div
         className={cn(
-          "pointer-events-auto mb-6 w-80 origin-bottom-right perspective-1000 transition-all duration-500",
+          'pointer-events-auto mb-6 w-80 origin-bottom-right perspective-1000 transition-all duration-500',
           isVisible && isExpanded
-            ? "translate-y-0 scale-100 opacity-100"
-            : "translate-y-4 scale-95 opacity-0 pointer-events-none"
+            ? 'translate-y-0 scale-100 opacity-100'
+            : 'translate-y-4 scale-95 opacity-0 pointer-events-none',
         )}
       >
         {/* Connector line */}
@@ -103,8 +103,8 @@ export function NovaGuide({ currentView }: NovaGuideProps) {
         type="button"
         onClick={() => setIsExpanded((v) => !v)}
         className={cn(
-          "pointer-events-auto relative z-50 flex h-14 w-14 items-center justify-center rounded-full transition-all duration-500",
-          isExpanded ? "scale-100" : "scale-95 hover:scale-105"
+          'pointer-events-auto relative z-50 flex h-14 w-14 items-center justify-center rounded-full transition-all duration-500',
+          isExpanded ? 'scale-100' : 'scale-95 hover:scale-105',
         )}
       >
         {/* Rings */}
@@ -114,14 +114,14 @@ export function NovaGuide({ currentView }: NovaGuideProps) {
         {/* Glow */}
         <div
           className={cn(
-            "absolute inset-0 rounded-full bg-forge-cyan/20 blur-xl transition-opacity duration-500",
-            isExpanded ? "opacity-100" : "opacity-0 group-hover:opacity-60"
+            'absolute inset-0 rounded-full bg-forge-cyan/20 blur-xl transition-opacity duration-500',
+            isExpanded ? 'opacity-100' : 'opacity-0 group-hover:opacity-60',
           )}
         />
 
         {/* Core icon */}
         <div className="relative z-10 flex h-10 w-10 items-center justify-center rounded-full border border-forge-cyan/50 bg-[#050508] shadow-[0_0_15px_rgba(34,211,238,0.5)] transition-colors group-hover:border-forge-cyan">
-          <Bot className={cn("h-5 w-5 text-forge-cyan", !isExpanded && "animate-pulse")} />
+          <Bot className={cn('h-5 w-5 text-forge-cyan', !isExpanded && 'animate-pulse')} />
         </div>
 
         {/* Status dot */}

@@ -1,8 +1,8 @@
-import React from "react";
+import React from 'react';
 
-import { cn } from "@/shared/lib/utils";
+import { cn } from '@/shared/lib/utils';
 
-import type { Project } from "../../../types";
+import type { Project } from '../../../types';
 
 interface ProjectLogsTabProps {
   project: Project;
@@ -36,18 +36,18 @@ export const ProjectLogsTab: React.FC<ProjectLogsTabProps> = ({ project, isLoadi
         <div key={log.id} className="relative pl-8 border-l border-white/10 pb-8 last:pb-0">
           <div
             className={cn(
-              "absolute -left-1.5 top-0 w-3 h-3 rounded-full border-2 border-[#09090b]",
-              log.type === "milestone" ? "bg-yellow-400" : "bg-gray-500"
+              'absolute -left-1.5 top-0 w-3 h-3 rounded-full border-2 border-[#09090b]',
+              log.type === 'milestone' ? 'bg-yellow-400' : 'bg-gray-500',
             )}
           />
           <div className="flex items-center gap-3 mb-1">
             <span className="text-xs font-mono text-gray-500">{log.date.toLocaleDateString()}</span>
             <span
               className={cn(
-                "text-[10px] font-bold px-1.5 py-0.5 rounded uppercase",
-                log.type === "milestone"
-                  ? "bg-yellow-500/10 text-yellow-400"
-                  : "bg-gray-500/10 text-gray-400"
+                'text-[10px] font-bold px-1.5 py-0.5 rounded uppercase',
+                log.type === 'milestone'
+                  ? 'bg-yellow-500/10 text-yellow-400'
+                  : 'bg-gray-500/10 text-gray-400',
               )}
             >
               {log.type}

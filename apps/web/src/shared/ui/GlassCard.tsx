@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 interface GlassCardProps {
   children: React.ReactNode;
@@ -9,7 +9,7 @@ interface GlassCardProps {
 
 export const GlassCard: React.FC<GlassCardProps> = ({
   children,
-  className = "",
+  className = '',
   interactive = false,
   noPadding = false,
 }) => {
@@ -21,8 +21,8 @@ export const GlassCard: React.FC<GlassCardProps> = ({
         border border-forge-border
         shadow-lg
         transition-all duration-300 ease-out
-        ${interactive ? "hover:bg-white/5 hover:border-white/20 hover:shadow-xl cursor-pointer group" : ""}
-        ${noPadding ? "" : "p-6"}
+        ${interactive ? 'hover:bg-white/5 hover:border-white/20 hover:shadow-xl cursor-pointer group' : ''}
+        ${noPadding ? '' : 'p-6'}
         ${className}
       `}
     >
