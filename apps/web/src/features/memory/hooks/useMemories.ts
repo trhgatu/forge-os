@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { useLanguage } from "@/contexts/LanguageContext";
-import { apiClient } from "@/services/apiClient";
-import type { PaginatedResponse } from "@/shared/types";
-import type { Memory, CreateMemoryPayload } from "@/shared/types/memory";
+import { useLanguage } from '@/contexts/LanguageContext';
+import { apiClient } from '@/services/apiClient';
+import type { PaginatedResponse } from '@/shared/types';
+import type { Memory, CreateMemoryPayload } from '@/shared/types/memory';
 
-import { getMemories, deleteMemory, updateMemory } from "../services/memoryService";
+import { getMemories, deleteMemory, updateMemory } from '../services/memoryService';
 
-export const MEMORY_QUERY_KEY = ["memories"];
+export const MEMORY_QUERY_KEY = ['memories'];
 
 export function useMemories() {
   const { language } = useLanguage();
@@ -40,7 +40,7 @@ export function useCreateMemory() {
         content: { [language]: payload.content },
       };
 
-      const res = await apiClient.post<Memory>("/memories", formattedPayload);
+      const res = await apiClient.post<Memory>('/memories', formattedPayload);
       return res.data;
     },
     onSuccess: () => {

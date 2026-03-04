@@ -1,12 +1,11 @@
-"use client";
+'use client';
 
-import { Edit2, Trash2 } from "lucide-react";
+import { Edit2, Trash2 } from 'lucide-react';
 
-import { cn } from "@/shared/lib/utils";
-import type { MoodEntry } from "@/shared/types/mood";
+import { cn } from '@/shared/lib/utils';
+import type { MoodEntry } from '@/shared/types/mood';
 
-import { MOOD_CONFIG } from "../config";
-
+import { MOOD_CONFIG } from '../config';
 
 interface MoodHistoryListProps {
   history: MoodEntry[];
@@ -59,8 +58,8 @@ export function MoodHistoryList({ history, onEdit, onDelete }: MoodHistoryListPr
               <div className="flex items-center gap-3">
                 <div
                   className={cn(
-                    "flex items-center justify-center rounded-lg bg-white/5 p-2",
-                    config.color
+                    'flex items-center justify-center rounded-lg bg-white/5 p-2',
+                    config.color,
                   )}
                 >
                   <config.icon size={18} />
@@ -69,8 +68,8 @@ export function MoodHistoryList({ history, onEdit, onDelete }: MoodHistoryListPr
                   <div className="capitalize text-white font-bold">{entry.mood}</div>
                   <div className="text-[10px] text-gray-500">
                     {entry.date.toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
+                      hour: '2-digit',
+                      minute: '2-digit',
                     })}
                   </div>
                 </div>

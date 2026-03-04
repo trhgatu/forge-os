@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { Search, Loader2, CornerDownLeft, Globe, Sparkles } from "lucide-react";
-import React, { useState, useEffect, useRef } from "react";
+import { Search, Loader2, CornerDownLeft, Globe, Sparkles } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
 
-import { useKnowledge } from "@/contexts"; // Assuming context is available here or adjusting path
-import { useLanguage } from "@/contexts/LanguageContext";
-import { GlassCard } from "@/shared/components/ui/GlassCard";
-import { cn } from "@/shared/lib/utils";
-import type { KnowledgeConcept } from "@/shared/types";
+import { useKnowledge } from '@/contexts'; // Assuming context is available here or adjusting path
+import { useLanguage } from '@/contexts/LanguageContext';
+import { GlassCard } from '@/shared/components/ui/GlassCard';
+import { cn } from '@/shared/lib/utils';
+import type { KnowledgeConcept } from '@/shared/types';
 
 export const SearchWidget: React.FC = () => {
   const { search, searchResults, selectConcept, isLoading, clearResults } = useKnowledge();
   const { language } = useLanguage();
 
-  const [query, setQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [query, setQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -41,14 +41,14 @@ export const SearchWidget: React.FC = () => {
         setIsFocused(false);
       }
     };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
   }, []);
 
   const handleSelect = (concept: KnowledgeConcept) => {
     selectConcept(concept);
-    setQuery("");
-    setDebouncedQuery("");
+    setQuery('');
+    setDebouncedQuery('');
     setIsFocused(false);
   };
 
@@ -60,8 +60,8 @@ export const SearchWidget: React.FC = () => {
         {/* Glow Effect */}
         <div
           className={cn(
-            "absolute inset-0 bg-linear-to-r from-forge-cyan/20 via-purple-500/20 to-forge-accent/20 opacity-0 transition-opacity duration-500 rounded-xl",
-            isFocused && "opacity-100"
+            'absolute inset-0 bg-linear-to-r from-forge-cyan/20 via-purple-500/20 to-forge-accent/20 opacity-0 transition-opacity duration-500 rounded-xl',
+            isFocused && 'opacity-100',
           )}
         />
 
@@ -72,7 +72,7 @@ export const SearchWidget: React.FC = () => {
             ) : (
               <Search
                 size={20}
-                className={cn("transition-colors", isFocused ? "text-forge-cyan" : "text-gray-500")}
+                className={cn('transition-colors', isFocused ? 'text-forge-cyan' : 'text-gray-500')}
               />
             )}
           </div>
@@ -83,9 +83,9 @@ export const SearchWidget: React.FC = () => {
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => setIsFocused(true)}
             placeholder={
-              language === "vi"
-                ? "Truy cập Mạng lưới Tri thức..."
-                : "Access Global Knowledge Grid..."
+              language === 'vi'
+                ? 'Truy cập Mạng lưới Tri thức...'
+                : 'Access Global Knowledge Grid...'
             }
             className="flex-1 bg-transparent border-none text-white text-lg placeholder-gray-500 focus:outline-none py-3 font-display font-light tracking-wide"
             autoComplete="off"
@@ -117,7 +117,7 @@ export const SearchWidget: React.FC = () => {
               key={result.id}
               onClick={() => handleSelect(result)}
               onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
+                if (e.key === 'Enter' || e.key === ' ') {
                   handleSelect(result);
                 }
               }}
@@ -138,10 +138,10 @@ export const SearchWidget: React.FC = () => {
                   {result.language && (
                     <span
                       className={cn(
-                        "text-[9px] font-bold px-1.5 py-0.5 rounded border uppercase tracking-wider opacity-60",
-                        result.language === "vi"
-                          ? "bg-red-500/10 text-red-200 border-red-500/20"
-                          : "bg-blue-500/10 text-blue-200 border-blue-500/20"
+                        'text-[9px] font-bold px-1.5 py-0.5 rounded border uppercase tracking-wider opacity-60',
+                        result.language === 'vi'
+                          ? 'bg-red-500/10 text-red-200 border-red-500/20'
+                          : 'bg-blue-500/10 text-blue-200 border-blue-500/20',
                       )}
                     >
                       {result.language}
@@ -149,7 +149,7 @@ export const SearchWidget: React.FC = () => {
                   )}
                 </div>
                 <p className="text-xs text-gray-500 line-clamp-1">
-                  {result.summary || "No summary available."}
+                  {result.summary || 'No summary available.'}
                 </p>
               </div>
               <CornerDownLeft

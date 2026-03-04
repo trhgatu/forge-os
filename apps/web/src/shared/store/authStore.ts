@@ -1,5 +1,5 @@
-import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 export interface User {
   id: string;
@@ -37,12 +37,12 @@ export const useAuthStore = create<AuthState>()(
       setHydrated: () => set({ isHydrated: true }),
     }),
     {
-      name: "forge-auth-storage", // unique name
+      name: 'forge-auth-storage', // unique name
       // TODO(security): Currently using localStorage for MVP. Plan to migrate to HttpOnly cookies for better XSS protection in Phase 2.
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: () => (state) => {
         state?.setHydrated();
       },
-    }
-  )
+    },
+  ),
 );

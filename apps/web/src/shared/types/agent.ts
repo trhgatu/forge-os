@@ -1,12 +1,12 @@
-import type { LucideIcon } from "lucide-react";
+import type { LucideIcon } from 'lucide-react';
 
-export type AgentId = "nexus" | "socrates" | "muse" | "cipher" | "user";
+export type AgentId = 'nexus' | 'socrates' | 'muse' | 'cipher' | 'user';
 
 export interface Agent {
   id: AgentId;
   name: string;
   role: string;
-  status: "idle" | "thinking" | "speaking" | "offline";
+  status: 'idle' | 'thinking' | 'speaking' | 'offline';
   icon: LucideIcon;
   color: string; // Tailwind text class (e.g., 'text-amber-400')
   bg: string; // Tailwind bg class for bubbles
@@ -17,7 +17,7 @@ export interface Agent {
 
 export interface Message {
   id: string;
-  role: "user" | "model";
+  role: 'user' | 'model';
   agentId?: AgentId; // If undefined, assumes 'nexus' (default system)
   text: string;
   timestamp?: number;

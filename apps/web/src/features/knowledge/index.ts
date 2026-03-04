@@ -1,1 +1,1 @@
-export * from "./components/Knowledge";
+export * from './components/Knowledge';

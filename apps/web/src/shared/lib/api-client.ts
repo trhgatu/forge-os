@@ -1,11 +1,11 @@
-import axios from "axios";
+import axios from 'axios';
 
-import { useAuthStore } from "@/store/auth.store";
+import { useAuthStore } from '@/store/auth.store';
 
 export const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000",
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000',
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
 });
 
@@ -17,7 +17,7 @@ apiClient.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 // Refresh Token Logic
@@ -65,7 +65,7 @@ apiClient.interceptors.response.use(
         const { refreshToken, setTokens, user } = useAuthStore.getState();
 
         if (!refreshToken || !user) {
-          throw new Error("No refresh token available");
+          throw new Error('No refresh token available');
         }
 
         // Call backend refresh endpoint
@@ -75,7 +75,7 @@ apiClient.interceptors.response.use(
           {},
           {
             headers: { Authorization: `Bearer ${refreshToken}` },
-          }
+          },
         );
 
         if (data && data.accessToken) {
@@ -89,7 +89,7 @@ apiClient.interceptors.response.use(
           originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
           return apiClient(originalRequest);
         } else {
-          throw new Error("Invalid refresh response");
+          throw new Error('Invalid refresh response');
         }
       } catch (refreshError) {
         processQueue(refreshError, null);
@@ -101,5 +101,5 @@ apiClient.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );

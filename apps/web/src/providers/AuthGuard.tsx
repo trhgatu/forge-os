@@ -1,11 +1,10 @@
-"use client";
+'use client';
 
-import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
-import { useAuthStore } from "@/store/auth.store";
-
+import { useAuthStore } from '@/store/auth.store';
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -17,7 +16,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     const timer = setTimeout(() => {
       // Strict check: Must have both auth flag AND user data
       if (!isAuthenticated || !user) {
-        router.push("/login");
+        router.push('/login');
       }
       setIsChecking(false);
     }, 100);

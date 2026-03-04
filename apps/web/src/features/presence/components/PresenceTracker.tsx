@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { usePathname } from "next/navigation";
-import type React from "react";
-import { useEffect } from "react";
+import { usePathname } from 'next/navigation';
+import type React from 'react';
+import { useEffect } from 'react';
 
-import { socketService } from "@/services/socketService";
-import { useAuthStore } from "@/shared/store/authStore";
+import { socketService } from '@/services/socketService';
+import { useAuthStore } from '@/shared/store/authStore';
 
 export const PresenceTracker: React.FC = () => {
   const pathname = usePathname();
@@ -28,18 +28,18 @@ export const PresenceTracker: React.FC = () => {
     if (socket) {
       const handleConnect = () => {
         // console.log('🔑 Socket connected, identifying...');
-        if (token) socket.emit("identify", { token });
-        socket.emit("updateLocation", { path: pathname });
+        if (token) socket.emit('identify', { token });
+        socket.emit('updateLocation', { path: pathname });
       };
 
       if (socket.connected) {
         handleConnect();
       } else {
-        socket.on("connect", handleConnect);
+        socket.on('connect', handleConnect);
       }
 
       return () => {
-        socket.off("connect", handleConnect);
+        socket.off('connect', handleConnect);
       };
     }
   }, [pathname]); // Re-run on pathname change to update location, but identify is idempotent-ish

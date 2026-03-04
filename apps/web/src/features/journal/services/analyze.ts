@@ -1,4 +1,4 @@
-import type { JournalAnalysis } from "@/shared/types/journal";
+import type { JournalAnalysis } from '@/shared/types/journal';
 
 export async function analyzeJournalEntry(content: string): Promise<JournalAnalysis> {
   void content;
@@ -7,8 +7,8 @@ export async function analyzeJournalEntry(content: string): Promise<JournalAnaly
 
   return {
     sentimentScore: Math.floor(Math.random() * 10),
-    keywords: ["Focus", "Clarity"],
-    summary: "A moment of clarity emerges from reflection.",
-    suggestedAction: "Write a follow-up tomorrow.",
+    keywords: ['Focus', 'Clarity'],
+    summary: 'A moment of clarity emerges from reflection.',
+    suggestedAction: 'Write a follow-up tomorrow.',
   };
 }

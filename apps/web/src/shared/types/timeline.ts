@@ -1,4 +1,4 @@
-import type { MoodType } from "./journal";
+import type { MoodType } from './journal';
 import type {
   MemoryMetadata,
   QuoteMetadata,
@@ -6,9 +6,9 @@ import type {
   MoodMetadata,
   MilestoneMetadata,
   InsightMetadata,
-} from "./timeline.metadata";
+} from './timeline.metadata';
 
-export type TimelineType = "memory" | "journal" | "quote" | "mood" | "milestone" | "insight";
+export type TimelineType = 'memory' | 'journal' | 'quote' | 'mood' | 'milestone' | 'insight';
 
 export interface TimelineMetadataMap {
   memory: MemoryMetadata;

@@ -1,12 +1,12 @@
-import { Book, Search, ArrowRight, Bookmark, Plus, Users } from "lucide-react";
-import React from "react";
+import { Book, Search, ArrowRight, Bookmark, Plus, Users } from 'lucide-react';
+import React from 'react';
 
-import { GlassCard } from "@/shared/components/ui/GlassCard";
-import { cn } from "@/shared/lib/utils";
+import { GlassCard } from '@/shared/components/ui/GlassCard';
+import { cn } from '@/shared/lib/utils';
 
-import type { Foundation } from "../types";
+import type { Foundation } from '../types';
 
-import { FoundationDetail } from "./FoundationDetail";
+import { FoundationDetail } from './FoundationDetail';
 
 interface FoundationLibraryProps {
   foundations: Foundation[];
@@ -19,13 +19,13 @@ export const FoundationLibrary: React.FC<FoundationLibraryProps> = ({
   activeFoundation,
   setActiveFoundation,
 }) => {
-  const [searchTerm, setSearchTerm] = React.useState("");
+  const [searchTerm, setSearchTerm] = React.useState('');
 
   const filteredFoundations = React.useMemo(() => {
     return foundations.filter(
       (doc) =>
         doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (doc.description || "").toLowerCase().includes(searchTerm.toLowerCase())
+        (doc.description || '').toLowerCase().includes(searchTerm.toLowerCase()),
     );
   }, [foundations, searchTerm]);
 
@@ -66,11 +66,11 @@ export const FoundationLibrary: React.FC<FoundationLibraryProps> = ({
               Categories
             </h3>
             <div className="space-y-1">
-              {["All Foundations", "Frameworks", "Guides", "Technical", "Philosophy"].map(
+              {['All Foundations', 'Frameworks', 'Guides', 'Technical', 'Philosophy'].map(
                 (cat, i) => (
                   <button
                     key={cat}
-                    className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center justify-between ${i === 0 ? "bg-white/10 text-white" : "text-gray-400 hover:text-white hover:bg-white/5"}`}
+                    className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center justify-between ${i === 0 ? 'bg-white/10 text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
                   >
                     {cat}
                     {i === 0 && (
@@ -79,7 +79,7 @@ export const FoundationLibrary: React.FC<FoundationLibraryProps> = ({
                       </span>
                     )}
                   </button>
-                )
+                ),
               )}
             </div>
           </div>
@@ -112,8 +112,8 @@ export const FoundationLibrary: React.FC<FoundationLibraryProps> = ({
                           {doc.status && (
                             <span
                               className={cn(
-                                "w-1.5 h-1.5 rounded-full",
-                                doc.status === "stable" ? "bg-emerald-500" : "bg-amber-500"
+                                'w-1.5 h-1.5 rounded-full',
+                                doc.status === 'stable' ? 'bg-emerald-500' : 'bg-amber-500',
                               )}
                             />
                           )}

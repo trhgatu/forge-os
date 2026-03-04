@@ -9,13 +9,13 @@ import {
   CopyPlus,
   CheckCircle,
   X,
-} from "lucide-react";
-import Image from "next/image";
-import React, { useEffect, useState, useRef, memo } from "react";
+} from 'lucide-react';
+import Image from 'next/image';
+import React, { useEffect, useState, useRef, memo } from 'react';
 
-import { GlassCard } from "@/shared/components/ui/GlassCard";
-import { cn } from "@/shared/lib/utils";
-import type { KnowledgeConcept } from "@/shared/types";
+import { GlassCard } from '@/shared/components/ui/GlassCard';
+import { cn } from '@/shared/lib/utils';
+import type { KnowledgeConcept } from '@/shared/types';
 
 interface SourceTabProps {
   concept: KnowledgeConcept;
@@ -45,10 +45,10 @@ const SourceContent = memo(
       />
     );
   },
-  (prev, next) => prev.htmlContent === next.htmlContent
+  (prev, next) => prev.htmlContent === next.htmlContent,
 );
 
-SourceContent.displayName = "SourceContent";
+SourceContent.displayName = 'SourceContent';
 
 export const SourceTab: React.FC<SourceTabProps> = ({
   concept,
@@ -64,7 +64,7 @@ export const SourceTab: React.FC<SourceTabProps> = ({
   const contentRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [selection, setSelection] = useState<{ text: string; top: number; left: number } | null>(
-    null
+    null,
   );
   const [isCaptured, setIsCaptured] = useState(false);
 
@@ -112,9 +112,9 @@ export const SourceTab: React.FC<SourceTabProps> = ({
       }, 10);
     };
 
-    document.addEventListener("mouseup", handleMouseUp);
+    document.addEventListener('mouseup', handleMouseUp);
     return () => {
-      document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener('mouseup', handleMouseUp);
     };
   }, []);
 
@@ -143,7 +143,7 @@ export const SourceTab: React.FC<SourceTabProps> = ({
       {selection && (
         <div
           className="absolute z-[100] animate-in fade-in zoom-in-95 duration-200"
-          style={{ top: selection.top, left: selection.left, transform: "translateX(-50%)" }}
+          style={{ top: selection.top, left: selection.left, transform: 'translateX(-50%)' }}
           onMouseDown={(e) => e.preventDefault()} // Prevent focus stealing
         >
           <button
@@ -151,10 +151,10 @@ export const SourceTab: React.FC<SourceTabProps> = ({
             onClick={handleCaptureClick}
             disabled={isCaptured}
             className={cn(
-              "group relative overflow-hidden flex items-center gap-2 px-5 py-2.5 rounded-xl border font-bold shadow-lg transition-all active:scale-95 backdrop-blur-md",
+              'group relative overflow-hidden flex items-center gap-2 px-5 py-2.5 rounded-xl border font-bold shadow-lg transition-all active:scale-95 backdrop-blur-md',
               isCaptured
-                ? "bg-emerald-500/90 border-emerald-400 text-white shadow-emerald-500/20"
-                : "bg-gradient-to-r from-cyan-950/90 to-blue-950/90 border-cyan-500/30 text-cyan-100 shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)] hover:border-cyan-400/50"
+                ? 'bg-emerald-500/90 border-emerald-400 text-white shadow-emerald-500/20'
+                : 'bg-gradient-to-r from-cyan-950/90 to-blue-950/90 border-cyan-500/30 text-cyan-100 shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)] hover:border-cyan-400/50',
             )}
           >
             {!isCaptured && (
@@ -171,17 +171,17 @@ export const SourceTab: React.FC<SourceTabProps> = ({
                 />
               )}
               <span className="text-sm font-bold tracking-wide text-white">
-                {isCaptured ? "Saved to Anvil" : "Capture Extract"}
+                {isCaptured ? 'Saved to Anvil' : 'Capture Extract'}
               </span>
             </div>
           </button>
           {/* Pointer Arrow */}
           <div
             className={cn(
-              "absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 border-r border-b rotate-45 transition-colors",
+              'absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 border-r border-b rotate-45 transition-colors',
               isCaptured
-                ? "bg-emerald-500/90 border-emerald-400"
-                : "bg-cyan-950/90 border-cyan-500/30"
+                ? 'bg-emerald-500/90 border-emerald-400'
+                : 'bg-cyan-950/90 border-cyan-500/30',
             )}
           />
         </div>
@@ -227,7 +227,7 @@ export const SourceTab: React.FC<SourceTabProps> = ({
 
         {/* CONTENT TEXT (Wrapped for interactions) */}
         <div className="px-4 md:px-0" ref={contentRef}>
-          <SourceContent htmlContent={concept.content ?? concept.extract ?? ""} />
+          <SourceContent htmlContent={concept.content ?? concept.extract ?? ''} />
         </div>
       </div>
 

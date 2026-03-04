@@ -1,1 +1,1 @@
-export * from "./useQuote";
+export * from './useQuote';

@@ -1,6 +1,6 @@
-import confetti from "canvas-confetti";
-import { X, Trophy, Sparkles } from "lucide-react";
-import React, { useEffect } from "react";
+import confetti from 'canvas-confetti';
+import { X, Trophy, Sparkles } from 'lucide-react';
+import React, { useEffect } from 'react';
 
 interface LevelUpModalProps {
   isOpen: boolean;
@@ -23,14 +23,14 @@ export const LevelUpModal: React.FC<LevelUpModalProps> = ({ isOpen, newLevel, on
           angle: 60,
           spread: 55,
           origin: { x: 0 },
-          colors: ["#22d3ee", "#a855f7", "#ffffff"],
+          colors: ['#22d3ee', '#a855f7', '#ffffff'],
         });
         confetti({
           particleCount: 2,
           angle: 120,
           spread: 55,
           origin: { x: 1 },
-          colors: ["#22d3ee", "#a855f7", "#ffffff"],
+          colors: ['#22d3ee', '#a855f7', '#ffffff'],
         });
 
         if (Date.now() < end) {

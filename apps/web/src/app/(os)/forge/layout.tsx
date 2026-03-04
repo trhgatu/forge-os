@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import React from "react";
+import React from 'react';
 
-import { LanguageProvider, SoundProvider, NovaViewProvider } from "@/contexts";
-import { NovaGuideWrapper } from "@/features/nova/components/NovaGuideWrapper";
-import { QueryProvider } from "@/providers/QueryProvider";
-import { Sidebar } from "@/shared/layout/Sidebar";
-import "@/app/globals.css";
+import { LanguageProvider, SoundProvider, NovaViewProvider } from '@/contexts';
+import { NovaGuideWrapper } from '@/features/nova/components/NovaGuideWrapper';
+import { QueryProvider } from '@/providers/QueryProvider';
+import { Sidebar } from '@/shared/layout/Sidebar';
+import '@/app/globals.css';
 
 export default function ForgeLayout({ children }: { children: React.ReactNode }) {
   return (

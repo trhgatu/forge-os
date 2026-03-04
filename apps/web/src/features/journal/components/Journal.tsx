@@ -1,23 +1,23 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useMemo, useRef } from "react";
-import { toast } from "sonner";
+import { useState, useEffect, useMemo, useRef } from 'react';
+import { toast } from 'sonner';
 
-import type { JournalEntry } from "@/features/journal/types";
-import { JournalStatus, JournalType } from "@/features/journal/types";
-import { useDebounce } from "@/shared/hooks/useDebounce";
+import type { JournalEntry } from '@/features/journal/types';
+import { JournalStatus, JournalType } from '@/features/journal/types';
+import { useDebounce } from '@/shared/hooks/useDebounce';
 
 import {
   useJournals,
   useCreateJournal,
   useUpdateJournal,
   useDeleteJournal,
-} from "../hooks/useJournal";
-import { analyzeJournalEntry } from "../services/analyze";
+} from '../hooks/useJournal';
+import { analyzeJournalEntry } from '../services/analyze';
 
-import { JournalContextPanel } from "./JournalContextPanel";
-import { JournalEditor } from "./JournalEditor";
-import { JournalSidebar } from "./JournalSidebar";
+import { JournalContextPanel } from './JournalContextPanel';
+import { JournalEditor } from './JournalEditor';
+import { JournalSidebar } from './JournalSidebar';
 
 export function Journal() {
   // --- Data & Hooks ---
@@ -38,7 +38,7 @@ export function Journal() {
 
   // --- Auto-Save Logic ---
   const debouncedEntry = useDebounce(localEntry, 1000);
-  const lastSavedRef = useRef<string>("");
+  const lastSavedRef = useRef<string>('');
 
   // 1. Select first entry on load if none selected
   useEffect(() => {
@@ -100,20 +100,20 @@ export function Journal() {
   const handleCreate = async () => {
     try {
       const newEntry = await createMutation.mutateAsync({
-        content: "",
-        title: "",
+        content: '',
+        title: '',
         status: JournalStatus.PRIVATE,
-        mood: "neutral",
+        mood: 'neutral',
         type: JournalType.THOUGHT,
         tags: [],
       });
       // eslint-disable-next-line no-console
-      console.log("Created new entry:", newEntry);
+      console.log('Created new entry:', newEntry);
 
       // Select the new entry after creation
       setSelectedId(newEntry.id);
     } catch (error) {
-      console.error("Failed to create entry", error);
+      console.error('Failed to create entry', error);
     }
   };
 
@@ -135,10 +135,10 @@ export function Journal() {
                   setLocalEntry(null);
                 }
 
-                toast.success("Entry deleted");
+                toast.success('Entry deleted');
               } catch (error) {
-                console.error("Failed to delete entry", error);
-                toast.error("Failed to delete entry");
+                console.error('Failed to delete entry', error);
+                toast.error('Failed to delete entry');
               }
             }}
             className="rounded-md bg-red-500/20 px-3 py-1.5 text-red-200 transition-colors hover:bg-red-500/30"
@@ -176,9 +176,9 @@ export function Journal() {
   };
 
   // Status Indicator Calculation
-  let saveStatus: "saved" | "saving" | "error" = "saved";
-  if (updateMutation.isPending || createMutation.isPending) saveStatus = "saving";
-  if (updateMutation.isError || createMutation.isError) saveStatus = "error";
+  let saveStatus: 'saved' | 'saving' | 'error' = 'saved';
+  if (updateMutation.isPending || createMutation.isPending) saveStatus = 'saving';
+  if (updateMutation.isError || createMutation.isError) saveStatus = 'error';
 
   if (isLoading && !localEntry && !createMutation.isPending)
     return <div className="p-10 text-center text-gray-500">Loading Journal...</div>;

@@ -1,6 +1,6 @@
-export const runtime = "nodejs";
+export const runtime = 'nodejs';
 
-import { GoogleGenAI, type Content, type GenerateContentResponse } from "@google/genai";
+import { GoogleGenAI, type Content, type GenerateContentResponse } from '@google/genai';
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY!,
@@ -11,7 +11,7 @@ interface AgentPayload {
 }
 
 interface IncomingMessage {
-  role: "user" | "model";
+  role: 'user' | 'model';
   parts: { text: string }[];
 }
 
@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     }));
 
     const streamResult = await ai.models.generateContentStream({
-      model: "gemini-2.5-flash",
+      model: 'gemini-2.5-flash',
       contents,
       config: {
         systemInstruction: agent.systemPrompt,
@@ -46,13 +46,13 @@ export async function POST(req: Request) {
           for await (const chunk of streamResult) {
             const response = chunk as GenerateContentResponse;
 
-            const text = response.text ?? "";
+            const text = response.text ?? '';
             if (text.length > 0) {
               controller.enqueue(encoder.encode(text));
             }
           }
         } catch (err) {
-          console.error("STREAM ERROR:", err);
+          console.error('STREAM ERROR:', err);
         } finally {
           controller.close();
         }
@@ -61,12 +61,12 @@ export async function POST(req: Request) {
 
     return new Response(stream, {
       headers: {
-        "Content-Type": "text/plain; charset=utf-8",
-        "Transfer-Encoding": "chunked",
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Transfer-Encoding': 'chunked',
       },
     });
   } catch (err) {
-    console.error("SERVER ERROR:", err);
-    return new Response("Server crashed", { status: 500 });
+    console.error('SERVER ERROR:', err);
+    return new Response('Server crashed', { status: 500 });
   }
 }

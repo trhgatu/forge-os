@@ -1,15 +1,15 @@
-import { Sparkles, Flame } from "lucide-react";
-import React, { useEffect, useState, useRef } from "react";
+import { Sparkles, Flame } from 'lucide-react';
+import React, { useEffect, useState, useRef } from 'react';
 
-import { useLanguage } from "@/contexts";
-import { cn } from "@/shared/lib/utils";
-import { useAuthStore } from "@/shared/store/authStore";
+import { useLanguage } from '@/contexts';
+import { cn } from '@/shared/lib/utils';
+import { useAuthStore } from '@/shared/store/authStore';
 
-import { useGamificationSocket } from "../hooks/useGamificationSocket";
-import { gamificationService } from "../services/gamificationService";
-import type { UserStats } from "../types";
+import { useGamificationSocket } from '../hooks/useGamificationSocket';
+import { gamificationService } from '../services/gamificationService';
+import type { UserStats } from '../types';
 
-import { LevelUpModal } from "./LevelUpModal";
+import { LevelUpModal } from './LevelUpModal';
 
 interface XPBarProps {
   compact?: boolean;
@@ -37,7 +37,7 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
         setStats(data);
       }
     } catch (error) {
-      console.error("Failed to fetch gamification stats", error);
+      console.error('Failed to fetch gamification stats', error);
     } finally {
       setLoading(false);
     }
@@ -56,16 +56,16 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
   const nextLevelXp = Math.pow(stats.level, 2) * 100;
   const progress = Math.min(
     100,
-    Math.max(0, ((stats.xp - currentLevelXp) / (nextLevelXp - currentLevelXp)) * 100)
+    Math.max(0, ((stats.xp - currentLevelXp) / (nextLevelXp - currentLevelXp)) * 100),
   );
 
   return (
     <div
       className={cn(
-        "flex items-center gap-4 select-none transition-all duration-300 font-lato",
+        'flex items-center gap-4 select-none transition-all duration-300 font-lato',
         compact
-          ? "justify-center gap-0"
-          : "p-3 bg-white/5 rounded-sm border border-white/5 hover:border-forge-cyan/30 shadow-lg group-hover:shadow-[0_0_15px_rgba(34,211,238,0.1)]"
+          ? 'justify-center gap-0'
+          : 'p-3 bg-white/5 rounded-sm border border-white/5 hover:border-forge-cyan/30 shadow-lg group-hover:shadow-[0_0_15px_rgba(34,211,238,0.1)]',
       )}
     >
       {/* Level Badge - Industrial Hex/Square Look */}
@@ -75,8 +75,8 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
 
         <div
           className={cn(
-            "relative flex items-center gap-3 px-3 py-2 bg-black border border-zinc-700/80 rounded-sm shadow-lg group-hover:border-forge-cyan transition-colors z-10",
-            compact && "px-2 py-2 border-transparent bg-transparent shadow-none"
+            'relative flex items-center gap-3 px-3 py-2 bg-black border border-zinc-700/80 rounded-sm shadow-lg group-hover:border-forge-cyan transition-colors z-10',
+            compact && 'px-2 py-2 border-transparent bg-transparent shadow-none',
           )}
         >
           <div className="flex items-center justify-center w-6 h-6 bg-zinc-900 rounded-sm border border-zinc-700 text-forge-cyan shadow-[0_0_8px_rgba(34,211,238,0.3)]">
@@ -89,10 +89,10 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
           {!compact && (
             <div className="flex flex-col leading-none">
               <span className="text-[9px] text-forge-cyan/80 uppercase tracking-widest mb-0.5">
-                {t("gamification.level")}
+                {t('gamification.level')}
               </span>
               <span className="text-xl font-bold text-white tracking-wide drop-shadow-md">
-                {String(stats.level).padStart(2, "0")}
+                {String(stats.level).padStart(2, '0')}
               </span>
             </div>
           )}
@@ -104,7 +104,7 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
           <div className="bg-zinc-900/90 px-4 py-2 border-b border-white/10 flex justify-between items-center relative overflow-hidden">
             <div className="absolute inset-0 bg-linear-to-r from-forge-cyan/10 to-transparent opacity-50" />
             <span className="text-sm text-forge-cyan uppercase tracking-[0.2em] relative z-10 font-bold">
-              {t("gamification.operator_stats")}
+              {t('gamification.operator_stats')}
             </span>
             <div className="flex gap-1.5 relative z-10">
               <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse shadow-[0_0_5px_red]" />
@@ -120,7 +120,7 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
             {/* Title Section */}
             <div className="relative flex items-center justify-between border-b border-white/5 pb-3">
               <span className="text-[10px] text-gray-500 uppercase tracking-wider">
-                {t("gamification.rank_designation")}
+                {t('gamification.rank_designation')}
               </span>
               <span className="text-xs text-white font-bold uppercase tracking-wide px-3 py-1 bg-forge-cyan/10 border border-forge-cyan/20 rounded-sm text-forge-cyan">
                 {stats.title}
@@ -131,10 +131,10 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
             <div className="space-y-2 relative">
               <div className="flex justify-between items-end">
                 <span className="text-[10px] text-gray-500 uppercase tracking-widest">
-                  {t("gamification.experience_log")}
+                  {t('gamification.experience_log')}
                 </span>
                 <span className="text-sm text-forge-cyan font-bold">
-                  {Math.floor(stats.xp)} <span className="text-gray-600 font-normal">/</span>{" "}
+                  {Math.floor(stats.xp)} <span className="text-gray-600 font-normal">/</span>{' '}
                   {nextLevelXp} XP
                 </span>
               </div>
@@ -155,14 +155,14 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
               <div className="flex items-center gap-2 text-xs text-amber-500 font-mono bg-amber-500/10 px-2 py-1 rounded-sm border border-amber-500/20">
                 <Flame size={12} fill="currentColor" className="animate-pulse" />
                 <span className="font-bold tracking-wide">
-                  {stats.streak} {t("gamification.day_streak").toUpperCase()}
+                  {stats.streak} {t('gamification.day_streak').toUpperCase()}
                 </span>
               </div>
               <span className="text-[9px] text-zinc-600 font-mono tracking-tighter">
-                ID:{" "}
+                ID:{' '}
                 {user?.id
                   ? `${user.id.substring(0, 4)}...${user.id.substring(user.id.length - 4)}`
-                  : "UNK"}
+                  : 'UNK'}
               </span>
             </div>
           </div>
@@ -174,7 +174,7 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
         <div className="flex flex-col gap-1.5 flex-1 group/bar">
           <div className="flex justify-between items-end px-0.5">
             <span className="text-[9px] uppercase tracking-[0.2em] text-zinc-500 font-medium group-hover/bar:text-forge-cyan transition-colors duration-300">
-              {t("gamification.progression")}
+              {t('gamification.progression')}
             </span>
             <span className="text-[10px] font-mono text-zinc-400 group-hover/bar:text-white transition-colors duration-300">
               {Math.round(progress)}%

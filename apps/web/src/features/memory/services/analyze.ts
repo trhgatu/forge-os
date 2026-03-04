@@ -1,6 +1,6 @@
-import type { Memory } from "@/shared/types/memory";
+import type { Memory } from '@/shared/types/memory';
 
-export type MemoryAnalysis = NonNullable<Memory["analysis"]>;
+export type MemoryAnalysis = NonNullable<Memory['analysis']>;
 
 export async function analyzeMemory(content: string): Promise<MemoryAnalysis> {
   await new Promise((resolve) => {
@@ -14,10 +14,10 @@ export async function analyzeMemory(content: string): Promise<MemoryAnalysis> {
   const sentimentScore = lengthScoreBase;
 
   return {
-    coreMeaning: "This moment carries a quiet but important internal shift in you.",
-    emotionalPattern: "You tend to reflect deeply when you step out of your usual flow.",
+    coreMeaning: 'This moment carries a quiet but important internal shift in you.',
+    emotionalPattern: 'You tend to reflect deeply when you step out of your usual flow.',
     timelineConnection:
-      "Connect this with other moments of stillness or transition in your Forge Timeline.",
+      'Connect this with other moments of stillness or transition in your Forge Timeline.',
     sentimentScore,
   };
 }

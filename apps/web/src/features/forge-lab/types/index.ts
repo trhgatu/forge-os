@@ -1,4 +1,4 @@
-export type ForgeTab = "dashboard" | "projects" | "foundations" | "research";
+export type ForgeTab = 'dashboard' | 'projects' | 'foundations' | 'research';
 
 // Stats cached from GitHub or Internal metrics
 export interface HybridStats {
@@ -61,7 +61,7 @@ export interface Project {
   title: string;
   description?: string;
   updatedAt: Date;
-  status: "active" | "archived" | "draft" | "completed";
+  status: 'active' | 'archived' | 'draft' | 'completed';
   tags?: string[];
   // Hybrid Data
   isPinned?: boolean;
@@ -79,17 +79,17 @@ export interface Project {
   // Management Data
   technologies?: string[];
   currentMilestone?: { title: string; progress: number; dueDate: Date };
-  links?: Array<{ title: string; url: string; icon?: "github" | "figma" | "doc" | "link" }>;
+  links?: Array<{ title: string; url: string; icon?: 'github' | 'figma' | 'doc' | 'link' }>;
   logs?: Array<{
     id: string;
     content: string;
     date: Date;
-    type: "update" | "milestone" | "issue" | "alert";
+    type: 'update' | 'milestone' | 'issue' | 'alert';
   }>;
   taskBoard?: {
-    todo: Array<{ id: string; title: string; priority: "low" | "medium" | "high" }>;
-    inProgress: Array<{ id: string; title: string; priority: "low" | "medium" | "high" }>;
-    done: Array<{ id: string; title: string; priority: "low" | "medium" | "high" }>;
+    todo: Array<{ id: string; title: string; priority: 'low' | 'medium' | 'high' }>;
+    inProgress: Array<{ id: string; title: string; priority: 'low' | 'medium' | 'high' }>;
+    done: Array<{ id: string; title: string; priority: 'low' | 'medium' | 'high' }>;
   };
 }
 
@@ -104,16 +104,16 @@ export interface Foundation {
   githubStats?: HybridStats;
 
   // Rich Data
-  status?: "stable" | "beta" | "deprecated";
+  status?: 'stable' | 'beta' | 'deprecated';
   version?: string;
   author?: { name: string; avatar?: string };
   contributors?: Array<{ name: string; avatar?: string }>;
   metrics?: {
     usageCount: number;
     impactScore: number;
-    complexity: "low" | "medium" | "high";
+    complexity: 'low' | 'medium' | 'high';
   };
-  connectedNodes?: Array<{ id: string; title: string; type: "project" | "concept" }>;
+  connectedNodes?: Array<{ id: string; title: string; type: 'project' | 'concept' }>;
 }
 
 export interface ResearchTrail {

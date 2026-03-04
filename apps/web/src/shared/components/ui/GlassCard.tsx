@@ -1,6 +1,6 @@
-import * as React from "react";
+import * as React from 'react';
 
-import { cn } from "@/shared/lib/utils";
+import { cn } from '@/shared/lib/utils';
 
 interface GlassCardProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
@@ -22,23 +22,23 @@ export function GlassCard({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-xl border border-white/10 bg-[#0A0A0F]/60 backdrop-blur-xl shadow-2xl transition-all duration-300",
+        'relative overflow-hidden rounded-xl border border-white/10 bg-[#0A0A0F]/60 backdrop-blur-xl shadow-2xl transition-all duration-300',
 
         // Gradient effect
         gradient &&
-          "before:absolute before:inset-0 before:bg-linear-to-br before:from-white/5 before:to-transparent before:pointer-events-none",
+          'before:absolute before:inset-0 before:bg-linear-to-br before:from-white/5 before:to-transparent before:pointer-events-none',
 
         // Interactive hover state
-        interactive && "hover:border-white/20 hover:bg-[#0A0A0F]/80 cursor-pointer",
+        interactive && 'hover:border-white/20 hover:bg-[#0A0A0F]/80 cursor-pointer',
 
         // Padding control
-        !noPadding && "p-6",
+        !noPadding && 'p-6',
 
-        className
+        className,
       )}
       {...props}
     >
-      <div className={cn("relative z-10", innerClassName)}>{children}</div>
+      <div className={cn('relative z-10', innerClassName)}>{children}</div>
       <div
         className="absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none"
         style={{

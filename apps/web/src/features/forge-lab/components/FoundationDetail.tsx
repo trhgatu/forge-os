@@ -1,7 +1,7 @@
-import { ArrowLeft, Share2, Edit3, Activity, GitMerge, Sparkles, Zap } from "lucide-react";
-import React from "react";
+import { ArrowLeft, Share2, Edit3, Activity, GitMerge, Sparkles, Zap } from 'lucide-react';
+import React from 'react';
 
-import type { Foundation } from "../types";
+import type { Foundation } from '../types';
 
 interface FoundationDetailProps {
   foundation: Foundation;
@@ -42,7 +42,7 @@ export const FoundationDetail: React.FC<FoundationDetailProps> = ({ foundation, 
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 mb-6 backdrop-blur-sm animate-in fade-in zoom-in-50 duration-700 delay-100">
           <Sparkles size={12} className="text-yellow-400" />
           <span className="text-[10px] font-mono uppercase tracking-widest text-gray-300">
-            {foundation.type} {"//"} {foundation.status || "Experimental"}
+            {foundation.type} {'//'} {foundation.status || 'Experimental'}
           </span>
         </div>
 
@@ -60,8 +60,8 @@ export const FoundationDetail: React.FC<FoundationDetailProps> = ({ foundation, 
             {foundation.author && (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={foundation.author.avatar || ""}
-                alt={foundation.author.name || "Author"}
+                src={foundation.author.avatar || ''}
+                alt={foundation.author.name || 'Author'}
                 className="w-10 h-10 rounded-full border-2 border-black bg-gray-800"
                 title="Author"
               />
@@ -190,7 +190,7 @@ export const FoundationDetail: React.FC<FoundationDetailProps> = ({ foundation, 
                 >
                   <span className="text-sm text-gray-300">{node.title}</span>
                   <div
-                    className={`w-2 h-2 rounded-full ${node.type === "project" ? "bg-cyan-500" : "bg-fuchsia-500"} `}
+                    className={`w-2 h-2 rounded-full ${node.type === 'project' ? 'bg-cyan-500' : 'bg-fuchsia-500'} `}
                   />
                 </div>
               ))}

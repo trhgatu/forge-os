@@ -1,14 +1,13 @@
-import { Activity } from "lucide-react";
-import React from "react";
-import { toast } from "sonner";
+import { Activity } from 'lucide-react';
+import React from 'react';
+import { toast } from 'sonner';
 
-import { forgeApi } from "@/features/forge-lab/api";
-import type { ContributionStats } from "@/features/forge-lab/types";
-import { GlassCard } from "@/shared/components/ui/GlassCard";
-import { cn } from "@/shared/lib/utils";
+import { forgeApi } from '@/features/forge-lab/api';
+import type { ContributionStats } from '@/features/forge-lab/types';
+import { GlassCard } from '@/shared/components/ui/GlassCard';
+import { cn } from '@/shared/lib/utils';
 
-import { ConnectGithubWidget } from "../ConnectGithubWidget";
-
+import { ConnectGithubWidget } from '../ConnectGithubWidget';
 
 interface MissionGraphWidgetProps {
   contributionStats: ContributionStats | null;
@@ -38,8 +37,8 @@ export const MissionGraphWidget: React.FC<MissionGraphWidgetProps> = ({
                 .getGithubStats(username)
                 .then(onStatsUpdate)
                 .catch((err) => {
-                  console.error("Failed to load freshly connected stats", err);
-                  toast.error("Failed to load GitHub stats");
+                  console.error('Failed to load freshly connected stats', err);
+                  toast.error('Failed to load GitHub stats');
                 })
                 .finally(() => setLoading(false));
             }}
@@ -53,7 +52,7 @@ export const MissionGraphWidget: React.FC<MissionGraphWidgetProps> = ({
               <p className="text-xs text-gray-500">
                 {contributionStats?.totalContributions
                   ? `${contributionStats.totalContributions} contributions in the last year`
-                  : "Loading contributions..."}
+                  : 'Loading contributions...'}
               </p>
             </div>
           </div>
@@ -73,21 +72,21 @@ export const MissionGraphWidget: React.FC<MissionGraphWidgetProps> = ({
                         const count = day.contributionCount;
                         const color =
                           count > 10
-                            ? "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]"
+                            ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]'
                             : count > 5
-                              ? "bg-emerald-500"
+                              ? 'bg-emerald-500'
                               : count > 2
-                                ? "bg-emerald-700/60"
+                                ? 'bg-emerald-700/60'
                                 : count > 0
-                                  ? "bg-emerald-900/40"
-                                  : "bg-white/[0.03]";
+                                  ? 'bg-emerald-900/40'
+                                  : 'bg-white/[0.03]';
 
                         return (
                           <div
                             key={rowIndex}
                             className={cn(
-                              "w-3 h-3 rounded-sm transition-all duration-500 hover:scale-125",
-                              color
+                              'w-3 h-3 rounded-sm transition-all duration-500 hover:scale-125',
+                              color,
                             )}
                             title={`${day.date}: ${count} contributions`}
                           />

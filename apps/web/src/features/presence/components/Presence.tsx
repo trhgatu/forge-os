@@ -1,12 +1,11 @@
-"use client";
+'use client';
 
-import { Radar, Eye } from "lucide-react";
-import React from "react";
+import { Radar, Eye } from 'lucide-react';
+import React from 'react';
 
-import { usePresence } from "../hooks/usePresence";
+import { usePresence } from '../hooks/usePresence';
 
-import { CosmicRadar } from "./CosmicRadar";
-
+import { CosmicRadar } from './CosmicRadar';
 
 export const Presence: React.FC = () => {
   const { echoes, stars } = usePresence();
@@ -49,7 +48,7 @@ export const Presence: React.FC = () => {
           <div className="w-2 h-2 rounded-full bg-amber-400/50 shadow-[0_0_5px_#FBBF24]" /> Known
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-fuchsia-500/50 shadow-[0_0_5px_#D946EF]" />{" "}
+          <div className="w-2 h-2 rounded-full bg-fuchsia-500/50 shadow-[0_0_5px_#D946EF]" />{' '}
           Connection
         </div>
         <div className="w-px h-4 bg-white/10" />

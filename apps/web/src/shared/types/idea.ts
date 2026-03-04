@@ -1,10 +1,10 @@
-export type IdeaMode = "CANVAS" | "LIST" | "GRAPH";
+export type IdeaMode = 'CANVAS' | 'LIST' | 'GRAPH';
 
 export interface IdeaConnection {
   id: string;
   fromId: string;
   toId: string;
-  type: "related" | "parent" | "child" | "conflict";
+  type: 'related' | 'parent' | 'child' | 'conflict';
   strength: number;
 }
 

@@ -1,10 +1,10 @@
-import { Layers, Book, Network, Terminal, Star, GitBranch } from "lucide-react";
-import React from "react";
+import { Layers, Book, Network, Terminal, Star, GitBranch } from 'lucide-react';
+import React from 'react';
 
-import { GlassCard } from "@/shared/components/ui/GlassCard";
-import { cn } from "@/shared/lib/utils";
+import { GlassCard } from '@/shared/components/ui/GlassCard';
+import { cn } from '@/shared/lib/utils';
 
-import type { ForgeTab, Project, Foundation } from "../../types";
+import type { ForgeTab, Project, Foundation } from '../../types';
 
 interface DirectivesWidgetProps {
   projects: Project[];
@@ -23,32 +23,32 @@ export const DirectivesWidget: React.FC<DirectivesWidgetProps> = ({
 
   const navItems = [
     {
-      id: "projects",
-      label: "Projects",
+      id: 'projects',
+      label: 'Projects',
       icon: Layers,
-      color: "text-cyan-400",
-      bg: "bg-cyan-400/10",
+      color: 'text-cyan-400',
+      bg: 'bg-cyan-400/10',
     },
     {
-      id: "foundations",
-      label: "Foundations",
+      id: 'foundations',
+      label: 'Foundations',
       icon: Book,
-      color: "text-fuchsia-400",
-      bg: "bg-fuchsia-400/10",
+      color: 'text-fuchsia-400',
+      bg: 'bg-fuchsia-400/10',
     },
     {
-      id: "research",
-      label: "Research",
+      id: 'research',
+      label: 'Research',
       icon: Network,
-      color: "text-emerald-400",
-      bg: "bg-emerald-400/10",
+      color: 'text-emerald-400',
+      bg: 'bg-emerald-400/10',
     },
     {
-      id: "cli",
-      label: "Terminal",
+      id: 'cli',
+      label: 'Terminal',
       icon: Terminal,
-      color: "text-gray-400",
-      bg: "bg-white/5",
+      color: 'text-gray-400',
+      bg: 'bg-white/5',
     },
   ];
 
@@ -62,7 +62,7 @@ export const DirectivesWidget: React.FC<DirectivesWidgetProps> = ({
             onClick={() => setActiveTab(item.id as ForgeTab)}
             className="flex items-center gap-3 p-4 rounded-2xl border border-white/5 bg-[#0d1117] hover:bg-white/[0.03] hover:border-white/20 transition-all group text-left"
           >
-            <div className={cn("p-2 rounded-lg transition-colors", item.bg, item.color)}>
+            <div className={cn('p-2 rounded-lg transition-colors', item.bg, item.color)}>
               <item.icon size={18} />
             </div>
             <span className="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">
@@ -85,39 +85,39 @@ export const DirectivesWidget: React.FC<DirectivesWidgetProps> = ({
           <GlassCard
             key={item.id}
             className={cn(
-              "group cursor-pointer transition-all border-white/5",
-              (item as { status?: string }).status === "active"
-                ? "hover:border-forge-cyan/30"
-                : "hover:border-fuchsia-400/30"
+              'group cursor-pointer transition-all border-white/5',
+              (item as { status?: string }).status === 'active'
+                ? 'hover:border-forge-cyan/30'
+                : 'hover:border-fuchsia-400/30',
             )}
             noPadding
             onClick={() =>
-              "type" in item
-                ? setActiveTab("foundations")
+              'type' in item
+                ? setActiveTab('foundations')
                 : setActiveProjectId((item as Project).id)
             }
           >
             <div className="p-5">
               <div className="flex justify-between items-start mb-3">
                 <div className="flex items-center gap-2">
-                  {"type" in item ? (
+                  {'type' in item ? (
                     <Book size={16} className="text-fuchsia-400" />
                   ) : (
                     <Layers size={16} className="text-forge-cyan" />
                   )}
                   <span
                     className={cn(
-                      "font-bold text-white text-sm transition-colors",
-                      "type" in item
-                        ? "group-hover:text-fuchsia-400"
-                        : "group-hover:text-forge-cyan"
+                      'font-bold text-white text-sm transition-colors',
+                      'type' in item
+                        ? 'group-hover:text-fuchsia-400'
+                        : 'group-hover:text-forge-cyan',
                     )}
                   >
                     {item.title}
                   </span>
                 </div>
                 <span className="px-2 py-0.5 rounded text-[10px] bg-white/5 text-gray-400 border border-white/10">
-                  {item.githubStats ? "Public" : "Internal"}
+                  {item.githubStats ? 'Public' : 'Internal'}
                 </span>
               </div>
               <p className="text-xs text-gray-400 mb-4 line-clamp-2">{item.description}</p>
@@ -126,8 +126,10 @@ export const DirectivesWidget: React.FC<DirectivesWidgetProps> = ({
                   <div className="flex items-center gap-1.5">
                     <div
                       className={cn(
-                        "w-2 h-2 rounded-full",
-                        item.githubStats.language === "TypeScript" ? "bg-blue-500" : "bg-yellow-400"
+                        'w-2 h-2 rounded-full',
+                        item.githubStats.language === 'TypeScript'
+                          ? 'bg-blue-500'
+                          : 'bg-yellow-400',
                       )}
                     />
                     <span className="text-gray-300">{item.githubStats.language}</span>

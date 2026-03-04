@@ -1,15 +1,14 @@
-import { Trash2, X, Sparkles, Pencil, Maximize2 } from "lucide-react";
-import React, { useState } from "react";
-import { toast } from "sonner";
+import { Trash2, X, Sparkles, Pencil, Maximize2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { toast } from 'sonner';
 
-import { GlassCard } from "@/shared/components/ui/GlassCard";
-import { cn } from "@/shared/lib/utils";
-import type { Quote } from "@/shared/types/quote";
+import { GlassCard } from '@/shared/components/ui/GlassCard';
+import { cn } from '@/shared/lib/utils';
+import type { Quote } from '@/shared/types/quote';
 
-import { SEASON_CONFIG, getSeasonFromMood } from "../../memory/config/seasons";
+import { SEASON_CONFIG, getSeasonFromMood } from '../../memory/config/seasons';
 
-import { ZenQuoteView } from "./ZenQuoteView";
-
+import { ZenQuoteView } from './ZenQuoteView';
 
 export function QuoteDetailPanel({
   quote,
@@ -65,8 +64,8 @@ export function QuoteDetailPanel({
       {/* Background Ambience */}
       <div
         className={cn(
-          "pointer-events-none absolute inset-0 opacity-10 transition-all duration-[2000ms]",
-          config.bg
+          'pointer-events-none absolute inset-0 opacity-10 transition-all duration-[2000ms]',
+          config.bg,
         )}
       />
       <div className="absolute inset-0 bg-[url('/assets/noise.svg')] opacity-[0.05] mix-blend-overlay pointer-events-none" />
@@ -76,8 +75,8 @@ export function QuoteDetailPanel({
         <div className="flex justify-between items-center mb-16">
           <div
             className={cn(
-              "flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 rounded-full border border-white/10 bg-white/[0.02]",
-              config.accent
+              'flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 rounded-full border border-white/10 bg-white/[0.02]',
+              config.accent,
             )}
           >
             <config.icon size={12} />
@@ -106,7 +105,7 @@ export function QuoteDetailPanel({
             <div className="h-px flex-1 bg-gradient-to-r from-white/20 to-transparent" />
             <div className="text-right">
               <p className="font-handwriting text-3xl text-forge-cyan/80 mb-1">
-                {quote.author || "Unknown"}
+                {quote.author || 'Unknown'}
               </p>
               {quote.source && (
                 <p className="font-sans text-xs text-white/30 tracking-widest uppercase">
@@ -126,8 +125,8 @@ export function QuoteDetailPanel({
           {/* Hover Glow */}
           <div
             className={cn(
-              "absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-700 pointer-events-none",
-              config.bg
+              'absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-700 pointer-events-none',
+              config.bg,
             )}
           />
 
@@ -152,7 +151,7 @@ export function QuoteDetailPanel({
                 className="p-4 rounded-xl bg-white/[0.02] hover:bg-white/[0.08] border border-white/5 hover:border-white/20 text-white/60 hover:text-forge-cyan transition-all"
                 title="AI Analysis"
               >
-                <Sparkles size={18} className={cn(isAnalyzing && "animate-spin")} />
+                <Sparkles size={18} className={cn(isAnalyzing && 'animate-spin')} />
               </button>
 
               <div className="w-px h-10 bg-white/10 mx-2" />
@@ -176,7 +175,7 @@ export function QuoteDetailPanel({
           {/* Tech Footer */}
           <div className="mt-6 pt-6 border-t border-white/5 flex items-center justify-between text-[9px] uppercase tracking-widest text-white/20 font-mono">
             <span>
-              ID: {quote.id.split("-")[0]} {"//"} {quote.mood}
+              ID: {quote.id.split('-')[0]} {'//'} {quote.mood}
             </span>
             <div className="flex gap-3">
               {quote.tags?.map((tag) => (
@@ -197,7 +196,7 @@ function QuoteDetailMetadata({ quote }: { quote: Quote }) {
     <div className="flex flex-wrap gap-2">
       <span
         className={cn(
-          "px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border border-white/10 bg-white/5 text-white/60"
+          'px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border border-white/10 bg-white/5 text-white/60',
         )}
       >
         {quote.mood}

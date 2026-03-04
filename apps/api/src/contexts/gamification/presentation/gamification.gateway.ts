@@ -10,7 +10,7 @@ import { LoggerService } from '@shared/logging/logger.service';
 
 @WebSocketGateway({
   cors: {
-    origin: process.env.CORS_ORIGIN || '*', // Consider restricting to specific domains in production
+    origin: process.env.CORS_ORIGIN || '*',
   },
   namespace: 'gamification',
 })
@@ -25,17 +25,6 @@ export class GamificationGateway implements OnGatewayConnection, OnGatewayDiscon
 
   async handleConnection(client: Socket) {
     try {
-      this.logger.debug('=== Gamification Connection Debug ===', 'GamificationGateway');
-      this.logger.debug(`Client ID: ${client.id}`, 'GamificationGateway');
-      this.logger.debug(
-        `Headers authorization: ${client.handshake.headers?.authorization}`,
-        'GamificationGateway',
-      );
-      this.logger.debug(
-        `Query params: ${JSON.stringify(client.handshake.query)}`,
-        'GamificationGateway',
-      );
-
       let userId: string | undefined;
       const queryUserId = client.handshake.query.userId;
       if (Array.isArray(queryUserId)) {
@@ -45,8 +34,6 @@ export class GamificationGateway implements OnGatewayConnection, OnGatewayDiscon
       }
 
       const token = client.handshake.auth?.token || client.handshake.headers?.authorization;
-
-      this.logger.debug(`Token found: ${!!token}`, 'GamificationGateway');
 
       if (token) {
         try {

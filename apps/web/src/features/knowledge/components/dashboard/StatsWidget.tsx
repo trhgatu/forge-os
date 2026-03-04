@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { BrainCircuit, Database, Share2, TrendingUp } from "lucide-react";
-import React from "react";
+import { BrainCircuit, Database, Share2, TrendingUp } from 'lucide-react';
+import React from 'react';
 
-import { GlassCard } from "@/shared/components/ui/GlassCard";
+import { GlassCard } from '@/shared/components/ui/GlassCard';
 
 interface StatsWidgetProps {
   totalCount: number;
@@ -12,25 +12,25 @@ interface StatsWidgetProps {
 export const StatsWidget: React.FC<StatsWidgetProps> = ({ totalCount }) => {
   const stats = [
     {
-      label: "Artifacts Collected",
+      label: 'Artifacts Collected',
       value: totalCount,
       icon: Database,
-      color: "text-forge-cyan",
-      trend: "+12% this week",
+      color: 'text-forge-cyan',
+      trend: '+12% this week',
     },
     {
-      label: "Synapses Active",
+      label: 'Synapses Active',
       value: totalCount * 4 + 7, // Fake stats for "connections"
       icon: Share2,
-      color: "text-purple-400",
-      trend: "Optimal Flow",
+      color: 'text-purple-400',
+      trend: 'Optimal Flow',
     },
     {
-      label: "Cognitive Load",
-      value: "42%", // Fake metric
+      label: 'Cognitive Load',
+      value: '42%', // Fake metric
       icon: BrainCircuit,
-      color: "text-emerald-400",
-      trend: "Stable",
+      color: 'text-emerald-400',
+      trend: 'Stable',
     },
   ];
 

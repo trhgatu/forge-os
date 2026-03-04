@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useRef, useState } from "react";
+import { useRef, useState } from 'react';
 
-import { cn } from "@/shared/lib/utils";
+import { cn } from '@/shared/lib/utils';
 
-import { EditorToolbar } from "./EditorToolbar";
-import { MarkdownPreview } from "./MarkdownPreview";
+import { EditorToolbar } from './EditorToolbar';
+import { MarkdownPreview } from './MarkdownPreview';
 
 interface ForgeEditorProps {
   content: string;
@@ -17,14 +17,14 @@ interface ForgeEditorProps {
 export function ForgeEditor({
   content,
   onChange,
-  placeholder = "Start forging your thoughts...",
+  placeholder = 'Start forging your thoughts...',
   className,
 }: ForgeEditorProps) {
-  const [mode, setMode] = useState<"write" | "preview">("write");
+  const [mode, setMode] = useState<'write' | 'preview'>('write');
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   // Insert markdown format
-  const insert = (prefix: string, suffix = "") => {
+  const insert = (prefix: string, suffix = '') => {
     if (!textareaRef.current) return;
     const el = textareaRef.current;
 
@@ -46,39 +46,39 @@ export function ForgeEditor({
 
   const onToolbar = (action: string) => {
     switch (action) {
-      case "bold":
-        insert("**", "**");
+      case 'bold':
+        insert('**', '**');
         break;
-      case "italic":
-        insert("*", "*");
+      case 'italic':
+        insert('*', '*');
         break;
-      case "h1":
-        insert("# ");
+      case 'h1':
+        insert('# ');
         break;
-      case "h2":
-        insert("## ");
+      case 'h2':
+        insert('## ');
         break;
-      case "list":
-        insert("- ");
+      case 'list':
+        insert('- ');
         break;
-      case "quote":
-        insert("> ");
+      case 'quote':
+        insert('> ');
         break;
-      case "code":
-        insert("`", "`");
+      case 'code':
+        insert('`', '`');
         break;
     }
   };
 
   return (
-    <div className={cn("flex flex-col h-full", className)}>
+    <div className={cn('flex flex-col h-full', className)}>
       {/* Toolbar */}
       <EditorToolbar mode={mode} onMode={setMode} onAction={onToolbar} />
 
       {/* Content */}
       <div className="flex-1 overflow-visible relative min-h-0 flex flex-col">
         {/* min-h-0 is crucial for flex children scrolling */}
-        {mode === "write" ? (
+        {mode === 'write' ? (
           <textarea
             ref={textareaRef}
             value={content}

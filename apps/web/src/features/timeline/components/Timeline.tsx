@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import { Plus } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
+import { Plus } from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
-import { cn } from "@/shared/lib/utils";
-import type { TimelineType } from "@/shared/types/timeline";
+import { cn } from '@/shared/lib/utils';
+import type { TimelineType } from '@/shared/types/timeline';
 
-import { TYPE_CONFIG } from "../config";
-import { useTimeline } from "../hooks/useTimeline";
+import { TYPE_CONFIG } from '../config';
+import { useTimeline } from '../hooks/useTimeline';
 
-import ContextPanel from "./ContextPanel";
-import TimelineCard from "./TimelineCard";
-import TimelineNode from "./TimelineNode";
+import ContextPanel from './ContextPanel';
+import TimelineCard from './TimelineCard';
+import TimelineNode from './TimelineNode';
 
 /* import { analyzeTimelineItem } from "@/services/geminiService"; */
 
@@ -23,10 +23,10 @@ export const Timeline = () => {
   const items = data?.pages.flatMap((page) => page.data) || [];
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [filterType, setFilterType] = useState<TimelineType | "all">("all");
+  const [filterType, setFilterType] = useState<TimelineType | 'all'>('all');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-  const filteredItems = filterType === "all" ? items : items.filter((i) => i.type === filterType);
+  const filteredItems = filterType === 'all' ? items : items.filter((i) => i.type === filterType);
   // Note: sorting is done by backend now, but safer to keep if needed. Backend should sort.
   const sortedItems = filteredItems; // [...filteredItems].sort((a, b) => b.date.getTime() - a.date.getTime());
 
@@ -48,8 +48,8 @@ export const Timeline = () => {
               )
             ); */
     } catch (e) {
-      console.error("Timeline analysis failed:", e);
-      toast.error("Failed to analyze timeline item");
+      console.error('Timeline analysis failed:', e);
+      toast.error('Failed to analyze timeline item');
     } finally {
       setIsAnalyzing(false);
     }
@@ -65,12 +65,12 @@ export const Timeline = () => {
         </h2>
         <div className="space-y-2">
           <button
-            onClick={() => setFilterType("all")}
+            onClick={() => setFilterType('all')}
             className={cn(
-              "w-full text-left px-3 py-2 rounded-lg text-sm transition-all",
-              filterType === "all"
-                ? "bg-white/10 text-white"
-                : "text-gray-400 hover:text-white hover:bg-white/5"
+              'w-full text-left px-3 py-2 rounded-lg text-sm transition-all',
+              filterType === 'all'
+                ? 'bg-white/10 text-white'
+                : 'text-gray-400 hover:text-white hover:bg-white/5',
             )}
           >
             All Streams
@@ -80,15 +80,15 @@ export const Timeline = () => {
               key={type}
               onClick={() => setFilterType(type as TimelineType)}
               className={cn(
-                "w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all",
+                'w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all',
                 filterType === type
-                  ? "bg-white/10 text-white"
-                  : "text-gray-400 hover:text-white hover:bg-white/5"
+                  ? 'bg-white/10 text-white'
+                  : 'text-gray-400 hover:text-white hover:bg-white/5',
               )}
             >
               <config.icon
                 size={14}
-                className={filterType === type ? "text-white" : config.color}
+                className={filterType === type ? 'text-white' : config.color}
               />
               {config.label}
             </button>
@@ -106,7 +106,7 @@ export const Timeline = () => {
           </div>
 
           <button
-            onClick={() => toast.info("New timeline entry coming soon")}
+            onClick={() => toast.info('New timeline entry coming soon')}
             className="pointer-events-auto p-3 rounded-full bg-forge-accent text-white shadow-lg hover:scale-110 transition-transform"
           >
             <Plus size={20} />
@@ -139,7 +139,7 @@ export const Timeline = () => {
                   disabled={isFetchingNextPage}
                   className="px-4 py-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors text-sm font-medium disabled:opacity-50"
                 >
-                  {isFetchingNextPage ? "Loading more artifacts..." : "Reveal prior moments"}
+                  {isFetchingNextPage ? 'Loading more artifacts...' : 'Reveal prior moments'}
                 </button>
               </div>
             )}

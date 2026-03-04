@@ -1,1 +1,1 @@
-export * from "./knowledgeService";
+export * from './knowledgeService';

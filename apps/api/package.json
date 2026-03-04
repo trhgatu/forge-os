@@ -26,6 +26,10 @@
     "seed:users": "ts-node -r tsconfig-paths/register src/shared/seeder/user/user.seed.ts"
   },
   "dependencies": {
+    "@bull-board/api": "^6.20.3",
+    "@bull-board/express": "^6.20.3",
+    "@bull-board/nestjs": "^6.20.3",
+    "@nestjs/bullmq": "^11.0.4",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
@@ -41,9 +45,11 @@
     "@nestjs/websockets": "^11.1.10",
     "@octokit/rest": "^22.0.1",
     "bcrypt": "^6.0.0",
+    "bullmq": "^5.70.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "geoip-lite": "^1.4.10",
+    "ioredis": "^5.10.0",
     "mongodb": "^7.1.0",
     "mongoose": "^8.16.1",
     "nest-winston": "^1.10.2",

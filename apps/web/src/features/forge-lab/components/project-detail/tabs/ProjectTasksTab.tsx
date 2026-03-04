@@ -1,11 +1,10 @@
-import { ListTodo, GitBranch, Plus, ArrowLeft } from "lucide-react";
-import React, { useState } from "react";
+import { ListTodo, GitBranch, Plus, ArrowLeft } from 'lucide-react';
+import React, { useState } from 'react';
 
+import { GlassCard } from '@/shared/components/ui/GlassCard';
+import { cn } from '@/shared/lib/utils';
 
-import { GlassCard } from "@/shared/components/ui/GlassCard";
-import { cn } from "@/shared/lib/utils";
-
-import type { Project } from "../../../types";
+import type { Project } from '../../../types';
 
 interface ProjectTasksTabProps {
   project: Project;
@@ -13,7 +12,7 @@ interface ProjectTasksTabProps {
 }
 
 export const ProjectTasksTab: React.FC<ProjectTasksTabProps> = ({ project, isLoading }) => {
-  const [taskViewMode, setTaskViewMode] = useState<"board" | "issues">("board");
+  const [taskViewMode, setTaskViewMode] = useState<'board' | 'issues'>('board');
 
   if (isLoading) {
     return (
@@ -42,23 +41,23 @@ export const ProjectTasksTab: React.FC<ProjectTasksTabProps> = ({ project, isLoa
       {/* Task View Toggle */}
       <div className="flex items-center gap-4 border-b border-white/5 pb-4">
         <button
-          onClick={() => setTaskViewMode("board")}
+          onClick={() => setTaskViewMode('board')}
           className={cn(
-            "text-sm font-bold uppercase tracking-wider flex items-center gap-2 pb-2 -mb-4 border-b-2 transition-all",
-            taskViewMode === "board"
-              ? "text-white border-forge-cyan"
-              : "text-gray-500 border-transparent hover:text-gray-300"
+            'text-sm font-bold uppercase tracking-wider flex items-center gap-2 pb-2 -mb-4 border-b-2 transition-all',
+            taskViewMode === 'board'
+              ? 'text-white border-forge-cyan'
+              : 'text-gray-500 border-transparent hover:text-gray-300',
           )}
         >
           <ListTodo size={14} /> Internal Board
         </button>
         <button
-          onClick={() => setTaskViewMode("issues")}
+          onClick={() => setTaskViewMode('issues')}
           className={cn(
-            "text-sm font-bold uppercase tracking-wider flex items-center gap-2 pb-2 -mb-4 border-b-2 transition-all",
-            taskViewMode === "issues"
-              ? "text-white border-forge-cyan"
-              : "text-gray-500 border-transparent hover:text-gray-300"
+            'text-sm font-bold uppercase tracking-wider flex items-center gap-2 pb-2 -mb-4 border-b-2 transition-all',
+            taskViewMode === 'issues'
+              ? 'text-white border-forge-cyan'
+              : 'text-gray-500 border-transparent hover:text-gray-300',
           )}
         >
           <GitBranch size={14} /> GitHub Issues
@@ -70,7 +69,7 @@ export const ProjectTasksTab: React.FC<ProjectTasksTabProps> = ({ project, isLoa
         </button>
       </div>
 
-      {taskViewMode === "board" ? (
+      {taskViewMode === 'board' ? (
         // INTERNAL BOARD VIEW
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* TODO */}
@@ -93,8 +92,8 @@ export const ProjectTasksTab: React.FC<ProjectTasksTabProps> = ({ project, isLoa
                   <div className="flex items-center gap-2">
                     <span
                       className={cn(
-                        "w-1.5 h-1.5 rounded-full",
-                        task.priority === "high" ? "bg-red-500" : "bg-gray-500"
+                        'w-1.5 h-1.5 rounded-full',
+                        task.priority === 'high' ? 'bg-red-500' : 'bg-gray-500',
                       )}
                     />
                     <span className="text-[10px] text-gray-500 font-mono uppercase">
@@ -126,8 +125,8 @@ export const ProjectTasksTab: React.FC<ProjectTasksTabProps> = ({ project, isLoa
                   <div className="flex items-center gap-2">
                     <span
                       className={cn(
-                        "w-1.5 h-1.5 rounded-full",
-                        task.priority === "high" ? "bg-red-500" : "bg-gray-500"
+                        'w-1.5 h-1.5 rounded-full',
+                        task.priority === 'high' ? 'bg-red-500' : 'bg-gray-500',
                       )}
                     />
                     <span className="text-[10px] text-gray-500 font-mono uppercase">

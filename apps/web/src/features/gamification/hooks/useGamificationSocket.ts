@@ -1,8 +1,8 @@
-import { useEffect, useState, useRef } from "react";
-import { toast } from "sonner";
+import { useEffect, useState, useRef } from 'react';
+import { toast } from 'sonner';
 
-import { socketService } from "@/services/socketService";
-import { useAuthStore } from "@/shared/store/authStore";
+import { socketService } from '@/services/socketService';
+import { useAuthStore } from '@/shared/store/authStore';
 
 interface XpAwardedData {
   userId: string;
@@ -13,10 +13,10 @@ interface XpAwardedData {
 
 export const useGamificationSocket = (
   userId?: string,
-  onXpAwarded?: (data: XpAwardedData) => void
+  onXpAwarded?: (data: XpAwardedData) => void,
 ) => {
   // Initialize with existing socket if any
-  const [socket, setSocket] = useState(socketService.getSocket("/gamification"));
+  const [socket, setSocket] = useState(socketService.getSocket('/gamification'));
   const onXpAwardedRef = useRef(onXpAwarded);
   const token = useAuthStore((state) => state.token);
 
@@ -28,7 +28,7 @@ export const useGamificationSocket = (
     if (!userId) return;
 
     // Connect via Singleton Service (Multiplexed)
-    const socketInstance = socketService.connect("/gamification");
+    const socketInstance = socketService.connect('/gamification');
     setSocket(socketInstance);
 
     const handleXpAwarded = (data: XpAwardedData) => {
@@ -45,10 +45,10 @@ export const useGamificationSocket = (
       }
     };
 
-    socketInstance.on("xp_awarded", handleXpAwarded);
+    socketInstance.on('xp_awarded', handleXpAwarded);
 
     return () => {
-      socketInstance.off("xp_awarded", handleXpAwarded);
+      socketInstance.off('xp_awarded', handleXpAwarded);
     };
   }, [userId, token]);
 

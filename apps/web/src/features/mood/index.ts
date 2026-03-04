@@ -1,1 +1,1 @@
-export * from "./components/Mood";
+export * from './components/Mood';

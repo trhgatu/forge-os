@@ -1,8 +1,8 @@
-import React from "react";
+import React from 'react';
 
-import { useAuthStore } from "@/shared/store/authStore";
+import { useAuthStore } from '@/shared/store/authStore';
 
-import { forgeApi } from "../../api";
+import { forgeApi } from '../../api';
 import type {
   Project,
   Foundation,
@@ -10,14 +10,14 @@ import type {
   ForgeTab,
   ContributionStats,
   UserConnection,
-} from "../../types";
+} from '../../types';
 
 // Widgets
-import { DirectivesWidget } from "./DirectivesWidget";
-import { MissionGraphWidget } from "./MissionGraphWidget";
-import { NovaBannerWidget } from "./NovaBannerWidget";
-import { QuickStatsWidget } from "./QuickStatsWidget";
-import { SystemLogsWidget } from "./SystemLogsWidget";
+import { DirectivesWidget } from './DirectivesWidget';
+import { MissionGraphWidget } from './MissionGraphWidget';
+import { NovaBannerWidget } from './NovaBannerWidget';
+import { QuickStatsWidget } from './QuickStatsWidget';
+import { SystemLogsWidget } from './SystemLogsWidget';
 
 interface LabDashboardProps {
   projects: Project[];
@@ -58,7 +58,7 @@ export const LabDashboard: React.FC<LabDashboardProps> = ({
         // 1. Fetch full profile to check connections
         const profile = await forgeApi.getUser(authUser.id);
         const githubConnection = profile.connections?.find(
-          (c: UserConnection) => c.provider === "github"
+          (c: UserConnection) => c.provider === 'github',
         );
 
         if (githubConnection) {
@@ -70,7 +70,7 @@ export const LabDashboard: React.FC<LabDashboardProps> = ({
           setContributionStats(null);
         }
       } catch (e) {
-        console.error("LabDashboard: Error loading identity", e);
+        console.error('LabDashboard: Error loading identity', e);
         // On error (e.g. 401), stop loading so we might see something (or empty state)
       } finally {
         setLoadingStats(false);
@@ -89,8 +89,8 @@ export const LabDashboard: React.FC<LabDashboardProps> = ({
             Forge Lab
           </h1>
           <p className="text-lg text-gray-400 font-light max-w-xl">
-            Central Command for{" "}
-            <span className="text-forge-cyan font-medium">System Evolution</span> &{" "}
+            Central Command for{' '}
+            <span className="text-forge-cyan font-medium">System Evolution</span> &{' '}
             <span className="text-fuchsia-400 font-medium">Neural Research</span>.
           </p>
         </div>

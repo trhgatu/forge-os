@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import { cn } from "@/shared/lib/utils";
+import { cn } from '@/shared/lib/utils';
 
 interface NovaVisualizerProps {
   isActive: boolean;
@@ -34,11 +34,11 @@ export function NovaVisualizer({ isActive, bars = 15 }: NovaVisualizerProps) {
       {heights.map((h, i) => (
         <div
           key={i}
-          className={cn("w-1 bg-forge-cyan")}
+          className={cn('w-1 bg-forge-cyan')}
           style={{
             height: `${h}%`,
             opacity: 1 - i * 0.05,
-            transition: "height 120ms ease",
+            transition: 'height 120ms ease',
           }}
         />
       ))}

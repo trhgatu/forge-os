@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { X } from "lucide-react";
-import { useState } from "react";
+import { X } from 'lucide-react';
+import { useState } from 'react';
 
-import { cn } from "@/shared/lib/utils";
-import type { MoodType } from "@/shared/types";
-import type { MoodEntry } from "@/shared/types/mood";
+import { cn } from '@/shared/lib/utils';
+import type { MoodType } from '@/shared/types';
+import type { MoodEntry } from '@/shared/types/mood';
 
-import { MOOD_CONFIG } from "../config";
-import type { CreateMoodDto } from "../services/moodService";
+import { MOOD_CONFIG } from '../config';
+import type { CreateMoodDto } from '../services/moodService';
 
 interface MoodModalProps {
   initialData?: MoodEntry;
@@ -19,7 +19,7 @@ interface MoodModalProps {
 export function MoodModal({ initialData, onClose, onSave }: MoodModalProps) {
   const [selectedMood, setSelectedMood] = useState<MoodType | null>(initialData?.mood || null);
   const [intensity, setIntensity] = useState<number>(initialData?.intensity || 5);
-  const [note, setNote] = useState(initialData?.note || "");
+  const [note, setNote] = useState(initialData?.note || '');
   // If editing, start at step 2 (Detail). If creating, step 1 (Selection)
   const [step, setStep] = useState<1 | 2>(initialData ? 2 : 1);
 
@@ -38,16 +38,16 @@ export function MoodModal({ initialData, onClose, onSave }: MoodModalProps) {
   };
 
   const topMoods: MoodType[] = [
-    "joy",
-    "calm",
-    "inspired",
-    "neutral",
-    "sad",
-    "stressed",
-    "lonely",
-    "angry",
-    "energetic",
-    "empty",
+    'joy',
+    'calm',
+    'inspired',
+    'neutral',
+    'sad',
+    'stressed',
+    'lonely',
+    'angry',
+    'energetic',
+    'empty',
   ];
 
   return (
@@ -60,12 +60,12 @@ export function MoodModal({ initialData, onClose, onSave }: MoodModalProps) {
           <div className="mb-8 flex items-start justify-between">
             <div>
               <h2 className="font-display text-2xl font-bold text-white">
-                {initialData ? "Reflect & Edit" : "Emotional Log"}
+                {initialData ? 'Reflect & Edit' : 'Emotional Log'}
               </h2>
               <p className="mt-1 text-sm text-gray-400">
                 {initialData
-                  ? "Update your emotional record"
-                  : "How does the inner world feel right now?"}
+                  ? 'Update your emotional record'
+                  : 'How does the inner world feel right now?'}
               </p>
             </div>
             <button
@@ -95,8 +95,8 @@ export function MoodModal({ initialData, onClose, onSave }: MoodModalProps) {
                   >
                     <div
                       className={cn(
-                        "mb-3 flex h-12 w-12 items-center justify-center rounded-full shadow-lg transition-transform group-hover:scale-110",
-                        `${config.color.replace("text-", "bg-")}/20`
+                        'mb-3 flex h-12 w-12 items-center justify-center rounded-full shadow-lg transition-transform group-hover:scale-110',
+                        `${config.color.replace('text-', 'bg-')}/20`,
                       )}
                     >
                       <config.icon size={24} className={config.color} />
@@ -122,7 +122,7 @@ export function MoodModal({ initialData, onClose, onSave }: MoodModalProps) {
 
                 {selectedMood && (
                   <div className="flex items-center gap-2 text-xl font-bold capitalize text-white">
-                    <div className={cn("h-3 w-3 rounded-full", MOOD_CONFIG[selectedMood].bg)} />
+                    <div className={cn('h-3 w-3 rounded-full', MOOD_CONFIG[selectedMood].bg)} />
                     {selectedMood}
                   </div>
                 )}
@@ -166,7 +166,7 @@ export function MoodModal({ initialData, onClose, onSave }: MoodModalProps) {
                   disabled={!selectedMood}
                   className="w-full rounded-xl bg-forge-accent px-6 py-3 text-sm font-medium text-white shadow-lg shadow-forge-accent/20 transition-colors hover:bg-forge-accent/80 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                 >
-                  {initialData ? "Update Record" : "Log Emotion"}
+                  {initialData ? 'Update Record' : 'Log Emotion'}
                 </button>
               </div>
             </div>

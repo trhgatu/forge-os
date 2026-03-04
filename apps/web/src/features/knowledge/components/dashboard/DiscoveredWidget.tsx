@@ -1,12 +1,11 @@
-"use client";
+'use client';
 
-import { History, Clock, ArrowRight, Layers } from "lucide-react";
-import Image from "next/image";
-import React from "react";
+import { History, Clock, ArrowRight, Layers } from 'lucide-react';
+import Image from 'next/image';
+import React from 'react';
 
-import { GlassCard } from "@/shared/components/ui/GlassCard";
-import type { KnowledgeConcept } from "@/shared/types";
-
+import { GlassCard } from '@/shared/components/ui/GlassCard';
+import type { KnowledgeConcept } from '@/shared/types';
 
 interface DiscoveredWidgetProps {
   history: KnowledgeConcept[];

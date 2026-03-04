@@ -1,18 +1,17 @@
-import { Github, Loader2, AlertCircle } from "lucide-react";
-import React, { useState } from "react";
+import { Github, Loader2, AlertCircle } from 'lucide-react';
+import React, { useState } from 'react';
 
+import { GlassCard } from '@/shared/components/ui/GlassCard';
+import { SYSTEM_CONFIG } from '@/shared/config/system.config';
 
-import { GlassCard } from "@/shared/components/ui/GlassCard";
-import { SYSTEM_CONFIG } from "@/shared/config/system.config";
-
-import { forgeApi } from "../api";
+import { forgeApi } from '../api';
 
 interface ConnectGithubProps {
   onConnected: (username: string) => void;
 }
 
 export const ConnectGithubWidget: React.FC<ConnectGithubProps> = ({ onConnected }) => {
-  const [username, setUsername] = useState(SYSTEM_CONFIG.identity.githubUsername || "");
+  const [username, setUsername] = useState(SYSTEM_CONFIG.identity.githubUsername || '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -23,13 +22,13 @@ export const ConnectGithubWidget: React.FC<ConnectGithubProps> = ({ onConnected 
     setError(null);
     try {
       await forgeApi.connectAccount({
-        provider: "github",
+        provider: 'github',
         identifier: trimmedUsername,
       });
       onConnected(trimmedUsername);
     } catch (err) {
       console.error(err);
-      setError("Failed to connect GitHub. Please try again.");
+      setError('Failed to connect GitHub. Please try again.');
     } finally {
       setLoading(false);
     }

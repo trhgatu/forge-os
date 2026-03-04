@@ -1,4 +1,4 @@
-import { Quote } from "@/features/quote";
+import { Quote } from '@/features/quote';
 
 export default function Page() {
   return <Quote />;

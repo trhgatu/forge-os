@@ -1,10 +1,10 @@
-import { X, AlertTriangle, Loader2 } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import { X, AlertTriangle, Loader2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
 
-import { GlassCard } from "@/shared/components/ui/GlassCard";
-import { Switch } from "@/shared/components/ui/Switch";
+import { GlassCard } from '@/shared/components/ui/GlassCard';
+import { Switch } from '@/shared/components/ui/Switch';
 
-import type { Project } from "../../types";
+import type { Project } from '../../types';
 
 interface ModalProps {
   isOpen: boolean;
@@ -22,16 +22,16 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
   onCreate,
   isLoading,
 }) => {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [error, setError] = useState("");
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (isOpen) {
       const timer = setTimeout(() => {
-        setTitle("");
-        setDescription("");
-        setError("");
+        setTitle('');
+        setDescription('');
+        setError('');
       }, 0);
       return () => clearTimeout(timer);
     }
@@ -40,7 +40,7 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) {
-      setError("Title is required");
+      setError('Title is required');
       return;
     }
     onCreate({ title, description });
@@ -69,7 +69,7 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
                 value={title}
                 onChange={(e) => {
                   setTitle(e.target.value);
-                  if (error) setError("");
+                  if (error) setError('');
                 }}
                 className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-forge-cyan/50 focus:ring-1 focus:ring-forge-cyan/50 transition-all"
                 placeholder="e.g. Neural Core Engine"
@@ -126,14 +126,14 @@ const StatusSelect = ({
   onChange,
 }: {
   value: string;
-  onChange: (val: "active" | "archived" | "draft" | "completed") => void;
+  onChange: (val: 'active' | 'archived' | 'draft' | 'completed') => void;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const options = [
-    { value: "active", label: "Active", color: "bg-green-500" },
-    { value: "archived", label: "Archived", color: "bg-gray-500" },
-    { value: "draft", label: "Draft", color: "bg-yellow-500" },
-    { value: "completed", label: "Completed", color: "bg-blue-500" },
+    { value: 'active', label: 'Active', color: 'bg-green-500' },
+    { value: 'archived', label: 'Archived', color: 'bg-gray-500' },
+    { value: 'draft', label: 'Draft', color: 'bg-yellow-500' },
+    { value: 'completed', label: 'Completed', color: 'bg-blue-500' },
   ];
 
   const current = options.find((o) => o.value === value) || options[0];
@@ -150,7 +150,7 @@ const StatusSelect = ({
           {current.label}
         </div>
         <svg
-          className={`w-4 h-4 text-gray-500 transition-transform ${isOpen ? "rotate-180" : ""}`}
+          className={`w-4 h-4 text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -167,7 +167,7 @@ const StatusSelect = ({
                 key={opt.value}
                 type="button"
                 onClick={() => {
-                  onChange(opt.value as "active" | "archived" | "draft" | "completed");
+                  onChange(opt.value as 'active' | 'archived' | 'draft' | 'completed');
                   setIsOpen(false);
                 }}
                 className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-colors text-left"
@@ -198,7 +198,7 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
     isPinned: project.isPinned,
   });
 
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   useEffect(() => {
     const timer = setTimeout(() => {
       setFormData({
@@ -207,7 +207,7 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
         status: project.status,
         isPinned: project.isPinned,
       });
-      setError("");
+      setError('');
     }, 0);
     return () => clearTimeout(timer);
   }, [project]);
@@ -215,7 +215,7 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title.trim()) {
-      setError("Title is required");
+      setError('Title is required');
       return;
     }
     onUpdate(project.id, formData);
@@ -244,7 +244,7 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
                 value={formData.title}
                 onChange={(e) => {
                   setFormData({ ...formData, title: e.target.value });
-                  if (error) setError("");
+                  if (error) setError('');
                 }}
                 className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-fuchsia-400/50 focus:ring-1 focus:ring-fuchsia-400/50 transition-all"
               />
@@ -336,7 +336,7 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
             </div>
             <h3 className="text-lg font-bold text-white mb-2">Delete Project?</h3>
             <p className="text-sm text-gray-400 mb-6">
-              Are you sure you want to delete{" "}
+              Are you sure you want to delete{' '}
               <span className="font-bold text-white">&quot;{projectTitle}&quot;</span>? This action
               cannot be undone.
             </p>

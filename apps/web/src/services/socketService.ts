@@ -1,12 +1,12 @@
-import type { Socket } from "socket.io-client";
-import { Manager } from "socket.io-client";
+import type { Socket } from 'socket.io-client';
+import { Manager } from 'socket.io-client';
 
 class SocketService {
   private manager: Manager | null = null;
   private sockets: Map<string, Socket> = new Map();
   private static instance: SocketService;
 
-  private constructor() { }
+  private constructor() {}
 
   public static getInstance(): SocketService {
     if (!SocketService.instance) {
@@ -16,7 +16,7 @@ class SocketService {
   }
 
   private getBaseUrl(): string {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
     try {
       const url = new URL(apiUrl);
       return url.origin; // e.g. http://localhost:8000
@@ -28,15 +28,15 @@ class SocketService {
   private lastToken: string | undefined;
 
   private getTokenFromStorage(): string | undefined {
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
       try {
-        const storage = localStorage.getItem("forge-auth-storage");
+        const storage = localStorage.getItem('forge-auth-storage');
         if (storage) {
           const parsed = JSON.parse(storage);
           return parsed.state?.token;
         }
       } catch (e) {
-        console.warn("[SocketService] Failed to retrieve auth token", e);
+        console.warn('[SocketService] Failed to retrieve auth token', e);
       }
     }
     return undefined;
@@ -66,7 +66,7 @@ class SocketService {
       }
 
       const managerOptions: ManagerOptionsWithAuth = {
-        transports: ["websocket"],
+        transports: ['websocket'],
         autoConnect: true,
         reconnection: true,
         auth: {
@@ -74,11 +74,10 @@ class SocketService {
         },
         extraHeaders: token
           ? {
-            Authorization: `Bearer ${token}`,
-          }
+              Authorization: `Bearer ${token}`,
+            }
           : {},
       };
-
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       this.manager = new Manager(url, managerOptions as any);
@@ -110,20 +109,20 @@ class SocketService {
         },
       });
 
-      socket.on("connect", () => {
+      socket.on('connect', () => {
         // eslint-disable-next-line no-console
         console.log(
           `[SocketService] Combined Connection Active for [${namespace}]. ID:`,
-          socket.id
+          socket.id,
         );
       });
 
-      socket.on("disconnect", () => {
+      socket.on('disconnect', () => {
         // eslint-disable-next-line no-console
         console.log(`[SocketService] Disconnected from [${namespace}]`);
       });
 
-      socket.on("connect_error", (err) => {
+      socket.on('connect_error', (err) => {
         console.error(`[SocketService] Connection Error on [${namespace}]:`, err.message);
       });
 

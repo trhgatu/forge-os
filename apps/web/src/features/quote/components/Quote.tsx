@@ -1,22 +1,21 @@
-"use client";
+'use client';
 
-import { Plus, Search, Filter, Leaf } from "lucide-react";
-import { useState, useMemo } from "react";
-import { toast } from "sonner";
+import { Plus, Search, Filter, Leaf } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { toast } from 'sonner';
 
-import { cn } from "@/shared/lib/utils";
-import type { MoodType } from "@/shared/types/journal";
-import type { Quote as QuoteType } from "@/shared/types/quote";
+import { cn } from '@/shared/lib/utils';
+import type { MoodType } from '@/shared/types/journal';
+import type { Quote as QuoteType } from '@/shared/types/quote';
 
-import { SEASON_CONFIG, getSeasonFromMood } from "../../memory/config/seasons";
-import { useQuotes, useCreateQuote, useDeleteQuote, useUpdateQuote } from "../hooks/useQuote";
+import { SEASON_CONFIG, getSeasonFromMood } from '../../memory/config/seasons';
+import { useQuotes, useCreateQuote, useDeleteQuote, useUpdateQuote } from '../hooks/useQuote';
 
-
-import { DailyInspiration } from "./DailyInspiration";
-import { MoodAmbience } from "./MoodAmbience";
-import { QuoteCard } from "./QuoteCard";
-import { QuoteDetailPanel } from "./QuoteDetailPanel";
-import { QuoteModal, EMOTION_OPTIONS } from "./QuoteModal";
+import { DailyInspiration } from './DailyInspiration';
+import { MoodAmbience } from './MoodAmbience';
+import { QuoteCard } from './QuoteCard';
+import { QuoteDetailPanel } from './QuoteDetailPanel';
+import { QuoteModal, EMOTION_OPTIONS } from './QuoteModal';
 
 export function Quote() {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useQuotes();
@@ -27,26 +26,26 @@ export function Quote() {
   const quotes = useMemo(() => data?.pages.flatMap((page) => page.data) || [], [data]);
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [filterMood, setFilterMood] = useState<MoodType | "all">("all");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [filterMood, setFilterMood] = useState<MoodType | 'all'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [isAdding, setIsAdding] = useState(false);
   const [editingQuote, setEditingQuote] = useState<QuoteType | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const filteredQuotes = quotes
-    .filter((q) => filterMood === "all" || q.mood === filterMood)
+    .filter((q) => filterMood === 'all' || q.mood === filterMood)
     .filter(
       (q) =>
-        searchQuery === "" ||
+        searchQuery === '' ||
         q.text.toLowerCase().includes(searchQuery.toLowerCase()) ||
         q.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        q.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()))
+        q.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase())),
     );
 
   const handleAnalyze = async () => {
     setIsAnalyzing(true);
     setTimeout(() => {
-      toast.info("AI analysis coming soon!");
+      toast.info('AI analysis coming soon!');
       setIsAnalyzing(false);
     }, 1000);
   };
@@ -57,14 +56,14 @@ export function Quote() {
     source?: string,
     tags?: string[],
     isFavorite?: boolean,
-    mood?: MoodType
+    mood?: MoodType,
   ) => {
     try {
       await createMutation.mutateAsync({ content, author, source, tags, isFavorite, mood });
-      toast.success("Quote added successfully!");
+      toast.success('Quote added successfully!');
     } catch (error) {
-      console.error("Failed to create quote", error);
-      toast.error("Failed to add quote");
+      console.error('Failed to create quote', error);
+      toast.error('Failed to add quote');
     }
   };
 
@@ -74,7 +73,7 @@ export function Quote() {
     source?: string,
     tags?: string[],
     isFavorite?: boolean,
-    mood?: MoodType
+    mood?: MoodType,
   ) => {
     if (!editingQuote) return;
     try {
@@ -84,15 +83,15 @@ export function Quote() {
         author,
         source,
         tags,
-        status: isFavorite ? "favorite" : "internal",
+        status: isFavorite ? 'favorite' : 'internal',
         mood,
       });
-      toast.success("Quote updated successfully!");
+      toast.success('Quote updated successfully!');
       setEditingQuote(null);
       setSelectedId(null);
     } catch (error) {
-      console.error("Failed to update quote", error);
-      toast.error("Failed to update quote");
+      console.error('Failed to update quote', error);
+      toast.error('Failed to update quote');
     }
   };
 
@@ -104,22 +103,22 @@ export function Quote() {
     try {
       await updateMutation.mutateAsync({
         id,
-        status: !quote.isFavorite ? "favorite" : "internal",
+        status: !quote.isFavorite ? 'favorite' : 'internal',
       });
     } catch (error) {
-      console.error("Failed to toggle favorite", error);
-      toast.error("Failed to update quote");
+      console.error('Failed to toggle favorite', error);
+      toast.error('Failed to update quote');
     }
   };
 
   const handleDelete = async (id: string) => {
     try {
       await deleteMutation.mutateAsync(id);
-      toast.success("Quote deleted successfully");
+      toast.success('Quote deleted successfully');
       setSelectedId(null);
     } catch (error) {
-      console.error("Failed to delete quote", error);
-      toast.error("Failed to delete quote");
+      console.error('Failed to delete quote', error);
+      toast.error('Failed to delete quote');
     }
   };
 
@@ -201,25 +200,25 @@ export function Quote() {
                 <div className="relative group/filter">
                   <button
                     className={cn(
-                      "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium uppercase tracking-wider transition-all",
-                      filterMood === "all"
-                        ? "text-white/60 hover:text-white hover:bg-white/5"
-                        : "bg-forge-cyan/10 text-forge-cyan border border-forge-cyan/20"
+                      'flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium uppercase tracking-wider transition-all',
+                      filterMood === 'all'
+                        ? 'text-white/60 hover:text-white hover:bg-white/5'
+                        : 'bg-forge-cyan/10 text-forge-cyan border border-forge-cyan/20',
                     )}
                   >
                     <Filter size={12} />
-                    {filterMood === "all" ? "Mood" : filterMood}
+                    {filterMood === 'all' ? 'Mood' : filterMood}
                   </button>
 
                   {/* Dropdown Menu */}
                   <div className="absolute top-full right-0 mt-3 w-48 p-1.5 bg-[#0A0A0F] border border-white/10 rounded-xl shadow-2xl opacity-0 invisible group-hover/filter:opacity-100 group-hover/filter:visible transition-all duration-200 transform origin-top-right z-50">
                     <button
-                      onClick={() => setFilterMood("all")}
+                      onClick={() => setFilterMood('all')}
                       className={cn(
-                        "w-full text-left px-3 py-2 rounded-lg text-xs font-medium transition-colors mb-1",
-                        filterMood === "all"
-                          ? "bg-white/10 text-white"
-                          : "text-white/50 hover:bg-white/5 hover:text-white"
+                        'w-full text-left px-3 py-2 rounded-lg text-xs font-medium transition-colors mb-1',
+                        filterMood === 'all'
+                          ? 'bg-white/10 text-white'
+                          : 'text-white/50 hover:bg-white/5 hover:text-white',
                       )}
                     >
                       All Frequencies
@@ -229,16 +228,16 @@ export function Quote() {
                         key={mood}
                         onClick={() => setFilterMood(mood)}
                         className={cn(
-                          "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-colors",
+                          'w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-colors',
                           filterMood === mood
-                            ? "bg-white/10 text-white"
-                            : "text-white/50 hover:bg-white/5 hover:text-white"
+                            ? 'bg-white/10 text-white'
+                            : 'text-white/50 hover:bg-white/5 hover:text-white',
                         )}
                       >
                         <span
                           className={cn(
-                            "w-1.5 h-1.5 rounded-full",
-                            SEASON_CONFIG[getSeasonFromMood(mood)].particleColor
+                            'w-1.5 h-1.5 rounded-full',
+                            SEASON_CONFIG[getSeasonFromMood(mood)].particleColor,
                           )}
                         />
                         {mood}
@@ -297,7 +296,7 @@ export function Quote() {
                   disabled={isFetchingNextPage}
                   className="px-8 py-3 rounded-full bg-white/[0.03] border border-white/5 text-white/50 hover:text-white/70 hover:bg-white/[0.05] hover:border-white/10 transition-all text-sm disabled:opacity-50 backdrop-blur-sm"
                 >
-                  {isFetchingNextPage ? "Growing..." : "Grow Garden"}
+                  {isFetchingNextPage ? 'Growing...' : 'Grow Garden'}
                 </button>
               </div>
             )}

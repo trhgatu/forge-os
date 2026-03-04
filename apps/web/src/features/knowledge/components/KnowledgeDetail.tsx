@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
-import { BookOpen, Hammer, Network, ArrowLeft, Share2, Bookmark, MoreVertical } from "lucide-react";
-import React, { useState } from "react";
+import { BookOpen, Hammer, Network, ArrowLeft, Share2, Bookmark, MoreVertical } from 'lucide-react';
+import React, { useState } from 'react';
 
-import { cn } from "@/shared/lib/utils";
-import type { KnowledgeConcept } from "@/shared/types";
+import { cn } from '@/shared/lib/utils';
+import type { KnowledgeConcept } from '@/shared/types';
 
-import { AnvilTab } from "./detail/tabs/AnvilTab";
-import { NexusTab } from "./detail/tabs/NexusTab";
-import { SourceTab } from "./detail/tabs/SourceTab";
+import { AnvilTab } from './detail/tabs/AnvilTab';
+import { NexusTab } from './detail/tabs/NexusTab';
+import { SourceTab } from './detail/tabs/SourceTab';
 
 interface KnowledgeDetailProps {
   concept: KnowledgeConcept;
   onClose: () => void;
 }
 
-type Tab = "source" | "anvil" | "nexus";
+type Tab = 'source' | 'anvil' | 'nexus';
 
 export const KnowledgeDetail: React.FC<KnowledgeDetailProps> = ({ concept, onClose }) => {
-  const [activeTab, setActiveTab] = useState<Tab>("source");
+  const [activeTab, setActiveTab] = useState<Tab>('source');
   const [isSaved, setIsSaved] = useState(false);
 
   // Two-stage capture process:
@@ -50,13 +50,13 @@ export const KnowledgeDetail: React.FC<KnowledgeDetailProps> = ({ concept, onClo
       setCommittedExtracts((prev) => [...prev, ...stagingExtracts]);
       setStagingExtracts([]); // Clear staging after moving
     }
-    setActiveTab("anvil");
+    setActiveTab('anvil');
   };
 
   const TABS = [
-    { id: "source", label: "Source", icon: BookOpen },
-    { id: "anvil", label: "Anvil", icon: Hammer },
-    { id: "nexus", label: "Nexus", icon: Network },
+    { id: 'source', label: 'Source', icon: BookOpen },
+    { id: 'anvil', label: 'Anvil', icon: Hammer },
+    { id: 'nexus', label: 'Nexus', icon: Network },
   ];
 
   return (
@@ -93,10 +93,10 @@ export const KnowledgeDetail: React.FC<KnowledgeDetailProps> = ({ concept, onClo
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as Tab)}
                   className={cn(
-                    "flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all",
+                    'flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all',
                     activeTab === tab.id
-                      ? "bg-white/10 text-white shadow-sm border border-white/5"
-                      : "text-gray-500 hover:text-gray-300 hover:bg-white/5"
+                      ? 'bg-white/10 text-white shadow-sm border border-white/5'
+                      : 'text-gray-500 hover:text-gray-300 hover:bg-white/5',
                   )}
                 >
                   <tab.icon size={14} />
@@ -111,11 +111,11 @@ export const KnowledgeDetail: React.FC<KnowledgeDetailProps> = ({ concept, onClo
             <button
               onClick={() => setIsSaved(!isSaved)}
               className={cn(
-                "p-2 rounded-lg transition-colors",
-                isSaved ? "text-forge-accent" : "text-gray-400 hover:text-white"
+                'p-2 rounded-lg transition-colors',
+                isSaved ? 'text-forge-accent' : 'text-gray-400 hover:text-white',
               )}
             >
-              <Bookmark size={20} fill={isSaved ? "currentColor" : "none"} />
+              <Bookmark size={20} fill={isSaved ? 'currentColor' : 'none'} />
             </button>
             <button className="p-2 text-gray-400 hover:text-white transition-colors">
               <Share2 size={20} />
@@ -129,7 +129,7 @@ export const KnowledgeDetail: React.FC<KnowledgeDetailProps> = ({ concept, onClo
 
       {/* MAIN CONTENT AREA */}
       <div className="max-w-[1600px] mx-auto px-4 md:px-8 py-8 md:py-12 relative z-10 min-h-screen">
-        {activeTab === "source" && (
+        {activeTab === 'source' && (
           <SourceTab
             concept={concept}
             extracts={stagingExtracts}
@@ -138,10 +138,10 @@ export const KnowledgeDetail: React.FC<KnowledgeDetailProps> = ({ concept, onClo
             onRemoveExtract={handleRemoveStaging}
           />
         )}
-        {activeTab === "anvil" && (
+        {activeTab === 'anvil' && (
           <AnvilTab extracts={committedExtracts} onRemoveExtract={handleRemoveCommitted} />
         )}
-        {activeTab === "nexus" && <NexusTab />}
+        {activeTab === 'nexus' && <NexusTab />}
       </div>
     </div>
   );

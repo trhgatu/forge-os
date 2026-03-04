@@ -1,16 +1,16 @@
-import React from "react";
+import React from 'react';
 
-import { cn } from "@/shared/lib/utils";
-import type { MoodType } from "@/shared/types/journal";
+import { cn } from '@/shared/lib/utils';
+import type { MoodType } from '@/shared/types/journal';
 
-import { SEASON_CONFIG, getSeasonFromMood } from "../../memory/config/seasons";
+import { SEASON_CONFIG, getSeasonFromMood } from '../../memory/config/seasons';
 
 interface MoodAmbienceProps {
-  mood: MoodType | "all";
+  mood: MoodType | 'all';
 }
 
 export const MoodAmbience: React.FC<MoodAmbienceProps> = ({ mood }) => {
-  const seasonId = mood === "all" ? "Winter" : getSeasonFromMood(mood);
+  const seasonId = mood === 'all' ? 'Winter' : getSeasonFromMood(mood);
   const config = SEASON_CONFIG[seasonId];
 
   return (
@@ -18,24 +18,24 @@ export const MoodAmbience: React.FC<MoodAmbienceProps> = ({ mood }) => {
       {/* 1. Base Deep Atmosphere (Darkened) */}
       <div
         className={cn(
-          "absolute inset-0 opacity-20 transition-colors duration-[5000ms] mix-blend-normal",
-          config.bg
+          'absolute inset-0 opacity-20 transition-colors duration-[5000ms] mix-blend-normal',
+          config.bg,
         )}
       />
 
       {/* 2. Primary Nebula (Subtle Overlay) */}
       <div
         className={cn(
-          "absolute top-[-20%] left-[-10%] w-[80vw] h-[80vw] rounded-full blur-[120px] opacity-10 animate-[spin_60s_linear_infinite] mix-blend-overlay transition-all duration-[5000ms]",
-          config.particleColor
+          'absolute top-[-20%] left-[-10%] w-[80vw] h-[80vw] rounded-full blur-[120px] opacity-10 animate-[spin_60s_linear_infinite] mix-blend-overlay transition-all duration-[5000ms]',
+          config.particleColor,
         )}
       />
 
       {/* 3. Secondary Aurora (Deep Glow) */}
       <div
         className={cn(
-          "absolute bottom-[-20%] right-[-10%] w-[70vw] h-[70vw] rounded-full blur-[150px] opacity-5 animate-[pulse_10s_ease-in-out_infinite] mix-blend-overlay transition-all duration-[5000ms]",
-          config.accent.replace("text-", "bg-")
+          'absolute bottom-[-20%] right-[-10%] w-[70vw] h-[70vw] rounded-full blur-[150px] opacity-5 animate-[pulse_10s_ease-in-out_infinite] mix-blend-overlay transition-all duration-[5000ms]',
+          config.accent.replace('text-', 'bg-'),
         )}
       />
 
@@ -52,15 +52,15 @@ export const MoodAmbience: React.FC<MoodAmbienceProps> = ({ mood }) => {
       {/* 6. Ceiling Light (Ambient Reading Light) */}
       <div
         className={cn(
-          "absolute top-[-20%] left-1/4 w-[50%] h-[400px] blur-[120px] opacity-10 transition-all duration-[8000ms]",
-          "bg-gradient-to-b from-white/20 to-transparent"
+          'absolute top-[-20%] left-1/4 w-[50%] h-[400px] blur-[120px] opacity-10 transition-all duration-[8000ms]',
+          'bg-gradient-to-b from-white/20 to-transparent',
         )}
       />
 
       {/* 7. Floor Reflection (Grounding) */}
       <div
         className={cn(
-          "absolute bottom-0 inset-x-0 h-[30%] bg-gradient-to-t from-[#050505] to-transparent opacity-80"
+          'absolute bottom-0 inset-x-0 h-[30%] bg-gradient-to-t from-[#050505] to-transparent opacity-80',
         )}
       />
 

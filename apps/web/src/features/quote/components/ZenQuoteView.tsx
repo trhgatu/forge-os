@@ -1,11 +1,11 @@
-import { Minimize2 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { createPortal } from "react-dom";
+import { Minimize2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
-import { cn } from "@/shared/lib/utils";
-import type { Quote } from "@/shared/types/quote";
+import { cn } from '@/shared/lib/utils';
+import type { Quote } from '@/shared/types/quote';
 
-import { SEASON_CONFIG, getSeasonFromMood } from "../../memory/config/seasons";
+import { SEASON_CONFIG, getSeasonFromMood } from '../../memory/config/seasons';
 
 interface ZenQuoteViewProps {
   quote: Quote;
@@ -24,27 +24,27 @@ export function ZenQuoteView({ quote, onClose }: ZenQuoteViewProps) {
     const timer = setTimeout(() => setIsVisible(true), 10);
 
     // Prevent background scrolling
-    document.body.style.overflow = "hidden";
+    document.body.style.overflow = 'hidden';
 
     // Add escape key listener
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === 'Escape') onClose();
     };
-    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown);
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "";
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
       clearTimeout(timer);
     };
   }, [onClose]);
 
-  if (!mounted || typeof document === "undefined") return null;
+  if (!mounted || typeof document === 'undefined') return null;
 
   return createPortal(
     <div
       className={cn(
-        "fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden transition-all duration-1000",
-        isVisible ? "opacity-100 bg-black" : "opacity-0 bg-transparent"
+        'fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden transition-all duration-1000',
+        isVisible ? 'opacity-100 bg-black' : 'opacity-0 bg-transparent',
       )}
     >
       {/* 1. Deep Void Background (Absolute Black) */}
@@ -52,20 +52,20 @@ export function ZenQuoteView({ quote, onClose }: ZenQuoteViewProps) {
 
       {/* 2. Mood Tint (Barely Visible - 10% Opacity) */}
       <div
-        className={cn("absolute inset-0 opacity-10 transition-colors duration-[3000ms]", config.bg)}
+        className={cn('absolute inset-0 opacity-10 transition-colors duration-[3000ms]', config.bg)}
       />
 
       {/* 3. Subtle Nebula Glows (Non-Intrusive) */}
       <div
         className={cn(
-          "absolute top-[-20%] left-[-10%] w-[80vw] h-[80vw] rounded-full blur-[150px] opacity-10 animate-[spin_60s_linear_infinite] mix-blend-overlay",
-          config.particleColor
+          'absolute top-[-20%] left-[-10%] w-[80vw] h-[80vw] rounded-full blur-[150px] opacity-10 animate-[spin_60s_linear_infinite] mix-blend-overlay',
+          config.particleColor,
         )}
       />
       <div
         className={cn(
-          "absolute bottom-[-20%] right-[-10%] w-[70vw] h-[70vw] rounded-full blur-[150px] opacity-5 animate-[pulse_10s_ease-in-out_infinite] mix-blend-overlay",
-          config.accent.replace("text-", "bg-")
+          'absolute bottom-[-20%] right-[-10%] w-[70vw] h-[70vw] rounded-full blur-[150px] opacity-5 animate-[pulse_10s_ease-in-out_infinite] mix-blend-overlay',
+          config.accent.replace('text-', 'bg-'),
         )}
       />
 
@@ -84,14 +84,14 @@ export function ZenQuoteView({ quote, onClose }: ZenQuoteViewProps) {
       {/* Content Container */}
       <div
         className={cn(
-          "relative z-10 max-w-6xl px-8 text-center transform transition-all duration-1000 delay-300",
-          isVisible ? "translate-y-0 opacity-100 scale-100" : "translate-y-10 opacity-0 scale-95"
+          'relative z-10 max-w-6xl px-8 text-center transform transition-all duration-1000 delay-300',
+          isVisible ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-10 opacity-0 scale-95',
         )}
       >
         <blockquote
           className={cn(
-            "font-quote font-medium leading-tight text-white drop-shadow-2xl whitespace-pre-wrap break-words italic",
-            quote.text.length > 100 ? "text-3xl md:text-5xl" : "text-4xl md:text-6xl lg:text-7xl"
+            'font-quote font-medium leading-tight text-white drop-shadow-2xl whitespace-pre-wrap break-words italic',
+            quote.text.length > 100 ? 'text-3xl md:text-5xl' : 'text-4xl md:text-6xl lg:text-7xl',
           )}
         >
           &quot;{quote.text}&quot;
@@ -101,13 +101,13 @@ export function ZenQuoteView({ quote, onClose }: ZenQuoteViewProps) {
           <div className="h-px w-32 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
 
           <cite className="font-mono text-xl md:text-2xl text-white/80 uppercase tracking-[0.2em] not-italic drop-shadow-lg">
-            {quote.author || "Unknown"}
+            {quote.author || 'Unknown'}
           </cite>
 
           <span
             className={cn(
-              "text-xs font-mono uppercase tracking-[0.3em] text-white/40",
-              config.accent
+              'text-xs font-mono uppercase tracking-[0.3em] text-white/40',
+              config.accent,
             )}
           >
             {quote.mood} Protocol
@@ -115,6 +115,6 @@ export function ZenQuoteView({ quote, onClose }: ZenQuoteViewProps) {
         </div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }

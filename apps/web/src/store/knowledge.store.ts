@@ -1,8 +1,8 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
-import { searchWikipedia, getConceptDetails } from "@/features/knowledge/services";
-import type { KnowledgeConcept } from "@/shared/types";
+import { searchWikipedia, getConceptDetails } from '@/features/knowledge/services';
+import type { KnowledgeConcept } from '@/shared/types';
 
 interface KnowledgeState {
   searchResults: KnowledgeConcept[];
@@ -36,7 +36,7 @@ export const useKnowledgeStore = create<KnowledgeState>()(
           const results = await searchWikipedia(query, lang);
           set({ searchResults: results });
         } catch (error) {
-          console.error("Search failed:", error);
+          console.error('Search failed:', error);
           set({ searchResults: [] });
         } finally {
           set({ isLoading: false });
@@ -55,7 +55,7 @@ export const useKnowledgeStore = create<KnowledgeState>()(
             // Update History
             const currentHistory = get().history;
             const exists = currentHistory.some(
-              (h) => h.title === fullConcept.title && h.language === fullConcept.language
+              (h) => h.title === fullConcept.title && h.language === fullConcept.language,
             );
 
             if (!exists) {
@@ -65,12 +65,12 @@ export const useKnowledgeStore = create<KnowledgeState>()(
               set({ searchResults: [] });
             }
           } else {
-            console.warn("Concept details not found for:", concept.title);
+            console.warn('Concept details not found for:', concept.title);
             // Optionally set an error state or keeping the current state but stopping loading
             set({ searchResults: [] });
           }
         } catch (error) {
-          console.error("Select concept failed:", error);
+          console.error('Select concept failed:', error);
         } finally {
           set({ isLoading: false });
         }
@@ -88,7 +88,7 @@ export const useKnowledgeStore = create<KnowledgeState>()(
         if (get().discoveryItems.length >= 10) return;
 
         // Dynamically import to separate logic
-        const { getRandomConcepts } = await import("@/features/knowledge/services");
+        const { getRandomConcepts } = await import('@/features/knowledge/services');
         try {
           const items = await getRandomConcepts(lang, 20);
           // Only update if we still need them
@@ -96,17 +96,17 @@ export const useKnowledgeStore = create<KnowledgeState>()(
             set({ discoveryItems: items });
           }
         } catch (e) {
-          console.error("Discovery load failed", e);
+          console.error('Discovery load failed', e);
         }
       },
     }),
     {
-      name: "forge-knowledge-storage",
+      name: 'forge-knowledge-storage',
       partialize: (state) => ({
         history: state.history,
         // Optional: persist discovery items too if desired
         discoveryItems: state.discoveryItems,
       }),
-    }
-  )
+    },
+  ),
 );

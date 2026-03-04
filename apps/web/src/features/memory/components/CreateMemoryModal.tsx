@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { X } from "lucide-react";
-import Image from "next/image";
-import { useState } from "react";
+import { X } from 'lucide-react';
+import Image from 'next/image';
+import { useState } from 'react';
 
-import { cn } from "@/shared/lib/utils";
-import type { MoodType } from "@/shared/types";
-import type { Memory } from "@/shared/types/memory";
+import { cn } from '@/shared/lib/utils';
+import type { MoodType } from '@/shared/types';
+import type { Memory } from '@/shared/types/memory';
 
 interface CreateMemoryModalProps {
   onClose: () => void;
@@ -15,21 +15,21 @@ interface CreateMemoryModalProps {
 }
 
 const EMOTION_OPTIONS: MoodType[] = [
-  "joy",
-  "calm",
-  "inspired",
-  "neutral",
-  "sad",
-  "anxious",
-  "focused",
-  "nostalgic",
+  'joy',
+  'calm',
+  'inspired',
+  'neutral',
+  'sad',
+  'anxious',
+  'focused',
+  'nostalgic',
 ];
 
 export function CreateMemoryModal({ onClose, onSave, initialData }: CreateMemoryModalProps) {
-  const [title, setTitle] = useState(initialData?.title || "");
-  const [content, setContent] = useState(initialData?.content || "");
-  const [mood, setMood] = useState<MoodType>(initialData?.mood || "neutral");
-  const [imageUrl, setImageUrl] = useState(initialData?.imageUrl || "");
+  const [title, setTitle] = useState(initialData?.title || '');
+  const [content, setContent] = useState(initialData?.content || '');
+  const [mood, setMood] = useState<MoodType>(initialData?.mood || 'neutral');
+  const [imageUrl, setImageUrl] = useState(initialData?.imageUrl || '');
 
   const [imgError, setImgError] = useState(false);
 
@@ -59,7 +59,7 @@ export function CreateMemoryModal({ onClose, onSave, initialData }: CreateMemory
         {/* Header */}
         <div className="flex items-center justify-between border-b border-white/5 px-6 py-4">
           <h3 className="font-display text-lg font-bold tracking-wide text-white">
-            {initialData ? "Refine Moment" : "Preserve Moment"}
+            {initialData ? 'Refine Moment' : 'Preserve Moment'}
           </h3>
           <div className="flex items-center gap-2">
             <button
@@ -74,7 +74,7 @@ export function CreateMemoryModal({ onClose, onSave, initialData }: CreateMemory
               onClick={handleSave}
               className="rounded-lg bg-white px-4 py-1.5 text-xs font-bold text-black transition-all hover:bg-gray-200 hover:shadow-[0_0_15px_rgba(255,255,255,0.2)]"
             >
-              {initialData ? "Update" : "Crystallize"}
+              {initialData ? 'Update' : 'Crystallize'}
             </button>
           </div>
         </div>
@@ -112,10 +112,10 @@ export function CreateMemoryModal({ onClose, onSave, initialData }: CreateMemory
                     type="button"
                     onClick={() => setMood(option)}
                     className={cn(
-                      "rounded px-3 py-1.5 text-xs capitalize transition-all border",
+                      'rounded px-3 py-1.5 text-xs capitalize transition-all border',
                       mood === option
-                        ? "border-white bg-white text-black font-bold shadow-lg"
-                        : "border-white/5 bg-white/5 text-gray-400 hover:border-white/20 hover:text-white"
+                        ? 'border-white bg-white text-black font-bold shadow-lg'
+                        : 'border-white/5 bg-white/5 text-gray-400 hover:border-white/20 hover:text-white',
                     )}
                   >
                     {option}

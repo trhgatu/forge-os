@@ -29,7 +29,6 @@ export class AuthService {
       throw new RoleNotFoundException({ roleId: dto.roleId });
     }
 
-    // Create User via Repository (which returns Entity)
     const newUser = await this.userRepository.create({
       name: dto.name,
       email: dto.email,
@@ -37,7 +36,6 @@ export class AuthService {
       roleId: dto.roleId,
     });
 
-    // Use Entity properties directly
     const userId = newUser.id.toString();
     const tokens = await this.getTokens(userId, newUser.email);
     await this.updateRefreshToken(userId, tokens.refreshToken);
@@ -46,7 +44,7 @@ export class AuthService {
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
       user: {
-        id: newUser.id.toString(), // Entity ID
+        id: newUser.id.toString(),
         name: newUser.name,
         email: newUser.email,
         role: newUser.roleId,

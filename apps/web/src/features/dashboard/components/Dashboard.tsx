@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 /* import { getDailyInsight } from "@/services/geminiService"; */
 /* import { getDailyInsight } from "@/services/geminiService"; */
@@ -15,53 +15,53 @@ import {
   ChevronRight,
   Maximize2,
   CheckCircle2,
-} from "lucide-react";
-import React, { useState, useEffect } from "react";
-import { AreaChart, Area, Tooltip, ResponsiveContainer } from "recharts";
+} from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { AreaChart, Area, Tooltip, ResponsiveContainer } from 'recharts';
 
-import { AGENTS } from "@/features/chamber/components/AgentDock";
-import { cn } from "@/shared/lib/utils";
+import { AGENTS } from '@/features/chamber/components/AgentDock';
+import { cn } from '@/shared/lib/utils';
 
-import { QuoteOfTheDayWidget } from "./QuoteOfTheDayWidget";
+import { QuoteOfTheDayWidget } from './QuoteOfTheDayWidget';
 
 const MOOD_DATA = [
-  { day: "Mon", value: 6, mood: "Neutral" },
-  { day: "Tue", value: 4, mood: "Tired" },
-  { day: "Wed", value: 7, mood: "Calm" },
-  { day: "Thu", value: 8, mood: "Focused" },
-  { day: "Fri", value: 5, mood: "Anxious" },
-  { day: "Sat", value: 9, mood: "Inspired" },
-  { day: "Sun", value: 8, mood: "Inspired" },
+  { day: 'Mon', value: 6, mood: 'Neutral' },
+  { day: 'Tue', value: 4, mood: 'Tired' },
+  { day: 'Wed', value: 7, mood: 'Calm' },
+  { day: 'Thu', value: 8, mood: 'Focused' },
+  { day: 'Fri', value: 5, mood: 'Anxious' },
+  { day: 'Sat', value: 9, mood: 'Inspired' },
+  { day: 'Sun', value: 8, mood: 'Inspired' },
 ];
 
 const RECENT_ARTIFACTS = [
   {
     id: 1,
-    title: "The Architecture of Silence",
-    type: "Journal",
-    date: "2h ago",
-    color: "bg-fuchsia-500",
+    title: 'The Architecture of Silence',
+    type: 'Journal',
+    date: '2h ago',
+    color: 'bg-fuchsia-500',
   },
   {
     id: 2,
-    title: "Project Nebula Specs",
-    type: "Memory",
-    date: "5h ago",
-    color: "bg-blue-500",
+    title: 'Project Nebula Specs',
+    type: 'Memory',
+    date: '5h ago',
+    color: 'bg-blue-500',
   },
   {
     id: 3,
-    title: "Stoic Reflections",
-    type: "Quote",
-    date: "Yesterday",
-    color: "bg-amber-500",
+    title: 'Stoic Reflections',
+    type: 'Quote',
+    date: 'Yesterday',
+    color: 'bg-amber-500',
   },
 ];
 
 const TIMELINE_SNAPSHOT = [
-  { id: 1, time: "10:00 AM", label: "Deep Focus Session", type: "event" },
-  { id: 2, time: "2:30 PM", label: "Logged Mood: Anxious", type: "mood" },
-  { id: 3, time: "4:45 PM", label: "Captured Memory", type: "memory" },
+  { id: 1, time: '10:00 AM', label: 'Deep Focus Session', type: 'event' },
+  { id: 2, time: '2:30 PM', label: 'Logged Mood: Anxious', type: 'mood' },
+  { id: 3, time: '4:45 PM', label: 'Captured Memory', type: 'memory' },
 ];
 
 // -------------------- WIDGET SHELL --------------------
@@ -83,13 +83,13 @@ export const WidgetShell: React.FC<WidgetProps> = ({
 }) => (
   <div
     className={cn(
-      "relative group flex flex-col",
-      "bg-white/2 backdrop-blur-xl border border-white/5 rounded-[20px]",
-      "hover:bg-white/4 hover:border-white/10 hover:-translate-y-1 hover:shadow-2xl hover:shadow-forge-accent/5",
-      "transition-all duration-500 ease-spring-out",
-      "overflow-hidden",
-      "animate-in slide-in-from-bottom-4 fill-mode-backwards",
-      className
+      'relative group flex flex-col',
+      'bg-white/2 backdrop-blur-xl border border-white/5 rounded-[20px]',
+      'hover:bg-white/4 hover:border-white/10 hover:-translate-y-1 hover:shadow-2xl hover:shadow-forge-accent/5',
+      'transition-all duration-500 ease-spring-out',
+      'overflow-hidden',
+      'animate-in slide-in-from-bottom-4 fill-mode-backwards',
+      className,
     )}
     style={{ animationDelay: `${delay}ms` }}
   >
@@ -106,7 +106,7 @@ export const WidgetShell: React.FC<WidgetProps> = ({
       </div>
     )}
 
-    <div className={cn("flex-1", noPadding ? "" : "p-5 pt-2")}>{children}</div>
+    <div className={cn('flex-1', noPadding ? '' : 'p-5 pt-2')}>{children}</div>
   </div>
 );
 
@@ -124,18 +124,18 @@ export const Dashboard: React.FC = () => {
   // Removed insight useEffect as state is now lazy-initialized
 
   const timeString = time.toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
+    hour: '2-digit',
+    minute: '2-digit',
   });
 
   const dateString = time.toLocaleDateString([], {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
   });
 
   const hour = time.getHours();
-  const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+  const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
 
   return (
     <div className="h-full flex bg-forge-bg overflow-hidden">
@@ -146,7 +146,7 @@ export const Dashboard: React.FC = () => {
           <div className="absolute -left-20 -top-20 w-64 h-64 bg-forge-accent/10 rounded-full blur-[80px] pointer-events-none" />
 
           <h1 className="text-5xl font-display font-bold text-white mb-2 tracking-tight animate-in slide-in-from-bottom-2 duration-700">
-            {greeting},{" "}
+            {greeting},{' '}
             <span className="text-transparent bg-clip-text bg-linear-to-r from-forge-cyan to-forge-accent">
               Traveler.
             </span>
@@ -228,12 +228,12 @@ export const Dashboard: React.FC = () => {
 
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: "#000",
-                      border: "1px solid #333",
-                      borderRadius: "8px",
-                      fontSize: "12px",
+                      backgroundColor: '#000',
+                      border: '1px solid #333',
+                      borderRadius: '8px',
+                      fontSize: '12px',
                     }}
-                    itemStyle={{ color: "#fff" }}
+                    itemStyle={{ color: '#fff' }}
                   />
 
                   <Area
@@ -265,8 +265,8 @@ export const Dashboard: React.FC = () => {
                   <div
                     key={agent.id}
                     className={cn(
-                      "w-10 h-10 rounded-full border-2 border-forge-bg bg-linear-to-br flex items-center justify-center shadow-lg",
-                      agent.gradient
+                      'w-10 h-10 rounded-full border-2 border-forge-bg bg-linear-to-br flex items-center justify-center shadow-lg',
+                      agent.gradient,
                     )}
                   >
                     <agent.icon size={14} className="text-white" />
@@ -307,8 +307,8 @@ export const Dashboard: React.FC = () => {
                   <div key={item.id} className="relative pl-4">
                     <div
                       className={cn(
-                        "absolute -left-1 top-1.5 w-2 h-2 rounded-full border-2 border-forge-bg",
-                        i === 0 ? "bg-forge-cyan" : "bg-gray-700"
+                        'absolute -left-1 top-1.5 w-2 h-2 rounded-full border-2 border-forge-bg',
+                        i === 0 ? 'bg-forge-cyan' : 'bg-gray-700',
                       )}
                     />
                     <div className="text-[10px] text-gray-500 font-mono mb-0.5">{item.time}</div>
@@ -338,7 +338,7 @@ export const Dashboard: React.FC = () => {
                   className="group/card relative bg-white/5 rounded-xl p-3 hover:bg-white/10 transition-colors cursor-pointer border border-white/5"
                 >
                   <div className="flex justify-between items-start mb-2">
-                    <div className={cn("w-1.5 h-1.5 rounded-full", item.color)} />
+                    <div className={cn('w-1.5 h-1.5 rounded-full', item.color)} />
                     <ArrowUpRight
                       size={10}
                       className="text-gray-600 group-hover/card:text-white opacity-0 group-hover/card:opacity-100 transition-all"
@@ -378,7 +378,7 @@ export const Dashboard: React.FC = () => {
               {[
                 { label: "Log a reflection on 'Focus'", checked: false },
                 { label: "Review yesterday's journal", checked: true },
-                { label: "Disconnect for 20 mins", checked: false },
+                { label: 'Disconnect for 20 mins', checked: false },
               ].map((task, i) => (
                 <div
                   key={i}
@@ -386,10 +386,10 @@ export const Dashboard: React.FC = () => {
                 >
                   <div
                     className={cn(
-                      "w-4 h-4 rounded-full border flex items-center justify-center transition-colors",
+                      'w-4 h-4 rounded-full border flex items-center justify-center transition-colors',
                       task.checked
-                        ? "bg-forge-accent border-forge-accent"
-                        : "border-gray-600 group-hover:border-white"
+                        ? 'bg-forge-accent border-forge-accent'
+                        : 'border-gray-600 group-hover:border-white',
                     )}
                   >
                     {task.checked && <CheckCircle2 size={10} className="text-white" />}
@@ -397,8 +397,8 @@ export const Dashboard: React.FC = () => {
 
                   <span
                     className={cn(
-                      "text-sm",
-                      task.checked ? "text-gray-500 line-through" : "text-gray-300"
+                      'text-sm',
+                      task.checked ? 'text-gray-500 line-through' : 'text-gray-300',
                     )}
                   >
                     {task.label}

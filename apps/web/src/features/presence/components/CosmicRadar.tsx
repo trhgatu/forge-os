@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import React from "react";
+import React from 'react';
 
-import type { VisitorEcho } from "../types";
+import type { VisitorEcho } from '../types';
 
-import { RadarBlip } from "./RadarBlip";
+import { RadarBlip } from './RadarBlip';
 
 export const CosmicRadar: React.FC<{ echoes: VisitorEcho[] }> = ({ echoes }) => {
   return (
@@ -23,7 +23,7 @@ export const CosmicRadar: React.FC<{ echoes: VisitorEcho[] }> = ({ echoes }) => 
       <div className="absolute w-full h-full animate-[spin_4s_linear_infinite] pointer-events-none origin-center">
         <div
           className="w-1/2 h-1/2 bg-gradient-to-r from-transparent via-forge-cyan/10 to-forge-cyan/40 absolute top-0 left-1/2 origin-bottom-left transform -rotate-45"
-          style={{ clipPath: "polygon(0 0, 100% 0, 0 100%)" }} // Triangle slice
+          style={{ clipPath: 'polygon(0 0, 100% 0, 0 100%)' }} // Triangle slice
         />
       </div>
 

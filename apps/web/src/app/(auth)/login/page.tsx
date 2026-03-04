@@ -1,23 +1,23 @@
-"use client";
+'use client';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowRight, Lock, Mail } from "lucide-react";
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import z from "zod";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { ArrowRight, Lock, Mail } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import z from 'zod';
 
-import { authService } from "@/features/auth/services/authService";
-import { Button } from "@/shared/components/ui/Button";
-import { GlassCard } from "@/shared/components/ui/GlassCard";
-import { Input } from "@/shared/components/ui/Input";
-import { useAuthStore } from "@/shared/store/authStore";
+import { authService } from '@/features/auth/services/authService';
+import { Button } from '@/shared/components/ui/Button';
+import { GlassCard } from '@/shared/components/ui/GlassCard';
+import { Input } from '@/shared/components/ui/Input';
+import { useAuthStore } from '@/shared/store/authStore';
 
 // Schema
 const loginSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(1, "Password is required"),
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(1, 'Password is required'),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
@@ -41,13 +41,13 @@ export default function LoginPage() {
       const { user, token, refreshToken } = await authService.login(data.email, data.password);
 
       login(user, token, refreshToken);
-      toast.success("Welcome back, " + (user.name || "Traveller"));
-      router.push("/forge/dashboard");
+      toast.success('Welcome back, ' + (user.name || 'Traveller'));
+      router.push('/forge/dashboard');
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error(error);
-      const message = error.response?.data?.message || "Login failed. Check your credentials.";
+      const message = error.response?.data?.message || 'Login failed. Check your credentials.';
       toast.error(message);
     } finally {
       setIsLoading(false);
@@ -73,7 +73,7 @@ export default function LoginPage() {
               <div className="relative">
                 <Mail className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
                 <Input
-                  {...register("email")}
+                  {...register('email')}
                   placeholder="user@forge.os"
                   className="pl-9 bg-black/40 border-white/5"
                   error={!!errors.email}
@@ -91,7 +91,7 @@ export default function LoginPage() {
               <div className="relative">
                 <Lock className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
                 <Input
-                  {...register("password")}
+                  {...register('password')}
                   type="password"
                   placeholder="••••••••"
                   className="pl-9 bg-black/40 border-white/5"

@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { Activity } from "lucide-react";
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis } from "recharts";
+import { Activity } from 'lucide-react';
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis } from 'recharts';
 
-import { GlassCard } from "@/shared/components/ui/GlassCard";
-import type { MoodEntry } from "@/shared/types/mood";
+import { GlassCard } from '@/shared/components/ui/GlassCard';
+import type { MoodEntry } from '@/shared/types/mood';
 
-import { MOOD_CHART_COLOR, MOOD_CHART_GRADIENT_ID } from "../config";
+import { MOOD_CHART_COLOR, MOOD_CHART_GRADIENT_ID } from '../config';
 
 interface MoodChartProps {
   history: MoodEntry[];
@@ -14,7 +14,7 @@ interface MoodChartProps {
 
 export function MoodChart({ history }: MoodChartProps) {
   const data = history.map((entry) => ({
-    date: entry.date.toLocaleDateString([], { weekday: "short" }),
+    date: entry.date.toLocaleDateString([], { weekday: 'short' }),
     fullDate: entry.date.toLocaleDateString(),
     value: entry.intensity,
     mood: entry.mood,
@@ -48,14 +48,14 @@ export function MoodChart({ history }: MoodChartProps) {
               <Tooltip
                 labelFormatter={(label, payload) => {
                   const first = payload?.[0];
-                  if (first && typeof first.payload.fullDate === "string") {
+                  if (first && typeof first.payload.fullDate === 'string') {
                     return first.payload.fullDate;
                   }
                   return label;
                 }}
                 contentStyle={{
-                  backgroundColor: "#09090b",
-                  borderColor: "#333",
+                  backgroundColor: '#09090b',
+                  borderColor: '#333',
                   borderRadius: 8,
                   fontSize: 12,
                 }}

@@ -1,4 +1,4 @@
-import type { MoodType } from "./journal";
+import type { MoodType } from './journal';
 
 export interface MoodEntry {
   id: string;

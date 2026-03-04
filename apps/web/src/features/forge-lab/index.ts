@@ -1,2 +1,2 @@
-export * from "./components/ForgeLab";
-export * from "./types";
+export * from './components/ForgeLab';
+export * from './types';

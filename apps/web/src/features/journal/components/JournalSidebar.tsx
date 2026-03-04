@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { Search, Plus, Trash2 } from "lucide-react";
+import { Search, Plus, Trash2 } from 'lucide-react';
 
-import type { JournalEntry } from "@/features/journal/types";
-import { MOOD_COLORS } from "@/shared/constants";
-import { cn } from "@/shared/lib/utils";
+import type { JournalEntry } from '@/features/journal/types';
+import { MOOD_COLORS } from '@/shared/constants';
+import { cn } from '@/shared/lib/utils';
 export function JournalSidebar({
   entries,
   selectedId,
@@ -51,10 +51,10 @@ export function JournalSidebar({
                 key={entry.id}
                 onClick={() => onSelect(entry.id)}
                 className={cn(
-                  "group relative p-3 rounded-xl cursor-pointer border transition-all duration-200",
+                  'group relative p-3 rounded-xl cursor-pointer border transition-all duration-200',
                   selectedId === entry.id
-                    ? "bg-white/10 border-white/10 shadow-lg"
-                    : "bg-transparent border-transparent hover:bg-white/5 hover:border-white/5"
+                    ? 'bg-white/10 border-white/10 shadow-lg'
+                    : 'bg-transparent border-transparent hover:bg-white/5 hover:border-white/5',
                 )}
               >
                 {/* Delete Button - Visible on Hover */}
@@ -72,31 +72,31 @@ export function JournalSidebar({
                 <div className="flex justify-between items-start mb-1 pr-6">
                   <h4
                     className={cn(
-                      "font-medium text-sm truncate pr-2",
+                      'font-medium text-sm truncate pr-2',
                       selectedId === entry.id
-                        ? "text-white"
-                        : "text-gray-300 group-hover:text-white"
+                        ? 'text-white'
+                        : 'text-gray-300 group-hover:text-white',
                     )}
                   >
-                    {entry.title || "Untitled Entry"}
+                    {entry.title || 'Untitled Entry'}
                   </h4>
                   {entry.analysis && (
                     <div
                       className={cn(
-                        "w-1.5 h-1.5 rounded-full flex-shrink-0 mt-1.5",
-                        MOOD_COLORS[entry.mood || "neutral"].split(" ")[0].replace("text-", "bg-")
+                        'w-1.5 h-1.5 rounded-full flex-shrink-0 mt-1.5',
+                        MOOD_COLORS[entry.mood || 'neutral'].split(' ')[0].replace('text-', 'bg-'),
                       )}
                     />
                   )}
                 </div>
                 <p className="text-xs text-gray-500 line-clamp-2 mb-2 leading-relaxed">
-                  {entry.content || "Empty content"}
+                  {entry.content || 'Empty content'}
                 </p>
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] text-gray-600 font-mono">
                     {new Date(entry.createdAt).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
+                      hour: '2-digit',
+                      minute: '2-digit',
                     })}
                   </span>
                   {entry.tags.slice(0, 1).map((tag) => (

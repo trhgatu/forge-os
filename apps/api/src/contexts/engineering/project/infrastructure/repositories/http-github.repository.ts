@@ -25,8 +25,6 @@ export class HttpGithubRepository implements GithubRepository, OnModuleInit {
     }
 
     try {
-      // Dynamic import to handle ESM module in CommonJS environment
-      // Using eval to bypass TypeScript transpilation of dynamic imports to require()
       const { Octokit } = await (eval('import("@octokit/rest")') as Promise<
         typeof import('@octokit/rest')
       >);

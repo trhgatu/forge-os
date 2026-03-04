@@ -1,11 +1,11 @@
-import { Plus, Search, Filter, MoreHorizontal, Folder, Clock } from "lucide-react";
-import React from "react";
+import { Plus, Search, Filter, MoreHorizontal, Folder, Clock } from 'lucide-react';
+import React from 'react';
 
-import { GlassCard } from "@/shared/components/ui/GlassCard";
+import { GlassCard } from '@/shared/components/ui/GlassCard';
 
-import type { Project } from "../types";
+import type { Project } from '../types';
 
-import { ProjectDetail } from "./project-detail/ProjectDetail";
+import { ProjectDetail } from './project-detail/ProjectDetail';
 
 interface ProjectForgeProps {
   projects: Project[];
@@ -109,7 +109,7 @@ export const ProjectForge: React.FC<ProjectForgeProps> = ({
             <div className="pt-4 border-t border-white/5 flex items-center justify-between text-xs text-gray-500">
               <div className="flex items-center gap-1.5">
                 <div
-                  className={`w-1.5 h-1.5 rounded-full ${project.status === "active" ? "bg-emerald-500" : "bg-gray-600"}`}
+                  className={`w-1.5 h-1.5 rounded-full ${project.status === 'active' ? 'bg-emerald-500' : 'bg-gray-600'}`}
                 />
                 <span className="capitalize">{project.status}</span>
               </div>

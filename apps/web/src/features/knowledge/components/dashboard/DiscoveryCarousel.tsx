@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, ArrowRight, RefreshCcw } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { motion, AnimatePresence } from 'framer-motion';
+import { Sparkles, ArrowRight, RefreshCcw } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 
-import { useKnowledge } from "@/contexts";
-import { GlassCard } from "@/shared/components/ui/GlassCard";
+import { useKnowledge } from '@/contexts';
+import { GlassCard } from '@/shared/components/ui/GlassCard';
 
 export const DiscoveryCarousel: React.FC = () => {
   const { discoveryItems, loadDiscovery, selectConcept, isLoading } = useKnowledge();
@@ -72,7 +72,7 @@ export const DiscoveryCarousel: React.FC = () => {
             style={{
               backgroundImage: `url(https://source.unsplash.com/random/800x400?abstract,technology,${index})`,
               background: `linear-gradient(to bottom right, ${
-                ["#4f46e5", "#8b5cf6", "#ec4899", "#06b6d4"][index % 4]
+                ['#4f46e5', '#8b5cf6', '#ec4899', '#06b6d4'][index % 4]
               }33, #000000)`,
             }}
           />
@@ -110,7 +110,7 @@ export const DiscoveryCarousel: React.FC = () => {
               </h3>
               <p className="text-gray-300 text-sm md:text-base line-clamp-2 mb-6 max-w-md h-[3rem]">
                 {currentItem.extract ||
-                  "Click to unfold the details of this concept and integrate it into your knowledge graph."}
+                  'Click to unfold the details of this concept and integrate it into your knowledge graph.'}
               </p>
 
               <div className="flex items-center gap-2 text-forge-cyan text-xs font-bold uppercase tracking-wider group-hover:gap-4 transition-all duration-300">
@@ -125,9 +125,9 @@ export const DiscoveryCarousel: React.FC = () => {
       <div className="absolute bottom-0 left-0 w-full h-1 bg-white/5">
         <motion.div
           key={index}
-          initial={{ width: "0%" }}
-          animate={{ width: "100%" }}
-          transition={{ duration: 8, ease: "linear" }}
+          initial={{ width: '0%' }}
+          animate={{ width: '100%' }}
+          transition={{ duration: 8, ease: 'linear' }}
           className="h-full bg-forge-cyan/50"
         />
       </div>

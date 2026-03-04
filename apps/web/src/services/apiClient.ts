@@ -1,10 +1,10 @@
 // services/apiClient.ts
-import axios from "axios";
+import axios from 'axios';
 
-import { useAuthStore } from "@/shared/store/authStore";
+import { useAuthStore } from '@/shared/store/authStore';
 
 const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL ?? "/api",
+  baseURL: process.env.NEXT_PUBLIC_API_URL ?? '/api',
   timeout: 15_000,
   withCredentials: true,
 });
@@ -27,7 +27,7 @@ apiClient.interceptors.response.use(
       // Optionally redirect to login, but usually the UI reacts to state change
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export { apiClient };

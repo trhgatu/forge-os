@@ -1,12 +1,11 @@
-import { Cpu, Activity, Clock, History, Users } from "lucide-react";
-import Image from "next/image";
-import React from "react";
+import { Cpu, Activity, Clock, History, Users } from 'lucide-react';
+import Image from 'next/image';
+import React from 'react';
 
+import { GlassCard } from '@/shared/components/ui/GlassCard';
+import { cn } from '@/shared/lib/utils';
 
-import { GlassCard } from "@/shared/components/ui/GlassCard";
-import { cn } from "@/shared/lib/utils";
-
-import type { Project } from "../../../types";
+import type { Project } from '../../../types';
 
 interface ProjectOverviewTabProps {
   project: Project;
@@ -80,7 +79,7 @@ export const ProjectOverviewTab: React.FC<ProjectOverviewTabProps> = ({ project 
                   Current Milestone
                 </div>
                 <div className="text-sm font-bold text-white max-w-[120px] truncate">
-                  {project.currentMilestone?.title || "Phase 1 Init"}
+                  {project.currentMilestone?.title || 'Phase 1 Init'}
                 </div>
               </div>
               <div className="text-right">
@@ -157,15 +156,15 @@ export const ProjectOverviewTab: React.FC<ProjectOverviewTabProps> = ({ project 
                   {(() => {
                     const total = Object.values(project.githubStats!.languages!).reduce(
                       (a, b) => a + b,
-                      0
+                      0,
                     );
                     const colors = [
-                      "bg-blue-500",
-                      "bg-yellow-400",
-                      "bg-red-500",
-                      "bg-purple-500",
-                      "bg-green-500",
-                      "bg-gray-500",
+                      'bg-blue-500',
+                      'bg-yellow-400',
+                      'bg-red-500',
+                      'bg-purple-500',
+                      'bg-green-500',
+                      'bg-gray-500',
                     ];
                     return Object.entries(project.githubStats!.languages!).map(
                       ([lang, bytes], i) => (
@@ -175,19 +174,19 @@ export const ProjectOverviewTab: React.FC<ProjectOverviewTabProps> = ({ project 
                           className={colors[i % colors.length]}
                           title={`${lang}: ${Math.round((bytes / total) * 100)}%`}
                         />
-                      )
+                      ),
                     );
                   })()}
                 </div>
                 <div className="flex flex-wrap gap-x-4 gap-y-1">
                   {(() => {
                     const colors = [
-                      "bg-blue-500",
-                      "bg-yellow-400",
-                      "bg-red-500",
-                      "bg-purple-500",
-                      "bg-green-500",
-                      "bg-gray-500",
+                      'bg-blue-500',
+                      'bg-yellow-400',
+                      'bg-red-500',
+                      'bg-purple-500',
+                      'bg-green-500',
+                      'bg-gray-500',
                     ];
                     return Object.keys(project.githubStats!.languages!).map((lang, i) => (
                       <div
@@ -235,7 +234,7 @@ export const ProjectOverviewTab: React.FC<ProjectOverviewTabProps> = ({ project 
                       const activityCount =
                         project.githubStats.commitActivity?.reduce(
                           (acc, curr) => acc + curr.count,
-                          0
+                          0,
                         ) || 0;
                       const recentCount = project.githubStats.recentCommits?.length || 0;
                       const displayCount = activityCount > 0 ? activityCount : recentCount;
@@ -244,8 +243,8 @@ export const ProjectOverviewTab: React.FC<ProjectOverviewTabProps> = ({ project 
                       return (
                         <>
                           {displayCount}
-                          {isEstimate ? "+" : ""} commits{" "}
-                          {isEstimate ? "recently" : "in the last year"}
+                          {isEstimate ? '+' : ''} commits{' '}
+                          {isEstimate ? 'recently' : 'in the last year'}
                         </>
                       );
                     })()}
@@ -298,7 +297,7 @@ export const ProjectOverviewTab: React.FC<ProjectOverviewTabProps> = ({ project 
 
                         const cellDate = new Date();
                         cellDate.setDate(
-                          today.getDate() - weekOffset * 7 + (rowIndex - today.getDay())
+                          today.getDate() - weekOffset * 7 + (rowIndex - today.getDay()),
                         );
                         // Adjustment: Calendar usually aligns rows as Sun(0)-Sat(6).
                         // rowIndex 0-6.
@@ -309,19 +308,19 @@ export const ProjectOverviewTab: React.FC<ProjectOverviewTabProps> = ({ project 
 
                         const color =
                           count === 0
-                            ? "bg-white/5"
+                            ? 'bg-white/5'
                             : count <= 2
-                              ? "bg-emerald-900/40"
+                              ? 'bg-emerald-900/40'
                               : count <= 5
-                                ? "bg-emerald-600/60"
+                                ? 'bg-emerald-600/60'
                                 : count <= 10
-                                  ? "bg-emerald-500/80"
-                                  : "bg-emerald-400";
+                                  ? 'bg-emerald-500/80'
+                                  : 'bg-emerald-400';
 
                         return (
                           <div
                             key={rowIndex}
-                            className={cn("w-3 h-3 rounded-[2px] transition-all", color)}
+                            className={cn('w-3 h-3 rounded-[2px] transition-all', color)}
                             title={`${dateStr}: ${count} commits`}
                           />
                         );
@@ -370,8 +369,8 @@ export const ProjectOverviewTab: React.FC<ProjectOverviewTabProps> = ({ project 
                       <div className="flex items-center gap-2 text-[10px] text-gray-500">
                         <span className="font-mono text-xs text-emerald-500/80">
                           {new Date(commit.date).toLocaleDateString(undefined, {
-                            month: "short",
-                            day: "numeric",
+                            month: 'short',
+                            day: 'numeric',
                           })}
                         </span>
                         <span>by</span>

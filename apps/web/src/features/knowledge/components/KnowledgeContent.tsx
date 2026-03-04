@@ -1,12 +1,12 @@
 // features/knowledge/components/KnowledgeContent.tsx
-"use client";
+'use client';
 
-import React from "react";
+import React from 'react';
 
-import { useKnowledge } from "../../../contexts/KnowledgeContext";
+import { useKnowledge } from '../../../contexts/KnowledgeContext';
 
-import { KnowledgeDashboard } from "./dashboard/KnowledgeDashboard";
-import { KnowledgeDetail } from "./KnowledgeDetail";
+import { KnowledgeDashboard } from './dashboard/KnowledgeDashboard';
+import { KnowledgeDetail } from './KnowledgeDetail';
 
 const KnowledgeContent: React.FC = () => {
   const { activeConcept, clearActive } = useKnowledge();
@@ -21,8 +21,8 @@ const KnowledgeContent: React.FC = () => {
           className="absolute inset-0 opacity-[0.03]"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
+              'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)',
+            backgroundSize: '60px 60px',
           }}
         />
         <div className="absolute inset-0 bg-[url('https://grainy-linears.vercel.app/noise.svg')] opacity-10 mix-blend-overlay" />

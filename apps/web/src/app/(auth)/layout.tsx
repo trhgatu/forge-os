@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import React from "react";
+import React from 'react';
 
-import { LanguageProvider, SoundProvider, NovaViewProvider } from "@/contexts";
-import { NovaGuideWrapper } from "@/features/nova/components/NovaGuideWrapper";
+import { LanguageProvider, SoundProvider, NovaViewProvider } from '@/contexts';
+import { NovaGuideWrapper } from '@/features/nova/components/NovaGuideWrapper';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (

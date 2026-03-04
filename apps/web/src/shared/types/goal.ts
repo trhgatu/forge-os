@@ -1,5 +1,5 @@
-export type GoalType = "life" | "project" | "micro";
-export type GoalStatus = "not_started" | "in_progress" | "paused" | "completed";
+export type GoalType = 'life' | 'project' | 'micro';
+export type GoalStatus = 'not_started' | 'in_progress' | 'paused' | 'completed';
 
 export interface Milestone {
   id: string;
