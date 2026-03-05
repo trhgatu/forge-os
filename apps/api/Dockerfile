@@ -1,4 +1,4 @@
-FROM node:20-alpine AS base
+FROM node:25-alpine AS base
 RUN npm install -g pnpm
 WORKDIR /app
 
@@ -8,7 +8,7 @@ RUN pnpm install --frozen-lockfile
 RUN pnpm --filter @forge/api build
 RUN pnpm --filter @forge/api --prod deploy isolated
 
-FROM node:20-alpine AS runner
+FROM node:25-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
