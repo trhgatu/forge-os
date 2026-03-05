@@ -23,7 +23,6 @@ export interface ProjectResponse {
   isDeleted: boolean;
   deletedAt: string | null;
 
-  // Frontend Compatibility Fields (mapped from metadata)
   technologies?: string[];
   currentMilestone?: {
     id: string;

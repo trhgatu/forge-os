@@ -1,4 +1,4 @@
-import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject, NotFoundException } from '@nestjs/common';
 import { SyncProjectCommand } from '../commands/sync-project.command';
 import { ProjectRepository } from '../ports/project.repository';
@@ -6,33 +6,34 @@ import { GithubRepository } from '../ports/github.repository';
 import { ProjectLink } from '../../domain/project.interfaces';
 import { Project } from '../../domain/project.entity';
 import { LoggerService } from '@shared/logging/logger.service';
-import { ProjectSyncedEvent } from '../../domain/events/project-synced.event';
-import { CacheService } from '@shared/services';
+import { ActivityStreamService } from '@shared/insfrastructure/redis/activity-stream.service';
 // import { ProjectResponse } from '../../presentation/dto/project.response';
+import { CacheService } from '@shared/services';
 
 @CommandHandler(SyncProjectCommand)
 export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
-  // private readonly logger = new Logger(SyncProjectHandler.name);
-
   constructor(
     @Inject('ProjectRepository')
     private readonly projectRepository: ProjectRepository,
     @Inject('GithubRepository')
     private readonly githubRepository: GithubRepository,
+    private readonly activityStream: ActivityStreamService,
     private readonly logger: LoggerService,
-    private readonly eventBus: EventBus,
     private readonly cacheService: CacheService,
   ) {}
 
   async execute(command: SyncProjectCommand): Promise<Project> {
-    const { id } = command;
-    const project = await this.projectRepository.findById(id);
+    const { payload } = command;
+    const userId = payload.userId;
+    const id = payload.id;
+    const project = await this.projectRepository.findById(payload.id);
+
+    console.log(`test: ${project}`);
 
     if (!project) {
-      throw new NotFoundException(`Project with ID ${id} not found`);
+      throw new NotFoundException(`Project with ID ${payload.id} not found`);
     }
 
-    // Extract owner/repo from metadata or links
     let owner: string | undefined;
     let repo: string | undefined;
 
@@ -52,16 +53,15 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
     }
 
     if (!owner || !repo) {
-      this.logger.warn(`Project ${id} has no GitHub info to sync`);
+      this.logger.warn(`Project ${payload.id} has no GitHub info to sync`);
       return project;
     }
 
-    this.logger.log(`Syncing project ${id} with GitHub ${owner}/${repo}`);
+    this.logger.log(`Syncing project ${payload.id} with GitHub ${owner}/${repo}`);
 
     try {
       const repoDetails = await this.githubRepository.getRepoDetails(owner, repo);
 
-      // Update Project Entity via public method
       project.updateInfo({
         githubStats: {
           stars: repoDetails.stars,
@@ -85,31 +85,25 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
         },
       });
 
-      // Add System Log
       const newCommitCount = repoDetails.recentCommits?.length || 0;
       project.addLog({
         date: new Date(),
         type: 'update',
         content: `Synced with GitHub. Fetched ${newCommitCount} recent commits and updated stats.`,
       });
-
-      // Save
       await this.projectRepository.save(project);
-
-      // Invalidate Cache
       await this.cacheService.deleteByPattern('projects:*');
 
-      this.eventBus.publish(
-        new ProjectSyncedEvent(
-          id.toString(),
-          'system', // TODO: Pass real userId from command
-          repoDetails,
-          newCommitCount,
-          new Date(),
-        ),
-      );
+      await this.activityStream.emit('engineering.project.synced', userId, {
+        id: payload.id.toString(),
+        owner,
+        repo,
+        commitCount: newCommitCount,
+      });
 
-      this.logger.log(`Project ${id} synced successfully`);
+      this.logger.log(
+        `Project synced and streamed: "${project.title}" (ID: ${payload.id.toString()}) with GitHub ${owner}/${repo}`,
+      );
       return project;
     } catch (error: any) {
       this.logger.error(`Failed to sync project ${id}`, (error as Error).stack); // Type cast for safety
