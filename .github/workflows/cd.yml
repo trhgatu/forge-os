@@ -11,6 +11,7 @@ on:
       - '.github/workflows/cd.yml'
       - 'package.json'
       - 'pnpm-workspace.yaml'
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -37,7 +38,8 @@ jobs:
           push: true
           tags: |
             trhgatu/forge-os-backend:${{ github.ref_name }}
-            trhgatu/forge-os-backend:latest
+            ${{ github.ref_name == 'main' && 'trhgatu/forge-os-backend:latest' || '' }}
+            ${{ github.ref_name == 'develop' && 'trhgatu/forge-os-backend:dev-latest' || '' }}
           cache-from: type=registry,ref=trhgatu/forge-os-backend:buildcache
           cache-to: type=registry,ref=trhgatu/forge-os-backend:buildcache,mode=max
 
