@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
+import { DiscoveryModule } from '@nestjs/core';
 import { BullModule } from '@nestjs/bullmq';
 import { MongooseModule } from '@nestjs/mongoose';
 import { GamificationController } from './presentation/gamification.controller';
@@ -10,10 +11,13 @@ import { AwardXpHandler } from './application/handlers/award-xp.handler';
 import { GetUserStatsHandler } from './application/queries/get-user-stats.query';
 import { GamificationGateway } from './presentation/gamification.gateway';
 import { XpAwardingProcessor } from './application/processors/xp-awarding.processor';
+import { ProjectCreatedXpStrategy } from './application/strategies/engineering/project-created.strategy';
+import { GithubSyncXpStrategy } from './application/strategies/engineering/github-sync.strategy';
 
 @Module({
   imports: [
     CqrsModule,
+    DiscoveryModule,
     MongooseModule.forFeature([{ name: UserStatsModel.name, schema: UserStatsSchema }]),
     AuthModule,
     BullModule.registerQueue({
@@ -23,6 +27,8 @@ import { XpAwardingProcessor } from './application/processors/xp-awarding.proces
   controllers: [GamificationController],
   providers: [
     AwardXpHandler,
+    ProjectCreatedXpStrategy,
+    GithubSyncXpStrategy,
     GetUserStatsHandler,
     GamificationGateway,
     XpAwardingProcessor,
