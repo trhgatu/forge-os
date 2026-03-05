@@ -28,8 +28,6 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
     const id = payload.id;
     const project = await this.projectRepository.findById(payload.id);
 
-    console.log(`test: ${project}`);
-
     if (!project) {
       throw new NotFoundException(`Project with ID ${payload.id} not found`);
     }
