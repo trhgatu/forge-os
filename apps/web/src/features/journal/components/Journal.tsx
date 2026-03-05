@@ -107,10 +107,6 @@ export function Journal() {
         type: JournalType.THOUGHT,
         tags: [],
       });
-      // eslint-disable-next-line no-console
-      console.log('Created new entry:', newEntry);
-
-      // Select the new entry after creation
       setSelectedId(newEntry.id);
     } catch (error) {
       console.error('Failed to create entry', error);

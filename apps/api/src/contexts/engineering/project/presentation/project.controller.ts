@@ -127,9 +127,9 @@ export class ProjectController {
 
   @Post(':id/sync')
   @Permissions(PermissionEnum.UPDATE_PROJECT)
-  async sync(@Param('id') id: string) {
+  async sync(@Param('id') id: string, @User('id') userId: string) {
     const project = (await this.commandBus.execute(
-      new SyncProjectCommand(ProjectId.create(id)),
+      new SyncProjectCommand({ id: ProjectId.create(id), userId }),
     )) as Project;
     return ProjectPresenter.toResponse(project);
   }
