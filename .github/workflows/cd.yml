@@ -39,7 +39,6 @@ jobs:
           tags: |
             trhgatu/forge-os-backend:${{ github.ref_name }}
             ${{ github.ref_name == 'main' && 'trhgatu/forge-os-backend:latest' || '' }}
-            ${{ github.ref_name == 'develop' && 'trhgatu/forge-os-backend:dev-latest' || '' }}
           cache-from: type=registry,ref=trhgatu/forge-os-backend:buildcache
           cache-to: type=registry,ref=trhgatu/forge-os-backend:buildcache,mode=max
 
