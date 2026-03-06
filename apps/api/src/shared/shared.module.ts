@@ -14,7 +14,7 @@ import { ACTIVITY_STREAM_PORT } from './ports/activity-stream.port';
     StreamBridgeService,
     {
       provide: ACTIVITY_STREAM_PORT,
-      useClass: ActivityStreamService,
+      useExisting: ActivityStreamService,
     },
   ],
   exports: [CacheService, ActivityStreamService, StreamBridgeService, ACTIVITY_STREAM_PORT],

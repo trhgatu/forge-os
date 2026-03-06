@@ -34,21 +34,14 @@ export class CreateProjectHandler implements ICommandHandler<CreateProjectComman
       projectId,
     );
 
-    console.time('ProjectRepo.save');
     await this.projectRepository.save(project);
-    console.timeEnd('ProjectRepo.save');
-
-    console.time('Cache.deleteByPattern');
     await this.cacheService.deleteByPattern('projects:*');
-    console.timeEnd('Cache.deleteByPattern');
 
-    console.time('ActivityStream.emit');
     await this.activityStream.emit('engineering.project.created', userId, {
       projectId: projectId.toString(),
       title: project.title,
       createdAt: new Date(),
     });
-    console.timeEnd('ActivityStream.emit');
 
     this.logger.log(
       `Project created: "${project.title}" (ID: ${projectId.toString()})`,

@@ -11,6 +11,7 @@ export class StreamBridgeService implements OnModuleInit, OnModuleDestroy {
   private readonly CONSUMER_NAME = `bridge_worker_${process.pid}`;
 
   private subscriber!: Redis;
+  private isDestroyed = false;
 
   constructor(
     @Inject('REDIS_CLIENT') private readonly redis: Redis,
@@ -25,6 +26,7 @@ export class StreamBridgeService implements OnModuleInit, OnModuleDestroy {
   }
 
   onModuleDestroy() {
+    this.isDestroyed = true;
     if (this.subscriber) {
       void this.subscriber.quit();
     }
@@ -41,7 +43,7 @@ export class StreamBridgeService implements OnModuleInit, OnModuleDestroy {
   }
 
   private async pollStream(): Promise<void> {
-    while (true) {
+    while (!this.isDestroyed) {
       try {
         const result = (await this.subscriber.xreadgroup(
           'GROUP',

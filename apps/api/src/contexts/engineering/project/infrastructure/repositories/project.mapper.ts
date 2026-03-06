@@ -10,13 +10,13 @@ import {
 
 export class ProjectMapper {
   static toDomain(doc: ProjectDocument): Project {
-    const rawId = doc._id as unknown as Types.ObjectId | { $oid: string };
+    const rawId = doc._id as unknown as Types.ObjectId | { $oid: string } | undefined;
+    if (!rawId) throw new Error('Project load failed: Missing _id');
+
     const id =
       typeof rawId === 'object' && '$oid' in rawId
         ? (rawId as { $oid: string }).$oid
         : rawId.toString();
-
-    if (!id) throw new Error('Project load failed: Missing _id');
 
     return Project.createFromPersistence({
       id,

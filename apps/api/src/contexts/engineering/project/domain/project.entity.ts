@@ -123,13 +123,26 @@ export class Project {
   }
 
   extractGithubInfo(): { owner: string; repo: string } | null {
-    const githubLink = this.props.links?.find((l) => l.url?.includes('github.com'));
+    const githubLink = this.props.links?.find((l) => {
+      try {
+        const url = new URL(l.url);
+        return url.hostname === 'github.com';
+      } catch {
+        return false;
+      }
+    });
+
     if (githubLink) {
-      const parts = githubLink.url.split('github.com/');
-      if (parts[1]) {
-        const [owner, repoRaw] = parts[1].split('/');
-        const repo = repoRaw?.replace(/\.git$/, '');
-        if (owner && repo) return { owner, repo };
+      try {
+        const url = new URL(githubLink.url);
+        const parts = url.pathname.split('/').filter(Boolean);
+        if (parts.length >= 2) {
+          const owner = parts[0];
+          const repo = parts[1].replace(/\.git$/, '');
+          if (owner && repo) return { owner, repo };
+        }
+      } catch {
+        // Ignored, fallback to metadata
       }
     }
 

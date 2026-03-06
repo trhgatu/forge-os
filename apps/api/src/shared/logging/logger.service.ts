@@ -1,5 +1,6 @@
 import { Injectable, LoggerService as NestLoggerService } from '@nestjs/common';
 import * as winston from 'winston';
+import * as util from 'util';
 import 'winston-daily-rotate-file';
 
 @Injectable()
@@ -57,7 +58,17 @@ export class LoggerService implements NestLoggerService {
   ): { msg: string; context?: string; extra?: Record<string, unknown> } {
     if (typeof message === 'object' && message !== null) {
       const { message: msg, context, ...rest } = message;
-      return { msg: String(msg ?? JSON.stringify(message)), context, extra: rest };
+      let safeMsg = '';
+      if (msg !== undefined) {
+        safeMsg = String(msg);
+      } else {
+        try {
+          safeMsg = JSON.stringify(message);
+        } catch {
+          safeMsg = util.inspect(message);
+        }
+      }
+      return { msg: safeMsg, context, extra: rest };
     }
     const context = typeof contextOrParams === 'string' ? contextOrParams : undefined;
     return { msg: String(message), context };
@@ -69,7 +80,6 @@ export class LoggerService implements NestLoggerService {
   }
 
   error(message: any, ...optionalParams: any[]): void {
-    // NestJS: error(message, trace?, context?)
     const trace = typeof optionalParams[0] === 'string' ? optionalParams[0] : undefined;
     const context =
       typeof optionalParams[1] === 'string'
