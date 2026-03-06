@@ -122,9 +122,23 @@ export class Project {
     this.props.updatedAt = new Date();
   }
 
-  // ============
-  //   GETTERS
-  // ============
+  extractGithubInfo(): { owner: string; repo: string } | null {
+    const githubLink = this.props.links?.find((l) => l.url?.includes('github.com'));
+    if (githubLink) {
+      const parts = githubLink.url.split('github.com/');
+      if (parts[1]) {
+        const [owner, repoRaw] = parts[1].split('/');
+        const repo = repoRaw?.replace(/\.git$/, '');
+        if (owner && repo) return { owner, repo };
+      }
+    }
+
+    const owner = this.props.metadata?.owner as string | undefined;
+    const repo = this.props.metadata?.repo as string | undefined;
+    if (owner && repo) return { owner, repo };
+
+    return null;
+  }
 
   get title() {
     return this.props.title;
@@ -172,10 +186,6 @@ export class Project {
   get deletedDate() {
     return this.deletedAt;
   }
-
-  // ============
-  //   SERIALIZATION
-  // ============
 
   toPersistence() {
     return {

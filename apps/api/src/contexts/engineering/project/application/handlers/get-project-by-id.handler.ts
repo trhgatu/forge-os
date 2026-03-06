@@ -7,8 +7,6 @@ import { LoggerService } from '@shared/logging/logger.service';
 
 @QueryHandler(GetProjectByIdQuery)
 export class GetProjectByIdHandler implements IQueryHandler<GetProjectByIdQuery> {
-  // private readonly logger = new Logger(GetProjectByIdHandler.name);
-
   constructor(
     @Inject('ProjectRepository')
     private readonly projectRepository: ProjectRepository,

@@ -4,7 +4,6 @@ import { toast } from 'sonner';
 import { forgeApi } from '../api';
 import type { Project } from '../types';
 
-// Keys for cache management
 export const projectKeys = {
   all: ['projects'] as const,
   lists: () => [...projectKeys.all, 'list'] as const,
@@ -24,7 +23,7 @@ export const useProject = (id: string) => {
     queryKey: projectKeys.detail(id),
     queryFn: () => forgeApi.getProject(id),
     enabled: !!id,
-    staleTime: 5 * 60 * 1000, // Keep summary fresh for 5 mins
+    staleTime: 5 * 60 * 1000,
   });
 };
 
@@ -61,7 +60,6 @@ export const useProjectLogs = (id: string, page = 1, enabled = false) => {
     queryKey: [...projectKeys.detail(id), 'logs', page],
     queryFn: () => forgeApi.getProjectLogs(id, page),
     enabled: !!id && enabled,
-    // keepPreviousData: true, // Deprecated in v5, use placeholderData
   });
 };
 
@@ -88,12 +86,7 @@ export const useUpdateProject = () => {
     mutationFn: ({ id, data }: { id: string; data: Partial<Project> }) =>
       forgeApi.updateProject(id, data),
     onSuccess: (updatedProject) => {
-      // toast.success("Project updated successfully");
-
-      // Update Detail Cache
       queryClient.setQueryData(projectKeys.detail(updatedProject.id), updatedProject);
-
-      // Invalidate List to refresh summaries
       queryClient.invalidateQueries({ queryKey: projectKeys.lists() });
     },
     onError: (error) => {
@@ -127,10 +120,8 @@ export const useSyncProject = () => {
     onSuccess: (syncedProject) => {
       toast.success('Project synced with GitHub!');
 
-      // Update Detail Cache
       queryClient.setQueryData(projectKeys.detail(syncedProject.id), syncedProject);
 
-      // Also update stats cache if sync returns fresh stats
       if (syncedProject.githubStats) {
         queryClient.setQueryData(projectKeys.stats(syncedProject.id), syncedProject.githubStats);
       }

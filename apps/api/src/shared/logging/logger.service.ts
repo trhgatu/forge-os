@@ -4,7 +4,7 @@ import 'winston-daily-rotate-file';
 
 @Injectable()
 export class LoggerService implements NestLoggerService {
-  private logger: winston.Logger;
+  private readonly winston: winston.Logger;
 
   constructor() {
     const isProduction = process.env.NODE_ENV === 'production';
@@ -18,7 +18,13 @@ export class LoggerService implements NestLoggerService {
             winston.format.printf(
               ({ timestamp, level, message, context, traceId, trace, stack }) => {
                 const stackTrace = trace || stack;
-                return `${timestamp} [${level}] ${context ? `[${context}] ` : ''}${message}${traceId ? ` [traceId=${traceId}]` : ''}${stackTrace ? `\n${stackTrace}` : ''}`;
+                return (
+                  `${timestamp} [${level}]` +
+                  `${context ? ` [${context}]` : ''}` +
+                  ` ${message}` +
+                  `${traceId ? ` [traceId=${traceId}]` : ''}` +
+                  `${stackTrace ? `\n${stackTrace}` : ''}`
+                );
               },
             ),
           ),
@@ -33,29 +39,65 @@ export class LoggerService implements NestLoggerService {
       format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
     });
 
-    this.logger = winston.createLogger({
+    this.winston = winston.createLogger({
       level: isProduction ? 'info' : 'debug',
       transports: [new winston.transports.Console({ format: consoleFormat }), fileTransport],
     });
   }
 
-  log(message: string, context?: string) {
-    this.logger.info(message, { context });
+  /**
+   * Normalize NestJS Logger args — NestJS can pass:
+   *   log(message: string, context?: string)
+   *   log(message: object)
+   *   log(message: string, ...optionalParams: any[])
+   */
+  private normalize(
+    message: any,
+    contextOrParams?: any,
+  ): { msg: string; context?: string; extra?: Record<string, unknown> } {
+    if (typeof message === 'object' && message !== null) {
+      const { message: msg, context, ...rest } = message;
+      return { msg: String(msg ?? JSON.stringify(message)), context, extra: rest };
+    }
+    const context = typeof contextOrParams === 'string' ? contextOrParams : undefined;
+    return { msg: String(message), context };
   }
 
-  error(message: string, trace?: string, context?: string, traceId?: string) {
-    this.logger.error(message, { trace, context, traceId });
+  log(message: any, ...optionalParams: any[]): void {
+    const { msg, context, extra } = this.normalize(message, optionalParams[0]);
+    this.winston.info(msg, { context, ...extra });
   }
 
-  warn(message: string, context?: string) {
-    this.logger.warn(message, { context });
+  error(message: any, ...optionalParams: any[]): void {
+    // NestJS: error(message, trace?, context?)
+    const trace = typeof optionalParams[0] === 'string' ? optionalParams[0] : undefined;
+    const context =
+      typeof optionalParams[1] === 'string'
+        ? optionalParams[1]
+        : typeof optionalParams[0] === 'string' && !trace
+          ? optionalParams[0]
+          : undefined;
+    const { msg, extra } = this.normalize(message);
+    this.winston.error(msg, { trace, context, ...extra });
   }
 
-  debug(message: string, context?: string) {
-    this.logger.debug(message, { context });
+  warn(message: any, ...optionalParams: any[]): void {
+    const { msg, context, extra } = this.normalize(message, optionalParams[0]);
+    this.winston.warn(msg, { context, ...extra });
   }
 
-  verbose(message: string, context?: string) {
-    this.logger.verbose(message, { context });
+  debug(message: any, ...optionalParams: any[]): void {
+    const { msg, context, extra } = this.normalize(message, optionalParams[0]);
+    this.winston.debug(msg, { context, ...extra });
+  }
+
+  verbose(message: any, ...optionalParams: any[]): void {
+    const { msg, context, extra } = this.normalize(message, optionalParams[0]);
+    this.winston.verbose(msg, { context, ...extra });
+  }
+
+  fatal(message: any, ...optionalParams: any[]): void {
+    const { msg, context, extra } = this.normalize(message, optionalParams[0]);
+    this.winston.error(msg, { context, level: 'fatal', ...extra });
   }
 }

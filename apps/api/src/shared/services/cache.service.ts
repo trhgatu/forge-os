@@ -1,6 +1,6 @@
 // src/shared/services/cache.service.ts
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { RedisClientType } from 'redis';
+import { Redis } from 'ioredis';
 import { REDIS_CLIENT } from '@config/redis.provider';
 
 @Injectable()
@@ -9,7 +9,7 @@ export class CacheService {
 
   constructor(
     @Inject(REDIS_CLIENT)
-    private readonly client: RedisClientType,
+    private readonly client: Redis,
   ) {}
 
   async get<T = unknown>(key: string): Promise<T | null> {
@@ -30,7 +30,7 @@ export class CacheService {
 
   async set<T>(key: string, data: T, ttlSeconds = 60): Promise<void> {
     try {
-      await this.client.setEx(key, ttlSeconds, JSON.stringify(data));
+      await this.client.setex(key, ttlSeconds, JSON.stringify(data));
     } catch (err) {
       this.logger.error(`Redis set error (key: ${key}): ${err}`);
     }

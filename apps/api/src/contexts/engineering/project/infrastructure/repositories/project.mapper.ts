@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { Project as ProjectEntity } from '../../domain/project.entity';
+import { Project } from '../../domain/project.entity';
 import { ProjectDocument } from '../project.schema';
 import {
   GithubRepoDetails,
@@ -9,46 +9,36 @@ import {
 } from '../../domain/project.interfaces';
 
 export class ProjectMapper {
-  static toDomain(doc: ProjectDocument): ProjectEntity {
-    // Determine the ID: if available as string or ObjectId or { $oid: ... } legacy import
-    let id = (doc as any)._id;
-    if (!id) {
-      throw new Error('Project load failed: Missing _id');
-    }
-    if (typeof id === 'object' && id && '$oid' in id) {
-      id = (id as any).$oid;
-    } else {
-      id = id.toString();
-    }
+  static toDomain(doc: ProjectDocument): Project {
+    const rawId = doc._id as unknown as Types.ObjectId | { $oid: string };
+    const id =
+      typeof rawId === 'object' && '$oid' in rawId
+        ? (rawId as { $oid: string }).$oid
+        : rawId.toString();
 
-    // Force casting for complex objects that suffer from Schema vs Domain inconsistencies
-    // especially Date vs String in nested objects or Enum strictness
-    const githubStats = doc.githubStats as unknown as GithubRepoDetails;
-    const taskBoard = doc.taskBoard as unknown as ProjectTaskBoard;
-    const links = (doc.links || []) as unknown as ProjectLink[];
-    const logs = (doc.logs || []) as unknown as ProjectLog[];
+    if (!id) throw new Error('Project load failed: Missing _id');
 
-    return ProjectEntity.createFromPersistence({
+    return Project.createFromPersistence({
       id,
       title: doc.title,
       description: doc.description,
-      status: doc.status as any, // Cast to match Domain Status Enum if needed
-      tags: doc.tags || [],
-      isPinned: doc.isPinned || false,
-      githubStats: githubStats || {},
-      metadata: doc.metadata || {},
-      progress: doc.progress || 0,
-      taskBoard: taskBoard || { todo: [], inProgress: [], done: [] },
-      links: links || [],
-      logs: logs || [],
-      createdAt: (doc as any).createdAt || new Date(),
-      updatedAt: (doc as any).updatedAt || new Date(),
-      isDeleted: (doc as any).isDeleted || false,
-      deletedAt: (doc as any).deletedAt,
+      status: doc.status,
+      tags: doc.tags ?? [],
+      isPinned: doc.isPinned ?? false,
+      githubStats: (doc.githubStats ?? {}) as unknown as GithubRepoDetails,
+      metadata: doc.metadata ?? {},
+      progress: doc.progress ?? 0,
+      taskBoard: (doc.taskBoard ?? { todo: [], inProgress: [], done: [] }) as ProjectTaskBoard,
+      links: (doc.links ?? []) as ProjectLink[],
+      logs: (doc.logs ?? []) as ProjectLog[],
+      createdAt: doc.createdAt ?? new Date(),
+      updatedAt: doc.updatedAt ?? new Date(),
+      isDeleted: doc.isDeleted ?? false,
+      deletedAt: doc.deletedAt,
     });
   }
 
-  static toPersistence(entity: ProjectEntity): Partial<ProjectDocument> {
+  static toPersistence(entity: Project): Partial<ProjectDocument> {
     const props = entity.toPersistence();
     return {
       _id: new Types.ObjectId(entity.id.toString()),
@@ -65,6 +55,6 @@ export class ProjectMapper {
       logs: props.logs,
       isDeleted: props.isDeleted,
       deletedAt: props.deletedAt,
-    } as any;
+    } as unknown as Partial<ProjectDocument>;
   }
 }

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CqrsModule } from '@nestjs/cqrs';
-import { Project, ProjectSchema } from './infrastructure/project.schema';
+import { ProjectSchema } from './infrastructure/project.schema';
 import { ProjectController } from './presentation/project.controller';
 import { CommandHandlers, QueryHandlers } from './application/handlers';
 import { MongoProjectRepository } from './infrastructure/repositories/mongo-project.repository';
@@ -10,7 +10,7 @@ import { SharedModule } from '@shared/shared.module';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Project.name, schema: ProjectSchema }]),
+    MongooseModule.forFeature([{ name: 'Project', schema: ProjectSchema }]),
     CqrsModule,
     SharedModule,
   ],
