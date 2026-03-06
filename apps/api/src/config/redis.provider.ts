@@ -1,4 +1,4 @@
-import { createClient, RedisClientType } from 'redis';
+import { Redis } from 'ioredis';
 import { ConfigService } from '@nestjs/config';
 import { Logger, Provider } from '@nestjs/common';
 
@@ -9,13 +9,15 @@ export const RedisProvider: Provider = {
   inject: [ConfigService],
   useFactory: async (configService: ConfigService) => {
     const logger = new Logger('Redis');
-    const client = createClient({
-      socket: {
-        host: configService.get<string>('REDIS_HOST') || '127.0.0.1',
-        port: configService.get<number>('REDIS_PORT') || 6379,
-      },
+    const client = new Redis({
+      host: configService.get<string>('REDIS_HOST') || '127.0.0.1',
+      port: configService.get<number>('REDIS_PORT') || 6379,
       username: configService.get<string>('REDIS_USERNAME'),
       password: configService.get<string>('REDIS_PASSWORD'),
+      retryStrategy: (times) => {
+        const delay = Math.min(times * 50, 2000);
+        return delay;
+      },
     });
 
     client.on('error', (err) => {
@@ -23,11 +25,9 @@ export const RedisProvider: Provider = {
     });
 
     client.on('connect', () => {
-      logger.log('Redis connected successfully');
+      logger.log('Redis connected successfully via ioredis');
     });
 
-    await client.connect();
-
-    return client as RedisClientType;
+    return client;
   },
 };

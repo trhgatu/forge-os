@@ -1,18 +1,15 @@
-import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { DeleteProjectCommand } from '../commands/delete-project.command';
 import { Inject, NotFoundException } from '@nestjs/common';
 import { ProjectRepository } from '../ports/project.repository';
-import { ProjectDeletedEvent } from '../../domain/events/project-deleted.event';
 import { LoggerService } from '@shared/logging/logger.service';
 import { CacheService } from '@shared/services';
-// import { ProjectId } from '../../domain/value-objects/project-id.vo'; // Unused now
 
 @CommandHandler(DeleteProjectCommand)
 export class DeleteProjectHandler implements ICommandHandler<DeleteProjectCommand> {
   constructor(
     @Inject('ProjectRepository')
     private readonly projectRepository: ProjectRepository,
-    private readonly eventBus: EventBus,
     private readonly logger: LoggerService,
     private readonly cacheService: CacheService,
   ) {}
@@ -27,14 +24,11 @@ export class DeleteProjectHandler implements ICommandHandler<DeleteProjectComman
 
     await this.projectRepository.softDelete(id);
 
-    this.eventBus.publish(new ProjectDeletedEvent(id.toString(), 'system', new Date()));
-
     this.logger.warn(
       `Project soft-deleted: ${id.toString()} (Title: "${project.title}")`,
       'DeleteProjectHandler',
     );
 
-    // Invalidate project list cache
     await this.cacheService.deleteByPattern('projects:*');
 
     return;

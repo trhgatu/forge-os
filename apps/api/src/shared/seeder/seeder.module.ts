@@ -16,10 +16,7 @@ import {
 import { Role, RoleSchema } from 'src/contexts/iam/roles/infrastructure/schemas/iam-role.schema';
 import { User, UserSchema } from 'src/contexts/iam/users/infrastructure/schemas/iam-user.schema';
 
-import {
-  ProjectSchema,
-  Project,
-} from 'src/contexts/engineering/project/infrastructure/project.schema';
+import { ProjectSchema } from 'src/contexts/engineering/project/infrastructure/project.schema';
 
 import { ProjectSeeder } from './project/project.seeder';
 
@@ -36,7 +33,7 @@ import { ProjectSeeder } from './project/project.seeder';
       { name: Permission.name, schema: PermissionSchema },
       { name: Role.name, schema: RoleSchema },
       { name: User.name, schema: UserSchema },
-      { name: Project.name, schema: ProjectSchema },
+      { name: 'Project', schema: ProjectSchema },
     ]),
   ],
   providers: [PermissionSeeder, RoleSeeder, AssignRolePermissionsSeeder, UserSeeder, ProjectSeeder],

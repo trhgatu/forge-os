@@ -5,27 +5,22 @@ import { CreateProjectCommand } from '../commands/create-project.command';
 import { ProjectRepository } from '../ports/project.repository';
 import { Project } from '../../domain/project.entity';
 import { ProjectId } from '../../domain/value-objects/project-id.vo';
-import { ProjectResponse } from '../../presentation/dto/project.response';
-import { ProjectPresenter } from '../../presentation/project.presenter';
 import { CacheService } from '@shared/services';
-// import { ProjectCreatedEvent } from '../../domain/events/project-created.event';
-import { ActivityStreamService } from '@shared/insfrastructure/redis/activity-stream.service';
+import { ACTIVITY_STREAM_PORT, IActivityStreamPort } from '@shared/ports/activity-stream.port';
 import { LoggerService } from '@shared/logging/logger.service';
 
 @CommandHandler(CreateProjectCommand)
-export class CreateProjectHandler implements ICommandHandler<
-  CreateProjectCommand,
-  ProjectResponse
-> {
+export class CreateProjectHandler implements ICommandHandler<CreateProjectCommand, Project> {
   constructor(
     @Inject('ProjectRepository')
     private readonly projectRepository: ProjectRepository,
-    private readonly activityStream: ActivityStreamService,
+    @Inject(ACTIVITY_STREAM_PORT)
+    private readonly activityStream: IActivityStreamPort,
     private readonly cacheService: CacheService,
     private readonly logger: LoggerService,
   ) {}
 
-  async execute(command: CreateProjectCommand): Promise<ProjectResponse> {
+  async execute(command: CreateProjectCommand): Promise<Project> {
     const { payload } = command;
 
     const projectId = ProjectId.create(new Types.ObjectId());
@@ -49,10 +44,10 @@ export class CreateProjectHandler implements ICommandHandler<
     });
 
     this.logger.log(
-      `Project created and streamed: "${project.title}" (ID: ${projectId.toString()})`,
+      `Project created: "${project.title}" (ID: ${projectId.toString()})`,
       'CreateProjectHandler',
     );
 
-    return ProjectPresenter.toResponse(project);
+    return project;
   }
 }

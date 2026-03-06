@@ -2,7 +2,12 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { ProjectTask } from '../domain/project.interfaces';
 
-export type ProjectDocument = Project & Document & { _id: Types.ObjectId };
+export type ProjectDocument = ProjectSchemaClass &
+  Document & {
+    _id: Types.ObjectId;
+    createdAt: Date;
+    updatedAt: Date;
+  };
 
 @Schema()
 class HybridStats {
@@ -105,7 +110,7 @@ export const ProjectLogSchema = SchemaFactory.createForClass(ProjectLog);
 export const HybridStatsSchema = SchemaFactory.createForClass(HybridStats);
 
 @Schema({ timestamps: true })
-export class Project {
+export class ProjectSchemaClass {
   @Prop({ required: true })
   title!: string;
 
@@ -121,19 +126,14 @@ export class Project {
   @Prop([String])
   tags!: string[];
 
-  // --- HYBRID DATA ---
-
   @Prop({ default: false })
   isPinned!: boolean;
 
   @Prop({ type: HybridStatsSchema })
   githubStats!: HybridStats;
 
-  // Store raw GitHub response or other metadata
   @Prop({ type: Object })
   metadata!: Record<string, any>;
-
-  // --- INTERNAL MANAGEMENT ---
 
   @Prop()
   progress!: number;
@@ -158,4 +158,4 @@ export class Project {
   deletedAt?: Date;
 }
 
-export const ProjectSchema = SchemaFactory.createForClass(Project);
+export const ProjectSchema = SchemaFactory.createForClass(ProjectSchemaClass);

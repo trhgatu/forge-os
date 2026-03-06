@@ -1,14 +1,17 @@
-import { Injectable, OnModuleInit, Inject, Logger } from '@nestjs/common';
+import { Injectable, OnModuleInit, OnModuleDestroy, Inject, Logger } from '@nestjs/common';
 import { Redis } from 'ioredis';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 
 @Injectable()
-export class StreamBridgeService implements OnModuleInit {
+export class StreamBridgeService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(StreamBridgeService.name);
   private readonly STREAM_KEY = 'forge:activities';
   private readonly GROUP_NAME = 'bridge_group';
   private readonly CONSUMER_NAME = `bridge_worker_${process.pid}`;
+
+  private subscriber!: Redis;
+  private isDestroyed = false;
 
   constructor(
     @Inject('REDIS_CLIENT') private readonly redis: Redis,
@@ -16,9 +19,17 @@ export class StreamBridgeService implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
+    this.subscriber = this.redis.duplicate();
     await this.setupGroup();
     void this.pollStream();
     this.logger.log('Stream Bridge is active and polling...');
+  }
+
+  onModuleDestroy() {
+    this.isDestroyed = true;
+    if (this.subscriber) {
+      void this.subscriber.quit();
+    }
   }
 
   private async setupGroup() {
@@ -32,9 +43,9 @@ export class StreamBridgeService implements OnModuleInit {
   }
 
   private async pollStream(): Promise<void> {
-    while (true) {
+    while (!this.isDestroyed) {
       try {
-        const result = (await this.redis.xreadgroup(
+        const result = (await this.subscriber.xreadgroup(
           'GROUP',
           this.GROUP_NAME,
           this.CONSUMER_NAME,

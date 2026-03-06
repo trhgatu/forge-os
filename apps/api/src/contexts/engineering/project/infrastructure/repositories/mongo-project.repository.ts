@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, FilterQuery } from 'mongoose';
-import { Project, ProjectDocument } from '../project.schema';
+import { ProjectDocument } from '../project.schema';
 import { ProjectRepository } from '../../application/ports/project.repository';
-import { Project as ProjectEntity } from '../../domain/project.entity';
+import { Project } from '../../domain/project.entity';
 import { ProjectMapper } from './project.mapper';
 import { ProjectId } from '../../domain/value-objects/project-id.vo';
 import { ProjectFilter } from '../../application/queries/project-filter';
@@ -13,16 +13,16 @@ import { paginateDDD } from '@shared/utils/paginateDDD';
 @Injectable()
 export class MongoProjectRepository implements ProjectRepository {
   constructor(
-    @InjectModel(Project.name)
+    @InjectModel('Project')
     private readonly projectModel: Model<ProjectDocument>,
   ) {}
 
-  async save(project: ProjectEntity): Promise<void> {
+  async save(project: Project): Promise<void> {
     const doc = ProjectMapper.toPersistence(project);
     await this.projectModel.updateOne({ _id: doc._id }, { $set: doc }, { upsert: true });
   }
 
-  async findAll(filter: ProjectFilter): Promise<PaginatedResult<ProjectEntity>> {
+  async findAll(filter: ProjectFilter): Promise<PaginatedResult<Project>> {
     const { page = 1, limit = 10 } = filter;
     const skip = (page - 1) * limit;
 
@@ -62,7 +62,7 @@ export class MongoProjectRepository implements ProjectRepository {
     };
   }
 
-  async findById(id: ProjectId): Promise<ProjectEntity | null> {
+  async findById(id: ProjectId): Promise<Project | null> {
     const doc = await this.projectModel.findById(id.toString()).exec();
     if (!doc) return null;
     return ProjectMapper.toDomain(doc);
