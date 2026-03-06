@@ -1,0 +1,19 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: forge-api
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./apps/api/.env
+    environment:
+      - NODE_ENV=development
+    restart: always
+    networks:
+      - forge-network
+
+networks:
+  forge-network:
+    driver: bridge
