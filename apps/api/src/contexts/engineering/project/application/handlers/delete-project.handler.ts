@@ -22,7 +22,8 @@ export class DeleteProjectHandler implements ICommandHandler<DeleteProjectComman
       throw new NotFoundException(`Project with ID ${id.toString()} not found`);
     }
 
-    await this.projectRepository.softDelete(id);
+    project.delete();
+    await this.projectRepository.save(project);
 
     this.logger.warn(
       `Project soft-deleted: ${id.toString()} (Title: "${project.title}")`,
