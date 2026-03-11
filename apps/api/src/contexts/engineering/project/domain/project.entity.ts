@@ -126,7 +126,7 @@ export class Project {
     const githubLink = this.props.links?.find((l) => {
       try {
         const url = new URL(l.url);
-        return url.hostname === 'github.com';
+        return url.hostname === 'github.com' && url.pathname.split('/').filter(Boolean).length >= 2;
       } catch {
         return false;
       }
@@ -146,8 +146,10 @@ export class Project {
       }
     }
 
-    const owner = this.props.metadata?.owner as string | undefined;
-    const repo = this.props.metadata?.repo as string | undefined;
+    const owner =
+      typeof this.props.metadata?.owner === 'string' ? this.props.metadata.owner : undefined;
+    const repo =
+      typeof this.props.metadata?.repo === 'string' ? this.props.metadata.repo : undefined;
     if (owner && repo) return { owner, repo };
 
     return null;

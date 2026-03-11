@@ -80,15 +80,27 @@ export class LoggerService implements NestLoggerService {
   }
 
   error(message: any, ...optionalParams: any[]): void {
-    const trace = typeof optionalParams[0] === 'string' ? optionalParams[0] : undefined;
-    const context =
-      typeof optionalParams[1] === 'string'
-        ? optionalParams[1]
-        : typeof optionalParams[0] === 'string' && !trace
-          ? optionalParams[0]
-          : undefined;
-    const { msg, extra } = this.normalize(message);
-    this.winston.error(msg, { trace, context, ...extra });
+    let trace: string | undefined;
+    let context: string | undefined;
+    let traceId: string | undefined;
+
+    if (optionalParams.length === 1) {
+      if (typeof optionalParams[0] === 'string') {
+        if (optionalParams[0].includes('\n')) {
+          trace = optionalParams[0];
+        } else {
+          context = optionalParams[0];
+        }
+      }
+    } else if (optionalParams.length >= 2) {
+      trace = typeof optionalParams[0] === 'string' ? optionalParams[0] : undefined;
+      context = typeof optionalParams[1] === 'string' ? optionalParams[1] : undefined;
+      traceId = typeof optionalParams[2] === 'string' ? optionalParams[2] : undefined;
+    }
+
+    const { msg, context: objContext, extra } = this.normalize(message);
+    const finalContext = context || objContext;
+    this.winston.error(msg, { trace, context: finalContext, traceId, ...extra });
   }
 
   warn(message: any, ...optionalParams: any[]): void {

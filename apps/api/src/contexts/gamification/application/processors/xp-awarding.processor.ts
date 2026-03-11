@@ -73,7 +73,7 @@ export class XpAwardingProcessor extends WorkerHost implements OnModuleInit {
       }
 
       const config = strategy.getRateLimitConfig();
-      const { allowed, reason } = await this.rateLimitService.check(
+      const { allowed, reason } = await this.rateLimitService.checkAndRecord(
         targetUserId,
         pattern,
         config,
@@ -91,8 +91,6 @@ export class XpAwardingProcessor extends WorkerHost implements OnModuleInit {
       }
 
       await this.commandBus.execute(new AwardXpCommand(targetUserId, xpAmount, description));
-
-      await this.rateLimitService.record(targetUserId, pattern, config, xpAmount);
       return {
         status: 'completed',
         data: {
