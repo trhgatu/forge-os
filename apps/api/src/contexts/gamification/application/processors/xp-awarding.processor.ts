@@ -59,6 +59,7 @@ export class XpAwardingProcessor extends WorkerHost implements OnModuleInit {
       return { status: 'failed', reason: 'MISSING_USER_ID', metadata: getMeta() };
     }
 
+    let checkSucceeded = false;
     try {
       const xpAmount = strategy.calculate(payload);
       const description = strategy.getDescription(payload);
@@ -73,7 +74,7 @@ export class XpAwardingProcessor extends WorkerHost implements OnModuleInit {
       }
 
       const config = strategy.getRateLimitConfig();
-      const { allowed, reason } = await this.rateLimitService.check(
+      const { allowed, reason } = await this.rateLimitService.checkAndRecord(
         targetUserId,
         pattern,
         config,
@@ -90,9 +91,8 @@ export class XpAwardingProcessor extends WorkerHost implements OnModuleInit {
         };
       }
 
+      checkSucceeded = true;
       await this.commandBus.execute(new AwardXpCommand(targetUserId, xpAmount, description));
-
-      await this.rateLimitService.record(targetUserId, pattern, config, xpAmount);
       return {
         status: 'completed',
         data: {
@@ -103,6 +103,16 @@ export class XpAwardingProcessor extends WorkerHost implements OnModuleInit {
         metadata: getMeta(),
       };
     } catch (error) {
+      if (checkSucceeded && strategy && targetUserId) {
+        try {
+          const config = strategy.getRateLimitConfig();
+          const xpAmount = strategy.calculate(payload);
+          await this.rateLimitService.refund(targetUserId, pattern, config, xpAmount);
+          this.logger.debug(`[XP-RateLimit] Refunded quota for ${pattern} due to error`);
+        } catch (refundError) {
+          this.logger.error(`[XP-RateLimit] Failed to refund quota: ${refundError}`);
+        }
+      }
       this.logger.error(`[Processor Error] ${pattern}: ${error}`);
       throw error;
     }

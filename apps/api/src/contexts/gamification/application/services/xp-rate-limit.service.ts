@@ -6,61 +6,118 @@ import { IXpRateLimitConfig } from '../strategies/xp-strategy.decorator';
 export class XpRateLimitService {
   constructor(@Inject('REDIS_CLIENT') private readonly redis: Redis) {}
 
-  async check(
+  async checkAndRecord(
     userId: string,
     pattern: string,
     config: IXpRateLimitConfig,
     xpAmount: number,
     dailyTotalCap: number = 1000,
   ): Promise<{ allowed: boolean; reason?: string }> {
-    const today = new Date().toISOString().split('T')[0];
+    const now = new Date();
+    const today = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}`;
+    const secondsUntilMidnight = this.secondsUntilMidnight();
 
     const cooldownKey = `xp:rate:${userId}:${pattern}:cooldown`;
-    const cooldownExists = await this.redis.exists(cooldownKey);
-    if (cooldownExists) {
-      return { allowed: false, reason: `cooldown:${pattern}` };
-    }
-
     const dailyCapKey = `xp:rate:${userId}:${pattern}:daily:${today}`;
-    const dailyCount = parseInt((await this.redis.get(dailyCapKey)) || '0');
-    if (dailyCount >= config.dailyCap) {
-      return { allowed: false, reason: `daily_cap:${pattern}` };
-    }
-
     const totalXpKey = `xp:rate:${userId}:total_xp:${today}`;
-    const totalXpToday = parseInt((await this.redis.get(totalXpKey)) || '0');
-    if (totalXpToday + xpAmount > dailyTotalCap) {
-      return { allowed: false, reason: 'daily_total_cap' };
+
+    const script = `
+      local cooldownKey = KEYS[1]
+      local dailyCapKey = KEYS[2]
+      local totalXpKey = KEYS[3]
+
+      local cooldownMinutes = tonumber(ARGV[1])
+      local dailyCap = tonumber(ARGV[2])
+      local dailyTotalCap = tonumber(ARGV[3])
+      local xpAmount = tonumber(ARGV[4])
+      local secondsUntilMidnight = tonumber(ARGV[5])
+
+      if redis.call('EXISTS', cooldownKey) == 1 then
+        return 'cooldown'
+      end
+
+      local dailyCount = tonumber(redis.call('GET', dailyCapKey) or '0')
+      if dailyCount >= dailyCap then
+        return 'daily_cap'
+      end
+
+      local totalXpToday = tonumber(redis.call('GET', totalXpKey) or '0')
+      if totalXpToday + xpAmount > dailyTotalCap then
+        return 'daily_total_cap'
+      end
+
+      if cooldownMinutes > 0 then
+        redis.call('SET', cooldownKey, '1', 'EX', cooldownMinutes * 60)
+      end
+
+      local newCount = redis.call('INCR', dailyCapKey)
+      if newCount == 1 then
+        redis.call('EXPIRE', dailyCapKey, secondsUntilMidnight)
+      end
+
+      redis.call('INCRBY', totalXpKey, xpAmount)
+      redis.call('EXPIRE', totalXpKey, secondsUntilMidnight)
+
+      return 'allowed'
+    `;
+
+    const result = await this.redis.eval(
+      script,
+      3,
+      cooldownKey,
+      dailyCapKey,
+      totalXpKey,
+      config.cooldownMinutes,
+      config.dailyCap,
+      dailyTotalCap,
+      xpAmount,
+      secondsUntilMidnight,
+    );
+
+    if (result === 'allowed') {
+      return { allowed: true };
     }
 
-    return { allowed: true };
+    return { allowed: false, reason: result as string };
   }
 
-  async record(
+  async refund(
     userId: string,
     pattern: string,
     config: IXpRateLimitConfig,
     xpAmount: number,
   ): Promise<void> {
-    const today = new Date().toISOString().split('T')[0];
-    const secondsUntilMidnight = this.secondsUntilMidnight();
+    const now = new Date();
+    const today = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}`;
 
-    if (config.cooldownMinutes > 0) {
-      await this.redis.set(
-        `xp:rate:${userId}:${pattern}:cooldown`,
-        '1',
-        'EX',
-        config.cooldownMinutes * 60,
-      );
-    }
-
+    const cooldownKey = `xp:rate:${userId}:${pattern}:cooldown`;
     const dailyCapKey = `xp:rate:${userId}:${pattern}:daily:${today}`;
-    await this.redis.incr(dailyCapKey);
-    await this.redis.expire(dailyCapKey, secondsUntilMidnight);
-
     const totalXpKey = `xp:rate:${userId}:total_xp:${today}`;
-    await this.redis.incrby(totalXpKey, xpAmount);
-    await this.redis.expire(totalXpKey, secondsUntilMidnight);
+
+    const script = `
+      local cooldownKey = KEYS[1]
+      local dailyCapKey = KEYS[2]
+      local totalXpKey = KEYS[3]
+      local xpAmount = tonumber(ARGV[1])
+
+      redis.call('DEL', cooldownKey)
+      
+      local currentDaily = tonumber(redis.call('GET', dailyCapKey) or '0')
+      if currentDaily > 0 then
+        redis.call('DECR', dailyCapKey)
+      end
+
+      local currentTotal = tonumber(redis.call('GET', totalXpKey) or '0')
+      if currentTotal > 0 then
+        if currentTotal - xpAmount < 0 then
+          redis.call('DECRBY', totalXpKey, currentTotal)
+        else
+          redis.call('DECRBY', totalXpKey, xpAmount)
+        end
+      end
+    `;
+
+    await this.redis.eval(script, 3, cooldownKey, dailyCapKey, totalXpKey, xpAmount);
   }
 
   private secondsUntilMidnight(): number {
