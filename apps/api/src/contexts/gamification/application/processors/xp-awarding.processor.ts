@@ -101,6 +101,17 @@ export class XpAwardingProcessor extends WorkerHost implements OnModuleInit {
         metadata: getMeta(),
       };
     } catch (error) {
+      if (strategy && targetUserId) {
+        try {
+          const config = strategy.getRateLimitConfig();
+          const xpAmount = strategy.calculate(payload);
+          await this.rateLimitService.refund(targetUserId, pattern, config, xpAmount);
+          this.logger.debug(`[XP-RateLimit] Refunded quota for ${pattern} due to error`);
+        } catch (refundError) {
+          this.logger.error(`[XP-RateLimit] Failed to refund quota: ${refundError}`);
+        }
+      }
+
       this.logger.error(`[Processor Error] ${pattern}: ${error}`);
       throw error;
     }

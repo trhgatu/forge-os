@@ -81,6 +81,41 @@ export class XpRateLimitService {
     return { allowed: false, reason: result as string };
   }
 
+  async refund(
+    userId: string,
+    pattern: string,
+    config: IXpRateLimitConfig,
+    xpAmount: number,
+  ): Promise<void> {
+    const now = new Date();
+    const today = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}`;
+
+    const cooldownKey = `xp:rate:${userId}:${pattern}:cooldown`;
+    const dailyCapKey = `xp:rate:${userId}:${pattern}:daily:${today}`;
+    const totalXpKey = `xp:rate:${userId}:total_xp:${today}`;
+
+    const script = `
+      local cooldownKey = KEYS[1]
+      local dailyCapKey = KEYS[2]
+      local totalXpKey = KEYS[3]
+      local xpAmount = tonumber(ARGV[1])
+
+      redis.call('DEL', cooldownKey)
+      
+      local currentDaily = tonumber(redis.call('GET', dailyCapKey) or '0')
+      if currentDaily > 0 then
+        redis.call('DECR', dailyCapKey)
+      end
+
+      local currentTotal = tonumber(redis.call('GET', totalXpKey) or '0')
+      if currentTotal > 0 then
+        redis.call('DECRBY', totalXpKey, xpAmount)
+      end
+    `;
+
+    await this.redis.eval(script, 3, cooldownKey, dailyCapKey, totalXpKey, xpAmount);
+  }
+
   private secondsUntilMidnight(): number {
     const now = new Date();
     const midnight = new Date(now);

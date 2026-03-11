@@ -6,6 +6,7 @@ import { BullModule } from '@nestjs/bullmq';
 
 import { ActivityStreamService } from './activity-stream.service';
 import { StreamBridgeService } from './stream-bridge.service';
+import { ACTIVITY_STREAM_PORT } from '../../ports/activity-stream.port';
 
 @Global()
 @Module({
@@ -43,7 +44,17 @@ import { StreamBridgeService } from './stream-bridge.service';
     },
     ActivityStreamService,
     StreamBridgeService,
+    {
+      provide: ACTIVITY_STREAM_PORT,
+      useExisting: ActivityStreamService,
+    },
   ],
-  exports: ['REDIS_CLIENT', ActivityStreamService, StreamBridgeService, BullModule],
+  exports: [
+    'REDIS_CLIENT',
+    ActivityStreamService,
+    StreamBridgeService,
+    ACTIVITY_STREAM_PORT,
+    BullModule,
+  ],
 })
 export class RedisModule {}
