@@ -110,7 +110,7 @@ export class XpRateLimitService {
       local currentTotal = tonumber(redis.call('GET', totalXpKey) or '0')
       if currentTotal > 0 then
         if currentTotal - xpAmount < 0 then
-          redis.call('SET', totalXpKey, '0')
+          redis.call('DECRBY', totalXpKey, currentTotal)
         else
           redis.call('DECRBY', totalXpKey, xpAmount)
         end
