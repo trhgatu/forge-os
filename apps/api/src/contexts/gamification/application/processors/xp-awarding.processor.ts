@@ -8,6 +8,7 @@ import { AwardXpCommand } from '../commands/award-xp.command';
 import { IXpStrategy, XP_STRATEGY_KEY } from '../strategies/xp-strategy.decorator';
 import { StreamEventPayload } from '@shared/domain/events/stream-event.interface';
 import { JobResult } from '@shared/domain/dtos/job-result.dto';
+import { XpRateLimitService } from '../services/xp-rate-limit.service';
 
 @Processor('xp_awarding')
 export class XpAwardingProcessor extends WorkerHost implements OnModuleInit {
@@ -17,6 +18,7 @@ export class XpAwardingProcessor extends WorkerHost implements OnModuleInit {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly discoveryService: DiscoveryService,
+    private readonly rateLimitService: XpRateLimitService,
   ) {
     super();
   }
@@ -70,7 +72,27 @@ export class XpAwardingProcessor extends WorkerHost implements OnModuleInit {
         };
       }
 
+      const config = strategy.getRateLimitConfig();
+      const { allowed, reason } = await this.rateLimitService.check(
+        targetUserId,
+        pattern,
+        config,
+        xpAmount,
+      );
+
+      if (!allowed) {
+        this.logger.debug(`[XP-RateLimit] Blocked ${pattern} for ${targetUserId}: ${reason}`);
+        return {
+          status: 'skipped',
+          reason: `RATE_LIMIT_${reason?.toUpperCase() || 'EXCEEDED'}`,
+          data: { userId: targetUserId },
+          metadata: getMeta(),
+        };
+      }
+
       await this.commandBus.execute(new AwardXpCommand(targetUserId, xpAmount, description));
+
+      await this.rateLimitService.record(targetUserId, pattern, config, xpAmount);
       return {
         status: 'completed',
         data: {

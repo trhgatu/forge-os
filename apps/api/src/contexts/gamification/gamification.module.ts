@@ -13,6 +13,7 @@ import { XpAwardingProcessor } from './application/processors/xp-awarding.proces
 import { ProjectCreatedXpStrategy } from './application/strategies/engineering/project-created.strategy';
 import { GithubSyncXpStrategy } from './application/strategies/engineering/github-sync.strategy';
 import { RedisModule } from '@shared/insfrastructure/redis/redis.module';
+import { XpRateLimitService } from './application/services/xp-rate-limit.service';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { RedisModule } from '@shared/insfrastructure/redis/redis.module';
     GetUserStatsHandler,
     GamificationGateway,
     XpAwardingProcessor,
+    XpRateLimitService,
     {
       provide: 'UserStatsRepository',
       useClass: MongoUserStatsRepository,
