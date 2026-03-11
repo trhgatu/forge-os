@@ -72,48 +72,53 @@ export class XpAwardingProcessor extends WorkerHost implements OnModuleInit {
         };
       }
 
-      const config = strategy.getRateLimitConfig();
-      const { allowed, reason } = await this.rateLimitService.checkAndRecord(
-        targetUserId,
-        pattern,
-        config,
-        xpAmount,
-      );
+      let checkSucceeded = false;
+      try {
+        const config = strategy.getRateLimitConfig();
+        const { allowed, reason } = await this.rateLimitService.checkAndRecord(
+          targetUserId,
+          pattern,
+          config,
+          xpAmount,
+        );
 
-      if (!allowed) {
-        this.logger.debug(`[XP-RateLimit] Blocked ${pattern} for ${targetUserId}: ${reason}`);
+        if (!allowed) {
+          this.logger.debug(`[XP-RateLimit] Blocked ${pattern} for ${targetUserId}: ${reason}`);
+          return {
+            status: 'skipped',
+            reason: `RATE_LIMIT_${reason?.toUpperCase() || 'EXCEEDED'}`,
+            data: { userId: targetUserId },
+            metadata: getMeta(),
+          };
+        }
+
+        checkSucceeded = true;
+        await this.commandBus.execute(new AwardXpCommand(targetUserId, xpAmount, description));
         return {
-          status: 'skipped',
-          reason: `RATE_LIMIT_${reason?.toUpperCase() || 'EXCEEDED'}`,
-          data: { userId: targetUserId },
+          status: 'completed',
+          data: {
+            awardedXp: xpAmount,
+            user: targetUserId,
+            description,
+          },
           metadata: getMeta(),
         };
-      }
-
-      await this.commandBus.execute(new AwardXpCommand(targetUserId, xpAmount, description));
-      return {
-        status: 'completed',
-        data: {
-          awardedXp: xpAmount,
-          user: targetUserId,
-          description,
-        },
-        metadata: getMeta(),
-      };
-    } catch (error) {
-      if (strategy && targetUserId) {
-        try {
-          const config = strategy.getRateLimitConfig();
-          const xpAmount = strategy.calculate(payload);
-          await this.rateLimitService.refund(targetUserId, pattern, config, xpAmount);
-          this.logger.debug(`[XP-RateLimit] Refunded quota for ${pattern} due to error`);
-        } catch (refundError) {
-          this.logger.error(`[XP-RateLimit] Failed to refund quota: ${refundError}`);
+      } catch (error) {
+        if (checkSucceeded && strategy && targetUserId) {
+          try {
+            const config = strategy.getRateLimitConfig();
+            await this.rateLimitService.refund(targetUserId, pattern, config, xpAmount);
+            this.logger.debug(`[XP-RateLimit] Refunded quota for ${pattern} due to error`);
+          } catch (refundError) {
+            this.logger.error(`[XP-RateLimit] Failed to refund quota: ${refundError}`);
+          }
         }
+        this.logger.error(`[Processor Error] ${pattern}: ${error}`);
+        throw error;
       }
-
-      this.logger.error(`[Processor Error] ${pattern}: ${error}`);
-      throw error;
+    } catch (outerError) {
+      this.logger.error(`[Processor Outer Error] ${pattern}: ${outerError}`);
+      throw outerError;
     }
   }
 }
