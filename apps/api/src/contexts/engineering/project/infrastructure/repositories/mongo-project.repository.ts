@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, FilterQuery } from 'mongoose';
 import { ProjectDocument } from '../project.schema';
@@ -69,21 +69,6 @@ export class MongoProjectRepository implements ProjectRepository {
   }
 
   async delete(id: ProjectId): Promise<void> {
-    const result = await this.projectModel.findByIdAndDelete(id.toString()).exec();
-    if (!result) throw new NotFoundException('Project not found');
-  }
-
-  async softDelete(id: ProjectId): Promise<void> {
-    const result = await this.projectModel
-      .findByIdAndUpdate(id.toString(), { isDeleted: true, deletedAt: new Date() }, { new: true })
-      .exec();
-    if (!result) throw new NotFoundException('Project not found');
-  }
-
-  async restore(id: ProjectId): Promise<void> {
-    const result = await this.projectModel
-      .findByIdAndUpdate(id.toString(), { isDeleted: false, deletedAt: null }, { new: true })
-      .exec();
-    if (!result) throw new NotFoundException('Project not found');
+    await this.projectModel.findByIdAndDelete(id.toString()).exec();
   }
 }

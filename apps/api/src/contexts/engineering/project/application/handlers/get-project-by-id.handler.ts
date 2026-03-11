@@ -3,14 +3,12 @@ import { GetProjectByIdQuery } from '../queries/get-project-by-id.query';
 import { Inject, NotFoundException } from '@nestjs/common';
 import { ProjectRepository } from '../ports/project.repository';
 import { Project } from '../../domain/project.entity';
-import { LoggerService } from '@shared/logging/logger.service';
 
 @QueryHandler(GetProjectByIdQuery)
 export class GetProjectByIdHandler implements IQueryHandler<GetProjectByIdQuery> {
   constructor(
     @Inject('ProjectRepository')
     private readonly projectRepository: ProjectRepository,
-    private readonly logger: LoggerService,
   ) {}
 
   async execute(query: GetProjectByIdQuery): Promise<Project> {
