@@ -1,28 +1,28 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { MoodType } from '@shared/enums';
-import { JournalType, JournalStatus, JournalRelationType } from '../domain/enums';
-
+import { JournalType, JournalStatus } from '../domain/enums';
 import { SoftDeletePlugin } from '@shared/database/mongo/plugins/soft-delete.plugin';
 
-export type JournalDocument = Document & {
-  _id: Types.ObjectId;
-  title?: string;
-  content: string;
-  mood?: MoodType;
-  tags?: string[];
-  type: JournalType;
-  status: JournalStatus;
-  source: 'user' | 'ai' | 'system';
-  relations?: { type: JournalRelationType; id: string }[];
-  isDeleted: boolean;
-  deletedAt?: Date;
-  createdAt: Date;
-  updatedAt: Date;
-};
+export type JournalDocument = JournalSchemaClass &
+  Document & {
+    _id: Types.ObjectId;
+    createdAt: Date;
+    updatedAt: Date;
+  };
+
+@Schema()
+export class JournalRelation {
+  @Prop({ required: true })
+  type!: string;
+
+  @Prop({ required: true })
+  id!: string;
+}
+const JournalRelationSchema = SchemaFactory.createForClass(JournalRelation);
 
 @Schema({ timestamps: true })
-export class Journal {
+export class JournalSchemaClass {
   @Prop()
   title?: string;
 
@@ -37,7 +37,7 @@ export class Journal {
   mood?: MoodType;
 
   @Prop({ type: [String], default: [] })
-  tags?: string[];
+  tags!: string[];
 
   @Prop({
     type: String,
@@ -62,16 +62,8 @@ export class Journal {
   })
   source!: 'user' | 'ai' | 'system';
 
-  @Prop({
-    type: [
-      {
-        type: { type: String, required: true },
-        id: { type: String, required: true },
-      },
-    ],
-    default: [],
-  })
-  relations?: { type: string; id: string }[];
+  @Prop({ type: [JournalRelationSchema], default: [] })
+  relations!: JournalRelation[];
 
   @Prop({ default: false })
   isDeleted!: boolean;
@@ -80,6 +72,6 @@ export class Journal {
   deletedAt?: Date;
 }
 
-export const JournalSchema = SchemaFactory.createForClass(Journal);
+export const JournalSchema = SchemaFactory.createForClass(JournalSchemaClass);
 
 JournalSchema.plugin(SoftDeletePlugin);

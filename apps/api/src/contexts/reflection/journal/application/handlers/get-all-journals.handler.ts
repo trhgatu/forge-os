@@ -1,3 +1,4 @@
+import { Inject } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { GetAllJournalsQuery } from '../queries/get-all-journals.query';
 import { JournalRepository } from '../../application/ports/journal.repository';
@@ -10,7 +11,8 @@ import { JournalCacheKeys } from '../../infrastructure/cache/journal-cache.keys'
 @QueryHandler(GetAllJournalsQuery)
 export class GetAllJournalsHandler implements IQueryHandler<GetAllJournalsQuery> {
   constructor(
-    private readonly journalRepo: JournalRepository,
+    @Inject('JournalRepository')
+    private readonly journalRepository: JournalRepository,
     private readonly cacheService: CacheService,
   ) {}
 
@@ -24,7 +26,7 @@ export class GetAllJournalsHandler implements IQueryHandler<GetAllJournalsQuery>
 
     if (cached) return cached;
 
-    const journals = await this.journalRepo.findAll(payload);
+    const journals = await this.journalRepository.findAll(payload);
 
     const response = {
       meta: journals.meta,

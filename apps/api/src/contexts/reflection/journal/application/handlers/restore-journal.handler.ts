@@ -1,34 +1,39 @@
-import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
+import { Inject } from '@nestjs/common';
+import { LoggerService } from '@shared/logging';
+
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { NotFoundException } from '@nestjs/common';
+
+import { Journal } from '../../domain/journal.entity';
 import { RestoreJournalCommand } from '../commands/restore-journal.command';
 import { JournalRepository } from '../../application/ports/journal.repository';
-import { JournalModifiedEvent } from '../events/journal-modified.event';
-import { JournalPresenter } from '../../presentation/journal.presenter';
-import { JournalResponse } from '../../presentation/dto/journal.response';
+import { CacheService } from '@shared/services';
 
 @CommandHandler(RestoreJournalCommand)
-export class RestoreJournalHandler implements ICommandHandler<
-  RestoreJournalCommand,
-  JournalResponse
-> {
+export class RestoreJournalHandler implements ICommandHandler<RestoreJournalCommand> {
   constructor(
-    private readonly journalRepo: JournalRepository,
-    private readonly eventBus: EventBus,
+    @Inject('JournalRepository')
+    private readonly journalRepository: JournalRepository,
+    private readonly cacheService: CacheService,
+    private readonly logger: LoggerService,
   ) {}
 
-  async execute(command: RestoreJournalCommand): Promise<JournalResponse> {
+  async execute(command: RestoreJournalCommand): Promise<Journal> {
     const { id } = command;
 
-    const journal = await this.journalRepo.findById(id);
+    const journal = await this.journalRepository.findById(id);
     if (!journal) {
       throw new NotFoundException('Journal not found');
     }
 
     journal.restore();
-    await this.journalRepo.save(journal);
 
-    this.eventBus.publish(new JournalModifiedEvent(id, 'restore'));
+    await this.logger.warn(`Journal ${id} restored. Title length: ${journal.title?.length}`);
 
-    return JournalPresenter.toResponse(journal);
+    await this.journalRepository.save(journal);
+
+    await this.cacheService.deleteByPattern('journals:*');
+
+    return journal;
   }
 }

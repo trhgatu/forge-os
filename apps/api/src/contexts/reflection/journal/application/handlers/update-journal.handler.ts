@@ -1,35 +1,37 @@
-import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
-import { NotFoundException } from '@nestjs/common';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { Inject, NotFoundException } from '@nestjs/common';
 import { UpdateJournalCommand } from '../commands/update-journal.command';
 import { JournalRepository } from '../../application/ports/journal.repository';
-import { JournalModifiedEvent } from '../events/journal-modified.event';
-import { JournalPresenter } from '../../presentation/journal.presenter';
-import { JournalResponse } from '../../presentation/dto/journal.response';
+import { Journal } from '../../domain/journal.entity';
+import { CacheService } from '@shared/services';
+import { LoggerService } from '@shared/logging';
 
 @CommandHandler(UpdateJournalCommand)
-export class UpdateJournalHandler implements ICommandHandler<
-  UpdateJournalCommand,
-  JournalResponse
-> {
+export class UpdateJournalHandler implements ICommandHandler<UpdateJournalCommand> {
   constructor(
-    private readonly journalRepo: JournalRepository,
-    private readonly eventBus: EventBus,
+    @Inject('JournalRepository')
+    private readonly journalRepository: JournalRepository,
+    private readonly cacheService: CacheService,
+    private readonly logger: LoggerService,
   ) {}
 
-  async execute(command: UpdateJournalCommand): Promise<JournalResponse> {
+  async execute(command: UpdateJournalCommand): Promise<Journal> {
     const { id, payload } = command;
 
-    const journal = await this.journalRepo.findById(id);
+    const journal = await this.journalRepository.findById(id);
+
     if (!journal) {
-      throw new NotFoundException('Journal not found');
+      throw new NotFoundException(`Journal with ID ${id} not found`);
     }
 
     journal.updateInfo(payload);
 
-    await this.journalRepo.save(journal);
+    await this.journalRepository.save(journal);
 
-    this.eventBus.publish(new JournalModifiedEvent(id, 'update'));
+    this.logger.warn(`Journal ${id} updated. Title length: ${journal.title?.length}`);
 
-    return JournalPresenter.toResponse(journal);
+    await this.cacheService.deleteByPattern('journals:*');
+
+    return journal;
   }
 }

@@ -17,7 +17,6 @@ import {
   CreateJournalCommand,
   UpdateJournalCommand,
   DeleteJournalCommand,
-  SoftDeleteJournalCommand,
   RestoreJournalCommand,
 } from '../../application/commands';
 import { GetAllJournalsQuery, GetJournalByIdQuery } from '../../application/queries';
@@ -62,12 +61,9 @@ export class JournalAdminController {
 
   @Delete(':id')
   @Permissions(PermissionEnum.DELETE_JOURNAL)
-  delete(@Param('id') id: string, @Query('hard') hard?: 'true') {
-    const journalId = JournalId.create(id);
-
-    return hard === 'true'
-      ? this.commandBus.execute(new DeleteJournalCommand(journalId))
-      : this.commandBus.execute(new SoftDeleteJournalCommand(journalId));
+  async remove(@Param('id') id: string) {
+    await this.commandBus.execute(new DeleteJournalCommand(JournalId.create(id)));
+    return { success: true };
   }
 
   @Patch(':id/restore')

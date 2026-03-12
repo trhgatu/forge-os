@@ -22,16 +22,12 @@ export class UpdateProjectHandler implements ICommandHandler<UpdateProjectComman
     if (!project) {
       throw new NotFoundException(`Project with ID ${id} not found`);
     }
-
-    this.logger.log(`Updating project ${id} with data: ${JSON.stringify(payload)}`);
-
     project.updateInfo(payload);
 
     await this.projectRepository.save(project);
 
     this.logger.log(`Project ${id} updated. Links count: ${project.links?.length}`);
 
-    // Invalidate cache
     await this.cacheService.deleteByPattern('projects:*');
 
     return project;
