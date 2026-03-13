@@ -1,11 +1,12 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 import { Inject, NotFoundException } from '@nestjs/common';
 
 import { LoggerService } from '@shared/logging/logger.service';
-import { CacheService } from '@shared/services';
 
 import { DeleteJournalCommand } from '../commands/delete-journal.command';
 import { JournalRepository } from '../ports/journal.repository';
+
+import { JournalModifiedEvent } from '../events/journal-modified.event';
 
 @CommandHandler(DeleteJournalCommand)
 export class DeleteJournalHandler implements ICommandHandler<DeleteJournalCommand, void> {
@@ -13,7 +14,7 @@ export class DeleteJournalHandler implements ICommandHandler<DeleteJournalComman
     @Inject('JournalRepository')
     private readonly journalRepo: JournalRepository,
     private readonly logger: LoggerService,
-    private readonly cacheService: CacheService,
+    private readonly eventBus: EventBus,
   ) {}
 
   async execute(command: DeleteJournalCommand): Promise<void> {
@@ -27,7 +28,7 @@ export class DeleteJournalHandler implements ICommandHandler<DeleteJournalComman
     journal.delete();
     await this.journalRepo.save(journal);
 
-    await this.cacheService.deleteByPattern('journals:*');
+    this.eventBus.publish(new JournalModifiedEvent(id, 'delete'));
 
     this.logger.warn(
       `Journal soft-deleted: ${id.toString()} (Title: "${journal.title || 'Untitled'}")`,

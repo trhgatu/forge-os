@@ -1,18 +1,20 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 import { Inject, NotFoundException } from '@nestjs/common';
 import { UpdateJournalCommand } from '../commands/update-journal.command';
 import { JournalRepository } from '../../application/ports/journal.repository';
 import { Journal } from '../../domain/journal.entity';
-import { CacheService } from '@shared/services';
+
 import { LoggerService } from '@shared/logging';
+
+import { JournalModifiedEvent } from '../events/journal-modified.event';
 
 @CommandHandler(UpdateJournalCommand)
 export class UpdateJournalHandler implements ICommandHandler<UpdateJournalCommand> {
   constructor(
     @Inject('JournalRepository')
     private readonly journalRepository: JournalRepository,
-    private readonly cacheService: CacheService,
     private readonly logger: LoggerService,
+    private readonly eventBus: EventBus,
   ) {}
 
   async execute(command: UpdateJournalCommand): Promise<Journal> {
@@ -28,9 +30,9 @@ export class UpdateJournalHandler implements ICommandHandler<UpdateJournalComman
 
     await this.journalRepository.save(journal);
 
-    this.logger.warn(`Journal ${id} updated. Title length: ${journal.title?.length}`);
+    this.eventBus.publish(new JournalModifiedEvent(id, 'create'));
 
-    await this.cacheService.deleteByPattern('journals:*');
+    this.logger.warn(`Journal ${id} updated. Title length: ${journal.title?.length}`);
 
     return journal;
   }

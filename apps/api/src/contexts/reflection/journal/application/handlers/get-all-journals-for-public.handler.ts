@@ -7,7 +7,6 @@ import { JournalRepository } from '../../application/ports/journal.repository';
 import { CacheService } from '@shared/services';
 import { LoggerService } from '@shared/logging';
 
-import { PaginatedResult } from '@shared/types/paginated-result';
 import { PaginatedResponse } from '@shared/types/paginated-response';
 
 import { JournalPresenter } from '../../presentation/journal.presenter';
@@ -27,22 +26,23 @@ export class GetAllJournalsForPublicHandler implements IQueryHandler<GetAllJourn
     const { payload } = query;
     const { page = 1, limit = 10 } = payload;
 
-    const cacheKey = JournalCacheKeys.GET_ALL_PUBLIC(page, limit, payload);
+    const version = await this.cacheService.getVersion('journals');
 
-    const cached = await this.cacheService.get<PaginatedResult<JournalResponse>>(cacheKey);
-    if (cached) {
-      this.logger.debug(`Cache hit for ${cacheKey}`);
-      return cached;
-    }
+    const cacheKey = JournalCacheKeys.GET_ALL_PUBLIC(version, page, limit, payload);
 
-    const journals = await this.journalRepository.findAll(payload);
+    return this.cacheService.wrap(
+      cacheKey,
+      async () => {
+        this.logger.debug(`Fetching journals from DB for key: ${cacheKey}`);
 
-    const response = {
-      meta: journals.meta,
-      data: journals.data.map((journal) => JournalPresenter.toResponse(journal)),
-    };
+        const journals = await this.journalRepository.findAll(payload);
 
-    await this.cacheService.set(cacheKey, response, 60);
-    return response;
+        return {
+          meta: journals.meta,
+          data: journals.data.map((journal) => JournalPresenter.toResponse(journal)),
+        };
+      },
+      60,
+    );
   }
 }

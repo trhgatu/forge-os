@@ -1,10 +1,9 @@
 import { Inject } from '@nestjs/common';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 import { Types } from 'mongoose';
 
 import { ACTIVITY_STREAM_PORT, IActivityStreamPort } from '@shared/ports/activity-stream.port';
 import { LoggerService } from '@shared/logging/logger.service';
-import { CacheService } from '@shared/services';
 import { MoodType } from '@shared/enums';
 
 import { JournalStatus } from '../../domain/enums/journal-status.enum';
@@ -15,6 +14,8 @@ import { Journal } from '../../domain/journal.entity';
 import { CreateJournalCommand } from '../commands/create-journal.command';
 import { JournalRepository } from '../ports/journal.repository';
 
+import { JournalModifiedEvent } from '../events/journal-modified.event';
+
 @CommandHandler(CreateJournalCommand)
 export class CreateJournalHandler implements ICommandHandler<CreateJournalCommand, Journal> {
   constructor(
@@ -22,8 +23,8 @@ export class CreateJournalHandler implements ICommandHandler<CreateJournalComman
     private readonly journalRepository: JournalRepository,
     @Inject(ACTIVITY_STREAM_PORT)
     private readonly activityStream: IActivityStreamPort,
-    private readonly cacheService: CacheService,
     private readonly logger: LoggerService,
+    private readonly eventBus: EventBus,
   ) {}
 
   async execute(command: CreateJournalCommand): Promise<Journal> {
@@ -51,7 +52,7 @@ export class CreateJournalHandler implements ICommandHandler<CreateJournalComman
 
     await this.journalRepository.save(journal);
 
-    await this.cacheService.deleteByPattern('journals:*');
+    this.eventBus.publish(new JournalModifiedEvent(journalId, 'create'));
 
     await this.activityStream.emit('reflection.journal.created', userId, {
       journalId: journalId.toString(),
