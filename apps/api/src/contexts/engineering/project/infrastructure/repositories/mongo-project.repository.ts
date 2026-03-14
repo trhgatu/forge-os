@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, FilterQuery } from 'mongoose';
 import { ProjectDocument } from '../project.schema';
 import { ProjectRepository } from '../../application/ports/project.repository';
-import { Project } from '../../domain/project.entity';
+import { Project } from '../../domain/entities/project.entity';
 import { ProjectMapper } from './project.mapper';
 import { ProjectId } from '../../domain/value-objects/project-id.vo';
 import { ProjectFilter } from '../../application/queries/project-filter';

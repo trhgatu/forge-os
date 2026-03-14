@@ -4,8 +4,8 @@ import {
   GithubRepoDetails,
   ProjectLog,
   ProjectMetadata,
-} from './project.interfaces';
-import { ProjectId } from './value-objects/project-id.vo';
+} from '../project.interfaces';
+import { ProjectId } from '../value-objects/project-id.vo';
 
 interface ProjectProps {
   title: string;

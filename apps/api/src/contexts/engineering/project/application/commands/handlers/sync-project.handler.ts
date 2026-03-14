@@ -1,9 +1,9 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject, NotFoundException } from '@nestjs/common';
-import { SyncProjectCommand } from '../commands/sync-project.command';
-import { ProjectRepository } from '../ports/project.repository';
-import { GithubRepository } from '../ports/github.repository';
-import { Project } from '../../domain/project.entity';
+import { SyncProjectCommand } from '../sync-project.command';
+import { ProjectRepository } from '../../ports/project.repository';
+import { GithubRepository } from '../../ports/github.repository';
+import { Project } from '../../../domain/entities/project.entity';
 import { LoggerService } from '@shared/logging/logger.service';
 import { ACTIVITY_STREAM_PORT, IActivityStreamPort } from '@shared/ports/activity-stream.port';
 import { CacheService } from '@shared/services';

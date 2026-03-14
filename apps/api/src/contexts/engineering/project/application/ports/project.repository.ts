@@ -1,4 +1,4 @@
-import { Project } from '../../domain/project.entity';
+import { Project } from '../../domain/entities/project.entity';
 import { ProjectId } from '../../domain/value-objects/project-id.vo';
 import { PaginatedResult } from '@shared/types/paginated-result';
 import { ProjectFilter } from '../queries/project-filter';
