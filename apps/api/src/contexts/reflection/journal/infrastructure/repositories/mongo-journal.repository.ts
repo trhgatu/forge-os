@@ -1,8 +1,8 @@
 import { InjectModel } from '@nestjs/mongoose';
-import { Injectable, NotFoundException, Logger } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Model, FilterQuery } from 'mongoose';
 
-import { Journal as JournalSchemaClass, JournalDocument } from '../journal.schema';
+import { JournalDocument } from '../journal.schema';
 import { JournalRepository } from '../../application/ports/journal.repository';
 
 import { Journal } from '../../domain/journal.entity';
@@ -15,20 +15,14 @@ import { PaginatedResult } from '@shared/types/paginated-result';
 
 @Injectable()
 export class MongoJournalRepository implements JournalRepository {
-  private readonly logger = new Logger(MongoJournalRepository.name);
   constructor(
-    @InjectModel(JournalSchemaClass.name)
-    private readonly model: Model<JournalDocument>,
+    @InjectModel('Journal')
+    private readonly journalModel: Model<JournalDocument>,
   ) {}
 
   async save(journal: Journal): Promise<void> {
     const doc = JournalMapper.toPersistence(journal);
-    await this.model.updateOne({ _id: doc._id }, { $set: doc }, { upsert: true });
-  }
-
-  async findById(id: JournalId): Promise<Journal | null> {
-    const doc = await this.model.findById(id.toString());
-    return doc ? JournalMapper.toDomain(doc) : null;
+    await this.journalModel.updateOne({ _id: doc._id }, { $set: doc }, { upsert: true });
   }
 
   async findAll(query: JournalFilter): Promise<PaginatedResult<Journal>> {
@@ -36,11 +30,21 @@ export class MongoJournalRepository implements JournalRepository {
     const skip = (page - 1) * limit;
 
     const filter: FilterQuery<JournalDocument> = {
-      ...(query.isDeleted !== undefined && { isDeleted: query.isDeleted }),
+      isDeleted: query.isDeleted ? true : { $ne: true },
       ...(query.keyword && {
         $or: [
-          { title: { $regex: query.keyword, $options: 'i' } },
-          { content: { $regex: query.keyword, $options: 'i' } },
+          {
+            title: {
+              $regex: query.keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
+              $options: 'i',
+            },
+          },
+          {
+            content: {
+              $regex: query.keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
+              $options: 'i',
+            },
+          },
         ],
       }),
 
@@ -52,37 +56,30 @@ export class MongoJournalRepository implements JournalRepository {
     };
 
     const result = await paginateDDD(
-      this.model.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit),
-      this.model.countDocuments(filter),
+      this.journalModel.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit),
+      this.journalModel.countDocuments(filter),
       page,
       limit,
     );
 
     return {
       meta: result.meta,
-      data: result.data.map(JournalMapper.toDomain),
+      data: result.data.map((doc) => JournalMapper.toDomain(doc)),
     };
   }
 
-  async delete(id: JournalId): Promise<void> {
-    const result = await this.model.findByIdAndDelete(id.toString());
-    if (!result) throw new NotFoundException('Journal not found');
+  async findById(id: JournalId): Promise<Journal | null> {
+    const doc = await this.journalModel.findById(id.toString()).exec();
+    if (!doc) return null;
+    return JournalMapper.toDomain(doc);
   }
 
-  async softDelete(id: JournalId): Promise<void> {
-    const result = await this.model.findByIdAndUpdate(
-      id.toString(),
-      {
-        isDeleted: true,
-        deletedAt: new Date(),
-      },
-      { new: true },
-    );
-    if (!result) throw new NotFoundException('Journal not found');
+  async delete(id: JournalId): Promise<void> {
+    await this.journalModel.findByIdAndDelete(id.toString()).exec();
   }
 
   async restore(id: JournalId): Promise<void> {
-    const result = await this.model.findByIdAndUpdate(
+    const result = await this.journalModel.findByIdAndUpdate(
       id.toString(),
       {
         isDeleted: false,

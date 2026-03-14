@@ -1,3 +1,7 @@
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { CacheInvalidationInterceptor } from '@shared/interceptors';
+import { CacheModule } from '@shared/services/cache.module';
+
 import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { BullModule } from '@nestjs/bullmq';
@@ -76,6 +80,14 @@ import { RedisModule } from '@shared/insfrastructure/redis/redis.module';
     PresenceModule,
     EngineeringModule,
     GamificationModule,
+
+    CacheModule,
+  ],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CacheInvalidationInterceptor,
+    },
   ],
   controllers: [AppController],
 })

@@ -46,7 +46,7 @@ export class GetAllProjectsHandler implements IQueryHandler<GetAllProjectsQuery>
       data: result.data.map((project) => ProjectPresenter.toResponse(project)),
     };
 
-    await this.cacheService.set(cacheKey, response, 60); // Cache for 60s
+    await this.cacheService.set(cacheKey, response, 60);
     return response;
   }
 }

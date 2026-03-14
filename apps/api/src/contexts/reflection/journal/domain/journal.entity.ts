@@ -2,7 +2,7 @@ import { JournalId } from './value-objects/journal-id.vo';
 import { MoodType } from '@shared/enums';
 import { JournalStatus, JournalType, JournalRelationType } from './enums';
 
-interface JournalRelation {
+export interface JournalRelation {
   type: JournalRelationType;
   id: string;
 }
@@ -34,8 +34,8 @@ export class Journal {
       relations?: JournalRelation[];
     },
     id: JournalId,
-    now: Date,
   ): Journal {
+    const now = new Date();
     return new Journal(id, {
       ...props,
       tags: props.tags ?? [],
@@ -52,12 +52,8 @@ export class Journal {
       deletedAt?: Date;
     },
   ): Journal {
-    return new Journal(
-      JournalId.create(data.id),
-      { ...data },
-      data.isDeleted ?? false,
-      data.deletedAt,
-    );
+    const { id, isDeleted, deletedAt, ...props } = data;
+    return new Journal(JournalId.create(id), props, isDeleted ?? false, deletedAt);
   }
 
   updateInfo(
@@ -66,56 +62,25 @@ export class Journal {
       relations?: JournalRelation[];
     },
   ): void {
-    if (props.title !== undefined) {
-      this.props.title = props.title;
-    }
-
-    if (props.content !== undefined) {
-      this.props.content = props.content;
-    }
-
-    if (props.mood !== undefined) {
-      this.props.mood = props.mood;
-    }
-
-    if (props.status !== undefined) {
-      this.props.status = props.status;
-    }
-
-    if (props.type !== undefined) {
-      this.props.type = props.type;
-    }
-
-    if (props.source !== undefined) {
-      this.props.source = props.source;
-    }
-
-    if (props.tags !== undefined) {
-      this.props.tags = props.tags;
-    }
-
-    if (props.relations !== undefined) {
-      this.props.relations = props.relations;
-    }
-
-    this.props.updatedAt = new Date();
+    Object.assign(this.props, {
+      ...props,
+      updatedAt: new Date(),
+    });
   }
 
   delete(): void {
     if (this.isDeleted) return;
     this.isDeleted = true;
     this.deletedAt = new Date();
+    this.props.updatedAt = new Date();
   }
 
   restore(): void {
     if (!this.isDeleted) return;
     this.isDeleted = false;
     this.deletedAt = undefined;
+    this.props.updatedAt = new Date();
   }
-
-  // ============
-  //   GETTERS
-  // ============
 
   get title() {
     return this.props.title;
@@ -161,22 +126,9 @@ export class Journal {
     return this.isDeleted;
   }
 
-  // ================
-  //   SERIALIZATION
-  // ================
   toPersistence() {
     return {
-      id: this.id.toString(),
-      title: this.props.title,
-      content: this.props.content,
-      mood: this.props.mood,
-      tags: this.props.tags,
-      type: this.props.type,
-      status: this.props.status,
-      source: this.props.source,
-      relations: this.props.relations,
-      createdAt: this.props.createdAt,
-      updatedAt: this.props.updatedAt,
+      ...this.props,
       isDeleted: this.isDeleted,
       deletedAt: this.deletedAt,
     };
@@ -185,16 +137,7 @@ export class Journal {
   toPrimitives() {
     return {
       id: this.id.toString(),
-      title: this.props.title,
-      content: this.props.content,
-      mood: this.props.mood,
-      tags: this.props.tags,
-      type: this.props.type,
-      status: this.props.status,
-      source: this.props.source,
-      relations: this.props.relations,
-      createdAt: this.props.createdAt,
-      updatedAt: this.props.updatedAt,
+      ...this.props,
       isDeleted: this.isDeleted,
       deletedAt: this.deletedAt,
     };

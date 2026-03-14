@@ -1,24 +1,24 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { NotFoundException } from '@nestjs/common';
-
+import { Inject, NotFoundException } from '@nestjs/common';
 import { GetJournalByIdQuery } from '../queries/get-journal-by-id.query';
-
 import { JournalRepository } from '../../application/ports/journal.repository';
-import { JournalPresenter } from '../../presentation/journal.presenter';
-import { JournalResponse } from '../../presentation/dto/journal.response';
+import { Journal } from '../../domain/journal.entity';
 
 @QueryHandler(GetJournalByIdQuery)
-export class GetJournalByIdHandler implements IQueryHandler<GetJournalByIdQuery, JournalResponse> {
-  constructor(private readonly journalRepo: JournalRepository) {}
+export class GetJournalByIdHandler implements IQueryHandler<GetJournalByIdQuery> {
+  constructor(
+    @Inject('JournalRepository')
+    private readonly journalRepository: JournalRepository,
+  ) {}
 
-  async execute(query: GetJournalByIdQuery): Promise<JournalResponse> {
+  async execute(query: GetJournalByIdQuery): Promise<Journal> {
     const { id } = query;
 
-    const journal = await this.journalRepo.findById(id);
+    const journal = await this.journalRepository.findById(id);
     if (!journal) {
-      throw new NotFoundException('Journal not found');
+      throw new NotFoundException(`Journal with ID ${id.toString()} not found`);
     }
 
-    return JournalPresenter.toResponse(journal);
+    return journal;
   }
 }

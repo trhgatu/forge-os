@@ -22,26 +22,26 @@ export class MongoProjectRepository implements ProjectRepository {
     await this.projectModel.updateOne({ _id: doc._id }, { $set: doc }, { upsert: true });
   }
 
-  async findAll(filter: ProjectFilter): Promise<PaginatedResult<Project>> {
-    const { page = 1, limit = 10 } = filter;
+  async findAll(query: ProjectFilter): Promise<PaginatedResult<Project>> {
+    const { page = 1, limit = 10 } = query;
     const skip = (page - 1) * limit;
 
-    const query: FilterQuery<ProjectDocument> = {
-      isDeleted: filter.isDeleted ? true : { $ne: true },
-      ...(filter.status && { status: filter.status }),
-      ...(filter.isPinned !== undefined && { isPinned: filter.isPinned }),
-      ...(filter.tags && filter.tags.length > 0 && { tags: { $in: filter.tags } }),
-      ...(filter.keyword && {
+    const filter: FilterQuery<ProjectDocument> = {
+      isDeleted: query.isDeleted ? true : { $ne: true },
+      ...(query.status && { status: query.status }),
+      ...(query.isPinned !== undefined && { isPinned: query.isPinned }),
+      ...(query.tags && query.tags.length > 0 && { tags: { $in: query.tags } }),
+      ...(query.keyword && {
         $or: [
           {
             title: {
-              $regex: filter.keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
+              $regex: query.keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
               $options: 'i',
             },
           },
           {
             description: {
-              $regex: filter.keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
+              $regex: query.keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
               $options: 'i',
             },
           },
@@ -50,8 +50,8 @@ export class MongoProjectRepository implements ProjectRepository {
     };
 
     const result = await paginateDDD(
-      this.projectModel.find(query).sort({ isPinned: -1, updatedAt: -1 }).skip(skip).limit(limit),
-      this.projectModel.countDocuments(query),
+      this.projectModel.find(filter).sort({ isPinned: -1, updatedAt: -1 }).skip(skip).limit(limit),
+      this.projectModel.countDocuments(filter),
       page,
       limit,
     );
