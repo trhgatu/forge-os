@@ -11,13 +11,14 @@ import {
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 
+import { CacheInvalidate } from '@shared/decorators/cache-invalidate.decorator';
+
 import { CreateJournalDto, UpdateJournalDto, QueryJournalDto } from '../dto';
 
 import {
   CreateJournalCommand,
   UpdateJournalCommand,
   DeleteJournalCommand,
-  SoftDeleteJournalCommand,
   RestoreJournalCommand,
 } from '../../application/commands';
 import { GetAllJournalsQuery, GetJournalByIdQuery } from '../../application/queries';
@@ -38,6 +39,7 @@ export class JournalAdminController {
 
   @Post()
   @Permissions(PermissionEnum.CREATE_JOURNAL)
+  @CacheInvalidate('journals')
   create(@Body() dto: CreateJournalDto) {
     return this.commandBus.execute(new CreateJournalCommand(dto));
   }
@@ -56,22 +58,22 @@ export class JournalAdminController {
 
   @Patch(':id')
   @Permissions(PermissionEnum.UPDATE_JOURNAL)
+  @CacheInvalidate('journals')
   update(@Param('id') id: string, @Body() dto: UpdateJournalDto) {
     return this.commandBus.execute(new UpdateJournalCommand(JournalId.create(id), dto));
   }
 
   @Delete(':id')
   @Permissions(PermissionEnum.DELETE_JOURNAL)
-  delete(@Param('id') id: string, @Query('hard') hard?: 'true') {
-    const journalId = JournalId.create(id);
-
-    return hard === 'true'
-      ? this.commandBus.execute(new DeleteJournalCommand(journalId))
-      : this.commandBus.execute(new SoftDeleteJournalCommand(journalId));
+  @CacheInvalidate('journals')
+  async remove(@Param('id') id: string) {
+    await this.commandBus.execute(new DeleteJournalCommand(JournalId.create(id)));
+    return { success: true };
   }
 
   @Patch(':id/restore')
   @Permissions(PermissionEnum.RESTORE_JOURNAL)
+  @CacheInvalidate('journals')
   restore(@Param('id') id: string) {
     return this.commandBus.execute(new RestoreJournalCommand(JournalId.create(id)));
   }

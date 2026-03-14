@@ -8,5 +8,4 @@ export abstract class JournalRepository {
   abstract findById(id: JournalId): Promise<Journal | null>;
   abstract findAll(filter: JournalFilter): Promise<PaginatedResult<Journal>>;
   abstract delete(id: JournalId): Promise<void>;
-  abstract softDelete(id: JournalId): Promise<void>;
 }

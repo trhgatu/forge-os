@@ -8,5 +8,4 @@ export abstract class ProjectRepository {
   abstract findById(id: ProjectId): Promise<Project | null>;
   abstract findAll(filter: ProjectFilter): Promise<PaginatedResult<Project>>;
   abstract delete(id: ProjectId): Promise<void>;
-  abstract softDelete(id: ProjectId): Promise<void>;
 }

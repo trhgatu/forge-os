@@ -7,7 +7,8 @@ import { DiscoveryService } from '@nestjs/core';
 import { AwardXpCommand } from '../commands/award-xp.command';
 import { IXpStrategy, XP_STRATEGY_KEY } from '../strategies/xp-strategy.decorator';
 import { StreamEventPayload } from '@shared/domain/events/stream-event.interface';
-import { getErrorMessage } from '@shared/utils';
+import { JobResult } from '@shared/domain/dtos/job-result.dto';
+import { XpRateLimitService } from '../services/xp-rate-limit.service';
 
 @Processor('xp_awarding')
 export class XpAwardingProcessor extends WorkerHost implements OnModuleInit {
@@ -17,6 +18,7 @@ export class XpAwardingProcessor extends WorkerHost implements OnModuleInit {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly discoveryService: DiscoveryService,
+    private readonly rateLimitService: XpRateLimitService,
   ) {
     super();
   }
@@ -37,37 +39,81 @@ export class XpAwardingProcessor extends WorkerHost implements OnModuleInit {
       }
     });
   }
-
-  async process(job: Job<StreamEventPayload>): Promise<void> {
+  async process(job: Job<StreamEventPayload>): Promise<JobResult> {
+    const startTime = Date.now();
     const { pattern, userId, payload } = job.data;
     const strategy = this.strategyMap.get(pattern);
 
+    const getMeta = () => ({
+      pattern,
+      timestamp: new Date().toISOString(),
+      duration: Date.now() - startTime,
+    });
+
     if (!strategy) {
-      if (pattern.includes('.')) {
-        this.logger.warn(`[XP-Worker] No strategy found for pattern: ${pattern}`);
-      }
-      return;
+      return { status: 'skipped', reason: 'STRATEGY_NOT_FOUND', metadata: getMeta() };
     }
 
     const targetUserId = typeof userId === 'string' ? userId : userId?.value;
     if (!targetUserId) {
-      this.logger.error(`[XP-Worker] Missing UserID in event: ${pattern}`);
-      return;
+      return { status: 'failed', reason: 'MISSING_USER_ID', metadata: getMeta() };
     }
 
+    let checkSucceeded = false;
     try {
       const xpAmount = strategy.calculate(payload);
       const description = strategy.getDescription(payload);
 
       if (xpAmount <= 0) {
-        this.logger.debug(`[XP-Worker] Zero XP for ${pattern}, skipping...`);
-        return;
+        return {
+          status: 'skipped',
+          reason: 'ZERO_XP',
+          data: { userId: targetUserId },
+          metadata: getMeta(),
+        };
       }
 
+      const config = strategy.getRateLimitConfig();
+      const { allowed, reason } = await this.rateLimitService.checkAndRecord(
+        targetUserId,
+        pattern,
+        config,
+        xpAmount,
+      );
+
+      if (!allowed) {
+        this.logger.debug(`[XP-RateLimit] Blocked ${pattern} for ${targetUserId}: ${reason}`);
+        return {
+          status: 'skipped',
+          reason: `RATE_LIMIT_${reason?.toUpperCase() || 'EXCEEDED'}`,
+          data: { userId: targetUserId },
+          metadata: getMeta(),
+        };
+      }
+
+      checkSucceeded = true;
       await this.commandBus.execute(new AwardXpCommand(targetUserId, xpAmount, description));
-      this.logger.log(`[Success] ${xpAmount} XP awarded to ${targetUserId} via ${pattern}`);
+      return {
+        status: 'completed',
+        data: {
+          awardedXp: xpAmount,
+          user: targetUserId,
+          description,
+        },
+        metadata: getMeta(),
+      };
     } catch (error) {
-      this.logger.error(`[Error] ${pattern}: ${getErrorMessage(error)}`);
+      if (checkSucceeded && strategy && targetUserId) {
+        try {
+          const config = strategy.getRateLimitConfig();
+          const xpAmount = strategy.calculate(payload);
+          await this.rateLimitService.refund(targetUserId, pattern, config, xpAmount);
+          this.logger.debug(`[XP-RateLimit] Refunded quota for ${pattern} due to error`);
+        } catch (refundError) {
+          this.logger.error(`[XP-RateLimit] Failed to refund quota: ${refundError}`);
+        }
+      }
+      this.logger.error(`[Processor Error] ${pattern}: ${error}`);
       throw error;
     }
   }

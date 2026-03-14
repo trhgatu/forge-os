@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { DiscoveryModule } from '@nestjs/core';
-import { BullModule } from '@nestjs/bullmq';
 import { MongooseModule } from '@nestjs/mongoose';
 import { GamificationController } from './presentation/gamification.controller';
 import { AuthModule } from '../iam/auth/auth.module';
@@ -13,6 +12,8 @@ import { GamificationGateway } from './presentation/gamification.gateway';
 import { XpAwardingProcessor } from './application/processors/xp-awarding.processor';
 import { ProjectCreatedXpStrategy } from './application/strategies/engineering/project-created.strategy';
 import { GithubSyncXpStrategy } from './application/strategies/engineering/github-sync.strategy';
+import { RedisModule } from '@shared/insfrastructure/redis/redis.module';
+import { XpRateLimitService } from './application/services/xp-rate-limit.service';
 
 @Module({
   imports: [
@@ -20,9 +21,7 @@ import { GithubSyncXpStrategy } from './application/strategies/engineering/githu
     DiscoveryModule,
     MongooseModule.forFeature([{ name: UserStatsModel.name, schema: UserStatsSchema }]),
     AuthModule,
-    BullModule.registerQueue({
-      name: 'xp_awarding',
-    }),
+    RedisModule,
   ],
   controllers: [GamificationController],
   providers: [
@@ -32,6 +31,7 @@ import { GithubSyncXpStrategy } from './application/strategies/engineering/githu
     GetUserStatsHandler,
     GamificationGateway,
     XpAwardingProcessor,
+    XpRateLimitService,
     {
       provide: 'UserStatsRepository',
       useClass: MongoUserStatsRepository,
