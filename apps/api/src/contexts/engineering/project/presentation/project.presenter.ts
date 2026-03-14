@@ -1,4 +1,4 @@
-import { Project } from '../domain/project.entity';
+import { Project } from '../domain/entities/project.entity';
 import {
   ProjectResponse,
   ProjectSummaryResponse,
