@@ -30,7 +30,7 @@ export class UpdateJournalHandler implements ICommandHandler<UpdateJournalComman
 
     await this.journalRepository.save(journal);
 
-    this.eventBus.publish(new JournalModifiedEvent(id, 'create'));
+    this.eventBus.publish(new JournalModifiedEvent(id, 'update'));
 
     this.logger.warn(`Journal ${id} updated. Title length: ${journal.title?.length}`);
 
