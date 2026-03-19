@@ -1,40 +1,25 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import { MongooseModule } from '@nestjs/mongoose';
-import { QuoteSchema, Quote } from './infrastructure/quote.schema';
-import { DailyQuoteSchema } from './infrastructure/daily-quote.schema';
-import { MongoQuoteRepository } from './infrastructure/repositories/mongo-quote.repository';
-import { QuoteRepository } from './application/ports/quote.repository';
-import { QuoteAdminController } from './presentation/controllers/quote.admin.controller';
-import { QuotePublicController } from './presentation/controllers/quote.public.controller';
 import { SharedModule } from '@shared/shared.module';
-import { QuoteHandlers } from './application/handlers';
-import { DailyQuote } from './infrastructure/daily-quote.schema';
+
+import { QuoteAdminController } from './infrastructure/http/controllers/quote-admin.controller';
+import { QuotePublicController } from './infrastructure/http/controllers/quote.public.controller';
+
+import { QuoteRepository } from './domain/repositories/quote.repository';
+import { PrismaQuoteRepository } from './infrastructure/repositories/prisma-quote.repository';
+
+import { QuoteHandlers } from './application';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([
-      {
-        name: Quote.name,
-        schema: QuoteSchema,
-      },
-      {
-        name: DailyQuote.name,
-        schema: DailyQuoteSchema,
-      },
-    ]),
-    CqrsModule,
-    SharedModule,
-  ],
+  imports: [CqrsModule, SharedModule],
   controllers: [QuoteAdminController, QuotePublicController],
   providers: [
     {
       provide: QuoteRepository,
-      useClass: MongoQuoteRepository,
+      useClass: PrismaQuoteRepository,
     },
-    MongoQuoteRepository,
     ...QuoteHandlers,
   ],
-  exports: [],
+  exports: [QuoteRepository],
 })
 export class QuoteModule {}

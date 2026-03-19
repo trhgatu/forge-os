@@ -32,10 +32,16 @@ import { EngineeringModule } from '@root/contexts/engineering/engineering.module
 import { GamificationModule } from '@root/contexts/gamification/gamification.module';
 import { RedisModule } from '@shared/insfrastructure/redis/redis.module';
 
+import { join } from 'path';
+
 @Module({
   imports: [
     CqrsModule,
-    ConfigModule.forRoot({ isGlobal: true, load: [databaseConfig] }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [databaseConfig],
+      envFilePath: join(process.cwd(), '../../.env'),
+    }),
     MongooseModule.forRootAsync({
       useFactory: () => {
         return {

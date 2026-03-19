@@ -1,0 +1,32 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+model Quote {
+  id          String   @id @default(uuid())
+  content     Json
+  author      String?
+  source      String?
+  tags        String[]
+  mood        String?
+  status      String   @default("INTERNAL")
+  isDeleted   Boolean  @default(false)
+  deletedAt   DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  dailyQuotes DailyQuote[]
+
+  @@map("quotes")
+}
+
+model DailyQuote {
+  date    String @id
+  quoteId String
+  quote   Quote  @relation(fields: [quoteId], references: [id])
+
+  @@map("daily_quotes")
+}

@@ -1,5 +1,6 @@
 import { QuoteFilter } from '../../application/queries/quote-filter';
 import { QuoteId } from '../../domain/value-objects/quote-id.vo';
+
 export class QuoteCacheKeys {
   static readonly ALL_QUOTES_PATTERN = 'quotes:*';
   static readonly PUBLIC_QUOTES_PATTERN = 'quotes:public:*';
@@ -12,7 +13,11 @@ export class QuoteCacheKeys {
     return `quotes:admin:p${page}:l${limit}:${JSON.stringify(payload)}`;
   }
 
-  static GET_BY_ID(id: QuoteId) {
-    return `quotes:id:${id.toString()}`;
+  static GET_BY_ID(id: QuoteId): string {
+    return `quotes:id:${id.value}`;
+  }
+
+  static GET_DAILY(date: string, lang: string): string {
+    return `quotes:daily:${date}:${lang}`;
   }
 }
