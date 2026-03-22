@@ -99,7 +99,7 @@ export class Quote extends AggregateRoot<IEvent> {
   public toPersistence() {
     return {
       id: this.id.value,
-      content: this._content,
+      content: Object.fromEntries(this._content),
       author: this._author,
       source: this._source,
       tags: this._tags,

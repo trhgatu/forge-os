@@ -1,6 +1,4 @@
-import { validate as validateUuid } from 'uuid';
 import { BaseId } from '@shared/domain/value-objects/base-id.vo';
-
 export class QuoteId extends BaseId {
   private constructor(value: string) {
     super(value);
@@ -11,13 +9,19 @@ export class QuoteId extends BaseId {
   }
 
   public static random(): QuoteId {
-    return new QuoteId(crypto.randomUUID());
+    const hex = '0123456789abcdef';
+    let result = '';
+    for (let i = 0; i < 24; i++) {
+      result += hex.charAt(Math.floor(Math.random() * hex.length));
+    }
+    return new QuoteId(result);
   }
 
   protected validate(value: string): void {
-    super.validate(value);
-    if (!validateUuid(value)) {
-      throw new Error(`INVALID_QUOTE_ID_FORMAT: ${value}`);
+    const objectIdRegex = /^[0-9a-fA-F]{24}$/;
+
+    if (!objectIdRegex.test(value)) {
+      throw new Error(`INVALID_QUOTE_ID_FORMAT: ${value}. Expected 24-char hex string.`);
     }
   }
 }

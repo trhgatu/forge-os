@@ -6,17 +6,9 @@ import { BaseDomainException } from '../exceptions/base-domain.exception';
 import { LoggerService } from '../logging/logger.service';
 import { ApiErrorResponse } from '../interfaces/api-error-response.interface';
 
-// Helper Interfaces
 interface MongoError extends Error {
   code?: number;
 }
-
-interface NestExceptionResponse {
-  message?: string | string[];
-  error?: string;
-  statusCode?: number;
-}
-
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
   constructor(
@@ -49,15 +41,17 @@ export class AllExceptionsFilter implements ExceptionFilter {
       httpStatus = exception.getStatus();
       const responseBody = exception.getResponse();
 
-      if (typeof responseBody === 'object' && responseBody !== null && 'message' in responseBody) {
-        message = (responseBody as NestExceptionResponse).message || responseBody;
+      if (typeof responseBody === 'object' && responseBody !== null) {
+        message = (responseBody as any).message || responseBody;
+        if ((responseBody as any).errors) {
+          message = responseBody;
+        }
       } else {
         message = responseBody as string | object;
       }
 
-      errorCode = ErrorCode.VALIDATION_ERROR; // Default fallback for HttpExceptions
+      errorCode = ErrorCode.VALIDATION_ERROR;
 
-      // Map standard NestJS exceptions to codes if needed
       if (httpStatus === HttpStatus.UNAUTHORIZED) errorCode = ErrorCode.UNAUTHORIZED;
       if (httpStatus === HttpStatus.FORBIDDEN) errorCode = ErrorCode.FORBIDDEN;
 
@@ -73,9 +67,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
       errorCode = exception.errorCode as ErrorCode;
       message = exception.message;
     } else if (exception instanceof Error) {
-      // Stack already captured above
-
-      // MongoDB Duplicate Key Error (Code 11000)
       const mongoError = exception as MongoError;
       if (mongoError.code === 11000) {
         httpStatus = HttpStatus.CONFLICT;
@@ -84,7 +75,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
       }
     }
 
-    // 3. Prepare Response Body
     const isProduction = process.env.NODE_ENV === 'production';
 
     const responseBody: ApiErrorResponse = {
@@ -99,7 +89,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
       stack: isProduction ? undefined : stack,
     };
 
-    // 4. Log Error
     const logContext = `GlobalFilter [${method} ${path}]`;
     if (httpStatus >= 500) {
       this.logger.error(`[${errorCode}] ${JSON.stringify(message)}`, stack, logContext, traceId);
@@ -109,8 +98,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
         logContext,
       );
     }
-
-    // 5. Send Response
     httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
   }
 }

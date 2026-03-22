@@ -14,9 +14,11 @@ export class PrismaQuoteRepository implements QuoteRepository {
   constructor(private readonly prisma: PrismaService) {}
   async save(quote: Quote): Promise<void> {
     const data = QuoteMapper.toPersistence(quote);
+    const { id, ...updateData } = data;
+
     await this.prisma.quote.upsert({
-      where: { id: data.id },
-      update: data,
+      where: { id: id },
+      update: updateData,
       create: data,
     });
   }

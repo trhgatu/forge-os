@@ -10,7 +10,6 @@ import {
   Post,
   Query,
   UseGuards,
-  UsePipes,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 
@@ -27,14 +26,8 @@ import { JwtAuthGuard } from 'src/contexts/iam/auth/application/guards/jwt-auth.
 import { PermissionsGuard } from '@shared/guards/permissions.guard';
 import { Permissions } from '@shared/decorators';
 import { PermissionEnum } from '@shared/enums';
-import { ZodValidationPipe } from '@shared/insfrastructure/pipes/zod-validation.pipe';
 
-import {
-  CreateQuoteSchema,
-  CreateQuoteRequest,
-  UpdateQuoteRequest,
-  QuoteQueryRequest,
-} from '../requests';
+import { CreateQuoteRequest, UpdateQuoteRequest, QuoteQueryRequest } from '../requests';
 
 import { QuoteResponse } from '../responses/quote.response';
 
@@ -49,7 +42,6 @@ export class QuoteAdminController {
   @Post()
   @Permissions(PermissionEnum.CREATE_QUOTE)
   @HttpCode(HttpStatus.CREATED)
-  @UsePipes(new ZodValidationPipe(CreateQuoteSchema))
   async create(
     @Body() req: CreateQuoteRequest,
     @Query('lang') lang: string = 'en',

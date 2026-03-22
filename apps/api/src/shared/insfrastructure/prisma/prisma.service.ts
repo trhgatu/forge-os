@@ -1,6 +1,4 @@
 import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
-import { Pool } from 'pg';
-import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@forgeos/database';
 
 @Injectable()
@@ -8,30 +6,21 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
   private readonly logger = new Logger(PrismaService.name);
 
   constructor() {
-    const connectionString = process.env.DATABASE_URL;
-    if (!connectionString) {
-      throw new Error('DATABASE_URL is missing in .env');
-    }
-
-    const pool = new Pool({ connectionString });
-
-    const adapter = new PrismaPg(pool);
-
-    super({ adapter });
+    super();
   }
 
   async onModuleInit() {
     try {
       await this.$connect();
-      this.logger.log('✅ Forge OS: Database connected with PostgreSQL Adapter');
+      this.logger.log('✅ Forge OS: Database connected with MongoDB');
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
-      this.logger.error(`💥 Database connection failed: ${message}`);
-      process.exit(1);
+      this.logger.error(`💥 MongoDB connection failed: ${message}`);
     }
   }
 
   async onModuleDestroy() {
     await this.$disconnect();
+    this.logger.log('🔌 Database disconnected');
   }
 }

@@ -1,8 +1,8 @@
-import { v4 as uuidv4 } from 'uuid';
+import { ObjectId } from 'bson';
 import { IdGenerator } from '../../application/ports/id-generator.port';
 
-export class UuidGeneratorAdapter implements IdGenerator {
+export class MongoIdGeneratorAdapter implements IdGenerator {
   generate(): string {
-    return uuidv4();
+    return new ObjectId().toHexString();
   }
 }

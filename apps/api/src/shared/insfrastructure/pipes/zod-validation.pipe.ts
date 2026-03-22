@@ -1,23 +1,29 @@
-import { PipeTransform, BadRequestException } from '@nestjs/common';
+import { Injectable, PipeTransform, ArgumentMetadata, BadRequestException } from '@nestjs/common';
 import { ZodSchema, ZodError } from 'zod';
 
-export class ZodValidationPipe implements PipeTransform {
-  constructor(private schema: ZodSchema) {} // Dùng cho local @UsePipes
+@Injectable()
+export class GlobalZodValidationPipe implements PipeTransform {
+  transform(value: unknown, metadata: ArgumentMetadata) {
+    const schema = metadata.metatype?.['zodSchema'] as ZodSchema | undefined;
 
-  transform(value: unknown) {
+    if (metadata.type !== 'body' || !schema) {
+      return value;
+    }
+
     try {
-      return this.schema.parse(value);
+      return schema.parse(value);
     } catch (error: unknown) {
       if (error instanceof ZodError) {
         throw new BadRequestException({
-          message: 'Validation failed in this reality',
-          errors: error.issues.map((issue) => ({
-            path: issue.path.join('.'),
-            message: issue.message,
+          message: 'Dữ liệu đéo khớp rồi ông giáo ạ!',
+          errorCode: 'VALIDATION_ERROR',
+          errors: error.issues.map((i) => ({
+            path: i.path.join('.'),
+            message: i.message,
           })),
         });
       }
-      throw new BadRequestException('Validation failed');
+      throw error;
     }
   }
 }

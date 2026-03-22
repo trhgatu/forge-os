@@ -1,14 +1,13 @@
-import { z } from 'zod';
-import { QuoteStatus, MoodType } from '@shared/enums';
-import { ContentSchema } from './content.schema';
+import { UseZod } from '@shared/insfrastructure/decorators/zod.decorator';
+import { CreateQuoteSchema } from '../dtos/create-quote.schema';
+import { MoodType, QuoteStatus } from '@shared/enums';
 
-export const CreateQuoteSchema = z.object({
-  content: ContentSchema,
-  author: z.string().optional(),
-  source: z.string().url({ message: 'Source must be a valid URL.' }).optional().or(z.literal('')),
-  tags: z.array(z.string()).optional().default([]),
-  mood: z.nativeEnum(MoodType).optional().default(MoodType.FOCUSED),
-  status: z.nativeEnum(QuoteStatus).optional().default(QuoteStatus.INTERNAL),
-});
-
-export type CreateQuoteRequest = z.infer<typeof CreateQuoteSchema>;
+@UseZod(CreateQuoteSchema)
+export class CreateQuoteRequest {
+  content!: Record<string, string>;
+  author?: string;
+  source?: string;
+  tags!: string[];
+  mood!: MoodType;
+  status!: QuoteStatus;
+}
