@@ -1,11 +1,11 @@
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { CacheInvalidationInterceptor } from '@shared/interceptors';
 import { CacheModule } from '@shared/services/cache.module';
 
 import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { BullModule } from '@nestjs/bullmq';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { BullBoardModule } from '@bull-board/nestjs';
 import { ExpressAdapter } from '@bull-board/express';
 import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
@@ -32,14 +32,22 @@ import { EngineeringModule } from '@root/contexts/engineering/engineering.module
 import { GamificationModule } from '@root/contexts/gamification/gamification.module';
 import { RedisModule } from '@shared/insfrastructure/redis/redis.module';
 
+import { join } from 'path';
+import { GlobalZodValidationPipe } from '@shared/insfrastructure/pipes/zod-validation.pipe';
+
 @Module({
   imports: [
     CqrsModule,
-    ConfigModule.forRoot({ isGlobal: true, load: [databaseConfig] }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [databaseConfig],
+      envFilePath: join(process.cwd(), '../../.env'),
+    }),
     MongooseModule.forRootAsync({
-      useFactory: () => {
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
         return {
-          uri: process.env.MONGODB_URI,
+          uri: configService.get<string>('databaseUrl'),
           autoIndex: true,
         };
       },
@@ -87,6 +95,10 @@ import { RedisModule } from '@shared/insfrastructure/redis/redis.module';
     {
       provide: APP_INTERCEPTOR,
       useClass: CacheInvalidationInterceptor,
+    },
+    {
+      provide: APP_PIPE,
+      useClass: GlobalZodValidationPipe,
     },
   ],
   controllers: [AppController],

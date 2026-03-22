@@ -1,0 +1,39 @@
+datasource db {
+  provider = "mongodb"
+  url = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Quote {
+  id              String       @id @default(auto()) @map("_id") @db.ObjectId
+  v               Int          @default(0) @map("__v")
+  author          String
+  content         Json
+  mood            String?
+  source          String?
+  status          String       @default("internal")
+  tags            String[]     @default([])
+  isDeleted       Boolean      @default(false)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  deletedAt       DateTime?
+
+  dailyQuotes     DailyQuote[]
+
+  @@map("quotes")
+}
+
+model DailyQuote {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  date    String   @unique
+  quoteId String   @db.ObjectId
+  quote   Quote    @relation(fields: [quoteId], references: [id])
+  v       Int      @default(0) @map("__v")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("daily_quotes")
+}

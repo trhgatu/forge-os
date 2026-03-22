@@ -13,14 +13,14 @@ export function SoftDeletePlugin(schema: Schema) {
     deletedAt: { type: Date, default: null },
   });
 
-  schema.pre(/^find/, function (this: SoftDeleteQuery, next) {
+  schema.pre(/^find/, function (this: SoftDeleteQuery, next: any) {
     if (this.getFilter().isDeleted === undefined) {
       this.where({ isDeleted: false });
     }
     next();
   });
 
-  schema.pre('countDocuments', function (this: SoftDeleteQuery, next) {
+  schema.pre('countDocuments', function (this: SoftDeleteQuery, next: any) {
     if (this.getFilter().isDeleted === undefined) {
       this.where({ isDeleted: false });
     }

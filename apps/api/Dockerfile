@@ -5,7 +5,11 @@ WORKDIR /app
 COPY . .
 
 RUN pnpm install --frozen-lockfile
+
+RUN pnpm --filter @forgeos/database db:generate
+
 RUN pnpm --filter @forge/api build
+
 RUN pnpm --filter @forge/api --prod deploy isolated
 
 FROM node:20-alpine AS runner
@@ -17,5 +21,6 @@ COPY --from=base /app/isolated ./
 
 COPY --from=base /app/apps/api/dist ./dist
 
-EXPOSE 3001
+EXPOSE 8000
+
 CMD ["node", "dist/main"]

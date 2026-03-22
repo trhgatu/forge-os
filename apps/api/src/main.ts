@@ -1,6 +1,6 @@
+import 'dotenv/config';
 import { NestFactory, HttpAdapterHost } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
 import { LoggerService } from './shared/logging/logger.service';
 import { AllExceptionsFilter } from './shared/filters/all-exceptions.filter';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
@@ -13,7 +13,7 @@ async function bootstrap() {
   const httpAdapter = app.get(HttpAdapterHost);
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapter, logger));
 
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+  // app.useGlobalPipes(new ValidationPipe({ whitelist: false, transform: true }));
   app.setGlobalPrefix('api/v1');
 
   app.enableCors({
