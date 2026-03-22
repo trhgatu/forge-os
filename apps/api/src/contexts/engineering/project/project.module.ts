@@ -1,16 +1,19 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CqrsModule } from '@nestjs/cqrs';
-import { Project, ProjectSchema } from './infrastructure/project.schema';
+import { ProjectSchema } from './infrastructure/project.schema';
 import { ProjectController } from './presentation/project.controller';
-import { CommandHandlers, QueryHandlers } from './application/handlers';
+import { CommandHandlers } from './application/commands/handlers';
+import { QueryHandlers } from './application/queries/handlers';
+import { EventHandlers } from './application/events/handlers';
+
 import { MongoProjectRepository } from './infrastructure/repositories/mongo-project.repository';
 import { HttpGithubRepository } from './infrastructure/repositories/http-github.repository';
 import { SharedModule } from '@shared/shared.module';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Project.name, schema: ProjectSchema }]),
+    MongooseModule.forFeature([{ name: 'Project', schema: ProjectSchema }]),
     CqrsModule,
     SharedModule,
   ],
@@ -26,6 +29,7 @@ import { SharedModule } from '@shared/shared.module';
     },
     ...CommandHandlers,
     ...QueryHandlers,
+    ...EventHandlers,
   ],
   exports: [],
 })

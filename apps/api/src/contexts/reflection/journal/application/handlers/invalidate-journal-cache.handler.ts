@@ -13,11 +13,17 @@ export class InvalidateJournalCacheHandler implements IEventHandler<JournalModif
 
   async handle(event: JournalModifiedEvent): Promise<void> {
     this.logger.log(
-      `Invalidating cache for journal: ${event.journalId.toString()}`,
+      `Handling cache invalidation for journal: ${event.journalId.toString()} (Action: ${event.action})`,
       InvalidateJournalCacheHandler.name,
     );
-    await this.cacheService.deleteByPattern(JournalCacheKeys.ALL_JOURNALS_PATTERN);
-    await this.cacheService.deleteByPattern(JournalCacheKeys.PUBLIC_JOURNALS_PATTERN);
-    await this.cacheService.deleteByPattern(JournalCacheKeys.GET_BY_ID(event.journalId));
+    await this.cacheService.incrementVersion('journals');
+
+    const specificKey = JournalCacheKeys.GET_BY_ID(event.journalId);
+    await this.cacheService.delete(specificKey);
+
+    this.logger.log(
+      `Version incremented and specific cache deleted: ${specificKey}`,
+      InvalidateJournalCacheHandler.name,
+    );
   }
 }

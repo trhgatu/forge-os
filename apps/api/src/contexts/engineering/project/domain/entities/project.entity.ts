@@ -4,8 +4,8 @@ import {
   GithubRepoDetails,
   ProjectLog,
   ProjectMetadata,
-} from './project.interfaces';
-import { ProjectId } from './value-objects/project-id.vo';
+} from '../project.interfaces';
+import { ProjectId } from '../value-objects/project-id.vo';
 
 interface ProjectProps {
   title: string;
@@ -122,9 +122,38 @@ export class Project {
     this.props.updatedAt = new Date();
   }
 
-  // ============
-  //   GETTERS
-  // ============
+  extractGithubInfo(): { owner: string; repo: string } | null {
+    const githubLink = this.props.links?.find((l) => {
+      try {
+        const url = new URL(l.url);
+        return url.hostname === 'github.com' && url.pathname.split('/').filter(Boolean).length >= 2;
+      } catch {
+        return false;
+      }
+    });
+
+    if (githubLink) {
+      try {
+        const url = new URL(githubLink.url);
+        const parts = url.pathname.split('/').filter(Boolean);
+        if (parts.length >= 2) {
+          const owner = parts[0];
+          const repo = parts[1].replace(/\.git$/, '');
+          if (owner && repo) return { owner, repo };
+        }
+      } catch {
+        // Ignored, fallback to metadata
+      }
+    }
+
+    const owner =
+      typeof this.props.metadata?.owner === 'string' ? this.props.metadata.owner : undefined;
+    const repo =
+      typeof this.props.metadata?.repo === 'string' ? this.props.metadata.repo : undefined;
+    if (owner && repo) return { owner, repo };
+
+    return null;
+  }
 
   get title() {
     return this.props.title;
@@ -172,10 +201,6 @@ export class Project {
   get deletedDate() {
     return this.deletedAt;
   }
-
-  // ============
-  //   SERIALIZATION
-  // ============
 
   toPersistence() {
     return {

@@ -1,23 +1,18 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
-
-import { Journal, JournalSchema } from './infrastructure/journal.schema';
+import { JournalSchema } from './infrastructure/journal.schema';
 import { MongoJournalRepository } from './infrastructure/repositories/mongo-journal.repository';
-
 import { JournalAdminController } from './presentation/controllers/journal.admin.controller';
 import { JournalPublicController } from './presentation/controllers/journal.public.controller';
-
+import { CommandHandlers, QueryHandlers } from './application/handlers';
 import { SharedModule } from '@shared/shared.module';
-
-import { JournalHandlers } from './application/handlers';
-import { JournalRepository } from './application/ports/journal.repository';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       {
-        name: Journal.name,
+        name: 'Journal',
         schema: JournalSchema,
       },
     ]),
@@ -27,11 +22,11 @@ import { JournalRepository } from './application/ports/journal.repository';
   controllers: [JournalAdminController, JournalPublicController],
   providers: [
     {
-      provide: JournalRepository,
+      provide: 'JournalRepository',
       useClass: MongoJournalRepository,
     },
-    MongoJournalRepository,
-    ...JournalHandlers,
+    ...CommandHandlers,
+    ...QueryHandlers,
   ],
   exports: [],
 })

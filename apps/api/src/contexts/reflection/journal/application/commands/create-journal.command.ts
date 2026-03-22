@@ -15,6 +15,7 @@ export interface CreateJournalPayload {
   status?: JournalStatus;
   source?: 'user' | 'ai' | 'system';
   relations?: CreateJournalRelationPayload[];
+  userId?: string;
 }
 
 export class CreateJournalCommand {
