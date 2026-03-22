@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { Project } from '../../domain/project.entity';
+import { Project } from '../../domain/entities/project.entity';
 import { ProjectDocument } from '../project.schema';
 import {
   GithubRepoDetails,

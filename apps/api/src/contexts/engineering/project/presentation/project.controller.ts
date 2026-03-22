@@ -20,7 +20,7 @@ import { GetGithubReposQuery } from '../application/queries/get-github-repos.que
 import { CreateProjectCommand } from '../application/commands/create-project.command';
 import { SyncProjectCommand } from '../application/commands/sync-project.command';
 import { ProjectId } from '../domain/value-objects/project-id.vo';
-import { Project } from '../domain/project.entity';
+import { Project } from '../domain/entities/project.entity';
 import { UpdateProjectCommand } from '../application/commands/update-project.command';
 
 import { CreateProjectDto } from '../application/dtos/create-project.dto';
@@ -32,6 +32,8 @@ import { PermissionEnum } from '@shared/enums/permission.enum';
 import { JwtAuthGuard } from '../../../iam/auth/application/guards/jwt-auth.guard';
 import { PermissionsGuard } from '@shared/guards/permissions.guard';
 import { UseGuards } from '@nestjs/common';
+
+import { CacheInvalidate } from '@shared/decorators/cache-invalidate.decorator';
 
 @Controller('engineering/projects')
 @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -99,6 +101,7 @@ export class ProjectController {
 
   @Post()
   @Permissions(PermissionEnum.CREATE_PROJECT)
+  @CacheInvalidate('projects')
   async create(@Body() dto: CreateProjectDto, @User('id') userId: string) {
     const project = (await this.commandBus.execute(
       new CreateProjectCommand({
@@ -111,22 +114,28 @@ export class ProjectController {
 
   @Patch(':id')
   @Permissions(PermissionEnum.UPDATE_PROJECT)
-  async update(@Param('id') id: string, @Body() dto: UpdateProjectDto) {
+  @CacheInvalidate('projects')
+  async update(@Param('id') id: string, @Body() dto: UpdateProjectDto, @User('id') userId: string) {
     const project = (await this.commandBus.execute(
-      new UpdateProjectCommand(ProjectId.create(id), dto),
+      new UpdateProjectCommand(ProjectId.create(id), {
+        ...dto,
+        userId,
+      }),
     )) as Project;
     return ProjectPresenter.toResponse(project);
   }
 
   @Delete(':id')
   @Permissions(PermissionEnum.DELETE_PROJECT)
-  async remove(@Param('id') id: string) {
-    await this.commandBus.execute(new DeleteProjectCommand(ProjectId.create(id)));
+  @CacheInvalidate('projects')
+  async remove(@Param('id') id: string, @User('id') userId: string) {
+    await this.commandBus.execute(new DeleteProjectCommand(ProjectId.create(id), userId));
     return { success: true };
   }
 
   @Post(':id/sync')
   @Permissions(PermissionEnum.UPDATE_PROJECT)
+  @CacheInvalidate('projects')
   async sync(@Param('id') id: string, @User('id') userId: string) {
     const project = (await this.commandBus.execute(
       new SyncProjectCommand({ id: ProjectId.create(id), userId }),
