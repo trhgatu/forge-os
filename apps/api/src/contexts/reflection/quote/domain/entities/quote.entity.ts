@@ -122,6 +122,7 @@ export class Quote extends AggregateRoot<IEvent> {
     if (props.source !== undefined) this._source = props.source;
     if (props.tags) this._tags = props.tags;
     if (props.status) this._status = props.status;
+    if (props.mood !== undefined) this._mood = props.mood;
 
     this._updatedAt = new Date();
     this.apply(new QuoteModifiedEvent(this.id.value, 'update'));

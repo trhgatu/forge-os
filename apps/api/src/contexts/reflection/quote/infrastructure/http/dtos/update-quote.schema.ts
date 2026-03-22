@@ -1,6 +1,6 @@
-import { CreateQuoteSchema } from './create-quote.schema';
+import { QuoteBaseSchema } from './quote-base.schema';
 
-export const UpdateQuoteSchema = CreateQuoteSchema.partial().refine(
+export const UpdateQuoteSchema = QuoteBaseSchema.partial().refine(
   (data) => Object.keys(data).length > 0,
   { message: 'At least one field must be provided for update' },
 );

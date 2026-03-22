@@ -1,12 +1,8 @@
-import { z } from 'zod';
 import { QuoteStatus, MoodType } from '@shared/enums';
-import { ContentSchema } from './content.schema';
+import { QuoteBaseSchema } from './quote-base.schema';
 
-export const CreateQuoteSchema = z.object({
-  content: ContentSchema,
-  author: z.string().optional(),
-  source: z.string().url({ message: 'Source must be a valid URL.' }).optional().or(z.literal('')),
-  tags: z.array(z.string()).optional().default([]),
-  mood: z.nativeEnum(MoodType).optional().default(MoodType.FOCUSED),
-  status: z.nativeEnum(QuoteStatus).optional().default(QuoteStatus.INTERNAL),
-});
+export const CreateQuoteSchema = QuoteBaseSchema.extend({
+  tags: QuoteBaseSchema.shape.tags.default([]),
+  mood: QuoteBaseSchema.shape.mood.default(MoodType.FOCUSED),
+  status: QuoteBaseSchema.shape.status.default(QuoteStatus.INTERNAL),
+}).refine((data) => data.content, { message: 'Content is required' });

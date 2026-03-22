@@ -69,8 +69,12 @@ export class QuoteAdminController {
 
   @Patch(':id')
   @Permissions(PermissionEnum.UPDATE_QUOTE)
-  async update(@Param('id') id: string, @Body() req: UpdateQuoteRequest): Promise<QuoteResponse> {
-    return this.commandBus.execute(new UpdateQuoteCommand(QuoteId.create(id), req));
+  async update(
+    @Param('id') id: string,
+    @Body() req: UpdateQuoteRequest,
+    @Query('lang') lang: string = 'en',
+  ): Promise<QuoteResponse> {
+    return this.commandBus.execute(new UpdateQuoteCommand(QuoteId.create(id), req, lang));
   }
 
   @Delete(':id')

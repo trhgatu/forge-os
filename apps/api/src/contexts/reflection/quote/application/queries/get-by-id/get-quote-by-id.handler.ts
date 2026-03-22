@@ -1,22 +1,19 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { GetQuoteByIdForPublicQuery } from './get-quote-by-id-public.query';
+import { GetQuoteByIdQuery } from './get-quote-by-id.query';
 import { NotFoundException } from '@nestjs/common';
 import { QuoteRepository } from '../../../domain/repositories/quote.repository';
 import { QuoteResponse } from '../../../infrastructure/http/responses/quote.response';
 import { CacheService } from '@shared/services';
 import { QuoteCacheKeys } from '../../../infrastructure/cache/quote-cache.keys';
 
-@QueryHandler(GetQuoteByIdForPublicQuery)
-export class GetQuoteByIdForPublicHandler implements IQueryHandler<
-  GetQuoteByIdForPublicQuery,
-  QuoteResponse
-> {
+@QueryHandler(GetQuoteByIdQuery)
+export class GetQuoteByIdHandler implements IQueryHandler<GetQuoteByIdQuery, QuoteResponse> {
   constructor(
     private readonly quoteRepo: QuoteRepository,
     private readonly cacheService: CacheService,
   ) {}
 
-  async execute(query: GetQuoteByIdForPublicQuery): Promise<QuoteResponse> {
+  async execute(query: GetQuoteByIdQuery): Promise<QuoteResponse> {
     const { id, lang } = query;
 
     const cacheKey = QuoteCacheKeys.GET_BY_ID(id);

@@ -1,10 +1,10 @@
-import { z } from 'zod';
+import { UseZod } from '@shared/insfrastructure/decorators/zod.decorator';
 import { UpdateQuoteSchema } from '../dtos/update-quote.schema';
 import { MoodType, QuoteStatus } from '@shared/enums';
 
-type UpdateQuoteType = z.infer<typeof UpdateQuoteSchema>;
-export class UpdateQuoteRequest implements UpdateQuoteType {
-  content?: UpdateQuoteType['content'];
+@UseZod(UpdateQuoteSchema)
+export class UpdateQuoteRequest {
+  content?: Record<string, string>;
   author?: string;
   source?: string;
   tags?: string[];
