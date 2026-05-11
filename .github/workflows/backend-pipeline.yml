@@ -37,6 +37,7 @@ jobs:
 
       - name: 🧹 Lint & Build Test
         run: |
+          pnpm prisma generate --schema=apps/api/prisma/schema.prisma
           pnpm turbo lint --filter=@forge/api
           pnpm turbo build --filter=@forge/api
 

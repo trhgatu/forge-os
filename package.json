@@ -8,7 +8,8 @@
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
-    "prepare": "husky"
+    "prepare": "husky",
+    "postinstall": "prisma generate --schema=apps/api/prisma/schema.prisma"
   },
   "devDependencies": {
     "@types/node": "^25.3.0",
