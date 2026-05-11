@@ -5,7 +5,7 @@ WORKDIR /app
 COPY . .
 
 RUN pnpm install --frozen-lockfile
-RUN pnpm --filter @forge/api build
+RUN pnpm turbo build --filter=@forge/api
 RUN pnpm --filter @forge/api --prod deploy isolated
 
 FROM node:20-alpine AS runner
