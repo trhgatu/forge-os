@@ -59,7 +59,7 @@ export class PrismaJournalRepository implements JournalRepository {
   }
 
   async findAll(filter: JournalFilter): Promise<PaginatedResult<JournalEntity>> {
-    const { page = 1, limit = 10, keyword, status, type, mood, isDeleted } = filter;
+    const { page = 1, limit = 10, keyword, status, type, mood, isDeleted, userId } = filter;
     const skip = (page - 1) * limit;
 
     const where: any = {

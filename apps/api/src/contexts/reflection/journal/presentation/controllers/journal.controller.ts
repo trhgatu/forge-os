@@ -2,7 +2,7 @@ import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards } fro
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../../../iam/auth/application/guards/jwt-auth.guard';
-import { CurrentUser } from '../../../../iam/auth/presentation/decorators/current-user.decorator';
+import { User } from '@shared/decorators';
 import { JournalId } from '../../domain/value-objects/journal-id.vo';
 import { CreateJournalDto, UpdateJournalDto, QueryJournalDto, JournalResponse } from '../dto';
 import {
@@ -27,7 +27,7 @@ export class JournalController {
   @Post()
   @ApiOperation({ summary: 'Create a new journal entry' })
   @ApiResponse({ status: 201, type: JournalResponse })
-  async create(@Body() dto: CreateJournalDto, @CurrentUser('id') userId: string) {
+  async create(@Body() dto: CreateJournalDto, @User('id') userId: string) {
     // Inject userId to ensure the journal belongs to the creator
     const journal = await this.commandBus.execute(new CreateJournalCommand({ ...dto, userId }));
     return this.presenter.toResponse(journal);
@@ -35,7 +35,7 @@ export class JournalController {
 
   @Get()
   @ApiOperation({ summary: 'Get my journal entries (paginated)' })
-  async findAll(@Query() queryDto: QueryJournalDto, @CurrentUser('id') userId: string) {
+  async findAll(@Query() queryDto: QueryJournalDto, @User('id') userId: string) {
     const filter = this.presenter.toFilter(queryDto);
     // Filter by userId to ensure privacy
     const result = await this.queryBus.execute(new GetAllJournalsQuery({ ...filter, userId }));
@@ -48,7 +48,7 @@ export class JournalController {
   @Get(':id')
   @ApiOperation({ summary: 'Get my journal entry by ID' })
   @ApiResponse({ status: 200, type: JournalResponse })
-  async findOne(@Param('id') id: string, @CurrentUser('id') userId: string) {
+  async findOne(@Param('id') id: string, @User('id') userId: string) {
     const journal = await this.queryBus.execute(
       new GetJournalByIdQuery(JournalId.fromString(id), userId),
     );
@@ -58,11 +58,7 @@ export class JournalController {
   @Put(':id')
   @ApiOperation({ summary: 'Update my journal entry' })
   @ApiResponse({ status: 200, type: JournalResponse })
-  async update(
-    @Param('id') id: string,
-    @Body() dto: UpdateJournalDto,
-    @CurrentUser('id') userId: string,
-  ) {
+  async update(@Param('id') id: string, @Body() dto: UpdateJournalDto, @User('id') userId: string) {
     const journal = await this.commandBus.execute(
       new UpdateJournalCommand(JournalId.fromString(id), { ...dto, userId }),
     );
@@ -71,7 +67,7 @@ export class JournalController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Soft delete my journal entry' })
-  async remove(@Param('id') id: string, @CurrentUser('id') userId: string) {
+  async remove(@Param('id') id: string, @User('id') userId: string) {
     const journal = await this.commandBus.execute(
       new SoftDeleteJournalCommand(JournalId.fromString(id), userId),
     );
