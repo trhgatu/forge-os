@@ -9,6 +9,9 @@ on:
       - '.github/workflows/**'
       - 'package.json'
       - 'pnpm-workspace.yaml'
+      - '*.config.ts'
+      - '*.config.mjs'
+      - '.env*'
   pull_request:
     branches: [main, develop]
   workflow_dispatch:
