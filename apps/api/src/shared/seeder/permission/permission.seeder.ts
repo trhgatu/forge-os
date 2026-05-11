@@ -8,10 +8,22 @@ export class PermissionSeeder {
   constructor(private readonly prisma: PrismaService) {}
 
   async seed() {
-    const allPermissions = Object.values(PermissionEnum);
-    let createdCount = 0;
+    const enumPermissions = Object.values(PermissionEnum) as string[];
 
-    for (const name of allPermissions) {
+    const deleted = await this.prisma.permission.deleteMany({
+      where: {
+        name: {
+          notIn: enumPermissions,
+        },
+      },
+    });
+
+    if (deleted.count > 0) {
+      console.log(`🧹 Deleted ${deleted.count} obsolete permissions.`);
+    }
+
+    let createdCount = 0;
+    for (const name of enumPermissions) {
       const exists = await this.prisma.permission.findUnique({ where: { name } });
       if (!exists) {
         const parts = name.split('_');
@@ -32,7 +44,7 @@ export class PermissionSeeder {
     if (createdCount > 0) {
       console.log(`✅ Seeded ${createdCount} new permissions.`);
     } else {
-      console.log('✨ All permissions already exist.');
+      console.log('✨ Permissions are up to date.');
     }
   }
 }
