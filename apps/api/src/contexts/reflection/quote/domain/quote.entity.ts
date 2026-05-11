@@ -71,20 +71,38 @@ export class Quote {
     this.deletedAt = undefined;
   }
 
-  get isQuoteDeleted(): boolean { return this.isDeleted; }
+  get isQuoteDeleted(): boolean {
+    return this.isDeleted;
+  }
 
   localizedContent(lang: string): string {
     return this.props.content.get(lang) ?? this.props.content.get('en') ?? '';
   }
 
-  get content() { return this.props.content; }
-  get author() { return this.props.author; }
-  get source() { return this.props.source; }
-  get tags() { return this.props.tags; }
-  get mood() { return this.props.mood; }
-  get status() { return this.props.status; }
-  get createdAt() { return this.props.createdAt; }
-  get updatedAt() { return this.props.updatedAt; }
+  get content() {
+    return this.props.content;
+  }
+  get author() {
+    return this.props.author;
+  }
+  get source() {
+    return this.props.source;
+  }
+  get tags() {
+    return this.props.tags;
+  }
+  get mood() {
+    return this.props.mood;
+  }
+  get status() {
+    return this.props.status;
+  }
+  get createdAt() {
+    return this.props.createdAt;
+  }
+  get updatedAt() {
+    return this.props.updatedAt;
+  }
 
   toPersistence() {
     return {

@@ -21,9 +21,7 @@ export class JournalPublicController {
   @ApiOperation({ summary: 'Get all public journal entries' })
   async findAll(@Query() queryDto: QueryJournalDto) {
     const filter = this.presenter.toFilter(queryDto);
-    const result = await this.queryBus.execute(
-      new GetAllJournalsForPublicQuery(filter),
-    );
+    const result = await this.queryBus.execute(new GetAllJournalsForPublicQuery(filter));
     return {
       ...result,
       data: this.presenter.toResponseArray(result.data),

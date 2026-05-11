@@ -9,7 +9,7 @@ import { QuoteMapper } from './quote.mapper';
 
 @Injectable()
 export class PrismaQuoteRepository implements QuoteRepository {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async save(quote: QuoteEntity): Promise<void> {
     const id = quote.id.toString();
@@ -49,7 +49,7 @@ export class PrismaQuoteRepository implements QuoteRepository {
   }
 
   async findAll(filter: QuoteFilter): Promise<PaginatedResult<QuoteEntity>> {
-    const { page = 1, limit = 10, keyword, status, mood, source, author, tags, isDeleted } = filter;
+    const { page = 1, limit = 10, status, mood, source, author, tags, isDeleted } = filter;
     const skip = (page - 1) * limit;
 
     const where: any = {
@@ -75,7 +75,9 @@ export class PrismaQuoteRepository implements QuoteRepository {
     ]);
 
     return {
-      data: data.map((doc) => QuoteMapper.toDomain(doc)).filter((q): q is QuoteEntity => q !== null),
+      data: data
+        .map((doc) => QuoteMapper.toDomain(doc))
+        .filter((q): q is QuoteEntity => q !== null),
       meta: {
         total,
         page,
@@ -128,7 +130,7 @@ export class PrismaQuoteRepository implements QuoteRepository {
   async delete(id: QuoteId): Promise<void> {
     try {
       await this.prisma.quote.delete({ where: { id: id.toString() } });
-    } catch (e) {
+    } catch {
       throw new NotFoundException('Quote not found');
     }
   }
@@ -139,7 +141,7 @@ export class PrismaQuoteRepository implements QuoteRepository {
         where: { id: id.toString() },
         data: { isDeleted: true, deletedAt: new Date() },
       });
-    } catch (e) {
+    } catch {
       throw new NotFoundException('Quote not found');
     }
   }
@@ -150,7 +152,7 @@ export class PrismaQuoteRepository implements QuoteRepository {
         where: { id: id.toString() },
         data: { isDeleted: false, deletedAt: null },
       });
-    } catch (e) {
+    } catch {
       throw new NotFoundException('Quote not found');
     }
   }

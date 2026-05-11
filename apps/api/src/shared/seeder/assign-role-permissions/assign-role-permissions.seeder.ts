@@ -17,7 +17,7 @@ export class AssignRolePermissionsSeeder {
     }
 
     const allPermissions = await this.prisma.permission.findMany();
-    
+
     await this.prisma.role.update({
       where: { id: adminRole.id },
       data: {

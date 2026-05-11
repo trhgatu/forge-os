@@ -3,7 +3,7 @@ import { JournalRepository } from '../../domain/journal.repository';
 import { Journal as JournalEntity } from '../../domain/journal.entity';
 import { JournalId } from '../../domain/value-objects/journal-id.vo';
 import { JournalFilter } from '../../application/queries/journal-filter';
-import { JournalStatus, JournalType } from '../../domain/enums';
+import { JournalStatus } from '../../domain/enums';
 import { PaginatedResult } from '@shared/types/paginated-result';
 import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
 import { JournalMapper } from './journal.mapper';
@@ -86,7 +86,9 @@ export class PrismaJournalRepository implements JournalRepository {
     ]);
 
     return {
-      data: data.map((doc) => JournalMapper.toDomain(doc)).filter((j): j is JournalEntity => j !== null),
+      data: data
+        .map((doc) => JournalMapper.toDomain(doc))
+        .filter((j): j is JournalEntity => j !== null),
       meta: {
         total,
         page,
@@ -126,7 +128,7 @@ export class PrismaJournalRepository implements JournalRepository {
   async delete(id: JournalId): Promise<void> {
     try {
       await this.prisma.journal.delete({ where: { id: id.toString() } });
-    } catch (e) {
+    } catch {
       throw new NotFoundException('Journal not found');
     }
   }

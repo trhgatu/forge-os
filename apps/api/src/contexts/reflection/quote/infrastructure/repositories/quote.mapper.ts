@@ -6,7 +6,8 @@ export class QuoteMapper {
 
     return Quote.createFromPersistence(
       {
-        content: doc.content instanceof Map ? doc.content : new Map(Object.entries(doc.content || {})),
+        content:
+          doc.content instanceof Map ? doc.content : new Map(Object.entries(doc.content || {})),
         author: doc.author,
         source: doc.source,
         tags: doc.tags || [],

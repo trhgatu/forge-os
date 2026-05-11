@@ -1,3 +1,7 @@
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { CacheInvalidationInterceptor } from '@shared/interceptors';
+import { CacheModule } from '@shared/services/cache.module';
+
 import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -70,6 +74,14 @@ import { PrismaModule } from './shared/infrastructure/prisma/prisma.module';
     PresenceModule,
     EngineeringModule,
     GamificationModule,
+
+    CacheModule,
+  ],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CacheInvalidationInterceptor,
+    },
   ],
   controllers: [AppController],
 })

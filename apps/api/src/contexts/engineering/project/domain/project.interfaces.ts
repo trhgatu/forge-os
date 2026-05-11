@@ -33,8 +33,8 @@ export interface GithubRepoDetails {
   issues: number;
   language: string | null;
   languages: Record<string, number>;
-  commitActivity: { date: string; count: number }[]; // For Heatmap
-  recentCommits: GithubCommitActivity[]; // For Activity Feed
+  commitActivity: { date: string; count: number }[];
+  recentCommits: GithubCommitActivity[];
   contributors: GithubContributor[];
   updatedAt: Date;
   description: string | null;
@@ -104,18 +104,18 @@ export interface ProjectMetadata {
     description?: string;
     dueDate?: string;
     status: 'pending' | 'in_progress' | 'completed';
-    progress: number; // Restored for frontend compatibility
+    progress: number;
   };
   dueDate?: string;
   team?: {
     id: string;
     name: string;
-    avatar?: string; // Renamed from avatarUrl to match frontend
+    avatar?: string;
   }[];
   lead?: {
     id: string;
     name: string;
-    avatar?: string; // Renamed from avatarUrl to match frontend
+    avatar?: string;
   };
-  [key: string]: unknown; // Allow extension while strictly typing known fields
+  [key: string]: unknown;
 }

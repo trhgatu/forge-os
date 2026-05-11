@@ -10,7 +10,7 @@ export class UpdateJournalHandler implements ICommandHandler<UpdateJournalComman
   constructor(
     @Inject('JournalRepository')
     private readonly journalRepo: JournalRepository,
-  ) { }
+  ) {}
 
   async execute(command: UpdateJournalCommand): Promise<Journal> {
     const { id, payload } = command;

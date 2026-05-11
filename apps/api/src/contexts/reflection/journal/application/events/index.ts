@@ -6,7 +6,4 @@ export * from './journal-modified.handler';
 import { JournalCreatedHandler } from './journal-created.handler';
 import { JournalModifiedHandler } from './journal-modified.handler';
 
-export const JournalEventHandlers = [
-  JournalCreatedHandler,
-  JournalModifiedHandler,
-];
+export const JournalEventHandlers = [JournalCreatedHandler, JournalModifiedHandler];

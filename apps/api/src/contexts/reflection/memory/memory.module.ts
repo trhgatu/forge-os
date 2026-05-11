@@ -25,11 +25,7 @@ const CommandHandlers = [
   RestoreMemoryHandler,
 ];
 
-const QueryHandlers = [
-  GetAllMemoriesHandler,
-  GetAllMemoriesForPublicHandler,
-  GetMemoryByIdHandler,
-];
+const QueryHandlers = [GetAllMemoriesHandler, GetAllMemoriesForPublicHandler, GetMemoryByIdHandler];
 
 @Module({
   imports: [CqrsModule, SharedModule],

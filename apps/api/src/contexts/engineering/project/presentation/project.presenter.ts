@@ -1,4 +1,4 @@
-import { Project } from '../domain/project.entity';
+import { Project } from '../domain/entities/project.entity';
 import {
   ProjectResponse,
   ProjectSummaryResponse,
@@ -31,7 +31,6 @@ export class ProjectPresenter {
       isDeleted: entity.isProjectDeleted,
       deletedAt: entity.deletedDate ? new Date(entity.deletedDate).toISOString() : null,
 
-      // Frontend Compatibility
       technologies: entity.metadata?.technologies || [],
       currentMilestone: entity.metadata?.currentMilestone
         ? {
@@ -129,8 +128,6 @@ export class ProjectPresenter {
     const sortedLogs = [...allLogs].sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
     );
-
-    // Pagination logic
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + limit;
     const paginatedLogs = sortedLogs.slice(startIndex, endIndex);

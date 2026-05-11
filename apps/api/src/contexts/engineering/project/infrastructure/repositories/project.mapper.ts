@@ -1,5 +1,4 @@
-import { Project } from '../../domain/project.entity';
-import { ProjectId } from '../../domain/value-objects/project-id.vo';
+import { Project } from '../../domain/entities/project.entity';
 
 export class ProjectMapper {
   static toDomain(doc: any): Project {

@@ -1,22 +1,49 @@
-name: CD - Deploy Backend to Docker Hub
+name: Forge OS - Backend Pipeline
 
 on:
   push:
-    branches:
-      - main
-      - develop
+    branches: [main, develop]
     paths:
       - 'apps/api/**'
       - 'packages/**'
-      - '.github/workflows/cd.yml'
+      - '.github/workflows/**'
       - 'package.json'
       - 'pnpm-workspace.yaml'
+  pull_request:
+    branches: [main, develop]
   workflow_dispatch:
 
 jobs:
-  deploy:
+  ci-test:
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
+      - name: 🔧 Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: 📦 Install
+        run: pnpm install --frozen-lockfile
+
+      - name: 🧹 Lint & Build Test
+        run: |
+          pnpm turbo lint --filter=@forge/api
+          pnpm turbo build --filter=@forge/api
+
+  cd-deploy:
+    needs: ci-test
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
@@ -39,7 +66,6 @@ jobs:
           tags: |
             trhgatu/forge-os-backend:${{ github.ref_name }}
             ${{ github.ref_name == 'main' && 'trhgatu/forge-os-backend:latest' || '' }}
-            ${{ github.ref_name == 'develop' && 'trhgatu/forge-os-backend:dev-latest' || '' }}
           cache-from: type=registry,ref=trhgatu/forge-os-backend:buildcache
           cache-to: type=registry,ref=trhgatu/forge-os-backend:buildcache,mode=max
 

@@ -3,7 +3,7 @@ import { MoodType } from '@shared/enums';
 import { JournalStatus, JournalType, JournalRelationType, JournalSource } from './enums';
 import { AggregateRoot } from '../../../../shared/domain/aggregate-root.base';
 
-interface JournalRelation {
+export interface JournalRelation {
   type: JournalRelationType;
   id: string;
 }
@@ -37,8 +37,8 @@ export class Journal extends AggregateRoot<JournalId> {
       relations?: JournalRelation[];
     },
     id: JournalId,
-    now: Date,
   ): Journal {
+    const now = new Date();
     const journal = new Journal(id, {
       ...props,
       tags: props.tags ?? [],
@@ -112,18 +112,42 @@ export class Journal extends AggregateRoot<JournalId> {
   }
 
   // --- Getters ---
-  get title() { return this.props.title; }
-  get content() { return this.props.content; }
-  get mood() { return this.props.mood; }
-  get tags() { return this.props.tags; }
-  get type() { return this.props.type; }
-  get status() { return this.props.status; }
-  get source() { return this.props.source; }
-  get relations() { return this.props.relations; }
-  get createdAt() { return this.props.createdAt; }
-  get updatedAt() { return this.props.updatedAt; }
-  get isJournalDeleted(): boolean { return this.isDeleted; }
-  get journalDeletedAt() { return this.deletedAt; }
+  get title() {
+    return this.props.title;
+  }
+  get content() {
+    return this.props.content;
+  }
+  get mood() {
+    return this.props.mood;
+  }
+  get tags() {
+    return this.props.tags;
+  }
+  get type() {
+    return this.props.type;
+  }
+  get status() {
+    return this.props.status;
+  }
+  get source() {
+    return this.props.source;
+  }
+  get relations() {
+    return this.props.relations;
+  }
+  get createdAt() {
+    return this.props.createdAt;
+  }
+  get updatedAt() {
+    return this.props.updatedAt;
+  }
+  get isJournalDeleted(): boolean {
+    return this.isDeleted;
+  }
+  get journalDeletedAt() {
+    return this.deletedAt;
+  }
 
   public toPersistence() {
     return {

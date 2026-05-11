@@ -1,36 +1,18 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
-  Body,
-  Param,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../../../iam/auth/application/guards/jwt-auth.guard';
 import { PermissionsGuard } from '@shared/guards/permissions.guard';
 import { Permissions } from '@shared/decorators';
 import { JournalId } from '../../domain/value-objects/journal-id.vo';
-import {
-  CreateJournalDto,
-  UpdateJournalDto,
-  QueryJournalDto,
-  JournalResponse,
-} from '../dto';
+import { CreateJournalDto, UpdateJournalDto, QueryJournalDto, JournalResponse } from '../dto';
 import {
   CreateJournalCommand,
   UpdateJournalCommand,
   SoftDeleteJournalCommand,
   RestoreJournalCommand,
 } from '../../application/commands';
-import {
-  GetAllJournalsQuery,
-  GetJournalByIdQuery,
-} from '../../application/queries';
+import { GetAllJournalsQuery, GetJournalByIdQuery } from '../../application/queries';
 import { JournalPresenter } from '../presenters/journal.presenter';
 
 @ApiTags('Reflection / Journal (Admin)')
@@ -70,9 +52,7 @@ export class JournalAdminController {
   @ApiOperation({ summary: 'Get a journal entry by ID' })
   @ApiResponse({ status: 200, type: JournalResponse })
   async findOne(@Param('id') id: string) {
-    const journal = await this.queryBus.execute(
-      new GetJournalByIdQuery(JournalId.fromString(id)),
-    );
+    const journal = await this.queryBus.execute(new GetJournalByIdQuery(JournalId.fromString(id)));
     return this.presenter.toResponse(journal);
   }
 

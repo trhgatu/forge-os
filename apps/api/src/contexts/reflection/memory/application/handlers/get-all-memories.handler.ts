@@ -7,7 +7,10 @@ import { PaginatedResult } from '@shared/types/paginated-result';
 import { Memory } from '../../domain/memory.entity';
 
 @QueryHandler(GetAllMemoriesQuery)
-export class GetAllMemoriesHandler implements IQueryHandler<GetAllMemoriesQuery, PaginatedResult<Memory>> {
+export class GetAllMemoriesHandler implements IQueryHandler<
+  GetAllMemoriesQuery,
+  PaginatedResult<Memory>
+> {
   constructor(
     @Inject('MemoryRepository')
     private readonly memoryRepo: MemoryRepository,
@@ -24,7 +27,7 @@ export class GetAllMemoriesHandler implements IQueryHandler<GetAllMemoriesQuery,
 
     const memories = await this.memoryRepo.findAll(payload);
     await this.cacheService.set(cacheKey, memories, 60);
-    
+
     return memories;
   }
 }

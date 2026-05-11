@@ -26,7 +26,7 @@ export class UserMapper {
     roleData: any,
   ): { id: string; name: string; permissions: string[] } | undefined {
     if (!roleData) return undefined;
-    
+
     const id = roleData.id;
     if (!id && typeof roleData !== 'object') return undefined;
 

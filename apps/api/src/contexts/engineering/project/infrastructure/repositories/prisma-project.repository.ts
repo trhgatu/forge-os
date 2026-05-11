@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ProjectRepository } from '../../application/ports/project.repository';
-import { Project as ProjectEntity } from '../../domain/project.entity';
+import { Project as ProjectEntity } from '../../domain/entities/project.entity';
 import { ProjectId } from '../../domain/value-objects/project-id.vo';
 import { ProjectFilter } from '../../application/queries/project-filter';
 import { PaginatedResult } from '@shared/types/paginated-result';
@@ -103,7 +103,7 @@ export class PrismaProjectRepository implements ProjectRepository {
   async delete(id: ProjectId): Promise<void> {
     try {
       await this.prisma.project.delete({ where: { id: id.toString() } });
-    } catch (e) {
+    } catch {
       throw new NotFoundException('Project not found');
     }
   }
@@ -114,7 +114,7 @@ export class PrismaProjectRepository implements ProjectRepository {
         where: { id: id.toString() },
         data: { isDeleted: true, deletedAt: new Date() },
       });
-    } catch (e) {
+    } catch {
       throw new NotFoundException('Project not found');
     }
   }
@@ -125,7 +125,7 @@ export class PrismaProjectRepository implements ProjectRepository {
         where: { id: id.toString() },
         data: { isDeleted: false, deletedAt: null },
       });
-    } catch (e) {
+    } catch {
       throw new NotFoundException('Project not found');
     }
   }

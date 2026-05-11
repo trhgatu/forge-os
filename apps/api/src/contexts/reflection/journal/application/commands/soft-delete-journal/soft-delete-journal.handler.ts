@@ -3,14 +3,16 @@ import { NotFoundException, Inject } from '@nestjs/common';
 import { SoftDeleteJournalCommand } from './soft-delete-journal.command';
 import { JournalRepository } from '../../../domain/journal.repository';
 import { Journal } from '../../../domain/journal.entity';
-import { JournalId } from '../../../domain/value-objects/journal-id.vo';
 
 @CommandHandler(SoftDeleteJournalCommand)
-export class SoftDeleteJournalHandler implements ICommandHandler<SoftDeleteJournalCommand, Journal> {
+export class SoftDeleteJournalHandler implements ICommandHandler<
+  SoftDeleteJournalCommand,
+  Journal
+> {
   constructor(
     @Inject('JournalRepository')
     private readonly journalRepo: JournalRepository,
-  ) { }
+  ) {}
 
   async execute(command: SoftDeleteJournalCommand): Promise<Journal> {
     const { id } = command;

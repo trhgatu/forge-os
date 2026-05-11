@@ -78,7 +78,9 @@ export class Memory {
     this.deletedAt = undefined;
   }
 
-  get isMemoryDeleted(): boolean { return this.isDeleted; }
+  get isMemoryDeleted(): boolean {
+    return this.isDeleted;
+  }
 
   localizedTitle(lang: string): string {
     const val = this.props.title.get(lang) ?? this.props.title.get('en');
@@ -92,13 +94,27 @@ export class Memory {
     return this.props.content.values().next().value ?? '';
   }
 
-  get title() { return this.props.title; }
-  get content() { return this.props.content; }
-  get mood() { return this.props.mood; }
-  get tags() { return this.props.tags; }
-  get status() { return this.props.status; }
-  get createdAt() { return this.props.createdAt; }
-  get updatedAt() { return this.props.updatedAt; }
+  get title() {
+    return this.props.title;
+  }
+  get content() {
+    return this.props.content;
+  }
+  get mood() {
+    return this.props.mood;
+  }
+  get tags() {
+    return this.props.tags;
+  }
+  get status() {
+    return this.props.status;
+  }
+  get createdAt() {
+    return this.props.createdAt;
+  }
+  get updatedAt() {
+    return this.props.updatedAt;
+  }
 
   toPersistence() {
     return {

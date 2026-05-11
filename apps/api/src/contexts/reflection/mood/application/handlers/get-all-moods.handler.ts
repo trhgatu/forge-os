@@ -6,10 +6,7 @@ import { Mood } from '../../domain/mood.entity';
 import { PaginatedResult } from '@shared/types/paginated-result';
 
 @QueryHandler(GetAllMoodsQuery)
-export class GetAllMoodsHandler implements IQueryHandler<
-  GetAllMoodsQuery,
-  PaginatedResult<Mood>
-> {
+export class GetAllMoodsHandler implements IQueryHandler<GetAllMoodsQuery, PaginatedResult<Mood>> {
   constructor(
     @Inject('MoodRepository')
     private readonly moodRepo: MoodRepository,

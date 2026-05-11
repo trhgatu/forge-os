@@ -1,11 +1,5 @@
 // Re-export from shared package
-export {
-  RoleEnum,
-  UserStatus,
-  MoodType,
-  MemoryStatus,
-  QuoteStatus,
-} from '@forge/shared';
+export { RoleEnum, UserStatus, MoodType, MemoryStatus, QuoteStatus } from '@forge/shared';
 
 // Backend-only or legacy enums (to be moved later)
 export * from './permission.enum';

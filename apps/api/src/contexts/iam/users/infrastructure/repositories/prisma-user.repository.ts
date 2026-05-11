@@ -112,7 +112,7 @@ export class PrismaUserRepository implements UserRepository {
 
   async update(id: string, dto: UpdateUserDto): Promise<UserEntity | null> {
     const data: any = { ...dto };
-    
+
     if (dto.password) {
       const salt = await bcrypt.genSalt();
       data.password = await bcrypt.hash(dto.password, salt);

@@ -1,13 +1,11 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject, NotFoundException } from '@nestjs/common';
-import { SyncProjectCommand } from '../commands/sync-project.command';
-import { ProjectRepository } from '../ports/project.repository';
-import { GithubRepository } from '../ports/github.repository';
-import { ProjectLink } from '../../domain/project.interfaces';
-import { Project } from '../../domain/project.entity';
+import { SyncProjectCommand } from '../sync-project.command';
+import { ProjectRepository } from '../../ports/project.repository';
+import { GithubRepository } from '../../ports/github.repository';
+import { Project } from '../../../domain/entities/project.entity';
 import { LoggerService } from '@shared/logging/logger.service';
-import { ActivityStreamService } from '@shared/insfrastructure/redis/activity-stream.service';
-// import { ProjectResponse } from '../../presentation/dto/project.response';
+import { ACTIVITY_STREAM_PORT, IActivityStreamPort } from '@shared/ports/activity-stream.port';
 import { CacheService } from '@shared/services';
 
 @CommandHandler(SyncProjectCommand)
@@ -17,7 +15,8 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
     private readonly projectRepository: ProjectRepository,
     @Inject('GithubRepository')
     private readonly githubRepository: GithubRepository,
-    private readonly activityStream: ActivityStreamService,
+    @Inject(ACTIVITY_STREAM_PORT)
+    private readonly activityStream: IActivityStreamPort,
     private readonly logger: LoggerService,
     private readonly cacheService: CacheService,
   ) {}
@@ -25,36 +24,20 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
   async execute(command: SyncProjectCommand): Promise<Project> {
     const { payload } = command;
     const userId = payload.userId;
-    const id = payload.id;
     const project = await this.projectRepository.findById(payload.id);
 
     if (!project) {
       throw new NotFoundException(`Project with ID ${payload.id} not found`);
     }
 
-    let owner: string | undefined;
-    let repo: string | undefined;
+    const githubInfo = project.extractGithubInfo();
 
-    const githubLink = project.links?.find((l: ProjectLink) => l.url?.includes('github.com'));
-    if (githubLink) {
-      const parts = githubLink.url.split('github.com/');
-      if (parts[1]) {
-        const [o, r] = parts[1].split('/');
-        owner = o;
-        repo = r?.replace(/\.git$/, '');
-      }
-    }
-
-    if (!owner || !repo) {
-      owner = project.metadata?.owner as string;
-      repo = project.metadata?.repo as string;
-    }
-
-    if (!owner || !repo) {
+    if (!githubInfo) {
       this.logger.warn(`Project ${payload.id} has no GitHub info to sync`);
       return project;
     }
 
+    const { owner, repo } = githubInfo;
     this.logger.log(`Syncing project ${payload.id} with GitHub ${owner}/${repo}`);
 
     try {
@@ -104,7 +87,7 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
       );
       return project;
     } catch (error: any) {
-      this.logger.error(`Failed to sync project ${id}`, (error as Error).stack); // Type cast for safety
+      this.logger.error(`Failed to sync project ${payload.id}`, (error as Error).stack);
 
       if (error.status === 404) {
         this.logger.warn(`GitHub Repo ${owner}/${repo} not found. Clearing invalid metadata.`);

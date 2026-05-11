@@ -40,7 +40,7 @@ export class PrismaMemoryRepository implements MemoryRepository {
   }
 
   async findAll(filter: MemoryFilter): Promise<PaginatedResult<MemoryEntity>> {
-    const { page = 1, limit = 10, keyword, status, mood, isDeleted } = filter;
+    const { page = 1, limit = 10, status, mood, isDeleted } = filter;
     const skip = (page - 1) * limit;
 
     const where: any = {
@@ -61,7 +61,9 @@ export class PrismaMemoryRepository implements MemoryRepository {
     ]);
 
     return {
-      data: data.map((doc) => MemoryMapper.toDomain(doc)).filter((m): m is MemoryEntity => m !== null),
+      data: data
+        .map((doc) => MemoryMapper.toDomain(doc))
+        .filter((m): m is MemoryEntity => m !== null),
       meta: {
         total,
         page,
@@ -81,7 +83,7 @@ export class PrismaMemoryRepository implements MemoryRepository {
   async delete(id: MemoryId): Promise<void> {
     try {
       await this.prisma.memory.delete({ where: { id: id.toString() } });
-    } catch (e) {
+    } catch {
       throw new NotFoundException('Memory not found');
     }
   }
@@ -92,7 +94,7 @@ export class PrismaMemoryRepository implements MemoryRepository {
         where: { id: id.toString() },
         data: { isDeleted: true, deletedAt: new Date() },
       });
-    } catch (e) {
+    } catch {
       throw new NotFoundException('Memory not found');
     }
   }
@@ -103,7 +105,7 @@ export class PrismaMemoryRepository implements MemoryRepository {
         where: { id: id.toString() },
         data: { isDeleted: false, deletedAt: null },
       });
-    } catch (e) {
+    } catch {
       throw new NotFoundException('Memory not found');
     }
   }

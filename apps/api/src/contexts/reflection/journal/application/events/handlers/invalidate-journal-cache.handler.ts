@@ -7,9 +7,7 @@ import { Logger } from '@nestjs/common';
 export class InvalidateJournalCacheHandler implements IEventHandler<JournalModifiedEvent> {
   private readonly logger = new Logger(InvalidateJournalCacheHandler.name);
 
-  constructor(
-    private readonly cacheService: CacheService,
-  ) { }
+  constructor(private readonly cacheService: CacheService) {}
 
   async handle(event: JournalModifiedEvent): Promise<void> {
     this.logger.log(`Invalidating cache for journal: ${event.id.value}`);

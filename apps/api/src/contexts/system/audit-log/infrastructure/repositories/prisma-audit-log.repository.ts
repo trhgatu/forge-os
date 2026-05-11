@@ -49,7 +49,9 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
     ]);
 
     return {
-      data: data.map((log) => AuditLogMapper.toDomain(log)).filter((l): l is AuditLogEntity => l !== null),
+      data: data
+        .map((log) => AuditLogMapper.toDomain(log))
+        .filter((l): l is AuditLogEntity => l !== null),
       meta: {
         total,
         page,

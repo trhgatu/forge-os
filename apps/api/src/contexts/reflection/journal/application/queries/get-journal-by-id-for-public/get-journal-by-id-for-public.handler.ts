@@ -5,7 +5,10 @@ import { JournalRepository } from '../../../domain/journal.repository';
 import { Journal } from '../../../domain/journal.entity';
 
 @QueryHandler(GetJournalByIdForPublicQuery)
-export class GetJournalByIdForPublicHandler implements IQueryHandler<GetJournalByIdForPublicQuery, Journal> {
+export class GetJournalByIdForPublicHandler implements IQueryHandler<
+  GetJournalByIdForPublicQuery,
+  Journal
+> {
   constructor(
     @Inject('JournalRepository')
     private readonly journalRepo: JournalRepository,

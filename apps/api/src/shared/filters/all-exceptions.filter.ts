@@ -74,7 +74,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       message = exception.message;
     } else if (exception instanceof Error) {
       const prismaError = exception as PrismaError;
-      
+
       // Prisma Duplicate Key Error (P2002)
       if (prismaError.code === 'P2002') {
         httpStatus = HttpStatus.CONFLICT;

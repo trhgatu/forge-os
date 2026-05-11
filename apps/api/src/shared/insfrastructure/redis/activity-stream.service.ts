@@ -1,6 +1,7 @@
 // apps/api/src/shared/infrastructure/redis/activity-stream.service.ts
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { Redis } from 'ioredis';
+import { IActivityStreamPort } from '../../ports/activity-stream.port';
 
 export interface IntegrationEvent {
   pattern: string;
@@ -10,7 +11,7 @@ export interface IntegrationEvent {
 }
 
 @Injectable()
-export class ActivityStreamService {
+export class ActivityStreamService implements IActivityStreamPort {
   private readonly logger = new Logger(ActivityStreamService.name);
   private readonly STREAM_KEY = 'forge:activities';
 

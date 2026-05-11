@@ -2,7 +2,6 @@ import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
 import { GetUserStatsQuery } from '../application/queries/get-user-stats.query';
 import { JwtAuthGuard } from '../../iam/auth/application/guards/jwt-auth.guard'; // Check path
-import { UserStats } from '../domain/user-stats.entity';
 import { UserStatsDto } from '@forge/shared';
 
 @Controller('gamification')

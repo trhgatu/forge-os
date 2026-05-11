@@ -10,7 +10,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
 
   constructor(configService: ConfigService) {
     const connectionString = configService.get<string>('DATABASE_URL');
-    
+
     // Khởi tạo Connection Pool cho PostgreSQL
     const pool = new Pool({ connectionString });
     const adapter = new PrismaPg(pool);

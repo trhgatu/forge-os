@@ -7,7 +7,10 @@ import { PaginatedResult } from '@shared/types/paginated-result';
 import { Journal } from '../../../domain/journal.entity';
 
 @QueryHandler(GetAllJournalsForPublicQuery)
-export class GetAllJournalsForPublicHandler implements IQueryHandler<GetAllJournalsForPublicQuery, PaginatedResult<Journal>> {
+export class GetAllJournalsForPublicHandler implements IQueryHandler<
+  GetAllJournalsForPublicQuery,
+  PaginatedResult<Journal>
+> {
   constructor(
     @Inject('JournalRepository')
     private readonly journalRepo: JournalRepository,

@@ -10,6 +10,7 @@ export interface UpdateProjectPayload {
   progress?: number;
   links?: ProjectLink[];
   taskBoard?: ProjectTaskBoard;
+  userId: string;
 }
 
 export class UpdateProjectCommand {

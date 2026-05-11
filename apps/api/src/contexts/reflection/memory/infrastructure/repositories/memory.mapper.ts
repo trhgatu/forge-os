@@ -7,7 +7,8 @@ export class MemoryMapper {
     return Memory.createFromPersistence(
       {
         title: doc.title instanceof Map ? doc.title : new Map(Object.entries(doc.title || {})),
-        content: doc.content instanceof Map ? doc.content : new Map(Object.entries(doc.content || {})),
+        content:
+          doc.content instanceof Map ? doc.content : new Map(Object.entries(doc.content || {})),
         mood: doc.mood,
         tags: doc.tags || [],
         status: doc.status,

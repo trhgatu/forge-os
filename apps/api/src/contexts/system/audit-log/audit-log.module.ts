@@ -11,10 +11,7 @@ const CommandHandlers = [CreateAuditLogHandler];
 const QueryHandlers = [GetAuditLogsHandler];
 
 @Module({
-  imports: [
-    CqrsModule,
-    SharedModule,
-  ],
+  imports: [CqrsModule, SharedModule],
   controllers: [AuditLogController],
   providers: [
     {

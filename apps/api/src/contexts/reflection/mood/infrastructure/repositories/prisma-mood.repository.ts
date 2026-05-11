@@ -89,7 +89,7 @@ export class PrismaMoodRepository implements MoodRepository {
   async delete(id: MoodId): Promise<void> {
     try {
       await this.prisma.mood.delete({ where: { id: id.toString() } });
-    } catch (e) {
+    } catch {
       throw new NotFoundException('Mood not found');
     }
   }
@@ -100,7 +100,7 @@ export class PrismaMoodRepository implements MoodRepository {
         where: { id: id.toString() },
         data: { isDeleted: true, deletedAt: new Date() },
       });
-    } catch (e) {
+    } catch {
       throw new NotFoundException('Mood not found');
     }
   }
@@ -111,7 +111,7 @@ export class PrismaMoodRepository implements MoodRepository {
         where: { id: id.toString() },
         data: { isDeleted: false, deletedAt: null },
       });
-    } catch (e) {
+    } catch {
       throw new NotFoundException('Mood not found');
     }
   }
