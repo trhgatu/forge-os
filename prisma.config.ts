@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { defineConfig, env } from "prisma/config";
+import { defineConfig } from "prisma/config";
 
 export default defineConfig({
   schema: "apps/api/prisma/schema.prisma",
@@ -7,6 +7,6 @@ export default defineConfig({
     path: "apps/api/prisma/migrations",
   },
   datasource: {
-    url: env("DIRECT_URL", "postgresql://localhost:5432/unused"),
+    url: process.env.DIRECT_URL || "postgresql://localhost:5432/unused",
   },
 });
