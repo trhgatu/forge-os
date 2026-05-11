@@ -52,7 +52,7 @@ export const journalService = {
   // Admin endpoints for mutations (require auth)
   create: async (data: CreateJournalDto): Promise<JournalEntry> => {
     try {
-      const res = await apiClient.post<RawJournalItem>('/admin/journals', data);
+      const res = await apiClient.post<RawJournalItem>('/journals', data);
 
       const item = res.data;
 
@@ -79,7 +79,7 @@ export const journalService = {
   },
 
   update: async (id: string, data: Partial<CreateJournalDto>): Promise<JournalEntry> => {
-    const res = await apiClient.patch<RawJournalItem>(`/admin/journals/${id}`, data);
+    const res = await apiClient.patch<RawJournalItem>(`/journals/${id}`, data);
     const item = res.data;
     return {
       id: item.id,
@@ -96,6 +96,6 @@ export const journalService = {
   },
 
   delete: async (id: string): Promise<void> => {
-    await apiClient.delete(`/admin/journals/${id}`);
+    await apiClient.delete(`/journals/${id}`);
   },
 };
