@@ -5,11 +5,11 @@ import { JournalFilter } from '../application/queries/journal-filter';
 
 export abstract class JournalRepository {
   abstract save(journal: Journal): Promise<void>;
-  abstract findById(id: JournalId): Promise<Journal | null>;
+  abstract findById(id: JournalId, userId?: string): Promise<Journal | null>;
   abstract findByIdPublic(id: JournalId): Promise<Journal | null>;
   abstract findAll(filter: JournalFilter): Promise<PaginatedResult<Journal>>;
   abstract findAllPublic(filter: JournalFilter): Promise<PaginatedResult<Journal>>;
   abstract delete(id: JournalId): Promise<void>;
-  abstract softDelete(id: JournalId): Promise<void>;
-  abstract restore(id: JournalId): Promise<void>;
+  abstract softDelete(id: JournalId, userId?: string): Promise<void>;
+  abstract restore(id: JournalId, userId?: string): Promise<void>;
 }

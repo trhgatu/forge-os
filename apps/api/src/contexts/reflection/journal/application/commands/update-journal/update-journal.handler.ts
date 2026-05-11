@@ -15,7 +15,7 @@ export class UpdateJournalHandler implements ICommandHandler<UpdateJournalComman
   async execute(command: UpdateJournalCommand): Promise<Journal> {
     const { id, payload } = command;
 
-    const journal = await this.journalRepo.findById(id);
+    const journal = await this.journalRepo.findById(id, payload.userId);
 
     if (!journal) {
       throw new NotFoundException(`Journal with ID ${id} not found`);

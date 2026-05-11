@@ -29,6 +29,7 @@ export class CreateJournalHandler implements ICommandHandler<CreateJournalComman
         status: payload.status ?? JournalStatus.PRIVATE,
         source: payload.source ?? JournalSource.USER,
         relations: payload.relations ?? [],
+        userId: payload.userId!,
       },
       journalId,
     );

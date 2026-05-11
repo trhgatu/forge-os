@@ -11,4 +11,5 @@ export interface JournalFilter {
   isDeleted?: boolean;
   page?: number;
   limit?: number;
+  userId?: string;
 }

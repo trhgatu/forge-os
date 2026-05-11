@@ -18,6 +18,7 @@ model User {
   connections     UserConnection[]
   isDeleted       Boolean          @default(false)
   deletedAt       DateTime?
+  journals        Journal[]
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
 
@@ -129,11 +130,14 @@ model Journal {
   status    String    @default("private")
   source    String    @default("user")
   relations Json?     @default("[]")
+  userId    String?
+  user      User?     @relation(fields: [userId], references: [id])
   isDeleted Boolean   @default(false)
   deletedAt DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
+  @@index([userId])
   @@map("journals")
 }
 

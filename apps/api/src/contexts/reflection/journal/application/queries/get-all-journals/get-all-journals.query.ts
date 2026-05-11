@@ -1,5 +1,5 @@
-import { QueryJournalDto } from '../../../presentation/dto';
+import { JournalFilter } from '../journal-filter';
 
 export class GetAllJournalsQuery {
-  constructor(public readonly payload: QueryJournalDto) {}
+  constructor(public readonly payload: JournalFilter) {}
 }

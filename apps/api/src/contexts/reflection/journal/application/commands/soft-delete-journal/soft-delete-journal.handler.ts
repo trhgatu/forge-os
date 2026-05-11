@@ -17,7 +17,7 @@ export class SoftDeleteJournalHandler implements ICommandHandler<
   async execute(command: SoftDeleteJournalCommand): Promise<Journal> {
     const { id } = command;
 
-    const journal = await this.journalRepo.findById(id);
+    const journal = await this.journalRepo.findById(id, command.userId);
 
     if (!journal) {
       throw new NotFoundException(`Journal with ID ${id} not found`);

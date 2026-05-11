@@ -3,7 +3,7 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { PrismaModule } from '@shared/infrastructure/prisma/prisma.module';
 import { SharedModule } from '@shared/shared.module';
 
-import { JournalAdminController, JournalPublicController } from './presentation/controllers';
+import { JournalAdminController, JournalController } from './presentation/controllers';
 import { JournalPresenter } from './presentation/presenters/journal.presenter';
 import { JournalCommandHandlers } from './application/commands';
 import { JournalQueryHandlers } from './application/queries';
@@ -14,7 +14,7 @@ import { JournalRepository } from './domain/journal.repository';
 
 @Module({
   imports: [CqrsModule, PrismaModule, SharedModule],
-  controllers: [JournalAdminController, JournalPublicController],
+  controllers: [JournalAdminController, JournalController],
   providers: [
     JournalPresenter,
     JournalMapper,

@@ -14,7 +14,7 @@ export class GetJournalByIdHandler implements IQueryHandler<GetJournalByIdQuery,
   async execute(query: GetJournalByIdQuery): Promise<Journal> {
     const { id } = query;
 
-    const journal = await this.journalRepo.findById(id);
+    const journal = await this.journalRepo.findById(id, query.userId);
     if (!journal) throw new NotFoundException('Journal not found');
 
     return journal;

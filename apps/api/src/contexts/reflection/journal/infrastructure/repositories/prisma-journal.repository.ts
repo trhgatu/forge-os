@@ -33,6 +33,7 @@ export class PrismaJournalRepository implements JournalRepository {
         relations: data.relations || [],
         isDeleted: data.isDeleted,
         deletedAt: data.deletedAt,
+        userId: data.userId,
       },
       create: {
         id,
@@ -46,6 +47,7 @@ export class PrismaJournalRepository implements JournalRepository {
         relations: data.relations || [],
         isDeleted: data.isDeleted,
         deletedAt: data.deletedAt,
+        userId: data.userId,
       },
     });
 
@@ -67,6 +69,7 @@ export class PrismaJournalRepository implements JournalRepository {
     if (status) where.status = status;
     if (type) where.type = type;
     if (mood) where.mood = mood;
+    if (userId) where.userId = userId;
 
     if (keyword) {
       where.OR = [
@@ -98,9 +101,12 @@ export class PrismaJournalRepository implements JournalRepository {
     };
   }
 
-  async findById(id: JournalId): Promise<JournalEntity | null> {
-    const doc = await this.prisma.journal.findUnique({
-      where: { id: id.toString() },
+  async findById(id: JournalId, userId?: string): Promise<JournalEntity | null> {
+    const where: any = { id: id.toString() };
+    if (userId) where.userId = userId;
+
+    const doc = await this.prisma.journal.findFirst({
+      where,
     });
     return doc ? JournalMapper.toDomain(doc) : null;
   }
@@ -133,16 +139,16 @@ export class PrismaJournalRepository implements JournalRepository {
     }
   }
 
-  async softDelete(id: JournalId): Promise<void> {
-    const journal = await this.findById(id);
+  async softDelete(id: JournalId, userId?: string): Promise<void> {
+    const journal = await this.findById(id, userId);
     if (!journal) throw new NotFoundException('Journal not found');
 
     journal.delete();
     await this.save(journal);
   }
 
-  async restore(id: JournalId): Promise<void> {
-    const journal = await this.findById(id);
+  async restore(id: JournalId, userId?: string): Promise<void> {
+    const journal = await this.findById(id, userId);
     if (!journal) throw new NotFoundException('Journal not found');
 
     journal.restore();
