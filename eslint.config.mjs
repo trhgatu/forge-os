@@ -6,7 +6,7 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['eslint.config.mjs', 'apps/api/src/generated/**'],
+    ignores: ['eslint.config.mjs', 'apps/api/prisma-client/**'],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommended,

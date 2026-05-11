@@ -1,4 +1,4 @@
-import { Journal as PrismaJournal } from '../../../../../generated/client';
+import { Journal as PrismaJournal } from '../../../../../../prisma-client';
 import { Journal } from '../../domain/journal.entity';
 import { JournalSource } from '../../domain/enums';
 

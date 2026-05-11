@@ -6,11 +6,14 @@ COPY . .
 
 RUN pnpm install --frozen-lockfile
 
-# Generate Prisma Client vào trong thư mục src/generated/client
+# Generate Prisma Client vào thư mục apps/api/prisma-client
 RUN pnpm prisma generate --schema=apps/api/prisma/schema.prisma
 
-# Build dự án (NestJS sẽ gom cả thư mục generated vào dist)
+# Build dự án
 RUN pnpm turbo build --filter=@forge/api
+
+# Copy Prisma Client vào trong dist để NestJS nhận diện được khi chạy
+RUN cp -r apps/api/prisma-client apps/api/dist/prisma-client
 
 # Gom các dependencies cho production
 RUN pnpm --filter @forge/api --prod deploy isolated
@@ -20,13 +23,13 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Copy các dependencies sạch (đã được pnpm deploy lọc)
+# Copy các dependencies sạch
 COPY --from=base /app/isolated/node_modules ./node_modules
 
-# Copy bản build đã bao gồm Prisma Client bên trong
+# Copy bản build (lúc này đã chứa prisma-client bên trong)
 COPY --from=base /app/apps/api/dist ./dist
 
-# Copy package.json để node nhận diện mode ES/CommonJS nếu cần
+# Copy package.json
 COPY --from=base /app/apps/api/package.json ./package.json
 
 EXPOSE 3001
