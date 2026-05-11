@@ -4,23 +4,23 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider = "postgresql"
 }
 
 model User {
-  id              String           @id @default(uuid())
-  email           String           @unique
-  name            String
-  password        String
-  refreshToken    String?
-  roleId          String?
-  role            Role?            @relation(fields: [roleId], references: [id])
-  stats           UserStats?
-  connections     UserConnection[]
-  isDeleted       Boolean          @default(false)
-  deletedAt       DateTime?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  id           String           @id @default(uuid())
+  email        String           @unique
+  name         String
+  password     String
+  refreshToken String?
+  roleId       String?
+  role         Role?            @relation(fields: [roleId], references: [id])
+  stats        UserStats?
+  connections  UserConnection[]
+  isDeleted    Boolean          @default(false)
+  deletedAt    DateTime?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
 
   @@map("users")
 }
@@ -29,8 +29,8 @@ model UserConnection {
   id          String   @id @default(uuid())
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  provider    String   // e.g., 'github', 'google'
-  identifier  String   // e.g., 'thuyencode', '10238129'
+  provider    String // e.g., 'github', 'google'
+  identifier  String // e.g., 'thuyencode', '10238129'
   metadata    Json?
   connectedAt DateTime @default(now())
 

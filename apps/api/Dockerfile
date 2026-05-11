@@ -6,27 +6,27 @@ COPY . .
 
 RUN pnpm install --frozen-lockfile
 
-# Generate Prisma Client (vào node_modules/.prisma mặc định)
+# Generate Prisma Client vào thư mục cố định
 RUN pnpm prisma generate --schema=apps/api/prisma/schema.prisma
 
 # Build dự án
 RUN pnpm turbo build --filter=@forge/api
 
-# Sử dụng pnpm deploy để lọc ra các dependencies cần thiết
-RUN pnpm --filter @forge/api --prod deploy isolated
+# Copy Prisma Client vào trong dist (đảm bảo cấu hình thư mục giống hệt src)
+RUN mkdir -p apps/api/dist/prisma && cp -r apps/api/prisma/generated-client apps/api/dist/prisma/
 
-# QUAN TRỌNG: Copy thư mục .prisma (code đã sinh ra) vào isolated để nó không bị mất
-RUN cp -r node_modules/.prisma isolated/node_modules/
+# Lọc dependencies
+RUN pnpm --filter @forge/api --prod deploy isolated
 
 FROM node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Copy toàn bộ isolated/node_modules (lúc này đã có đủ .prisma)
+# Copy dependencies
 COPY --from=base /app/isolated/node_modules ./node_modules
 
-# Copy bản build
+# Copy bản build (đã có sẵn prisma/generated-client bên trong)
 COPY --from=base /app/apps/api/dist ./dist
 
 # Copy package.json
