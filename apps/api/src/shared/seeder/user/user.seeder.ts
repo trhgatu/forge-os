@@ -1,46 +1,41 @@
 // src/shared/seeder/user/user.seeder.ts
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { User, UserDocument } from 'src/contexts/iam/users/infrastructure/schemas/iam-user.schema';
-import { Role, RoleDocument } from 'src/contexts/iam/roles/infrastructure/schemas/iam-role.schema';
-import { RoleEnum } from '@shared/enums'; // nếu có enum Role
+import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
+import { RoleEnum } from '@shared/enums';
 
 @Injectable()
 export class UserSeeder {
-  constructor(
-    @InjectModel(User.name)
-    private readonly userModel: Model<UserDocument>,
-    @InjectModel(Role.name)
-    private readonly roleModel: Model<RoleDocument>,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async seed() {
-    const existing = await this.userModel.countDocuments();
+    const existing = await this.prisma.user.count();
     if (existing > 0) {
       console.log('⚠️  Users already exist. Skipping seed.');
       return;
     }
 
-    // 🔑 Seed admin
-    const adminRole = await this.roleModel.findOne({ name: RoleEnum.ADMIN });
+    const adminRole = await this.prisma.role.findUnique({ where: { name: RoleEnum.ADMIN } });
     if (!adminRole) throw new Error('❌ Admin role not found');
 
-    const adminUser = await this.userModel.create({
-      name: 'Admin User',
-      email: 'admin@example.com',
-      password: 'admin123',
-      roleId: adminRole._id,
+    const adminUser = await this.prisma.user.create({
+      data: {
+        name: 'Admin User',
+        email: 'admin@example.com',
+        password: 'admin123',
+        roleId: adminRole.id,
+      },
     });
 
-    const userRole = await this.roleModel.findOne({ name: RoleEnum.USER });
+    const userRole = await this.prisma.role.findUnique({ where: { name: RoleEnum.USER } });
     if (!userRole) throw new Error('❌ User role not found');
 
-    const normalUser = await this.userModel.create({
-      name: 'Normal User',
-      email: 'user@example.com',
-      password: 'user123',
-      roleId: userRole._id,
+    const normalUser = await this.prisma.user.create({
+      data: {
+        name: 'Normal User',
+        email: 'user@example.com',
+        password: 'user123',
+        roleId: userRole.id,
+      },
     });
 
     console.log(`✅ Seeded admin: ${adminUser.email}`);

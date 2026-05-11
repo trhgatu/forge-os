@@ -1,28 +1,52 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import { MongooseModule } from '@nestjs/mongoose';
-import { MemorySchema } from './infrastructure/memory.schema';
-import { MongoMemoryRepository } from './infrastructure/repositories/mongo-memory.repository';
+import { PrismaMemoryRepository } from './infrastructure/repositories/prisma-memory.repository';
+import { MemoryMapper } from './infrastructure/repositories/memory.mapper';
+import { MemoryRepository } from './application/ports/memory.repository';
 import { MemoryAdminController } from './presentation/controllers/memory.admin.controller';
 import { MemoryPublicController } from './presentation/controllers/memory.public.controller';
+import {
+  CreateMemoryHandler,
+  UpdateMemoryHandler,
+  DeleteMemoryHandler,
+  GetAllMemoriesHandler,
+  GetAllMemoriesForPublicHandler,
+  GetMemoryByIdHandler,
+  SoftDeleteMemoryHandler,
+  RestoreMemoryHandler,
+} from './application/handlers';
 import { SharedModule } from '@shared/shared.module';
-import { MemoryHandlers } from './application/handlers';
+
+const CommandHandlers = [
+  CreateMemoryHandler,
+  UpdateMemoryHandler,
+  DeleteMemoryHandler,
+  SoftDeleteMemoryHandler,
+  RestoreMemoryHandler,
+];
+
+const QueryHandlers = [
+  GetAllMemoriesHandler,
+  GetAllMemoriesForPublicHandler,
+  GetMemoryByIdHandler,
+];
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([{ name: 'Memory', schema: MemorySchema }]),
-    CqrsModule,
-    SharedModule,
-  ],
+  imports: [CqrsModule, SharedModule],
   controllers: [MemoryAdminController, MemoryPublicController],
   providers: [
     {
-      provide: 'MemoryRepository',
-      useClass: MongoMemoryRepository,
+      provide: MemoryRepository,
+      useClass: PrismaMemoryRepository,
     },
-    MongoMemoryRepository,
-    ...MemoryHandlers,
+    {
+      provide: 'MemoryRepository',
+      useClass: PrismaMemoryRepository,
+    },
+    MemoryMapper,
+    ...CommandHandlers,
+    ...QueryHandlers,
   ],
-  exports: [],
+  exports: [MemoryRepository],
 })
 export class MemoryModule {}

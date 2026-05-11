@@ -1,6 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { Types } from 'mongoose';
 import { CreateProjectCommand } from '../commands/create-project.command';
 import { ProjectRepository } from '../ports/project.repository';
 import { Project } from '../../domain/project.entity';
@@ -28,7 +27,7 @@ export class CreateProjectHandler implements ICommandHandler<
   async execute(command: CreateProjectCommand): Promise<ProjectResponse> {
     const { payload } = command;
 
-    const projectId = ProjectId.create(new Types.ObjectId());
+    const projectId = ProjectId.random();
     const userId = payload.userId || 'system';
 
     const project = Project.create(

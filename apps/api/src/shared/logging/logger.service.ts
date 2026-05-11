@@ -14,28 +14,38 @@ export class LoggerService implements NestLoggerService {
       isProduction
         ? winston.format.json()
         : winston.format.combine(
-            winston.format.colorize(),
-            winston.format.printf(
-              ({ timestamp, level, message, context, traceId, trace, stack }) => {
-                const stackTrace = trace || stack;
-                return `${timestamp} [${level}] ${context ? `[${context}] ` : ''}${message}${traceId ? ` [traceId=${traceId}]` : ''}${stackTrace ? `\n${stackTrace}` : ''}`;
-              },
-            ),
+          winston.format.colorize(),
+          winston.format.printf(
+            ({ timestamp, level, message, context, traceId, trace, stack }) => {
+              const stackTrace = trace || stack;
+              return `${timestamp} [${level}] ${context ? `[${context}] ` : ''}${message}${traceId ? ` [traceId=${traceId}]` : ''}${stackTrace ? `\n${stackTrace}` : ''}`;
+            },
           ),
+        ),
     );
 
-    const fileTransport = new winston.transports.DailyRotateFile({
-      filename: 'logs/application-%DATE%.log',
-      datePattern: 'YYYY-MM-DD',
-      zippedArchive: true,
-      maxSize: '20m',
-      maxFiles: '14d',
-      format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
-    });
+    const transports: winston.transport[] = [
+      new winston.transports.Console({ format: consoleFormat }),
+    ];
+
+    if (isProduction) {
+      const fileTransport = new winston.transports.DailyRotateFile({
+        filename: 'logs/application-%DATE%.log',
+        datePattern: 'YYYY-MM-DD',
+        zippedArchive: true,
+        maxSize: '20m',
+        maxFiles: '14d',
+        format: winston.format.combine(
+          winston.format.timestamp(),
+          winston.format.json(),
+        ),
+      });
+      transports.push(fileTransport);
+    }
 
     this.logger = winston.createLogger({
       level: isProduction ? 'info' : 'debug',
-      transports: [new winston.transports.Console({ format: consoleFormat }), fileTransport],
+      transports,
     });
   }
 

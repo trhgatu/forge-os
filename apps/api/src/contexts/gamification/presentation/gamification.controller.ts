@@ -3,6 +3,7 @@ import { QueryBus } from '@nestjs/cqrs';
 import { GetUserStatsQuery } from '../application/queries/get-user-stats.query';
 import { JwtAuthGuard } from '../../iam/auth/application/guards/jwt-auth.guard'; // Check path
 import { UserStats } from '../domain/user-stats.entity';
+import { UserStatsDto } from '@forge/shared';
 
 @Controller('gamification')
 @UseGuards(JwtAuthGuard)
@@ -10,7 +11,7 @@ export class GamificationController {
   constructor(private readonly queryBus: QueryBus) {}
 
   @Get('stats')
-  async getUserStats(@Req() req: any): Promise<UserStats> {
+  async getUserStats(@Req() req: any): Promise<UserStatsDto> {
     const stats = await this.queryBus.execute(new GetUserStatsQuery(String(req.user.id)));
     if (!stats) {
       // Return default stats (or should we create them?)

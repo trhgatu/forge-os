@@ -8,6 +8,18 @@ export class QueryPermissionDto extends QueryPaginationDto {
   keyword?: string;
 
   @IsOptional()
+  @IsString()
+  name?: string;
+
+  @IsOptional()
+  @IsString()
+  resource?: string;
+
+  @IsOptional()
+  @IsString()
+  action?: string;
+
+  @IsOptional()
   @IsBoolean()
   @Transform(({ value }) => {
     if (value === 'true' || value === true) return true;

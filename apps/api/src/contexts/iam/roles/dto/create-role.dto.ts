@@ -1,4 +1,4 @@
-import { IsArray, IsMongoId, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsOptional, IsString } from 'class-validator';
 
 export class CreateRoleDto {
   @IsString()
@@ -9,7 +9,11 @@ export class CreateRoleDto {
   description?: string;
 
   @IsOptional()
+  @IsBoolean()
+  isSystem?: boolean;
+
+  @IsOptional()
   @IsArray()
-  @IsMongoId({ each: true })
+  @IsString({ each: true })
   permissions?: string[];
 }

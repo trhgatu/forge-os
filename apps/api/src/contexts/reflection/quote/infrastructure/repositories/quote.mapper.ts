@@ -1,31 +1,31 @@
-import { Types } from 'mongoose';
 import { Quote } from '../../domain/quote.entity';
-import { QuoteDocument } from '../quote.schema';
-import { QuoteStatus } from '@shared/enums';
 
 export class QuoteMapper {
-  static toDomain(doc: QuoteDocument): Quote {
-    return Quote.createFromPersistence({
-      id: doc._id.toString(),
-      content:
-        doc.content instanceof Map ? new Map(doc.content) : new Map(Object.entries(doc.content)),
-      author: doc.author,
-      source: doc.source,
-      tags: doc.tags,
-      mood: doc.mood,
-      status: doc.status as QuoteStatus,
-      isDeleted: doc.isDeleted,
-      deletedAt: doc.deletedAt,
-      createdAt: doc.createdAt,
-      updatedAt: doc.updatedAt,
-    });
+  static toDomain(doc: any): Quote | null {
+    if (!doc) return null;
+
+    return Quote.createFromPersistence(
+      {
+        content: doc.content instanceof Map ? doc.content : new Map(Object.entries(doc.content || {})),
+        author: doc.author,
+        source: doc.source,
+        tags: doc.tags || [],
+        mood: doc.mood,
+        status: doc.status,
+        createdAt: doc.createdAt,
+        updatedAt: doc.updatedAt,
+      },
+      doc.id,
+      doc.isDeleted || false,
+      doc.deletedAt,
+    );
   }
 
-  static toPersistence(entity: Quote): Partial<QuoteDocument> {
+  static toPersistence(entity: Quote): any {
     const props = entity.toPersistence();
     return {
-      _id: new Types.ObjectId(entity.id.toString()),
-      content: props.content,
+      id: entity.id.toString(),
+      content: Object.fromEntries(props.content),
       author: props.author,
       source: props.source,
       tags: props.tags,

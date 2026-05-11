@@ -1,11 +1,9 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { CqrsModule } from '@nestjs/cqrs';
-import { Role, RoleSchema } from './infrastructure/schemas/iam-role.schema';
 import { RoleController } from './presentation/controllers/role.controller';
 import { SharedModule } from '@shared/shared.module';
 import { RoleRepository } from './application/ports/role.repository';
-import { MongoRoleRepository } from './infrastructure/repositories/mongo-role.repository';
+import { PrismaRoleRepository } from './infrastructure/repositories/prisma-role.repository';
 import {
   CreateRoleHandler,
   UpdateRoleHandler,
@@ -26,16 +24,16 @@ const QueryHandlers = [GetRolesHandler, GetRoleByIdHandler];
 const EventHandlers = [InvalidateRoleCacheHandler];
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([{ name: Role.name, schema: RoleSchema }]),
-    CqrsModule,
-    SharedModule,
-  ],
+  imports: [CqrsModule, SharedModule],
   controllers: [RoleController],
   providers: [
     {
       provide: RoleRepository,
-      useClass: MongoRoleRepository,
+      useClass: PrismaRoleRepository,
+    },
+    {
+      provide: 'RoleRepository',
+      useClass: PrismaRoleRepository,
     },
     ...CommandHandlers,
     ...QueryHandlers,

@@ -1,0 +1,196 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id              String           @id @default(uuid())
+  email           String           @unique
+  name            String
+  password        String
+  refreshToken    String?
+  roleId          String?
+  role            Role?            @relation(fields: [roleId], references: [id])
+  stats           UserStats?
+  connections     UserConnection[]
+  isDeleted       Boolean          @default(false)
+  deletedAt       DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@map("users")
+}
+
+model UserConnection {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider    String   // e.g., 'github', 'google'
+  identifier  String   // e.g., 'thuyencode', '10238129'
+  metadata    Json?
+  connectedAt DateTime @default(now())
+
+  @@unique([provider, identifier])
+  @@map("user_connections")
+}
+
+model UserStats {
+  id               String   @id @default(uuid())
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  xp               Int      @default(0)
+  level            Int      @default(1)
+  title            String   @default("Novice")
+  streak           Int      @default(0)
+  lastActivityDate DateTime @default(now())
+  achievements     String[] @default([])
+
+  @@map("user_stats")
+}
+
+model Role {
+  id          String       @id @default(uuid())
+  name        String       @unique
+  description String?
+  isSystem    Boolean      @default(false)
+  isDeleted   Boolean      @default(false)
+  deletedAt   DateTime?
+  users       User[]
+  permissions Permission[] @relation("RolePermissions")
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@map("roles")
+}
+
+model Permission {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  resource    String
+  action      String
+  isDeleted   Boolean   @default(false)
+  deletedAt   DateTime?
+  roles       Role[]    @relation("RolePermissions")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("permissions")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String?
+  action     String
+  method     String?
+  statusCode Int?
+  path       String?
+  params     Json?
+  query      Json?
+  body       Json?
+  ip         String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  @@map("audit_logs")
+}
+
+model Project {
+  id          String    @id @default(uuid())
+  title       String
+  description String?
+  status      String    @default("active")
+  tags        String[]  @default([])
+  isPinned    Boolean   @default(false)
+  progress    Int       @default(0)
+  githubStats Json?
+  taskBoard   Json?
+  links       Json?     @default("[]")
+  logs        Json?     @default("[]")
+  metadata    Json?     @default("{}")
+  isDeleted   Boolean   @default(false)
+  deletedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("projects")
+}
+
+model Journal {
+  id        String    @id @default(uuid())
+  title     String?
+  content   String
+  mood      String?
+  tags      String[]  @default([])
+  type      String    @default("thought")
+  status    String    @default("private")
+  source    String    @default("user")
+  relations Json?     @default("[]")
+  isDeleted Boolean   @default(false)
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("journals")
+}
+
+model Memory {
+  id        String    @id @default(uuid())
+  title     Json      @default("{}")
+  content   Json      @default("{}")
+  mood      String?
+  tags      String[]  @default([])
+  status    String    @default("internal")
+  isDeleted Boolean   @default(false)
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("memories")
+}
+
+model Mood {
+  id        String    @id @default(uuid())
+  mood      String
+  note      String?
+  intensity Int?
+  tags      String[]  @default([])
+  loggedAt  DateTime  @default(now())
+  isDeleted Boolean   @default(false)
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("moods")
+}
+
+model Quote {
+  id          String       @id @default(uuid())
+  content     Json         @default("{}")
+  author      String?
+  source      String?
+  tags        String[]     @default([])
+  mood        String?
+  status      String       @default("internal")
+  isDeleted   Boolean      @default(false)
+  deletedAt   DateTime?
+  dailyQuotes DailyQuote[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@map("quotes")
+}
+
+model DailyQuote {
+  id        String   @id @default(uuid())
+  date      String   @unique // Format: YYYY-MM-DD
+  quoteId   String
+  quote     Quote    @relation(fields: [quoteId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("daily_quotes")
+}

@@ -1,6 +1,7 @@
 import { JournalId } from './value-objects/journal-id.vo';
 import { MoodType } from '@shared/enums';
-import { JournalStatus, JournalType, JournalRelationType } from './enums';
+import { JournalStatus, JournalType, JournalRelationType, JournalSource } from './enums';
+import { AggregateRoot } from '../../../../shared/domain/aggregate-root.base';
 
 interface JournalRelation {
   type: JournalRelationType;
@@ -14,19 +15,21 @@ interface JournalProps {
   tags: string[];
   type: JournalType;
   status: JournalStatus;
-  source: 'user' | 'ai' | 'system';
+  source: JournalSource;
   relations: JournalRelation[];
   createdAt: Date;
   updatedAt: Date;
 }
 
-export class Journal {
+export class Journal extends AggregateRoot<JournalId> {
   private constructor(
-    public readonly id: JournalId,
+    id: JournalId,
     private props: JournalProps,
     private isDeleted = false,
     private deletedAt?: Date,
-  ) {}
+  ) {
+    super(id);
+  }
 
   static create(
     props: Omit<JournalProps, 'createdAt' | 'updatedAt' | 'tags' | 'relations'> & {
@@ -36,165 +39,105 @@ export class Journal {
     id: JournalId,
     now: Date,
   ): Journal {
-    return new Journal(id, {
+    const journal = new Journal(id, {
       ...props,
       tags: props.tags ?? [],
       relations: props.relations ?? [],
       createdAt: now,
       updatedAt: now,
     });
+
+    journal.addDomainEvent({ type: 'journal.created', id: id.value });
+    return journal;
   }
 
   static createFromPersistence(
-    data: JournalProps & {
-      id: string;
-      isDeleted?: boolean;
-      deletedAt?: Date;
-    },
+    props: JournalProps,
+    id: string,
+    isDeleted = false,
+    deletedAt?: Date,
   ): Journal {
-    return new Journal(
-      JournalId.create(data.id),
-      { ...data },
-      data.isDeleted ?? false,
-      data.deletedAt,
-    );
+    return new Journal(JournalId.fromString(id), props, isDeleted, deletedAt);
   }
 
-  updateInfo(
-    props: Partial<Omit<JournalProps, 'createdAt' | 'updatedAt' | 'relations' | 'tags'>> & {
-      tags?: string[];
-      relations?: JournalRelation[];
-    },
-  ): void {
-    if (props.title !== undefined) {
-      this.props.title = props.title;
-    }
+  // --- Semantic Domain Methods ---
 
-    if (props.content !== undefined) {
-      this.props.content = props.content;
-    }
+  public updateContent(content: string, title?: string): void {
+    this.props.content = content;
+    if (title !== undefined) this.props.title = title;
+    this.props.updatedAt = new Date();
+    this.addDomainEvent({ type: 'journal.updated', id: this.id.value });
+  }
 
-    if (props.mood !== undefined) {
-      this.props.mood = props.mood;
-    }
-
-    if (props.status !== undefined) {
-      this.props.status = props.status;
-    }
-
-    if (props.type !== undefined) {
-      this.props.type = props.type;
-    }
-
-    if (props.source !== undefined) {
-      this.props.source = props.source;
-    }
-
-    if (props.tags !== undefined) {
-      this.props.tags = props.tags;
-    }
-
-    if (props.relations !== undefined) {
-      this.props.relations = props.relations;
-    }
-
+  public changeMood(mood: MoodType): void {
+    this.props.mood = mood;
     this.props.updatedAt = new Date();
   }
 
-  delete(): void {
+  public publish(): void {
+    this.props.status = JournalStatus.PUBLISHED;
+    this.props.updatedAt = new Date();
+  }
+
+  public archive(): void {
+    this.props.status = JournalStatus.ARCHIVED;
+    this.props.updatedAt = new Date();
+  }
+
+  public addTags(tags: string[]): void {
+    const uniqueTags = new Set([...this.props.tags, ...tags]);
+    this.props.tags = Array.from(uniqueTags);
+    this.props.updatedAt = new Date();
+  }
+
+  public setRelations(relations: JournalRelation[]): void {
+    this.props.relations = relations;
+    this.props.updatedAt = new Date();
+  }
+
+  public delete(): void {
     if (this.isDeleted) return;
     this.isDeleted = true;
     this.deletedAt = new Date();
+    this.props.updatedAt = new Date();
+    this.addDomainEvent({ type: 'journal.deleted', id: this.id.value });
   }
 
-  restore(): void {
+  public restore(): void {
     if (!this.isDeleted) return;
     this.isDeleted = false;
     this.deletedAt = undefined;
+    this.props.updatedAt = new Date();
+    this.addDomainEvent({ type: 'journal.restored', id: this.id.value });
   }
 
-  // ============
-  //   GETTERS
-  // ============
+  // --- Getters ---
+  get title() { return this.props.title; }
+  get content() { return this.props.content; }
+  get mood() { return this.props.mood; }
+  get tags() { return this.props.tags; }
+  get type() { return this.props.type; }
+  get status() { return this.props.status; }
+  get source() { return this.props.source; }
+  get relations() { return this.props.relations; }
+  get createdAt() { return this.props.createdAt; }
+  get updatedAt() { return this.props.updatedAt; }
+  get isJournalDeleted(): boolean { return this.isDeleted; }
+  get journalDeletedAt() { return this.deletedAt; }
 
-  get title() {
-    return this.props.title;
-  }
-
-  get content() {
-    return this.props.content;
-  }
-
-  get mood() {
-    return this.props.mood;
-  }
-
-  get tags() {
-    return this.props.tags;
-  }
-
-  get type() {
-    return this.props.type;
-  }
-
-  get status() {
-    return this.props.status;
-  }
-
-  get source() {
-    return this.props.source;
-  }
-
-  get relations() {
-    return this.props.relations;
-  }
-
-  get createdAt() {
-    return this.props.createdAt;
-  }
-
-  get updatedAt() {
-    return this.props.updatedAt;
-  }
-
-  get isJournalDeleted(): boolean {
-    return this.isDeleted;
-  }
-
-  // ================
-  //   SERIALIZATION
-  // ================
-  toPersistence() {
+  public toPersistence() {
     return {
-      id: this.id.toString(),
-      title: this.props.title,
-      content: this.props.content,
-      mood: this.props.mood,
-      tags: this.props.tags,
-      type: this.props.type,
-      status: this.props.status,
-      source: this.props.source,
-      relations: this.props.relations,
-      createdAt: this.props.createdAt,
-      updatedAt: this.props.updatedAt,
+      id: this.id.value,
+      ...this.props,
       isDeleted: this.isDeleted,
       deletedAt: this.deletedAt,
     };
   }
 
-  toPrimitives() {
+  public toPrimitives() {
     return {
-      id: this.id.toString(),
-      title: this.props.title,
-      content: this.props.content,
-      mood: this.props.mood,
-      tags: this.props.tags,
-      type: this.props.type,
-      status: this.props.status,
-      source: this.props.source,
-      relations: this.props.relations,
-      createdAt: this.props.createdAt,
-      updatedAt: this.props.updatedAt,
+      id: this.id.value,
+      ...this.props,
       isDeleted: this.isDeleted,
       deletedAt: this.deletedAt,
     };

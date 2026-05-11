@@ -1,6 +1,7 @@
 # dependencies
 node_modules
 .pnpm-debug.log*
+.pnpm-store
 .yarn
 
 # build outputs
@@ -10,6 +11,9 @@ out/
 build
 /coverage
 .turbo
+**/src/generated/
+**/node_modules/
+**/dist/
 
 # environment files
 .env*

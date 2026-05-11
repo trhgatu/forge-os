@@ -1,5 +1,6 @@
 {
   "name": "forge-os",
+  "type": "commonjs",
   "private": true,
   "scripts": {
     "build": "turbo run build",
@@ -23,7 +24,11 @@
     "node": ">=18"
   },
   "dependencies": {
+    "@prisma/client": "^7.8.0",
+    "dotenv": "^17.4.2",
     "husky": "^9.1.7",
-    "lint-staged": "^16.2.7"
+    "lint-staged": "^16.2.7",
+    "prisma": "^7.8.0",
+    "zod": "^4.4.3"
   }
 }

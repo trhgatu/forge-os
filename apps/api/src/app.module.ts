@@ -1,12 +1,10 @@
 import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { BullModule } from '@nestjs/bullmq';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { BullBoardModule } from '@bull-board/nestjs';
 import { ExpressAdapter } from '@bull-board/express';
 import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 
-import databaseConfig from '@config/database.config';
 import { AppController } from './app.controller';
 
 import { AuthModule } from 'src/contexts/iam/auth';
@@ -27,26 +25,22 @@ import { PresenceModule } from '@root/contexts/nova/presence/presence.module';
 import { EngineeringModule } from '@root/contexts/engineering/engineering.module';
 import { GamificationModule } from '@root/contexts/gamification/gamification.module';
 import { RedisModule } from '@shared/insfrastructure/redis/redis.module';
+import { PrismaModule } from './shared/infrastructure/prisma/prisma.module';
 
 @Module({
   imports: [
     CqrsModule,
-    ConfigModule.forRoot({ isGlobal: true, load: [databaseConfig] }),
-    MongooseModule.forRootAsync({
-      useFactory: () => {
-        return {
-          uri: process.env.MONGODB_URI,
-          autoIndex: true,
-        };
-      },
-    }),
+    ConfigModule.forRoot({ isGlobal: true }),
+    PrismaModule,
     RedisModule,
     BullModule.forRootAsync({
-      useFactory: () => ({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
         connection: {
-          host: process.env.REDIS_HOST,
-          port: Number(process.env.REDIS_PORT),
-          password: process.env.REDIS_PASSWORD,
+          host: configService.get<string>('REDIS_HOST'),
+          port: configService.get<number>('REDIS_PORT'),
+          password: configService.get<string>('REDIS_PASSWORD'),
           maxRetriesPerRequest: null,
         },
       }),

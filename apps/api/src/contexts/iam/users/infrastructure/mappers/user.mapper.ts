@@ -1,17 +1,18 @@
 import { User } from '../../domain/user.entity';
 import { UserId } from '../../domain/value-objects/user-id.vo';
-import { UserDocument } from '../schemas/iam-user.schema';
-import { Types } from 'mongoose';
 
 export class UserMapper {
-  static toDomain(doc: UserDocument): User {
+  static toDomain(doc: any): User {
+    const id = doc.id;
+    const roleId = doc.roleId;
+
     return User.reconstitute({
-      id: UserId.create(doc._id.toString()),
+      id: UserId.create(id),
       name: doc.name,
       email: doc.email,
       password: doc.password,
-      roleId: doc.roleId.toString(),
-      role: UserMapper.extractRole(doc.roleId),
+      roleId: roleId,
+      role: UserMapper.extractRole(doc.role),
       refreshToken: doc.refreshToken,
       isDeleted: doc.isDeleted,
       deletedAt: doc.deletedAt,
@@ -22,45 +23,31 @@ export class UserMapper {
   }
 
   private static extractRole(
-    roleOrId: Types.ObjectId | unknown,
+    roleData: any,
   ): { id: string; name: string; permissions: string[] } | undefined {
-    if (!roleOrId) return undefined;
-    if (roleOrId instanceof Types.ObjectId) return undefined;
+    if (!roleData) return undefined;
+    
+    const id = roleData.id;
+    if (!id && typeof roleData !== 'object') return undefined;
 
-    // Type narrowing for populated object
-    if (
-      typeof roleOrId === 'object' &&
-      roleOrId !== null &&
-      'name' in roleOrId &&
-      'permissions' in roleOrId
-    ) {
-      // Safe to treat as object with known shape roughly
-      const role = roleOrId as {
-        _id?: Types.ObjectId;
-        name: string;
-        permissions: unknown[];
-      };
-
-      return {
-        id: role._id?.toString() || '',
-        name: role.name,
-        permissions: Array.isArray(role.permissions)
-          ? role.permissions.map((p) =>
-              typeof p === 'object' && p && 'name' in p ? (p as { name: string }).name : String(p),
-            )
-          : [],
-      };
-    }
-    return undefined;
+    return {
+      id: id || '',
+      name: roleData.name,
+      permissions: Array.isArray(roleData.permissions)
+        ? roleData.permissions.map((p: any) =>
+            typeof p === 'object' && p && 'name' in p ? p.name : String(p),
+          )
+        : [],
+    };
   }
 
-  static toPersistence(entity: User): Partial<UserDocument> {
+  static toPersistence(entity: User): any {
     return {
-      _id: new Types.ObjectId(entity.id.toString()),
+      id: entity.id.toString(),
       name: entity.name,
       email: entity.email,
       password: entity.password,
-      roleId: new Types.ObjectId(entity.roleId),
+      roleId: entity.roleId,
       refreshToken: entity.refreshToken,
       isDeleted: entity.isDeleted,
       deletedAt: entity.deletedAt,

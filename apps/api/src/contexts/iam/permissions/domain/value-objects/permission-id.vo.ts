@@ -1,12 +1,12 @@
-import { BaseId } from '@shared/value-objects';
-import { Types } from 'mongoose';
+import { BaseId } from '@shared/value-objects/base-id.vo';
+import { v4 as uuid } from 'uuid';
 
 export class PermissionId extends BaseId {
-  private constructor(id: string | Types.ObjectId) {
+  private constructor(id: string) {
     super(id);
   }
 
-  static create(id?: string | Types.ObjectId): PermissionId {
-    return new PermissionId(id ?? new Types.ObjectId());
+  static create(id?: string): PermissionId {
+    return new PermissionId(id ?? uuid());
   }
 }

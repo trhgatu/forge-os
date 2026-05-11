@@ -1,28 +1,52 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { MoodType } from '@shared/enums';
-import { JournalStatus, JournalType, JournalRelationType } from '../../domain/enums';
+import { JournalStatus, JournalType, JournalRelationType, JournalSource } from '../../domain/enums';
 
-export interface JournalRelationResponse {
-  type: JournalRelationType;
-  id: string;
+export class JournalRelationResponse {
+  @ApiProperty({ enum: JournalRelationType })
+  type!: JournalRelationType;
+
+  @ApiProperty()
+  id!: string;
 }
 
-export interface JournalResponse {
-  id: string;
-  title: string;
-  content: string;
+export class JournalResponse {
+  @ApiProperty()
+  id!: string;
 
+  @ApiProperty()
+  title!: string;
+
+  @ApiProperty()
+  content!: string;
+
+  @ApiPropertyOptional({ enum: MoodType })
   mood?: MoodType;
-  tags: string[];
 
-  type: JournalType;
-  status: JournalStatus;
-  source: 'user' | 'ai' | 'system';
+  @ApiProperty({ type: [String] })
+  tags!: string[];
 
-  relations: JournalRelationResponse[];
+  @ApiProperty({ enum: JournalType })
+  type!: JournalType;
 
-  createdAt: string;
-  updatedAt: string;
+  @ApiProperty({ enum: JournalStatus })
+  status!: JournalStatus;
 
-  isDeleted: boolean;
-  deletedAt: string | null;
+  @ApiProperty({ enum: JournalSource })
+  source!: JournalSource;
+
+  @ApiProperty({ type: [JournalRelationResponse] })
+  relations!: JournalRelationResponse[];
+
+  @ApiProperty()
+  createdAt!: string;
+
+  @ApiProperty()
+  updatedAt!: string;
+
+  @ApiProperty()
+  isDeleted!: boolean;
+
+  @ApiPropertyOptional({ type: String, nullable: true })
+  deletedAt!: string | null;
 }

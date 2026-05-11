@@ -8,4 +8,12 @@ export class CreatePermissionDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  resource!: string;
+
+  @IsNotEmpty()
+  @IsString()
+  action!: string;
 }

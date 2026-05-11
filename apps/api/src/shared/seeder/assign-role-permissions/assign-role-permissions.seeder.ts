@@ -1,33 +1,32 @@
-// src/shared/seeder/assign-role-permissions.seeder.ts
+// src/shared/seeder/assign-role-permissions/assign-role-permissions.seeder.ts
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
-import { Role, RoleDocument } from 'src/contexts/iam/roles/infrastructure/schemas/iam-role.schema';
-import {
-  Permission,
-  PermissionDocument,
-} from 'src/contexts/iam/permissions/infrastructure/schemas/iam-permission.schema';
+import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
 import { RoleEnum } from '@shared/enums';
 
 @Injectable()
 export class AssignRolePermissionsSeeder {
-  constructor(
-    @InjectModel(Role.name) private readonly roleModel: Model<RoleDocument>,
-    @InjectModel(Permission.name)
-    private readonly permissionModel: Model<PermissionDocument>,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async seed() {
-    const adminRole = await this.roleModel.findOne({ name: RoleEnum.ADMIN });
+    const adminRole = await this.prisma.role.findUnique({
+      where: { name: RoleEnum.ADMIN },
+    });
 
     if (!adminRole) {
       throw new Error('Admin role not found');
     }
 
-    const allPermissions = await this.permissionModel.find();
-    adminRole.permissions = allPermissions.map((p) => p._id as Types.ObjectId);
+    const allPermissions = await this.prisma.permission.findMany();
+    
+    await this.prisma.role.update({
+      where: { id: adminRole.id },
+      data: {
+        permissions: {
+          set: allPermissions.map((p) => ({ id: p.id })),
+        },
+      },
+    });
 
-    await adminRole.save();
     console.log(`✅ Assigned ${allPermissions.length} permissions to Admin role`);
   }
 }

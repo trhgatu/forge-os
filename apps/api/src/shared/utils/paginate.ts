@@ -1,4 +1,3 @@
-// src/shared/utils/paginate.ts
 import { PaginatedResult } from '@shared/interfaces/paginated-result.interface';
 
 export async function paginate<T>(
@@ -11,7 +10,7 @@ export async function paginate<T>(
 
   return {
     data,
-    pagination: {
+    meta: {
       total,
       page,
       limit,

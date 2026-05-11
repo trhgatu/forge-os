@@ -1,16 +1,20 @@
-import { BaseId } from '@shared/value-objects';
-import { Types } from 'mongoose';
+import { BaseId } from '@shared/value-objects/base-id.vo';
+import { v4 as uuid } from 'uuid';
 
 export class JournalId extends BaseId {
-  private constructor(value: string | Types.ObjectId) {
-    super(value);
+  private constructor(id: string) {
+    super(id);
   }
 
-  public static create(value: string | Types.ObjectId): JournalId {
-    return new JournalId(value);
+  static create(id?: string): JournalId {
+    return new JournalId(id ?? uuid());
   }
 
-  public static random(): JournalId {
-    return new JournalId(new Types.ObjectId());
+  static fromString(id: string): JournalId {
+    return new JournalId(id);
+  }
+
+  static random(): JournalId {
+    return new JournalId(uuid());
   }
 }

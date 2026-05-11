@@ -1,12 +1,12 @@
-import { BaseId } from '@shared/value-objects';
-import { Types } from 'mongoose';
+import { BaseId } from '@shared/value-objects/base-id.vo';
+import { v4 as uuid } from 'uuid';
 
 export class RoleId extends BaseId {
-  private constructor(id: string | Types.ObjectId) {
+  private constructor(id: string) {
     super(id);
   }
 
-  static create(id?: string | Types.ObjectId): RoleId {
-    return new RoleId(id ?? new Types.ObjectId());
+  static create(id?: string): RoleId {
+    return new RoleId(id ?? uuid());
   }
 }

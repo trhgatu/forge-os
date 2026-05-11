@@ -1,12 +1,16 @@
-import { BaseId } from '@shared/value-objects';
-import { Types } from 'mongoose';
+import { BaseId } from '@shared/value-objects/base-id.vo';
+import { v4 as uuid } from 'uuid';
 
 export class MemoryId extends BaseId {
-  private constructor(value: string | Types.ObjectId) {
-    super(value);
+  private constructor(id: string) {
+    super(id);
   }
 
-  public static create(value: string | Types.ObjectId): MemoryId {
-    return new MemoryId(value);
+  static create(id?: string): MemoryId {
+    return new MemoryId(id ?? uuid());
+  }
+
+  static random(): MemoryId {
+    return new MemoryId(uuid());
   }
 }

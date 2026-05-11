@@ -1,30 +1,31 @@
-import { Types } from 'mongoose';
 import { Memory } from '../../domain/memory.entity';
-import { MemoryDocument } from '../memory.schema';
-import { MemoryStatus, MoodType } from '@shared/enums';
 
 export class MemoryMapper {
-  static toDomain(doc: MemoryDocument): Memory {
-    return Memory.createFromPersistence({
-      id: doc._id.toString(),
-      title: new Map(doc.title),
-      content: new Map(doc.content),
-      mood: doc.mood as MoodType,
-      tags: doc.tags,
-      status: doc.status as MemoryStatus,
-      isDeleted: doc.isDeleted,
-      deletedAt: doc.deletedAt,
-      createdAt: doc.createdAt,
-      updatedAt: doc.updatedAt,
-    });
+  static toDomain(doc: any): Memory | null {
+    if (!doc) return null;
+
+    return Memory.createFromPersistence(
+      {
+        title: doc.title instanceof Map ? doc.title : new Map(Object.entries(doc.title || {})),
+        content: doc.content instanceof Map ? doc.content : new Map(Object.entries(doc.content || {})),
+        mood: doc.mood,
+        tags: doc.tags || [],
+        status: doc.status,
+        createdAt: doc.createdAt,
+        updatedAt: doc.updatedAt,
+      },
+      doc.id,
+      doc.isDeleted || false,
+      doc.deletedAt,
+    );
   }
 
-  static toPersistence(entity: Memory): Partial<MemoryDocument> {
+  static toPersistence(entity: Memory): any {
     const props = entity.toPersistence();
     return {
-      _id: new Types.ObjectId(entity.id.toString()),
-      title: props.title,
-      content: props.content,
+      id: entity.id.toString(),
+      title: Object.fromEntries(props.title),
+      content: Object.fromEntries(props.content),
       mood: props.mood,
       tags: props.tags,
       status: props.status,

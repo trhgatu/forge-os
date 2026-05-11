@@ -1,6 +1,6 @@
 import { UserStats } from '../user-stats.entity';
 
-export interface UserStatsRepository {
-  findByUserId(userId: string): Promise<UserStats | null>;
-  save(stats: UserStats): Promise<void>;
+export abstract class UserStatsRepository {
+  abstract findByUserId(userId: string): Promise<UserStats | null>;
+  abstract save(stats: UserStats): Promise<void>;
 }

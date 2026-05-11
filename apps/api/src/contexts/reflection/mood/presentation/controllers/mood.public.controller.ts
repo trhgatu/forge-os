@@ -3,14 +3,17 @@ import { QueryBus } from '@nestjs/cqrs';
 import { QueryMoodDto } from '../dto/query-mood.dto';
 import { GetAllMoodsQuery, GetMoodByIdQuery } from '../../application/queries';
 import { MoodId } from '../../domain/value-objects/mood-id.vo';
+import { MoodPresenter } from '../mood.presenter';
+import { Mood } from '../../domain/mood.entity';
+import { PaginatedResult } from '@shared/types/paginated-result';
 
 @Controller('moods')
 export class MoodPublicController {
   constructor(private readonly queryBus: QueryBus) {}
 
   @Get()
-  findAll(@Query() query: QueryMoodDto) {
-    return this.queryBus.execute(
+  async findAll(@Query() query: QueryMoodDto) {
+    const result: PaginatedResult<Mood> = await this.queryBus.execute(
       new GetAllMoodsQuery({
         page: query.page ? Number(query.page) : undefined,
         limit: query.limit ? Number(query.limit) : undefined,
@@ -21,10 +24,16 @@ export class MoodPublicController {
         isDeleted: query.isDeleted ? query.isDeleted === 'true' : false,
       }),
     );
+
+    return {
+      meta: result.meta,
+      data: result.data.map(MoodPresenter.toResponse),
+    };
   }
 
   @Get(':id')
-  findById(@Param('id') id: string) {
-    return this.queryBus.execute(new GetMoodByIdQuery(MoodId.create(id)));
+  async findById(@Param('id') id: string) {
+    const mood: Mood = await this.queryBus.execute(new GetMoodByIdQuery(MoodId.create(id)));
+    return MoodPresenter.toResponse(mood);
   }
 }

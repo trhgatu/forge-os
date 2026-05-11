@@ -1,34 +1,34 @@
-import { Types } from 'mongoose';
+import { Journal as PrismaJournal } from '@prisma/client';
 import { Journal } from '../../domain/journal.entity';
-import { JournalDocument } from '../journal.schema';
-import { MoodType } from '@shared/enums';
-import { JournalStatus } from '../../domain/enums/journal-status.enum';
-import { JournalType } from '../../domain/enums/journal-type.enum';
+import { JournalSource } from '../../domain/enums';
 
 export class JournalMapper {
-  static toDomain(doc: JournalDocument): Journal {
-    return Journal.createFromPersistence({
-      id: doc._id.toString(),
-      title: doc.title,
-      content: doc.content,
-      mood: doc.mood as MoodType,
-      tags: doc.tags ?? [],
-      type: doc.type as JournalType,
-      status: doc.status as JournalStatus,
-      source: doc.source as 'user' | 'ai' | 'system',
-      relations: doc.relations ?? [],
-      isDeleted: doc.isDeleted,
-      deletedAt: doc.deletedAt,
-      createdAt: doc.createdAt,
-      updatedAt: doc.updatedAt,
-    });
+  static toDomain(doc: PrismaJournal): Journal | null {
+    if (!doc) return null;
+
+    return Journal.createFromPersistence(
+      {
+        title: doc.title || '',
+        content: doc.content,
+        mood: doc.mood as any,
+        tags: (doc.tags as string[]) || [],
+        type: doc.type as any,
+        status: doc.status as any,
+        source: (doc.source as any) || JournalSource.USER,
+        relations: (doc.relations as any) || [],
+        createdAt: doc.createdAt,
+        updatedAt: doc.updatedAt,
+      },
+      doc.id,
+      doc.isDeleted || false,
+      doc.deletedAt ?? undefined,
+    );
   }
 
-  static toPersistence(entity: Journal): Partial<JournalDocument> {
+  static toPersistence(entity: Journal): any {
     const props = entity.toPersistence();
-
     return {
-      _id: new Types.ObjectId(entity.id.toString()),
+      id: entity.id.toString(),
       title: props.title,
       content: props.content,
       mood: props.mood,

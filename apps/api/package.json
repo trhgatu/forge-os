@@ -1,5 +1,6 @@
 {
   "name": "@forge/api",
+  "type": "commonjs",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -44,6 +45,7 @@
     "@nestjs/terminus": "^11.0.0",
     "@nestjs/websockets": "^11.1.10",
     "@octokit/rest": "^22.0.1",
+    "@prisma/adapter-pg": "^7.8.0",
     "bcrypt": "^6.0.0",
     "bullmq": "^5.70.1",
     "class-transformer": "^0.5.1",
@@ -55,6 +57,7 @@
     "nest-winston": "^1.10.2",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
+    "pg": "^8.20.0",
     "redis": "^5.5.6",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
@@ -65,7 +68,8 @@
     "uuid": "^9.0.1",
     "winston": "^3.19.0",
     "winston-daily-rotate-file": "^5.0.0",
-    "zod": "^3.24.2"
+    "zod": "^3.24.2",
+    "@forge/shared": "workspace:*"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
@@ -81,6 +85,7 @@
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.7",
     "@types/passport-jwt": "^4.0.1",
+    "@types/pg": "^8.20.0",
     "@types/supertest": "^6.0.2",
     "@types/ua-parser-js": "^0.7.39",
     "@types/uuid": "^9.0.8",

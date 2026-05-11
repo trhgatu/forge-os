@@ -1,18 +1,16 @@
-import { BadRequestException } from '@nestjs/common';
-import { ObjectId } from 'mongodb';
+import { BaseId } from '@shared/value-objects/base-id.vo';
+import { v4 as uuid } from 'uuid';
 
-export class MoodId {
-  private constructor(private readonly value: ObjectId) {}
-
-  static create(id?: string | ObjectId): MoodId {
-    const objectId = typeof id === 'string' ? new ObjectId(id) : (id ?? new ObjectId());
-    if (!ObjectId.isValid(objectId)) {
-      throw new BadRequestException('Invalid MoodId');
-    }
-    return new MoodId(objectId as ObjectId);
+export class MoodId extends BaseId {
+  private constructor(id: string) {
+    super(id);
   }
 
-  toString() {
-    return this.value.toHexString();
+  static create(id?: string): MoodId {
+    return new MoodId(id ?? uuid());
+  }
+
+  static random(): MoodId {
+    return new MoodId(uuid());
   }
 }

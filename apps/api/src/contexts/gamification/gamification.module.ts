@@ -1,41 +1,31 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import { DiscoveryModule } from '@nestjs/core';
-import { BullModule } from '@nestjs/bullmq';
-import { MongooseModule } from '@nestjs/mongoose';
 import { GamificationController } from './presentation/gamification.controller';
-import { AuthModule } from '../iam/auth/auth.module';
-import { MongoUserStatsRepository } from './infrastructure/mongo-user-stats.repository';
-import { UserStatsModel, UserStatsSchema } from './infrastructure/user-stats.schema';
-import { AwardXpHandler } from './application/handlers/award-xp.handler';
-import { GetUserStatsHandler } from './application/queries/get-user-stats.query';
 import { GamificationGateway } from './presentation/gamification.gateway';
-import { XpAwardingProcessor } from './application/processors/xp-awarding.processor';
-import { ProjectCreatedXpStrategy } from './application/strategies/engineering/project-created.strategy';
-import { GithubSyncXpStrategy } from './application/strategies/engineering/github-sync.strategy';
+import { PrismaUserStatsRepository } from './infrastructure/prisma-user-stats.repository';
+import { UserStatsRepository } from './domain/ports/user-stats.repository';
+import { GetUserStatsHandler } from './application/queries/get-user-stats.query';
+import { AwardXpHandler } from './application/handlers/award-xp.handler';
+import { SharedModule } from '@shared/shared.module';
+import { AuthModule } from '../iam/auth/auth.module';
+
+const Handlers = [GetUserStatsHandler, AwardXpHandler];
 
 @Module({
-  imports: [
-    CqrsModule,
-    DiscoveryModule,
-    MongooseModule.forFeature([{ name: UserStatsModel.name, schema: UserStatsSchema }]),
-    AuthModule,
-    BullModule.registerQueue({
-      name: 'xp_awarding',
-    }),
-  ],
+  imports: [CqrsModule, SharedModule, AuthModule],
   controllers: [GamificationController],
   providers: [
-    AwardXpHandler,
-    ProjectCreatedXpStrategy,
-    GithubSyncXpStrategy,
-    GetUserStatsHandler,
     GamificationGateway,
-    XpAwardingProcessor,
+    {
+      provide: UserStatsRepository,
+      useClass: PrismaUserStatsRepository,
+    },
     {
       provide: 'UserStatsRepository',
-      useClass: MongoUserStatsRepository,
+      useClass: PrismaUserStatsRepository,
     },
+    ...Handlers,
   ],
+  exports: [UserStatsRepository],
 })
 export class GamificationModule {}
