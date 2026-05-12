@@ -4,29 +4,29 @@ WORKDIR /app
 
 COPY . .
 
-# Cài đặt với lockfile mới (shamefully-hoist=true)
+# 1. Cài đặt với cấu hình hoisted (đã có .npmrc)
 RUN pnpm install --frozen-lockfile
 
-# Sinh Prisma Client
+# 2. Sinh Prisma Client vào đúng vị trí mặc định
 RUN npx prisma generate --schema=apps/api/prisma/schema.prisma
 
-# Build dự án
+# 3. Build code NestJS
 RUN pnpm turbo build --filter=@forge/api
 
-# Deploy production dependencies
-RUN pnpm --filter @forge/api --prod deploy isolated
-
-# Đảm bảo .prisma được copy vào isolated
-RUN find node_modules -name ".prisma" -type d -exec cp -r {} isolated/node_modules/ \; || true
-
+# --- STAGE RUNNER ---
 FROM node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 
-COPY --from=base /app/isolated/node_modules ./node_modules
+# 4. Copy TOÀN BỘ node_modules từ gốc (vì chúng ta đã dùng hoisted layout nên mọi thứ đều ở đây)
+COPY --from=base /app/node_modules ./node_modules
+
+# 5. Copy bản build của API
 COPY --from=base /app/apps/api/dist ./dist
 COPY --from=base /app/apps/api/package.json ./package.json
 
 EXPOSE 3001
+
+# Chạy lệnh
 CMD ["node", "dist/main"]
