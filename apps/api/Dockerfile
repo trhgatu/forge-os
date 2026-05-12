@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-# Với node-linker=hoisted, pnpm sẽ tạo cấu trúc node_modules phẳng, giúp Prisma ổn định
+# Cài đặt với lockfile mới (shamefully-hoist=true)
 RUN pnpm install --frozen-lockfile
 
 # Sinh Prisma Client
@@ -16,8 +16,8 @@ RUN pnpm turbo build --filter=@forge/api
 # Deploy production dependencies
 RUN pnpm --filter @forge/api --prod deploy isolated
 
-# Với hoisted layout, chúng ta copy nốt .prisma vào isolated nếu nó chưa có
-RUN cp -r node_modules/.prisma isolated/node_modules/ || true
+# Đảm bảo .prisma được copy vào isolated
+RUN find node_modules -name ".prisma" -type d -exec cp -r {} isolated/node_modules/ \; || true
 
 FROM node:20-alpine AS runner
 WORKDIR /app
