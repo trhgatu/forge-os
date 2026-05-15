@@ -15,14 +15,16 @@ RUN pnpm install --frozen-lockfile --ignore-scripts
 # Bây giờ mới copy code
 COPY . .
 
-# Sinh Prisma Client
-RUN npx prisma generate --schema=apps/api/prisma/schema.prisma
-
 # Build API
 RUN pnpm turbo build --filter=@forge/api
 
 # Deploy ra thư mục riêng
 RUN pnpm --filter=@forge/api --prod deploy out/api
+
+# Sinh Prisma Client TRONG thư mục đã deploy để đảm bảo nó nằm đúng node_modules
+WORKDIR /app/out/api
+RUN npx prisma generate --schema=prisma/schema.prisma
+WORKDIR /app
 
 # --- STAGE RUNNER ---
 FROM node:20-alpine AS runner
