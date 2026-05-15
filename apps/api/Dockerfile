@@ -2,32 +2,39 @@ FROM node:20-alpine AS base
 RUN npm install -g pnpm
 WORKDIR /app
 
-COPY . .
+# --- STAGE BUILDER ---
+FROM base AS builder
+# Copy files needed for dependency installation first (Better Caching)
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
+COPY apps/api/package.json ./apps/api/
+COPY packages ./packages
 
-# 1. Cài đặt toàn bộ dependencies (bao gồm cả symlinks giữa các gói)
+# Cài đặt để build (chỉ những gì cần thiết cho workspace này)
 RUN pnpm install --frozen-lockfile
 
-# 2. Sinh Prisma Client
+# Bây giờ mới copy code
+COPY . .
+
+# Sinh Prisma Client
 RUN npx prisma generate --schema=apps/api/prisma/schema.prisma
 
-# 3. Build toàn bộ workspace (để có dist cho @forge/shared, v.v.)
+# Build API
 RUN pnpm turbo build --filter=@forge/api
+
+# Deploy ra thư mục riêng
+RUN pnpm --filter=@forge/api --prod deploy out/api
 
 # --- STAGE RUNNER ---
 FROM node:20-alpine AS runner
 WORKDIR /app
 
+# Bảo mật: Chạy với user node, không dùng root
 ENV NODE_ENV=production
+RUN chown -R node:node /app
+USER node
 
-# 4. Copy node_modules (chứa các symlink)
-COPY --from=base /app/node_modules ./node_modules
-
-# 5. QUAN TRỌNG: Copy các gói nội bộ (chứa code đã build của shared packages)
-COPY --from=base /app/packages ./packages
-
-# 6. Copy bản build của API
-COPY --from=base /app/apps/api/dist ./dist
-COPY --from=base /app/apps/api/package.json ./package.json
+# Copy từ builder
+COPY --from=builder --chown=node:node /app/out/api ./
 
 EXPOSE 3001
 
