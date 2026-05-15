@@ -7,11 +7,10 @@ FROM base AS builder
 # Copy files needed for dependency installation first (Better Caching)
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
 COPY apps/api/package.json ./apps/api/
-COPY apps/api/prisma ./apps/api/prisma
 COPY packages ./packages
 
-# Cài đặt để build (chỉ những gì cần thiết cho workspace này)
-RUN pnpm install --frozen-lockfile
+# Cài đặt để build (bỏ qua scripts để tránh lỗi prisma generate khi chưa có code)
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 # Bây giờ mới copy code
 COPY . .
