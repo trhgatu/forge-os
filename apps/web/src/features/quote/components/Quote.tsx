@@ -1,11 +1,11 @@
 'use client';
 
+import type { MoodType } from '@forge/reflection';
 import { Plus, Search, Filter, Leaf } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
 
 import { cn } from '@/shared/lib/utils';
-import type { MoodType } from '@/shared/types/journal';
 import type { Quote as QuoteType } from '@/shared/types/quote';
 
 import { SEASON_CONFIG, getSeasonFromMood } from '../../memory/config/seasons';
@@ -327,3 +327,6 @@ export function Quote() {
     </div>
   );
 }
+
+
+

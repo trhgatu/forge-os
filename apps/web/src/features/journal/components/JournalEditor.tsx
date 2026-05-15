@@ -125,3 +125,6 @@ export function JournalEditor({
     </div>
   );
 }
+
+
+

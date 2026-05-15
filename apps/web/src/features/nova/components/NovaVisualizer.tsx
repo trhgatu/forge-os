@@ -45,3 +45,5 @@ export function NovaVisualizer({ isActive, bars = 15 }: NovaVisualizerProps) {
     </div>
   );
 }
+
+

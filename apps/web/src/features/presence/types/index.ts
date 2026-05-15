@@ -24,3 +24,5 @@ export interface VisitorEcho {
   duration: number;
   pageVisited: string;
 }
+
+

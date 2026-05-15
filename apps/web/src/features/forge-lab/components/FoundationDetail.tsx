@@ -204,3 +204,5 @@ export const FoundationDetail: React.FC<FoundationDetailProps> = ({ foundation, 
     </div>
   );
 };
+
+

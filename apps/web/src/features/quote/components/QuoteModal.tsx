@@ -1,8 +1,8 @@
+import type { MoodType } from '@forge/reflection';
 import { X } from 'lucide-react';
 import React, { useState } from 'react';
 
 import { cn } from '@/shared/lib/utils';
-import type { MoodType } from '@/shared/types/journal';
 import type { Quote } from '@/shared/types/quote';
 
 export const EMOTION_OPTIONS: MoodType[] = [
@@ -143,3 +143,6 @@ export function QuoteModal({
     </div>
   );
 }
+
+
+

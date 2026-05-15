@@ -18,3 +18,5 @@ export const ROLE_COLORS: Record<ConnectionRole, string> = {
   Healer: 'bg-teal-300 shadow-[0_0_15px_#5EEAD4]',
   Mystery: 'bg-fuchsia-400 shadow-[0_0_15px_#E879F9]',
 };
+
+

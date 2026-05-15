@@ -11,9 +11,9 @@ const apiClient = axios.create({
 
 // Request Interceptor: Attach Token
 apiClient.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().token;
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  const accessToken = useAuthStore.getState().accessToken;
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
   }
   return config;
 });
@@ -24,10 +24,11 @@ apiClient.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       useAuthStore.getState().logout();
-      // Optionally redirect to login, but usually the UI reacts to state change
     }
     return Promise.reject(error);
   },
 );
 
 export { apiClient };
+
+

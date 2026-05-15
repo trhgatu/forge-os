@@ -14,3 +14,5 @@ export default function Page() {
   }, [setCurrentView]);
   return <Memory />;
 }
+
+

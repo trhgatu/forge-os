@@ -80,3 +80,5 @@ export const ConnectGithubWidget: React.FC<ConnectGithubProps> = ({ onConnected 
     </GlassCard>
   );
 };
+
+

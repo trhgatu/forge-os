@@ -130,6 +130,7 @@ model Journal {
   status    String    @default("private")
   source    String    @default("user")
   relations Json?     @default("[]")
+  analysis  Json?
   userId    String?
   user      User?     @relation(fields: [userId], references: [id])
   isDeleted Boolean   @default(false)

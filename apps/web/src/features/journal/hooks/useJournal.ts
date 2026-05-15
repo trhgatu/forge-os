@@ -1,20 +1,21 @@
+import type { PaginatedResponse } from '@forge/core';
+import type { JournalEntry } from '@forge/reflection';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
-import type { PaginatedResponse } from '@/shared/types/api';
 
 import { journalService } from '../services/journalService';
-import type { CreateJournalDto, JournalFilter, JournalEntry } from '../types';
+import type { CreateJournalDto, JournalFilter } from '../types';
 
 export const useJournals = (filter?: JournalFilter) => {
   return useQuery({
-    queryKey: ['journals', filter], // Add filter back for cache isolation
+    queryKey: ['journals', filter],
     queryFn: async () => {
       const result = await journalService.getAll(filter);
       return result;
     },
-    staleTime: 0, // Always consider data stale
-    refetchOnMount: 'always', // Always refetch when component mounts
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 };
 
@@ -33,8 +34,6 @@ export const useCreateJournal = () => {
     mutationFn: (data: CreateJournalDto) => journalService.create(data),
     onSuccess: async (newEntry) => {
       toast.success('Journal entry created successfully');
-
-      // Manually update cache to prevent flicker
       queryClient.setQueryData<PaginatedResponse<JournalEntry>>(
         ['journals', { page: 1, limit: 100 }],
         (old: PaginatedResponse<JournalEntry> | undefined) => {
@@ -93,3 +92,6 @@ export const useDeleteJournal = () => {
     },
   });
 };
+
+
+

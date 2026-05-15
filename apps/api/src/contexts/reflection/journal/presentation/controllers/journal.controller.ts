@@ -28,7 +28,6 @@ export class JournalController {
   @ApiOperation({ summary: 'Create a new journal entry' })
   @ApiResponse({ status: 201, type: JournalResponse })
   async create(@Body() dto: CreateJournalDto, @User('id') userId: string) {
-    // Inject userId to ensure the journal belongs to the creator
     const journal = await this.commandBus.execute(new CreateJournalCommand({ ...dto, userId }));
     return this.presenter.toResponse(journal);
   }
@@ -37,7 +36,6 @@ export class JournalController {
   @ApiOperation({ summary: 'Get my journal entries (paginated)' })
   async findAll(@Query() queryDto: QueryJournalDto, @User('id') userId: string) {
     const filter = this.presenter.toFilter(queryDto);
-    // Filter by userId to ensure privacy
     const result = await this.queryBus.execute(new GetAllJournalsQuery({ ...filter, userId }));
     return {
       ...result,

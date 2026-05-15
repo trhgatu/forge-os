@@ -23,12 +23,12 @@ export const PresenceTracker: React.FC = () => {
   // Handle identification logic using Auth Token
   useEffect(() => {
     const socket = socketService.getSocket('/presence');
-    const token = useAuthStore.getState().token;
+    const accessToken = useAuthStore.getState().accessToken;
 
     if (socket) {
       const handleConnect = () => {
         // console.log('🔑 Socket connected, identifying...');
-        if (token) socket.emit('identify', { token });
+        if (accessToken) socket.emit('identify', { token: accessToken });
         socket.emit('updateLocation', { path: pathname });
       };
 
@@ -46,3 +46,5 @@ export const PresenceTracker: React.FC = () => {
 
   return null; // Headless component
 };
+
+

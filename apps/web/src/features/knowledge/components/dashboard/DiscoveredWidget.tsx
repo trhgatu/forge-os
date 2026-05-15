@@ -95,3 +95,5 @@ export const DiscoveredWidget: React.FC<DiscoveredWidgetProps> = ({ history, onS
     </GlassCard>
   );
 };
+
+

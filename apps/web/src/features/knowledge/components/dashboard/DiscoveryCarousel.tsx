@@ -134,3 +134,5 @@ export const DiscoveryCarousel: React.FC = () => {
     </GlassCard>
   );
 };
+
+

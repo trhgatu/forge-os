@@ -26,3 +26,5 @@ export interface InsightMetadata {
   category?: string;
   confidence?: number;
 }
+
+

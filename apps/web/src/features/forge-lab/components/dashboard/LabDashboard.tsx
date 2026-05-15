@@ -37,7 +37,7 @@ export const LabDashboard: React.FC<LabDashboardProps> = ({
   const [contributionStats, setContributionStats] = React.useState<ContributionStats | null>(null);
   const [loadingStats, setLoadingStats] = React.useState(true);
   const authUser = useAuthStore((state) => state.user);
-  const token = useAuthStore((state) => state.token);
+  const accessToken = useAuthStore((state) => state.accessToken);
   const isHydrated = useAuthStore((state) => state.isHydrated);
 
   React.useEffect(() => {
@@ -48,7 +48,7 @@ export const LabDashboard: React.FC<LabDashboardProps> = ({
       // Avoid flickering: If we have a token but no user yet (hydration), wait.
       // Only stop loading if we truly have no token (logged out).
       if (!authUser?.id) {
-        if (!token) {
+        if (!accessToken) {
           setLoadingStats(false);
         }
         return;
@@ -78,7 +78,7 @@ export const LabDashboard: React.FC<LabDashboardProps> = ({
     };
 
     initIdentity();
-  }, [authUser?.id, isHydrated, token]);
+  }, [authUser?.id, isHydrated, accessToken]);
 
   return (
     <div className="max-w-[1600px] mx-auto p-6 md:p-10 pb-32 space-y-10 animate-in fade-in zoom-in-95 duration-700">
@@ -134,3 +134,5 @@ export const LabDashboard: React.FC<LabDashboardProps> = ({
     </div>
   );
 };
+
+

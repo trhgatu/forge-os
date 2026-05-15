@@ -223,3 +223,5 @@ export const AgentDock: React.FC<AgentDockProps> = ({ isOpen, activeAgentIds = [
     </div>
   );
 };
+
+

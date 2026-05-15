@@ -4,12 +4,14 @@ import { UpdateJournalCommand } from './update-journal.command';
 import { JournalRepository } from '../../../domain/journal.repository';
 import { Journal } from '../../../domain/journal.entity';
 import { JournalStatus } from '../../../domain/enums';
+import { CacheService } from '@shared/services';
 
 @CommandHandler(UpdateJournalCommand)
 export class UpdateJournalHandler implements ICommandHandler<UpdateJournalCommand, Journal> {
   constructor(
     @Inject('JournalRepository')
     private readonly journalRepo: JournalRepository,
+    private readonly cacheService: CacheService,
   ) {}
 
   async execute(command: UpdateJournalCommand): Promise<Journal> {
@@ -38,7 +40,13 @@ export class UpdateJournalHandler implements ICommandHandler<UpdateJournalComman
       journal.addTags(payload.tags);
     }
 
+    if (payload.analysis) {
+      journal.updateAnalysis(payload.analysis);
+    }
+
     await this.journalRepo.save(journal);
+
+    await this.cacheService.deleteByPattern('journals:*');
 
     return journal;
   }

@@ -52,3 +52,5 @@ export const MOCK_TIMELINE: TimelineItem[] = [
       'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800',
   },
 ];
+
+

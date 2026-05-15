@@ -1,66 +1,21 @@
+import type { BackendResponse, PaginatedResponse } from '@forge/core';
+import type { MoodType } from '@forge/reflection';
+
 import { apiClient } from '@/services/apiClient';
-import type { PaginatedResponse } from '@/shared/types/api';
-import type { MoodType } from '@/shared/types/journal';
 
 import type { CreateJournalDto, JournalEntry, JournalFilter, RawJournalItem } from '../types';
 import { JournalStatus, JournalType } from '../types';
 
 export const journalService = {
-  // Public endpoints for reading
   getAll: async (filter?: JournalFilter): Promise<PaginatedResponse<JournalEntry>> => {
-    const res = await apiClient.get<PaginatedResponse<RawJournalItem>>('/journals', {
+    const res = await apiClient.get<BackendResponse<RawJournalItem[]>>('/journals', {
       params: filter,
     });
 
-    // Map Backend Raw Item to Frontend Entity
-    const mappedData: JournalEntry[] = res.data.data.map((item) => ({
-      id: item.id,
-      title: item.title,
-      content: item.content,
-      mood: (item.mood as MoodType) || undefined,
-      tags: item.tags || [],
-      type: (item.type as JournalType) || JournalType.THOUGHT,
-      status: (item.status as JournalStatus) || JournalStatus.PRIVATE,
-      createdAt: item.createdAt,
-      updatedAt: item.updatedAt,
-      date: new Date(item.createdAt),
-    }));
+    const { data: items, meta } = res.data;
 
     return {
-      data: mappedData,
-      meta: res.data.meta,
-    };
-  },
-
-  getById: async (id: string): Promise<JournalEntry> => {
-    const res = await apiClient.get<RawJournalItem>(`/journals/${id}`);
-    const item = res.data;
-    return {
-      id: item.id,
-      title: item.title,
-      content: item.content,
-      mood: (item.mood as MoodType) || undefined,
-      tags: item.tags || [],
-      type: (item.type as JournalType) || JournalType.THOUGHT,
-      status: (item.status as JournalStatus) || JournalStatus.PRIVATE,
-      createdAt: item.createdAt,
-      updatedAt: item.updatedAt,
-      date: new Date(item.createdAt),
-    };
-  },
-
-  // Admin endpoints for mutations (require auth)
-  create: async (data: CreateJournalDto): Promise<JournalEntry> => {
-    try {
-      const res = await apiClient.post<RawJournalItem>('/journals', data);
-
-      const item = res.data;
-
-      if (!item) {
-        throw new Error('Backend returned no data');
-      }
-
-      return {
+      data: items.map((item: RawJournalItem) => ({
         id: item.id,
         title: item.title,
         content: item.content,
@@ -71,16 +26,16 @@ export const journalService = {
         createdAt: item.createdAt,
         updatedAt: item.updatedAt,
         date: new Date(item.createdAt),
-      };
-    } catch (error) {
-      console.error('Create Journal Error:', error);
-      throw error;
-    }
+        analysis: item.analysis,
+      })),
+      meta: meta as any,
+    };
   },
 
-  update: async (id: string, data: Partial<CreateJournalDto>): Promise<JournalEntry> => {
-    const res = await apiClient.patch<RawJournalItem>(`/journals/${id}`, data);
-    const item = res.data;
+  getById: async (id: string): Promise<JournalEntry> => {
+    const res = await apiClient.get<BackendResponse<RawJournalItem>>(`/journals/${id}`);
+    const item = res.data.data;
+
     return {
       id: item.id,
       title: item.title,
@@ -92,10 +47,72 @@ export const journalService = {
       createdAt: item.createdAt,
       updatedAt: item.updatedAt,
       date: new Date(item.createdAt),
+      analysis: item.analysis,
+    };
+  },
+
+  create: async (data: CreateJournalDto): Promise<JournalEntry> => {
+    const res = await apiClient.post<BackendResponse<RawJournalItem>>('/journals', data);
+    const item = res.data.data;
+
+    return {
+      id: item.id,
+      title: item.title,
+      content: item.content,
+      mood: (item.mood as MoodType) || undefined,
+      tags: item.tags || [],
+      type: (item.type as JournalType) || JournalType.THOUGHT,
+      status: (item.status as JournalStatus) || JournalStatus.PRIVATE,
+      createdAt: item.createdAt,
+      updatedAt: item.updatedAt,
+      date: new Date(item.createdAt),
+      analysis: item.analysis,
+    };
+  },
+
+  update: async (id: string, data: Partial<CreateJournalDto>): Promise<JournalEntry> => {
+    const res = await apiClient.put<BackendResponse<RawJournalItem>>(`/journals/${id}`, data);
+    const item = res.data.data;
+
+    return {
+      id: item.id,
+      title: item.title,
+      content: item.content,
+      mood: (item.mood as MoodType) || undefined,
+      tags: item.tags || [],
+      type: (item.type as JournalType) || JournalType.THOUGHT,
+      status: (item.status as JournalStatus) || JournalStatus.PRIVATE,
+      createdAt: item.createdAt,
+      updatedAt: item.updatedAt,
+      date: new Date(item.createdAt),
+      analysis: item.analysis,
     };
   },
 
   delete: async (id: string): Promise<void> => {
+    if (!id) {
+      console.error('Attempted to delete journal without an ID');
+      return;
+    }
     await apiClient.delete(`/journals/${id}`);
+  },
+
+  analyze: async (id: string): Promise<JournalEntry> => {
+    const res = await apiClient.post<BackendResponse<RawJournalItem>>(`/journals/${id}/analyze`);
+    const item = res.data.data;
+
+    return {
+      id: item.id,
+      title: item.title,
+      content: item.content,
+      mood: (item.mood as MoodType) || undefined,
+      tags: item.tags || [],
+      type: (item.type as JournalType) || JournalType.THOUGHT,
+      status: (item.status as JournalStatus) || JournalStatus.PRIVATE,
+      createdAt: item.createdAt,
+      updatedAt: item.updatedAt,
+      date: new Date(item.createdAt),
+      analysis: item.analysis,
+    };
   },
 };

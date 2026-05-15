@@ -99,3 +99,5 @@ export const LevelUpModal: React.FC<LevelUpModalProps> = ({ isOpen, newLevel, on
     </div>
   );
 };
+
+

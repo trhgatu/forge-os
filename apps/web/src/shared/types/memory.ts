@@ -1,4 +1,4 @@
-import type { MoodType } from './journal';
+import type { MoodType } from '@forge/reflection';
 
 export type MemoryType = 'moment' | 'milestone' | 'insight' | 'challenge';
 
@@ -23,3 +23,6 @@ export interface Memory {
 }
 
 export type CreateMemoryPayload = Omit<Memory, 'id' | 'date' | 'analysis' | 'reflectionDepth'>;
+
+
+

@@ -31,11 +31,14 @@
       "@root/*": [
         "src/*"
       ],
-      "@forge/shared": [
-        "../../packages/shared/src/index"
+      "@forge/core": [
+        "../../packages/core/src/index"
       ],
-      "@forge/shared/*": [
-        "../../packages/shared/src/*"
+      "@forge/auth": [
+        "../../packages/auth/src/index"
+      ],
+      "@forge/reflection": [
+        "../../packages/reflection/src/index"
       ]
     },
     "incremental": true,

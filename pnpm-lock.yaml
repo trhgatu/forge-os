@@ -63,9 +63,15 @@ importers:
       '@bull-board/nestjs':
         specifier: ^6.20.3
         version: 6.21.3(@bull-board/api@6.21.3(@bull-board/ui@6.21.3))(@nestjs/bull-shared@11.0.4(@nestjs/common@11.1.19(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.19(@nestjs/common@11.1.19(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.19)(@nestjs/websockets@11.1.19)(reflect-metadata@0.2.2)(rxjs@7.8.2)))(@nestjs/common@11.1.19(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.19(@nestjs/common@11.1.19(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.19)(@nestjs/websockets@11.1.19)(reflect-metadata@0.2.2)(rxjs@7.8.2))(reflect-metadata@0.2.2)(rxjs@7.8.2)
-      '@forge/shared':
+      '@forge/auth':
         specifier: workspace:*
-        version: link:../../packages/shared
+        version: link:../../packages/auth
+      '@forge/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@forge/reflection':
+        specifier: workspace:*
+        version: link:../../packages/reflection
       '@nestjs/bullmq':
         specifier: ^11.0.4
         version: 11.0.4(@nestjs/common@11.1.19(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.19(@nestjs/common@11.1.19(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.19)(@nestjs/websockets@11.1.19)(reflect-metadata@0.2.2)(rxjs@7.8.2))(bullmq@5.76.6)
@@ -283,9 +289,15 @@ importers:
 
   apps/web:
     dependencies:
-      '@forge/shared':
+      '@forge/auth':
         specifier: workspace:*
-        version: link:../../packages/shared
+        version: link:../../packages/auth
+      '@forge/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@forge/reflection':
+        specifier: workspace:*
+        version: link:../../packages/reflection
       '@google/genai':
         specifier: ^1.30.0
         version: 1.52.0
@@ -384,6 +396,18 @@ importers:
         specifier: ^5
         version: 5.9.2
 
+  packages/auth:
+    devDependencies:
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.2
+
+  packages/core:
+    devDependencies:
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.2
+
   packages/eslint-config:
     devDependencies:
       '@eslint/js':
@@ -420,20 +444,10 @@ importers:
         specifier: ^8.50.0
         version: 8.59.2(eslint@9.39.4(jiti@2.7.0))(typescript@5.9.2)
 
-  packages/shared:
-    dependencies:
-      zod:
-        specifier: ^3.24.2
-        version: 3.25.76
+  packages/reflection:
     devDependencies:
-      '@forge/eslint-config':
-        specifier: workspace:*
-        version: link:../eslint-config
-      '@forge/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
       typescript:
-        specifier: 5.9.2
+        specifier: ^5.7.3
         version: 5.9.2
 
   packages/typescript-config: {}

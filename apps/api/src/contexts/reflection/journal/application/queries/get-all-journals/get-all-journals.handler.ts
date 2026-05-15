@@ -26,7 +26,13 @@ export class GetAllJournalsHandler implements IQueryHandler<
     if (cached) return cached;
 
     const result = await this.journalRepo.findAll(payload);
-    await this.cacheService.set(cacheKey, result, 60);
+
+    const cacheableResult = {
+      ...result,
+      data: result.data.map((journal) => journal.toPrimitives()),
+    };
+
+    await this.cacheService.set(cacheKey, cacheableResult, 60);
 
     return result;
   }

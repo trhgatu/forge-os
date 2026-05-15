@@ -1,9 +1,8 @@
+import type { BackendResponse, PaginatedResponse } from '@forge/core';
+
 import { apiClient } from '@/services/apiClient';
-import type { PaginatedResponse } from '@/shared/types';
 import type { TimelineItem } from '@/shared/types/timeline';
 
-// Define a minimal interface for the raw response items if needed, or use unknown and type check.
-// For now, let's trust the backend contract or assert specific shapes.
 interface RawTimelineItem {
   id: string;
   type: string;
@@ -23,14 +22,13 @@ export const getTimeline = async (
   limit = 20,
   lang?: string,
 ): Promise<PaginatedResponse<TimelineItem>> => {
-  const res = await apiClient.get<PaginatedResponse<RawTimelineItem>>('/timeline', {
+  const res = await apiClient.get<BackendResponse<RawTimelineItem[]>>('/timeline', {
     params: { page, limit, lang },
   });
 
-  const rawData = res.data;
+  const { data: items, meta } = res.data;
 
-  // Map Backend DTOs to Frontend TimelineItem
-  const mappedData: TimelineItem[] = rawData.data.map((item) => {
+  const mappedData: TimelineItem[] = items.map((item) => {
     const base = {
       id: item.id,
       type: item.type as TimelineItem['type'],
@@ -78,7 +76,9 @@ export const getTimeline = async (
   });
 
   return {
-    meta: rawData.meta,
+    meta: meta as any,
     data: mappedData,
   };
 };
+
+

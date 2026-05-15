@@ -74,3 +74,5 @@ export function MoodChart({ history }: MoodChartProps) {
     </div>
   );
 }
+
+
