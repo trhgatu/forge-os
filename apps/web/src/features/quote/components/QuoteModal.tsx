@@ -1,4 +1,4 @@
-import type { MoodType } from '@forge/reflection';
+import { MoodType } from '@forge/reflection';
 import { X } from 'lucide-react';
 import React, { useState } from 'react';
 
@@ -6,14 +6,14 @@ import { cn } from '@/shared/lib/utils';
 import type { Quote } from '@/shared/types/quote';
 
 export const EMOTION_OPTIONS: MoodType[] = [
-  'joy',
-  'calm',
-  'inspired',
-  'neutral',
-  'sad',
-  'anxious',
-  'focused',
-  'nostalgic',
+  MoodType.JOY,
+  MoodType.CALM,
+  MoodType.INSPIRED,
+  MoodType.NEUTRAL,
+  MoodType.SAD,
+  MoodType.ANXIOUS,
+  MoodType.FOCUSED,
+  MoodType.NOSTALGIC,
 ];
 
 export function QuoteModal({
@@ -37,7 +37,7 @@ export function QuoteModal({
   const [text, setText] = useState(quote?.text || initialText);
   const [author, setAuthor] = useState(quote?.author || (initialText ? 'Self' : ''));
   const [source, setSource] = useState(quote?.source || '');
-  const [mood, setMood] = useState<MoodType>(quote?.mood || 'neutral');
+  const [mood, setMood] = useState<MoodType>(quote?.mood || MoodType.NEUTRAL);
   const [tags] = useState<string[]>(quote?.tags || []);
   const [isFavorite] = useState(quote?.isFavorite || false);
 

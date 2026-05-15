@@ -50,7 +50,14 @@ export function useCreateQuote() {
       isFavorite?: boolean;
       mood?: MoodType;
     }) => {
-      return createQuote(content, author, source, tags, isFavorite, mood);
+      return createQuote({
+        content: { en: content },
+        author,
+        source,
+        tags,
+        status: isFavorite ? 'favorite' : 'internal',
+        mood,
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUOTE_QUERY_KEY });

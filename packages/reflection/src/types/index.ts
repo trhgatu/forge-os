@@ -1,9 +1,9 @@
 export enum MoodType {
+  NEUTRAL = 'neutral',
   HAPPY = 'happy',
   JOY = 'joy',
   CALM = 'calm',
   INSPIRED = 'inspired',
-  NEUTRAL = 'neutral',
   SAD = 'sad',
   STRESSED = 'stressed',
   LONELY = 'lonely',
