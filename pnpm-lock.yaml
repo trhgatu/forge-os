@@ -398,12 +398,18 @@ importers:
 
   packages/auth:
     devDependencies:
+      '@forge/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
       typescript:
         specifier: ^5.7.3
         version: 5.9.2
 
   packages/core:
     devDependencies:
+      '@forge/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
       typescript:
         specifier: ^5.7.3
         version: 5.9.2
@@ -446,6 +452,9 @@ importers:
 
   packages/reflection:
     devDependencies:
+      '@forge/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
       typescript:
         specifier: ^5.7.3
         version: 5.9.2
