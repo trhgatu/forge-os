@@ -39,24 +39,29 @@ export const getQuotes = async (
   };
 };
 
+export const createQuote = async (data: CreateQuoteDto): Promise<Quote> => {
+  const res = await apiClient.post<BackendResponse<QuoteDto>>('/quotes', data);
+  return mapDtoToQuote(res.data.data);
+};
+
+export const updateQuote = async (id: string, data: Partial<CreateQuoteDto>): Promise<Quote> => {
+  const res = await apiClient.patch<BackendResponse<QuoteDto>>(`/quotes/${id}`, data);
+  return mapDtoToQuote(res.data.data);
+};
+
+export const deleteQuote = async (id: string): Promise<void> => {
+  await apiClient.delete(`/quotes/${id}`);
+};
+
+export const getDailyQuote = async (): Promise<Quote> => {
+  const res = await apiClient.get<BackendResponse<QuoteDto>>('/quotes/random');
+  return mapDtoToQuote(res.data.data);
+};
+
 export const quoteService = {
   getAll: getQuotes,
-  create: async (data: CreateQuoteDto): Promise<Quote> => {
-    const res = await apiClient.post<BackendResponse<QuoteDto>>('/quotes', data);
-    return mapDtoToQuote(res.data.data);
-  },
-  update: async (id: string, data: Partial<CreateQuoteDto>): Promise<Quote> => {
-    const res = await apiClient.patch<BackendResponse<QuoteDto>>(`/quotes/${id}`, data);
-    return mapDtoToQuote(res.data.data);
-  },
-  delete: async (id: string): Promise<void> => {
-    await apiClient.delete(`/quotes/${id}`);
-  },
-  toggleFavorite: async (id: string, isFavorite: boolean): Promise<Quote> => {
-    const res = await apiClient.patch<BackendResponse<QuoteDto>>(`/quotes/${id}`, {
-      status: isFavorite ? 'favorite' : 'active',
-    });
-    return mapDtoToQuote(res.data.data);
-  },
-  getRandomQuote
+  create: createQuote,
+  update: updateQuote,
+  delete: deleteQuote,
+  getDailyQuote,
 };

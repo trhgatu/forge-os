@@ -1,11 +1,11 @@
 'use client';
 
+import { MoodType } from '@forge/reflection';
 import { X } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 
 import { cn } from '@/shared/lib/utils';
-import type { MoodType } from '@/shared/types';
 import type { Memory } from '@/shared/types/memory';
 
 interface CreateMemoryModalProps {
@@ -15,20 +15,20 @@ interface CreateMemoryModalProps {
 }
 
 const EMOTION_OPTIONS: MoodType[] = [
-  'joy',
-  'calm',
-  'inspired',
-  'neutral',
-  'sad',
-  'anxious',
-  'focused',
-  'nostalgic',
+  MoodType.JOY,
+  MoodType.CALM,
+  MoodType.INSPIRED,
+  MoodType.NEUTRAL,
+  MoodType.SAD,
+  MoodType.ANXIOUS,
+  MoodType.FOCUSED,
+  MoodType.NOSTALGIC,
 ];
 
 export function CreateMemoryModal({ onClose, onSave, initialData }: CreateMemoryModalProps) {
   const [title, setTitle] = useState(initialData?.title || '');
   const [content, setContent] = useState(initialData?.content || '');
-  const [mood, setMood] = useState<MoodType>(initialData?.mood || 'neutral');
+  const [mood, setMood] = useState<MoodType>(initialData?.mood || MoodType.NEUTRAL);
   const [imageUrl, setImageUrl] = useState(initialData?.imageUrl || '');
 
   const [imgError, setImgError] = useState(false);

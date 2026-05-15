@@ -88,7 +88,6 @@ export const WidgetShell: React.FC<WidgetProps> = ({
       'hover:bg-white/4 hover:border-white/10 hover:-translate-y-1 hover:shadow-2xl hover:shadow-forge-accent/5',
       'transition-all duration-500 ease-spring-out',
       'overflow-hidden',
-      'animate-in slide-in-from-bottom-4 fill-mode-backwards',
       className,
     )}
     style={{ animationDelay: `${delay}ms` }}
@@ -145,14 +144,14 @@ export const Dashboard: React.FC = () => {
         <header className="mb-10 relative">
           <div className="absolute -left-20 -top-20 w-64 h-64 bg-forge-accent/10 rounded-full blur-[80px] pointer-events-none" />
 
-          <h1 className="text-5xl font-display font-bold text-white mb-2 tracking-tight animate-in slide-in-from-bottom-2 duration-700">
+          <h1 className="text-5xl font-display font-bold text-white mb-2 tracking-tight">
             {greeting},{' '}
             <span className="text-transparent bg-clip-text bg-linear-to-r from-forge-cyan to-forge-accent">
               Traveler.
             </span>
           </h1>
 
-          <div className="flex items-center gap-4 text-gray-400 animate-in slide-in-from-bottom-3 duration-700 delay-100">
+          <div className="flex items-center gap-4 text-gray-400">
             <span className="flex items-center gap-2 font-light">
               <Calendar size={14} /> {dateString}
             </span>

@@ -20,7 +20,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             </div>
 
             {/* Content Container */}
-            <div className="relative z-10 w-full max-w-md p-6">{children}</div>
+            <div className="relative z-10 w-full h-full flex items-center justify-center p-6">{children}</div>
 
             {/* Footer / Copyright - Centered */}
             <div className="absolute bottom-6 inset-x-0 text-center text-[10px] text-gray-600 font-mono tracking-widest uppercase pointer-events-none">

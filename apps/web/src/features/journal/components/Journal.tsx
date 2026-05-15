@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 
 import type { JournalEntry } from '@/features/journal/types';
 import { JournalStatus, JournalType } from '@/features/journal/types';
+import { Button } from '@/shared/components/ui';
 import { useDebounce } from '@/shared/hooks/useDebounce';
 
 import {
@@ -13,15 +14,25 @@ import {
   useUpdateJournal,
   useDeleteJournal,
 } from '../hooks/useJournal';
-import { analyzeJournalEntry } from '../services/analyze';
 
-import { JournalContextPanel } from './JournalContextPanel';
 import { JournalEditor } from './JournalEditor';
 import { JournalSidebar } from './JournalSidebar';
 
 export function Journal() {
+  // --- Local State ---
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [localEntry, setLocalEntry] = useState<JournalEntry | null>(null);
+  const [isFocusMode, setIsFocusMode] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const debouncedSearch = useDebounce(searchQuery, 300);
+
   // --- Data & Hooks ---
-  const { data, isLoading } = useJournals({ page: 1, limit: 100 }); // TODO: Infinite scroll later
+  const { data, isLoading } = useJournals({
+    page: 1,
+    limit: 100,
+    search: debouncedSearch,
+  });
 
   // Memoize entries to prevent exhaustive-deps warnings
   const entries = useMemo(() => data?.data || [], [data]);
@@ -30,11 +41,21 @@ export function Journal() {
   const updateMutation = useUpdateJournal();
   const deleteMutation = useDeleteJournal();
 
-  // --- Local State ---
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [localEntry, setLocalEntry] = useState<JournalEntry | null>(null);
-  const [isFocusMode, setIsFocusMode] = useState(false);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  // --- Visual Save Status ---
+  const [visualSaveStatus, setVisualSaveStatus] = useState<'saved' | 'saving' | 'error'>('saved');
+
+  useEffect(() => {
+    if (updateMutation.isPending) {
+      setVisualSaveStatus('saving');
+    } else if (updateMutation.isError) {
+      setVisualSaveStatus('error');
+    } else if (updateMutation.isSuccess) {
+      const timer = setTimeout(() => {
+        setVisualSaveStatus('saved');
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+  }, [updateMutation.isPending, updateMutation.isError, updateMutation.isSuccess]);
 
   // --- Auto-Save Logic ---
   const debouncedEntry = useDebounce(localEntry, 1000);
@@ -73,27 +94,26 @@ export function Journal() {
   useEffect(() => {
     if (!debouncedEntry || !selectedId) return;
 
-    const currentState = JSON.stringify({
-      title: debouncedEntry.title,
-      content: debouncedEntry.content,
+    const currentData = {
+      title: debouncedEntry.title || '',
+      content: debouncedEntry.content || '',
       mood: debouncedEntry.mood,
-      tags: debouncedEntry.tags,
-    });
+      tags: debouncedEntry.tags || [],
+    };
 
-    // Only save if different from last saved state
-    if (currentState !== lastSavedRef.current) {
-      updateMutation.mutate({
-        id: debouncedEntry.id,
-        data: {
-          title: debouncedEntry.title,
-          content: debouncedEntry.content,
-          mood: debouncedEntry.mood,
-          tags: debouncedEntry.tags,
-        },
-      });
-      lastSavedRef.current = currentState;
-    }
-  }, [debouncedEntry, updateMutation, selectedId]);
+    const currentState = JSON.stringify(currentData);
+
+    // Block if data hasn't changed since last save (including in-progress saves)
+    if (currentState === lastSavedRef.current) return;
+
+    // Mark as saved/saving immediately to prevent loops
+    lastSavedRef.current = currentState;
+
+    updateMutation.mutate({
+      id: debouncedEntry.id,
+      data: currentData,
+    });
+  }, [debouncedEntry, selectedId]); // removed updateMutation to be safer
 
   // --- Handlers ---
 
@@ -120,7 +140,9 @@ export function Journal() {
         <p className="font-bold">Delete this journal entry?</p>
         <p className="text-gray-400">This action cannot be undone.</p>
         <div className="mt-2 flex gap-2">
-          <button
+          <Button
+            variant="danger"
+            size="sm"
             onClick={async () => {
               toast.dismiss(t);
               try {
@@ -138,16 +160,16 @@ export function Journal() {
                 toast.error('Failed to delete entry');
               }
             }}
-            className="rounded-md bg-red-500/20 px-3 py-1.5 text-red-200 transition-colors hover:bg-red-500/30"
           >
             Confirm
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => toast.dismiss(t)}
-            className="rounded-md bg-white/10 px-3 py-1.5 text-gray-300 transition-colors hover:bg-white/20"
           >
             Cancel
-          </button>
+          </Button>
         </div>
       </div>
     ));
@@ -157,29 +179,12 @@ export function Journal() {
     setLocalEntry((prev) => (prev ? { ...prev, ...patch } : null));
   };
 
-  const handleAnalyze = async () => {
-    if (!localEntry) return;
-    setIsAnalyzing(true);
-    try {
-      const result = await analyzeJournalEntry(localEntry.content);
-      updateMutation.mutate({
-        id: localEntry.id,
-        data: { analysis: result },
-      });
-    } finally {
-      setIsAnalyzing(false);
-    }
-  };
-
-  let saveStatus: 'saved' | 'saving' | 'error' = 'saved';
-  if (updateMutation.isPending || createMutation.isPending) saveStatus = 'saving';
-  if (updateMutation.isError || createMutation.isError) saveStatus = 'error';
-
   if (isLoading && !localEntry && !createMutation.isPending)
-    return <div className="p-10 text-center text-gray-500">Loading Journal...</div>;
+    return <div className="p-10 text-center text-gray-500 font-mono animate-pulse">Initializing Journal...</div>;
 
   return (
-    <div className="h-full flex bg-forge-bg text-white overflow-hidden animate-in fade-in duration-700">
+    <div className="h-full flex bg-forge-bg text-white overflow-hidden">
+
       {!isFocusMode && (
         <JournalSidebar
           entries={entries}
@@ -187,6 +192,8 @@ export function Journal() {
           onSelect={setSelectedId}
           onNew={handleCreate}
           onDelete={handleDelete}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
         />
       )}
 
@@ -194,19 +201,15 @@ export function Journal() {
         <JournalEditor
           entry={localEntry}
           onChange={handleUpdateLocal}
-          onAnalyze={handleAnalyze}
-          isAnalyzing={isAnalyzing}
           isFocusMode={isFocusMode}
           toggleFocusMode={() => setIsFocusMode((v) => !v)}
-          saveStatus={saveStatus}
+          saveStatus={visualSaveStatus}
         />
       ) : (
         <div className="flex-1 flex items-center justify-center text-gray-500">
           Select an entry or create a new one.
         </div>
       )}
-
-      {!isFocusMode && localEntry && <JournalContextPanel analysis={localEntry.analysis} />}
     </div>
   );
 }
