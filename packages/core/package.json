@@ -10,6 +10,7 @@
     "type-check": "tsc --noEmit"
   },
   "devDependencies": {
+    "@forge/typescript-config": "workspace:*",
     "typescript": "^5.7.3"
   }
 }
