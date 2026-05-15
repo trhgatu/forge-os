@@ -15,10 +15,9 @@ export const useGamificationSocket = (
   userId?: string,
   onXpAwarded?: (data: XpAwardedData) => void,
 ) => {
-  // Initialize with existing socket if any
   const [socket, setSocket] = useState(socketService.getSocket('/gamification'));
   const onXpAwardedRef = useRef(onXpAwarded);
-  const token = useAuthStore((state) => state.token);
+  const accessToken = useAuthStore((state) => state.accessToken);
 
   useEffect(() => {
     onXpAwardedRef.current = onXpAwarded;
@@ -27,13 +26,11 @@ export const useGamificationSocket = (
   useEffect(() => {
     if (!userId) return;
 
-    // Connect via Singleton Service (Multiplexed)
     const socketInstance = socketService.connect('/gamification');
     setSocket(socketInstance);
 
     const handleXpAwarded = (data: XpAwardedData) => {
       if (data.userId === userId) {
-        // Show Global Toast
         toast.success(`+${data.xp} XP: ${data.reason}`, {
           description: data.newLevel ? `Current Level: ${data.newLevel}` : undefined,
           duration: 4000,
@@ -50,7 +47,9 @@ export const useGamificationSocket = (
     return () => {
       socketInstance.off('xp_awarded', handleXpAwarded);
     };
-  }, [userId, token]);
+  }, [userId, accessToken]);
 
   return socket;
 };
+
+

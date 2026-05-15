@@ -128,3 +128,6 @@ export const MOOD_CONFIG: Record<MoodType, MoodConfigItem> = {
 
 export const MOOD_CHART_COLOR = '#FBBF24';
 export const MOOD_CHART_GRADIENT_ID = 'moodGradient';
+
+
+

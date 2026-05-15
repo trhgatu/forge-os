@@ -10,7 +10,12 @@ export * from './timeline';
 export * from './quote';
 export * from './mood';
 export * from './memory';
-export * from './journal';
 export * from './insight';
 export * from './knowledge';
-export * from './api';
+
+// Enterprise Modules
+export * from '@forge/auth';
+export * from '@forge/core';
+export * from '@forge/reflection';
+
+

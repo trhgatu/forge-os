@@ -10,3 +10,5 @@ export const ResearchTrails: React.FC = () => {
     </div>
   );
 };
+
+

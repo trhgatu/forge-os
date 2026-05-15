@@ -1,4 +1,4 @@
-import type { MoodType } from './journal';
+import type { MoodType } from '@forge/reflection';
 
 export interface QuoteAnalysis {
   meaning: string;
@@ -20,3 +20,6 @@ export interface Quote {
   analysis?: QuoteAnalysis;
   imageUrl?: string;
 }
+
+
+

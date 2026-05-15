@@ -1,10 +1,10 @@
 'use client';
 
+import type { MoodType } from '@forge/reflection';
 import { useInfiniteQuery, useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 
 import type { PaginatedResponse } from '@/shared/types';
 import type { QuoteFilter } from '@/shared/types/dto/quote.dto';
-import type { MoodType } from '@/shared/types/journal';
 import type { Quote } from '@/shared/types/quote';
 
 import {
@@ -120,3 +120,6 @@ export function useDailyQuote() {
     staleTime: 1000 * 60 * 60, // 1 hour
   });
 }
+
+
+

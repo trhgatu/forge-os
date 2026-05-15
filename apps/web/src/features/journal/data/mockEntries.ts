@@ -1,4 +1,4 @@
-import type { JournalEntry } from '@/shared/types/journal';
+import type { JournalEntry } from '@forge/reflection';
 
 export const MOCK_ENTRIES: JournalEntry[] = [
   {
@@ -41,3 +41,6 @@ export const MOCK_ENTRIES: JournalEntry[] = [
     tags: ['Work', 'Ideas'],
   },
 ];
+
+
+

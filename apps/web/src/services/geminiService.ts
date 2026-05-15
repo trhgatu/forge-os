@@ -26,3 +26,5 @@ export const generateInsight = async (prompt: string) => {
     throw error;
   }
 };
+
+

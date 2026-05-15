@@ -15,3 +15,5 @@ export interface RawUser {
     permissions: Array<string | { name: string }>;
   };
 }
+
+

@@ -135,3 +135,5 @@ export function NovaGuide({ currentView }: NovaGuideProps) {
     </div>
   );
 }
+
+

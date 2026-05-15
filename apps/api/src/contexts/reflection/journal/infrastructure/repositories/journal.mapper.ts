@@ -16,6 +16,7 @@ export class JournalMapper {
         status: doc.status as any,
         source: (doc.source as any) || JournalSource.USER,
         relations: (doc.relations as any) || [],
+        analysis: doc.analysis || null,
         userId: doc.userId || '',
         createdAt: doc.createdAt,
         updatedAt: doc.updatedAt,
@@ -38,7 +39,8 @@ export class JournalMapper {
       status: props.status,
       source: props.source,
       relations: props.relations,
-      userId: props.userId,
+      analysis: props.analysis,
+      userId: props.userId.toString(),
       isDeleted: props.isDeleted,
       deletedAt: props.deletedAt,
     };

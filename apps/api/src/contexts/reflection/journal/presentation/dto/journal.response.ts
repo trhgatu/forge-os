@@ -47,6 +47,9 @@ export class JournalResponse {
   @ApiProperty()
   isDeleted!: boolean;
 
+  @ApiPropertyOptional({ type: Object })
+  analysis?: any;
+
   @ApiPropertyOptional({ type: String, nullable: true })
   deletedAt!: string | null;
 }

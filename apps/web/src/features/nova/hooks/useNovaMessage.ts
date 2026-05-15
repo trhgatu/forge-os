@@ -32,3 +32,5 @@ export function useNovaMessage(view: View, languageCode: string, delayMs = 800) 
 
   return message;
 }
+
+

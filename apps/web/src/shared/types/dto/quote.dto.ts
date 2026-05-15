@@ -1,4 +1,4 @@
-import type { MoodType } from '@/shared/types/journal';
+import type { MoodType } from '@forge/reflection';
 
 export interface QuoteDto {
   id: string;
@@ -37,3 +37,6 @@ export interface QuoteFilter {
   tags?: string[];
   author?: string;
 }
+
+
+

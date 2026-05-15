@@ -5,39 +5,32 @@ import { JournalFilter } from '../../application/queries/journal-filter';
 
 @Injectable()
 export class JournalPresenter {
-  /**
-   * Map domain entity to API response DTO
-   */
-  toResponse(journal: Journal): JournalResponse {
-    const props = journal.toPrimitives();
+  toResponse(journal: any): JournalResponse {
+    const data = typeof journal.toPrimitives === 'function' ? journal.toPrimitives() : journal;
 
     return {
-      id: props.id,
-      title: props.title ?? '',
-      content: props.content,
-      mood: props.mood,
-      tags: props.tags ?? [],
-      type: props.type,
-      status: props.status,
-      source: props.source,
-      relations: props.relations ?? [],
-      createdAt: props.createdAt?.toISOString() ?? '',
-      updatedAt: props.updatedAt?.toISOString() ?? '',
-      isDeleted: props.isDeleted,
-      deletedAt: props.deletedAt?.toISOString() ?? null,
+      id: String(data.id),
+      title: data.title ?? '',
+      content: data.content,
+      mood: data.mood,
+      tags: data.tags ?? [],
+      type: data.type,
+      status: data.status,
+      source: data.source,
+      relations: data.relations ?? [],
+      createdAt:
+        data.createdAt instanceof Date ? data.createdAt.toISOString() : (data.createdAt ?? ''),
+      updatedAt:
+        data.updatedAt instanceof Date ? data.updatedAt.toISOString() : (data.updatedAt ?? ''),
+      isDeleted: data.isDeleted,
+      analysis: data.analysis,
+      deletedAt:
+        data.deletedAt instanceof Date ? data.deletedAt.toISOString() : (data.deletedAt ?? null),
     };
   }
-
-  /**
-   * Map domain entities array to API response DTOs array
-   */
   toResponseArray(journals: Journal[]): JournalResponse[] {
     return journals.map((j) => this.toResponse(j));
   }
-
-  /**
-   * Map Query DTO to Application Layer Filter
-   */
   toFilter(dto: QueryJournalDto): JournalFilter {
     return {
       keyword: dto.keyword,

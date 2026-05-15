@@ -207,3 +207,5 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
 };
 
 export default XPBar;
+
+

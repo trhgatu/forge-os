@@ -25,3 +25,5 @@ export function NovaViewProvider({ children }: { children: React.ReactNode }) {
 }
 
 export const useNovaView = () => useContext(NovaViewContext);
+
+

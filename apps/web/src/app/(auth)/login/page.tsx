@@ -3,10 +3,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowRight, Lock, Mail } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import z from 'zod';
+import { z } from 'zod';
 
 import { authService } from '@/features/auth/services/authService';
 import { Button } from '@/shared/components/ui/Button';
@@ -24,25 +24,33 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const router = useRouter();
+  const { isAuthenticated, user: authUser } = useAuthStore();
   const login = useAuthStore((state) => state.login);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Reactive redirect: If already authenticated, go to dashboard
+  useEffect(() => {
+    if (isAuthenticated && authUser) {
+      router.push('/forge/dashboard');
+    }
+  }, [isAuthenticated, authUser, router]);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(loginSchema as any),
   });
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     try {
-      const { user, token, refreshToken } = await authService.login(data.email, data.password);
+      const { user, accessToken, refreshToken } = await authService.login(data.email, data.password);
 
-      login(user, token, refreshToken);
+      login(user, accessToken, refreshToken);
       toast.success('Welcome back, ' + (user.name || 'Traveller'));
-      router.push('/forge/dashboard');
+      // Imperative redirect removed in favor of useEffect above
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
@@ -116,3 +124,5 @@ export default function LoginPage() {
     </div>
   );
 }
+
+

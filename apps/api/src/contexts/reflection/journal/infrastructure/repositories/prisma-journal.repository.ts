@@ -31,6 +31,7 @@ export class PrismaJournalRepository implements JournalRepository {
         status: data.status,
         source: data.source,
         relations: data.relations || [],
+        analysis: data.analysis,
         isDeleted: data.isDeleted,
         deletedAt: data.deletedAt,
         userId: data.userId,
@@ -45,13 +46,13 @@ export class PrismaJournalRepository implements JournalRepository {
         status: data.status,
         source: data.source,
         relations: data.relations || [],
+        analysis: data.analysis,
         isDeleted: data.isDeleted,
         deletedAt: data.deletedAt,
         userId: data.userId,
       },
     });
 
-    // --- Automatic Domain Event Publishing ---
     if (journal.domainEvents.length > 0) {
       journal.domainEvents.forEach((event) => this.eventBus.publish(event));
       journal.clearDomainEvents();
@@ -69,7 +70,7 @@ export class PrismaJournalRepository implements JournalRepository {
     if (status) where.status = status;
     if (type) where.type = type;
     if (mood) where.mood = mood;
-    if (userId) where.userId = userId;
+    if (userId) where.userId = userId.toString();
 
     if (keyword) {
       where.OR = [
@@ -103,7 +104,7 @@ export class PrismaJournalRepository implements JournalRepository {
 
   async findById(id: JournalId, userId?: string): Promise<JournalEntity | null> {
     const where: any = { id: id.toString() };
-    if (userId) where.userId = userId;
+    if (userId) where.userId = userId.toString();
 
     const doc = await this.prisma.journal.findFirst({
       where,

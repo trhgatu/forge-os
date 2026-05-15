@@ -6,12 +6,14 @@ import { Journal } from '../../../domain/journal.entity';
 import { JournalId } from '../../../domain/value-objects/journal-id.vo';
 import { MoodType } from '@shared/enums';
 import { JournalStatus, JournalType, JournalSource } from '../../../domain/enums';
+import { CacheService } from '@shared/services';
 
 @CommandHandler(CreateJournalCommand)
 export class CreateJournalHandler implements ICommandHandler<CreateJournalCommand, Journal> {
   constructor(
     @Inject('JournalRepository')
     private readonly journalRepo: JournalRepository,
+    private readonly cacheService: CacheService,
   ) {}
 
   async execute(command: CreateJournalCommand): Promise<Journal> {
@@ -35,6 +37,9 @@ export class CreateJournalHandler implements ICommandHandler<CreateJournalComman
     );
 
     await this.journalRepo.save(journal);
+
+    // Invalidate journal cache
+    await this.cacheService.deleteByPattern('journals:*');
 
     return journal;
   }

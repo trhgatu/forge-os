@@ -14,7 +14,7 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
   async create(dto: CreateAuditLogDto): Promise<AuditLogEntity> {
     const log = await this.prisma.auditLog.create({
       data: {
-        userId: dto.user,
+        userId: typeof dto.user === 'object' && dto.user !== null ? dto.user.toString() : dto.user,
         action: dto.action,
         method: dto.method,
         statusCode: dto.statusCode,

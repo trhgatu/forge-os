@@ -80,3 +80,5 @@ export function InsightPanel({ analysis, isAnalyzing }: InsightPanelProps) {
     </div>
   );
 }
+
+

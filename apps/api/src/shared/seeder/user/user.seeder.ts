@@ -2,6 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
 import { RoleEnum } from '@shared/enums';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserSeeder {
@@ -17,11 +18,15 @@ export class UserSeeder {
     const adminRole = await this.prisma.role.findUnique({ where: { name: RoleEnum.ADMIN } });
     if (!adminRole) throw new Error('❌ Admin role not found');
 
+    const salt = await bcrypt.genSalt();
+    const hashedAdminPassword = await bcrypt.hash('admin123', salt);
+    const hashedUserPassword = await bcrypt.hash('user123', salt);
+
     const adminUser = await this.prisma.user.create({
       data: {
         name: 'Admin User',
         email: 'admin@example.com',
-        password: 'admin123',
+        password: hashedAdminPassword,
         roleId: adminRole.id,
       },
     });
@@ -33,7 +38,7 @@ export class UserSeeder {
       data: {
         name: 'Normal User',
         email: 'user@example.com',
-        password: 'user123',
+        password: hashedUserPassword,
         roleId: userRole.id,
       },
     });

@@ -16,6 +16,7 @@ export interface UpdateJournalPayload {
   status?: JournalStatus;
   source?: 'user' | 'ai' | 'system';
   relations?: UpdateJournalRelationPayload[];
+  analysis?: any;
   userId?: string;
 }
 

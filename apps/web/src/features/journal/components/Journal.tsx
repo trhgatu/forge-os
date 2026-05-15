@@ -114,6 +114,7 @@ export function Journal() {
   };
 
   const handleDelete = (id: string) => {
+    console.log('handleDelete entering for ID:', id);
     toast.custom((t) => (
       <div className="flex flex-col gap-2 rounded-xl border border-red-500/20 bg-black/90 p-4 text-sm text-white shadow-xl backdrop-blur-md">
         <p className="font-bold">Delete this journal entry?</p>
@@ -161,17 +162,15 @@ export function Journal() {
     setIsAnalyzing(true);
     try {
       const result = await analyzeJournalEntry(localEntry.content);
-      // Save analysis strictly to local state for now
-      // Backend does not support 'analysis' field yet, so we don't save it to DB
-      handleUpdateLocal({ analysis: result });
-
-      // TODO: Implement backend storage for Analysis results
+      updateMutation.mutate({
+        id: localEntry.id,
+        data: { analysis: result },
+      });
     } finally {
       setIsAnalyzing(false);
     }
   };
 
-  // Status Indicator Calculation
   let saveStatus: 'saved' | 'saving' | 'error' = 'saved';
   if (updateMutation.isPending || createMutation.isPending) saveStatus = 'saving';
   if (updateMutation.isError || createMutation.isError) saveStatus = 'error';
@@ -211,3 +210,6 @@ export function Journal() {
     </div>
   );
 }
+
+
+
