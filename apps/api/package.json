@@ -87,7 +87,7 @@
     "@types/express": "^5.0.0",
     "@types/geoip-lite": "^1.4.4",
     "@types/jest": "^29.5.14",
-    "@types/node": "^22.10.7",
+    "@types/node": "^25.8.0",
     "@types/passport-jwt": "^4.0.1",
     "@types/pg": "^8.20.0",
     "@types/supertest": "^6.0.2",
