@@ -1,4 +1,4 @@
-// Trigger Vercel Build - Monorepo Stabilization
+// Vercel Build Trigger: Monorepo Fixed
 import type { Metadata } from 'next';
 import {
   Geist,
