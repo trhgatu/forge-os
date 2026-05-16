@@ -2,7 +2,7 @@
 
 import { MOOD_COLORS } from '@/shared/constants';
 import { cn } from '@/shared/lib/utils';
-import type { MoodType } from '@/shared/types';
+import { MoodType } from '@forge/reflection';
 
 export function MoodSelector({
   mood,
