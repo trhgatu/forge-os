@@ -15,7 +15,7 @@ RUN pnpm install --frozen-lockfile --ignore-scripts
 # Bây giờ mới copy code
 COPY . .
 
-# Sinh Prisma Client cho bước build (Type safety)
+# Sinh Prisma Client (Type safety & Runtime base)
 RUN ./node_modules/.bin/prisma generate --schema=apps/api/prisma/schema.prisma
 
 # Build API
@@ -24,10 +24,8 @@ RUN pnpm turbo build --filter=@forge/api
 # Deploy ra thư mục riêng
 RUN pnpm --filter=@forge/api --prod deploy out/api
 
-# Sinh Prisma Client TRONG thư mục đã deploy (Runtime)
-WORKDIR /app/out/api
-RUN ./node_modules/.bin/prisma generate --schema=prisma/schema.prisma
-WORKDIR /app
+# Copy thủ công Prisma Client đã sinh vào thư mục deploy để bypass pnpm symlink rắc rối
+RUN cp -r node_modules/.prisma out/api/node_modules/
 
 # --- STAGE RUNNER ---
 FROM node:20-alpine AS runner
