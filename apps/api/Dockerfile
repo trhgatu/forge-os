@@ -16,7 +16,7 @@ RUN pnpm install --frozen-lockfile --ignore-scripts
 COPY . .
 
 # Sinh Prisma Client cho bước build (Type safety)
-RUN npx prisma generate --schema=apps/api/prisma/schema.prisma
+RUN ./node_modules/.bin/prisma generate --schema=apps/api/prisma/schema.prisma
 
 # Build API
 RUN pnpm turbo build --filter=@forge/api
@@ -26,7 +26,7 @@ RUN pnpm --filter=@forge/api --prod deploy out/api
 
 # Sinh Prisma Client TRONG thư mục đã deploy (Runtime)
 WORKDIR /app/out/api
-RUN npx prisma generate --schema=prisma/schema.prisma
+RUN ./node_modules/.bin/prisma generate --schema=prisma/schema.prisma
 WORKDIR /app
 
 # --- STAGE RUNNER ---
