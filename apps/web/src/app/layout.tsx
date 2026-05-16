@@ -1,3 +1,4 @@
+// Trigger Vercel Build - Monorepo Stabilization
 import type { Metadata } from 'next';
 import {
   Geist,
