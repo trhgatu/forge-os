@@ -146,3 +146,5 @@ export function ParticleCanvas({ mode, color }: ParticleCanvasProps) {
     />
   );
 }
+
+

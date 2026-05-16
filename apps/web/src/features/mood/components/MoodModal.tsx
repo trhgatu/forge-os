@@ -1,10 +1,10 @@
 'use client';
 
+import { MoodType } from '@forge/reflection';
 import { X } from 'lucide-react';
 import { useState } from 'react';
 
 import { cn } from '@/shared/lib/utils';
-import type { MoodType } from '@/shared/types';
 import type { MoodEntry } from '@/shared/types/mood';
 
 import { MOOD_CONFIG } from '../config';
@@ -20,7 +20,6 @@ export function MoodModal({ initialData, onClose, onSave }: MoodModalProps) {
   const [selectedMood, setSelectedMood] = useState<MoodType | null>(initialData?.mood || null);
   const [intensity, setIntensity] = useState<number>(initialData?.intensity || 5);
   const [note, setNote] = useState(initialData?.note || '');
-  // If editing, start at step 2 (Detail). If creating, step 1 (Selection)
   const [step, setStep] = useState<1 | 2>(initialData ? 2 : 1);
 
   const handleSave = () => {
@@ -38,16 +37,21 @@ export function MoodModal({ initialData, onClose, onSave }: MoodModalProps) {
   };
 
   const topMoods: MoodType[] = [
-    'joy',
-    'calm',
-    'inspired',
-    'neutral',
-    'sad',
-    'stressed',
-    'lonely',
-    'angry',
-    'energetic',
-    'empty',
+    MoodType.JOY,
+    MoodType.HAPPY,
+    MoodType.CALM,
+    MoodType.INSPIRED,
+    MoodType.NEUTRAL,
+    MoodType.SAD,
+    MoodType.STRESSED,
+    MoodType.LONELY,
+    MoodType.ANGRY,
+    MoodType.ENERGETIC,
+    MoodType.EMPTY,
+    MoodType.FOCUSED,
+    MoodType.ANXIOUS,
+    MoodType.NOSTALGIC,
+    MoodType.TIRED,
   ];
 
   return (
@@ -176,3 +180,6 @@ export function MoodModal({ initialData, onClose, onSave }: MoodModalProps) {
     </div>
   );
 }
+
+
+

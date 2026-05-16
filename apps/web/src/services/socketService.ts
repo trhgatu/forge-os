@@ -30,10 +30,10 @@ class SocketService {
   private getTokenFromStorage(): string | undefined {
     if (typeof window !== 'undefined') {
       try {
-        const storage = localStorage.getItem('forge-auth-storage');
+        const storage = localStorage.getItem('forge-auth-v2');
         if (storage) {
           const parsed = JSON.parse(storage);
-          return parsed.state?.token;
+          return parsed.state?.accessToken;
         }
       } catch (e) {
         console.warn('[SocketService] Failed to retrieve auth token', e);
@@ -152,3 +152,5 @@ class SocketService {
 }
 
 export const socketService = SocketService.getInstance();
+
+

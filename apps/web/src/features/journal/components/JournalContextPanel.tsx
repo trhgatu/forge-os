@@ -1,10 +1,10 @@
 'use client';
 
+import type { JournalAnalysis } from '@forge/reflection';
 import { BrainCircuit, ChevronRight, Sparkles, Hash } from 'lucide-react';
 
 import { GlassCard } from '@/shared/components/ui/GlassCard';
 import { cn } from '@/shared/lib/utils';
-import type { JournalAnalysis } from '@/shared/types/journal';
 
 export function JournalContextPanel({ analysis }: { analysis?: JournalAnalysis }) {
   if (!analysis) {
@@ -135,3 +135,6 @@ function ThemeTag({ text }: { text: string }) {
     </span>
   );
 }
+
+
+

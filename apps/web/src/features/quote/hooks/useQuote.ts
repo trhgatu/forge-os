@@ -1,10 +1,10 @@
 'use client';
 
+import type { MoodType } from '@forge/reflection';
 import { useInfiniteQuery, useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 
 import type { PaginatedResponse } from '@/shared/types';
 import type { QuoteFilter } from '@/shared/types/dto/quote.dto';
-import type { MoodType } from '@/shared/types/journal';
 import type { Quote } from '@/shared/types/quote';
 
 import {
@@ -50,7 +50,14 @@ export function useCreateQuote() {
       isFavorite?: boolean;
       mood?: MoodType;
     }) => {
-      return createQuote(content, author, source, tags, isFavorite, mood);
+      return createQuote({
+        content: { en: content },
+        author,
+        source,
+        tags,
+        status: isFavorite ? 'favorite' : 'internal',
+        mood,
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUOTE_QUERY_KEY });
@@ -120,3 +127,6 @@ export function useDailyQuote() {
     staleTime: 1000 * 60 * 60, // 1 hour
   });
 }
+
+
+

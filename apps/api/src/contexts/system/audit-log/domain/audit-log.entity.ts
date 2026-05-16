@@ -54,6 +54,13 @@ export class AuditLog extends AggregateRoot {
     return new AuditLog(props);
   }
 
+  static createFromPersistence(props: any, id: string): AuditLog {
+    return new AuditLog({
+      ...props,
+      id: AuditLogId.create(id),
+    });
+  }
+
   get id(): AuditLogId {
     return this._id;
   }
@@ -96,6 +103,21 @@ export class AuditLog extends AggregateRoot {
 
   get updatedAt(): Date | undefined {
     return this._updatedAt;
+  }
+
+  toPersistence(): any {
+    return {
+      action: this.action,
+      method: this.method,
+      statusCode: this.statusCode,
+      userId: this.userId,
+      path: this.path,
+      params: this.params,
+      query: this.query,
+      body: this.body,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+    };
   }
 
   toPrimitives(): any {

@@ -1,24 +1,12 @@
-import { Types } from 'mongoose';
+import { BaseId } from '@shared/value-objects/base-id.vo';
+import { v4 as uuid } from 'uuid';
 
-export class AuditLogId {
-  constructor(private readonly value: string) {
-    if (!value) {
-      throw new Error('AuditLogId cannot be empty');
-    }
+export class AuditLogId extends BaseId {
+  private constructor(id: string) {
+    super(id);
   }
 
-  static create(value?: string | Types.ObjectId): AuditLogId {
-    if (!value) {
-      return new AuditLogId(new Types.ObjectId().toString());
-    }
-    return new AuditLogId(value.toString());
-  }
-
-  toString(): string {
-    return this.value;
-  }
-
-  equals(other: AuditLogId): boolean {
-    return this.value === other.value;
+  static create(id?: string): AuditLogId {
+    return new AuditLogId(id ?? uuid());
   }
 }

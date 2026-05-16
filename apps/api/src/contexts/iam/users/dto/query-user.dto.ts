@@ -1,15 +1,23 @@
-import { IsString, IsOptional, IsBoolean } from 'class-validator';
+import { IsOptional, IsString, IsBoolean } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { QueryPaginationDto } from '@shared/dtos';
 
 export class QueryUserDto extends QueryPaginationDto {
   @IsOptional()
   @IsString()
-  status?: 'active' | 'inactive';
+  keyword?: string;
 
   @IsOptional()
   @IsString()
-  keyword?: string;
+  email?: string;
+
+  @IsOptional()
+  @IsString()
+  name?: string;
+
+  @IsOptional()
+  @IsString()
+  status?: string;
 
   @IsOptional()
   @IsBoolean()

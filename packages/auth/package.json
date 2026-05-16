@@ -1,0 +1,16 @@
+{
+  "name": "@forge/auth",
+  "version": "0.0.1",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint src/",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@forge/typescript-config": "workspace:*",
+    "typescript": "^5.7.3"
+  }
+}

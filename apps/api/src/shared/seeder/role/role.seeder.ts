@@ -1,26 +1,27 @@
-// src/shared/seeder/role.seeder.ts
+// src/shared/seeder/role/role.seeder.ts
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Role, RoleDocument } from 'src/contexts/iam/roles/infrastructure/schemas/iam-role.schema';
+import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
 import { RoleEnum } from '@shared/enums';
 
 @Injectable()
 export class RoleSeeder {
-  constructor(
-    @InjectModel(Role.name)
-    private readonly roleModel: Model<RoleDocument>,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async seed() {
-    const existing = await this.roleModel.countDocuments();
+    const existing = await this.prisma.role.count();
     if (existing > 0) {
       console.log('⚠️  Roles already exist. Skipping seed.');
       return;
     }
 
-    const data = Object.values(RoleEnum).map((name) => ({ name }));
-    await this.roleModel.insertMany(data);
+    const data = Object.values(RoleEnum).map((name) => ({
+      name: name as string,
+      description: `Role for ${name}`,
+    }));
+
+    for (const role of data) {
+      await this.prisma.role.create({ data: role });
+    }
     console.log(`✅ Seeded ${data.length} roles.`);
   }
 }

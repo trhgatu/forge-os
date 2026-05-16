@@ -1,17 +1,7 @@
-import { CreateMoodHandler } from './create-mood.handler';
-import { UpdateMoodHandler } from './update-mood.handler';
-import { DeleteMoodHandler } from './delete-mood.handler';
-import { SoftDeleteMoodHandler } from './soft-delete-mood.handler';
-import { RestoreMoodHandler } from './restore-mood.handler';
-import { GetAllMoodsHandler } from './get-all-moods.handler';
-import { GetMoodByIdHandler } from './get-mood-by-id.handler';
-
-export const MoodHandlers = [
-  CreateMoodHandler,
-  UpdateMoodHandler,
-  DeleteMoodHandler,
-  SoftDeleteMoodHandler,
-  RestoreMoodHandler,
-  GetAllMoodsHandler,
-  GetMoodByIdHandler,
-];
+export * from './create-mood.handler';
+export * from './update-mood.handler';
+export * from './delete-mood.handler';
+export * from './soft-delete-mood.handler';
+export * from './restore-mood.handler';
+export * from './get-all-moods.handler';
+export * from './get-mood-by-id.handler';

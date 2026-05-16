@@ -13,11 +13,15 @@ interface MemoryProps {
 
 export class Memory {
   private constructor(
-    public readonly id: MemoryId,
+    private readonly _id: MemoryId,
     private props: MemoryProps,
     private isDeleted = false,
     private deletedAt?: Date,
   ) {}
+
+  public get id(): MemoryId {
+    return this._id;
+  }
 
   static create(
     props: Omit<MemoryProps, 'createdAt' | 'updatedAt'>,
@@ -34,20 +38,12 @@ export class Memory {
   }
 
   static createFromPersistence(
-    data: MemoryProps & {
-      id: string;
-      isDeleted?: boolean;
-      deletedAt?: Date;
-    },
+    props: MemoryProps,
+    id: string,
+    isDeleted = false,
+    deletedAt?: Date,
   ): Memory {
-    return new Memory(
-      MemoryId.create(data.id),
-      {
-        ...data,
-      },
-      data.isDeleted ?? false,
-      data.deletedAt,
-    );
+    return new Memory(MemoryId.create(id), props, isDeleted, deletedAt);
   }
 
   updateInfo(props: Partial<Omit<MemoryProps, 'createdAt' | 'updatedAt'>>): void {
@@ -63,17 +59,9 @@ export class Memory {
       }
     }
 
-    if (props.tags) {
-      this.props.tags = props.tags;
-    }
-
-    if (props.mood !== undefined) {
-      this.props.mood = props.mood;
-    }
-
-    if (props.status !== undefined) {
-      this.props.status = props.status;
-    }
+    if (props.tags) this.props.tags = props.tags;
+    if (props.mood !== undefined) this.props.mood = props.mood;
+    if (props.status !== undefined) this.props.status = props.status;
 
     this.props.updatedAt = new Date();
   }
@@ -97,55 +85,41 @@ export class Memory {
   localizedTitle(lang: string): string {
     const val = this.props.title.get(lang) ?? this.props.title.get('en');
     if (val) return val;
-    // Fallback to any available language
     return this.props.title.values().next().value ?? '';
   }
 
   localizedContent(lang: string): string {
     const val = this.props.content.get(lang) ?? this.props.content.get('en');
     if (val) return val;
-    // Fallback to any available language
     return this.props.content.values().next().value ?? '';
   }
 
   get title() {
     return this.props.title;
   }
-
   get content() {
     return this.props.content;
   }
-
   get mood() {
     return this.props.mood;
   }
-
   get tags() {
     return this.props.tags;
   }
-
   get status() {
     return this.props.status;
   }
-
   get createdAt() {
     return this.props.createdAt;
   }
-
   get updatedAt() {
     return this.props.updatedAt;
   }
 
   toPersistence() {
     return {
-      id: this.id.toString(),
-      title: this.props.title,
-      content: this.props.content,
-      mood: this.props.mood,
-      tags: this.props.tags,
-      status: this.props.status,
-      createdAt: this.props.createdAt,
-      updatedAt: this.props.updatedAt,
+      id: this._id.toString(),
+      ...this.props,
       isDeleted: this.isDeleted,
       deletedAt: this.deletedAt,
     };
@@ -153,7 +127,7 @@ export class Memory {
 
   toPrimitives(lang: string) {
     return {
-      id: this.id.toString(),
+      id: this._id.toString(),
       title: this.localizedTitle(lang),
       content: this.localizedContent(lang),
       mood: this.mood,

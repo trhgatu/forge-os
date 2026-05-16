@@ -1,15 +1,18 @@
 import { Role } from '../../domain/role.entity';
 import { RoleId } from '../../domain/value-objects/role-id.vo';
-import { RoleDocument } from '../../infrastructure/schemas/iam-role.schema';
-import { Types } from 'mongoose';
 
 export class RoleMapper {
-  static toDomain(doc: RoleDocument): Role {
+  static toDomain(doc: any): Role {
+    const id = doc.id;
+    const permissions = Array.isArray(doc.permissions)
+      ? doc.permissions.map((p: any) => (p.id || p).toString())
+      : [];
+
     return Role.reconstitute({
-      id: RoleId.create(doc._id as Types.ObjectId),
+      id: RoleId.create(id),
       name: doc.name,
       description: doc.description,
-      permissions: doc.permissions.map((p) => p.toString()),
+      permissions,
       isSystem: doc.isSystem,
       isDeleted: doc.isDeleted,
       deletedAt: doc.deletedAt,
@@ -18,12 +21,12 @@ export class RoleMapper {
     });
   }
 
-  static toPersistence(entity: Role): Partial<RoleDocument> {
+  static toPersistence(entity: Role): any {
     return {
-      _id: new Types.ObjectId(entity.id.toString()),
+      id: entity.id.toString(),
       name: entity.name,
       description: entity.description,
-      permissions: entity.permissions.map((p) => new Types.ObjectId(p)),
+      permissions: entity.permissions,
       isSystem: entity.isSystem,
       isDeleted: entity.isDeleted,
       deletedAt: entity.deletedAt,

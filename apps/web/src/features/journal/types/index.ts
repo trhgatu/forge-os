@@ -1,35 +1,15 @@
-import type { MoodType, JournalAnalysis } from '@/shared/types/journal';
+import type {
+  JournalEntry,
+  MoodType,
+  JournalAnalysis
+} from '@forge/reflection';
+import {
+  JournalStatus,
+  JournalType
+} from '@forge/reflection';
 
-export enum JournalStatus {
-  PRIVATE = 'private',
-  INTERNAL = 'internal',
-  SHARED = 'shared',
-}
-
-export enum JournalType {
-  DAILY = 'daily',
-  THOUGHT = 'thought',
-  INSIGHT = 'insight',
-  CONVERSATION_LOG = 'conversation_log',
-  EVENT = 'event',
-  DREAM = 'dream',
-}
-
-// Frontend-facing entity
-export interface JournalEntry {
-  id: string;
-  title?: string;
-  content: string;
-  mood?: MoodType;
-  tags: string[];
-  type: JournalType;
-  status: JournalStatus;
-  createdAt: string; // ISO String for display
-  updatedAt: string;
-  date: Date; // Converted Date object for Calendar/UI
-  isDraft?: boolean; // For UI state
-  analysis?: JournalAnalysis; // Placeholder for AI result
-}
+export { JournalStatus, JournalType };
+export type { JournalEntry, MoodType, JournalAnalysis };
 
 // DTO for Create
 export interface CreateJournalDto {
@@ -40,6 +20,7 @@ export interface CreateJournalDto {
   type?: JournalType;
   status?: JournalStatus;
   source?: 'user' | 'ai' | 'system';
+  analysis?: any;
 }
 
 // Response from Backend
@@ -53,6 +34,7 @@ export interface RawJournalItem {
   status?: string;
   createdAt: string;
   updatedAt: string;
+  analysis?: any;
 }
 
 // Helper Types
@@ -62,3 +44,6 @@ export interface JournalFilter {
   search?: string;
   tags?: string[];
 }
+
+
+

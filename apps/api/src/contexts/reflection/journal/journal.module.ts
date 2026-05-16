@@ -1,38 +1,36 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import { MongooseModule } from '@nestjs/mongoose';
-
-import { Journal, JournalSchema } from './infrastructure/journal.schema';
-import { MongoJournalRepository } from './infrastructure/repositories/mongo-journal.repository';
-
-import { JournalAdminController } from './presentation/controllers/journal.admin.controller';
-import { JournalPublicController } from './presentation/controllers/journal.public.controller';
-
+import { PrismaModule } from '@shared/infrastructure/prisma/prisma.module';
 import { SharedModule } from '@shared/shared.module';
 
-import { JournalHandlers } from './application/handlers';
-import { JournalRepository } from './application/ports/journal.repository';
+import { JournalAdminController, JournalController } from './presentation/controllers';
+import { JournalPresenter } from './presentation/presenters/journal.presenter';
+import { JournalCommandHandlers } from './application/commands';
+import { JournalQueryHandlers } from './application/queries';
+import { JournalEventHandlers } from './application/events';
+import { AuthModule } from '../../iam/auth/auth.module';
+import { PrismaJournalRepository } from './infrastructure/repositories/prisma-journal.repository';
+import { JournalMapper } from './infrastructure/repositories/journal.mapper';
+import { JournalRepository } from './domain/journal.repository';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([
-      {
-        name: Journal.name,
-        schema: JournalSchema,
-      },
-    ]),
-    CqrsModule,
-    SharedModule,
-  ],
-  controllers: [JournalAdminController, JournalPublicController],
+  imports: [CqrsModule, PrismaModule, SharedModule, AuthModule],
+  controllers: [JournalAdminController, JournalController],
   providers: [
+    JournalPresenter,
+    JournalMapper,
     {
       provide: JournalRepository,
-      useClass: MongoJournalRepository,
+      useClass: PrismaJournalRepository,
     },
-    MongoJournalRepository,
-    ...JournalHandlers,
+    {
+      provide: 'JournalRepository',
+      useClass: PrismaJournalRepository,
+    },
+    ...JournalCommandHandlers,
+    ...JournalQueryHandlers,
+    ...JournalEventHandlers,
   ],
-  exports: [],
+  exports: [JournalRepository, 'JournalRepository'],
 })
 export class JournalModule {}

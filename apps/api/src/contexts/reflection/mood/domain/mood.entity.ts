@@ -3,6 +3,7 @@ import { MoodId } from './value-objects/mood-id.vo';
 export type MoodProps = {
   mood: string;
   note?: string;
+  intensity?: number;
   tags: string[];
   loggedAt: Date;
   isDeleted: boolean;
@@ -14,8 +15,12 @@ export type MoodProps = {
 export class Mood {
   private constructor(
     private props: MoodProps,
-    private readonly id: MoodId,
+    private readonly _id: MoodId,
   ) {}
+
+  public get id(): MoodId {
+    return this._id;
+  }
 
   static create(props: Partial<MoodProps>, id: MoodId): Mood {
     const now = new Date();
@@ -23,6 +28,7 @@ export class Mood {
       {
         mood: props.mood ?? '',
         note: props.note,
+        intensity: props.intensity,
         tags: props.tags ?? [],
         loggedAt: props.loggedAt ?? now,
         isDeleted: props.isDeleted ?? false,
@@ -32,6 +38,10 @@ export class Mood {
       },
       id,
     );
+  }
+
+  static createFromPersistence(props: MoodProps, id: string): Mood {
+    return new Mood(props, MoodId.create(id));
   }
 
   update(data: Partial<MoodProps>) {
@@ -52,9 +62,15 @@ export class Mood {
     this.props.deletedAt = undefined;
   }
 
+  toPersistence() {
+    return {
+      ...this.props,
+    };
+  }
+
   toPrimitives() {
     return {
-      id: this.id.toString(),
+      id: this._id.toString(),
       ...this.props,
     };
   }

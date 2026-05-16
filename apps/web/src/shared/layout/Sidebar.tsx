@@ -38,6 +38,7 @@ import {
   ChevronDown,
   WindIcon,
 } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useState, useEffect, useRef } from 'react';
@@ -46,6 +47,7 @@ import type { SoundType } from '@/contexts';
 import { useLanguage, useSound } from '@/contexts';
 import XPBar from '@/features/gamification/components/XPBar';
 import { cn } from '@/shared/lib/utils';
+import { useAuthStore } from '@/shared/store';
 import { View } from '@/shared/types/os';
 
 interface NavItem {
@@ -253,6 +255,7 @@ const SidebarGroup: React.FC<{
 
 export const Sidebar: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(true);
+  const { user: authUser, logout } = useAuthStore();
   const { language, setLanguage, t } = useLanguage();
   const { playSound } = useSound();
   const navContainerRef = useRef<HTMLDivElement>(null);
@@ -336,6 +339,39 @@ export const Sidebar: React.FC = () => {
         >
           <XPBar compact={!isExpanded} />
         </div>
+
+        {/* User Profile Section */}
+        <div className={cn(
+          "p-4 border-t border-white/5 bg-white/[0.02] flex items-center gap-3 transition-all",
+          !isExpanded && "justify-center"
+        )}>
+          <div className="relative shrink-0">
+            <div className="w-10 h-10 rounded-full bg-linear-to-br from-forge-cyan/20 to-blue-500/20 border border-white/10 flex items-center justify-center text-forge-cyan font-bold shadow-lg shadow-black">
+              {authUser?.name?.[0]?.toUpperCase() || <Users size={18} />}
+            </div>
+            <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-black rounded-full" />
+          </div>
+
+          {isExpanded && (
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-white truncate">{authUser?.name || 'Traveller'}</p>
+              <p className="text-[10px] text-gray-500 font-mono truncate">{authUser?.email}</p>
+            </div>
+          )}
+
+          {isExpanded && (
+            <button 
+              onClick={() => {
+                playSound('click');
+                logout();
+              }}
+              className="p-2 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-400/10 transition-all"
+              title="Logout"
+            >
+              <LogOut size={16} />
+            </button>
+          )}
+        </div>
       </div>
       <div className="p-4 border-t border-white/5 bg-black/20 space-y-2">
         <button
@@ -377,3 +413,5 @@ export const Sidebar: React.FC = () => {
     </aside>
   );
 };
+
+

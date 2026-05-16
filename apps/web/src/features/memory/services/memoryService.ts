@@ -1,5 +1,6 @@
+import type { BackendResponse, PaginatedResponse } from '@forge/core';
+
 import { apiClient } from '@/services/apiClient';
-import type { PaginatedResponse } from '@/shared/types';
 import type { MemoryDto } from '@/shared/types/dto/memory.dto';
 import type { Memory, CreateMemoryPayload } from '@/shared/types/memory';
 
@@ -21,10 +22,10 @@ export const getMemories = async (
   page = 1,
   limit = 12,
 ): Promise<PaginatedResponse<Memory>> => {
-  const res = await apiClient.get<PaginatedResponse<MemoryDto>>('/memories', {
+  const res = await apiClient.get<BackendResponse<PaginatedResponse<MemoryDto>>>('/memories', {
     params: { lang, page, limit },
   });
-  const payload = res.data;
+  const payload = res.data.data;
 
   return {
     meta: payload.meta,
@@ -50,6 +51,8 @@ export const updateMemory = async (
     ...(payload.content !== undefined && { content: { [language]: payload.content } }),
   };
 
-  const res = await apiClient.put<MemoryDto>(`/memories/${id}`, formattedPayload);
-  return mapDtoToMemory(res.data);
+  const res = await apiClient.put<BackendResponse<MemoryDto>>(`/memories/${id}`, formattedPayload);
+  return mapDtoToMemory(res.data.data);
 };
+
+

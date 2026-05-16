@@ -1,12 +1,12 @@
 import { Permission } from '../../domain/permission.entity';
 import { PermissionId } from '../../domain/value-objects/permission-id.vo';
-import { PermissionDocument } from '../../infrastructure/schemas/iam-permission.schema';
-import { Types } from 'mongoose';
 
 export class PermissionMapper {
-  static toDomain(doc: PermissionDocument): Permission {
+  static toDomain(doc: any): Permission {
+    const id = doc.id;
+
     return Permission.reconstitute({
-      id: PermissionId.create(doc._id as Types.ObjectId),
+      id: PermissionId.create(id),
       name: doc.name,
       description: doc.description,
       resource: doc.resource,
@@ -18,9 +18,9 @@ export class PermissionMapper {
     });
   }
 
-  static toPersistence(entity: Permission): Partial<PermissionDocument> {
+  static toPersistence(entity: Permission): any {
     return {
-      _id: new Types.ObjectId(entity.id.toString()),
+      id: entity.id.toString(),
       name: entity.name,
       description: entity.description,
       resource: entity.resource,

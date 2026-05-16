@@ -26,6 +26,9 @@ import {
 } from '../../application/commands';
 import { GetAllMoodsQuery, GetMoodByIdQuery } from '../../application/queries';
 import { MoodId } from '../../domain/value-objects/mood-id.vo';
+import { MoodPresenter } from '../mood.presenter';
+import { Mood } from '../../domain/mood.entity';
+import { PaginatedResult } from '@shared/types/paginated-result';
 
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @Controller('admin/moods')
@@ -37,14 +40,15 @@ export class MoodAdminController {
 
   @Post()
   @Permissions(PermissionEnum.CREATE_MOOD)
-  create(@Body() dto: CreateMoodDto) {
-    return this.commandBus.execute(new CreateMoodCommand(dto));
+  async create(@Body() dto: CreateMoodDto) {
+    const mood: Mood = await this.commandBus.execute(new CreateMoodCommand(dto));
+    return MoodPresenter.toResponse(mood);
   }
 
   @Get()
   @Permissions(PermissionEnum.READ_MOOD)
-  findAll(@Query() query: QueryMoodDto) {
-    return this.queryBus.execute(
+  async findAll(@Query() query: QueryMoodDto) {
+    const result: PaginatedResult<Mood> = await this.queryBus.execute(
       new GetAllMoodsQuery({
         page: query.page ? Number(query.page) : undefined,
         limit: query.limit ? Number(query.limit) : undefined,
@@ -55,18 +59,25 @@ export class MoodAdminController {
         isDeleted: query.isDeleted ? query.isDeleted === 'true' : undefined,
       }),
     );
+
+    return {
+      meta: result.meta,
+      data: result.data.map(MoodPresenter.toResponse),
+    };
   }
 
   @Get(':id')
   @Permissions(PermissionEnum.READ_MOOD)
-  findById(@Param('id') id: string) {
-    return this.queryBus.execute(new GetMoodByIdQuery(MoodId.create(id)));
+  async findById(@Param('id') id: string) {
+    const mood: Mood = await this.queryBus.execute(new GetMoodByIdQuery(MoodId.create(id)));
+    return MoodPresenter.toResponse(mood);
   }
 
   @Patch(':id')
   @Permissions(PermissionEnum.UPDATE_MOOD)
-  update(@Param('id') id: string, @Body() dto: UpdateMoodDto) {
-    return this.commandBus.execute(new UpdateMoodCommand(MoodId.create(id), dto));
+  async update(@Param('id') id: string, @Body() dto: UpdateMoodDto) {
+    const mood: Mood = await this.commandBus.execute(new UpdateMoodCommand(MoodId.create(id), dto));
+    return MoodPresenter.toResponse(mood);
   }
 
   @Delete(':id')

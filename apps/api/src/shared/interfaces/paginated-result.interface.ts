@@ -1,7 +1,6 @@
-// src/shared/interfaces/paginated-result.interface.ts
 export interface PaginatedResult<T> {
   data: T[];
-  pagination: {
+  meta: {
     total: number;
     page: number;
     limit: number;

@@ -1,6 +1,6 @@
 // 📁 File: contexts/reflection/memory/application/handlers/create-memory.handler.ts
 
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 import { CreateMemoryCommand } from '../commands/create-memory.command';
 import { Inject } from '@nestjs/common';
 import { MemoryRepository } from '../ports/memory.repository';
@@ -8,9 +8,7 @@ import { Memory } from '../../domain/memory.entity';
 import { MemoryId } from '../../domain/value-objects/memory-id.vo';
 import { MemoryPresenter } from '../../presentation/memory.presenter';
 import { MemoryResponse } from '../../presentation/dto/memory.response';
-import { ObjectId } from 'mongodb';
 import { MemoryModifiedEvent } from '../events/memory-modified.event';
-import { EventBus } from '@nestjs/cqrs';
 import { MemoryStatus, MoodType } from '@shared/enums';
 
 @CommandHandler(CreateMemoryCommand)
@@ -25,8 +23,7 @@ export class CreateMemoryHandler implements ICommandHandler<CreateMemoryCommand,
     const { payload, lang } = command;
 
     const now = new Date();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    const id = MemoryId.create(new ObjectId() as any);
+    const id = MemoryId.random();
 
     const memory = Memory.create(
       {

@@ -97,3 +97,6 @@ export function getSeasonFromMood(mood: MoodType): InnerSeason {
       return 'Winter';
   }
 }
+
+
+

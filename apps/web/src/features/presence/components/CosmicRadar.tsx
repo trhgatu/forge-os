@@ -39,3 +39,5 @@ export const CosmicRadar: React.FC<{ echoes: VisitorEcho[] }> = ({ echoes }) => 
     </div>
   );
 };
+
+

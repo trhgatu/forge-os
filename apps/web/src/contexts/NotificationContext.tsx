@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import { toast } from 'sonner';
 
-import { useNotificationStore } from '@/store/notification.store';
+import { useNotificationStore } from '@/shared/store/notificationStore';
 
 // Mock messages
 const AMBIENT_WHISPERS = [
@@ -62,3 +62,5 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 export const useNotification = () => {
   return useNotificationStore();
 };
+
+

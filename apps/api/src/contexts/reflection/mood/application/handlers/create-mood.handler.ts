@@ -4,7 +4,6 @@ import { Inject } from '@nestjs/common';
 import { MoodRepository } from '../ports/mood.repository';
 import { Mood } from '../../domain/mood.entity';
 import { MoodId } from '../../domain/value-objects/mood-id.vo';
-import { ObjectId } from 'mongodb';
 import { MoodPresenter } from '../../presentation/mood.presenter';
 import { MoodResponse } from '../../presentation/dto/mood.response';
 
@@ -17,7 +16,7 @@ export class CreateMoodHandler implements ICommandHandler<CreateMoodCommand, Moo
 
   async execute(command: CreateMoodCommand): Promise<MoodResponse> {
     const { payload } = command;
-    const id = MoodId.create(new ObjectId());
+    const id = MoodId.create();
     const mood = Mood.create(
       {
         mood: payload.mood,

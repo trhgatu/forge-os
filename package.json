@@ -1,5 +1,6 @@
 {
   "name": "forge-os",
+  "type": "commonjs",
   "private": true,
   "scripts": {
     "build": "turbo run build",
@@ -7,10 +8,19 @@
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
-    "prepare": "husky"
+    "prepare": "husky",
+    "postinstall": "prisma generate --schema=apps/api/prisma/schema.prisma",
+    "db:push:local": "npx prisma db push",
+    "db:push:prod": "dotenv -e .env.production -- npx prisma db push",
+    "db:migrate:local": "npx prisma migrate deploy",
+    "db:migrate:prod": "dotenv -e .env.production -- npx prisma migrate deploy",
+    "seed:local": "pnpm --filter @forge/api run seed",
+    "seed:prod": "dotenv -e .env.production -- pnpm --filter @forge/api run seed",
+    "dev:prod": "dotenv -e .env.production -- turbo run dev"
   },
   "devDependencies": {
     "@types/node": "^25.3.0",
+    "dotenv-cli": "^11.0.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.2.2",
     "globals": "^17.3.0",
@@ -23,7 +33,11 @@
     "node": ">=18"
   },
   "dependencies": {
+    "@prisma/client": "^7.8.0",
+    "dotenv": "^17.4.2",
     "husky": "^9.1.7",
-    "lint-staged": "^16.2.7"
+    "lint-staged": "^16.2.7",
+    "prisma": "^7.8.0",
+    "zod": "^4.4.3"
   }
 }

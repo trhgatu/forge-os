@@ -32,3 +32,5 @@ export default function ForgeLayout({ children }: { children: React.ReactNode })
     </LanguageProvider>
   );
 }
+
+

@@ -1,25 +1,18 @@
+import type { User } from '@forge/auth';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
-export interface User {
-  id: string;
-  email: string;
-  name?: string;
-  role: {
-    id: string;
-    name: string;
-    permissions: string[];
-  };
-}
+export type { User };
 
 interface AuthState {
   user: User | null;
-  token: string | null;
+  accessToken: string | null;
   refreshToken: string | null;
   isAuthenticated: boolean;
   isHydrated: boolean;
-  login: (user: User, token: string, refreshToken: string) => void;
+  login: (user: User, accessToken: string, refreshToken: string) => void;
   logout: () => void;
+  setTokens: (accessToken: string, refreshToken: string) => void;
   setHydrated: () => void;
 }
 
@@ -27,17 +20,18 @@ export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       user: null,
-      token: null,
+      accessToken: null,
       refreshToken: null,
       isAuthenticated: false,
       isHydrated: false,
-      login: (user, token, refreshToken) =>
-        set({ user, token, refreshToken, isAuthenticated: true }),
-      logout: () => set({ user: null, token: null, refreshToken: null, isAuthenticated: false }),
+      login: (user, accessToken, refreshToken) =>
+        set({ user, accessToken, refreshToken, isAuthenticated: true }),
+      logout: () => set({ user: null, accessToken: null, refreshToken: null, isAuthenticated: false }),
+      setTokens: (accessToken, refreshToken) => set({ accessToken, refreshToken }),
       setHydrated: () => set({ isHydrated: true }),
     }),
     {
-      name: 'forge-auth-storage', // unique name
+      name: 'forge-auth-v2', // unique name
       // TODO(security): Currently using localStorage for MVP. Plan to migrate to HttpOnly cookies for better XSS protection in Phase 2.
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: () => (state) => {
@@ -46,3 +40,5 @@ export const useAuthStore = create<AuthState>()(
     },
   ),
 );
+
+

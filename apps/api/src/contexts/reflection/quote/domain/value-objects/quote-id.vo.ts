@@ -1,16 +1,16 @@
-import { BaseId } from '@shared/value-objects';
-import { Types } from 'mongoose';
+import { BaseId } from '@shared/value-objects/base-id.vo';
+import { v4 as uuid } from 'uuid';
 
 export class QuoteId extends BaseId {
-  private constructor(value: string | Types.ObjectId) {
-    super(value);
+  private constructor(id: string) {
+    super(id);
   }
 
-  public static create(value: string | Types.ObjectId): QuoteId {
-    return new QuoteId(value);
+  static create(id?: string): QuoteId {
+    return new QuoteId(id ?? uuid());
   }
 
-  public static random(): QuoteId {
-    return new QuoteId(new Types.ObjectId());
+  static random(): QuoteId {
+    return new QuoteId(uuid());
   }
 }

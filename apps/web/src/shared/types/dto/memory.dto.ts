@@ -1,4 +1,4 @@
-import type { MoodType } from '@/shared/types/journal';
+import type { MoodType } from '@forge/reflection';
 
 export interface MemoryDto {
   id: string;
@@ -11,3 +11,6 @@ export interface MemoryDto {
   createdAt: string;
   updatedAt: string;
 }
+
+
+

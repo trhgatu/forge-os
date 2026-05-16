@@ -1,8 +1,8 @@
 export enum JournalType {
-  DAILY = 'daily',
-  THOUGHT = 'thought',
-  INSIGHT = 'insight',
-  CONVERSATION_LOG = 'conversation_log',
+  NOTE = 'note',
+  TASK = 'task',
   EVENT = 'event',
-  DREAM = 'dream',
+  REFLECTION = 'reflection',
+  MOOD = 'mood',
+  THOUGHT = 'thought',
 }

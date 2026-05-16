@@ -1,24 +1,25 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { CqrsModule } from '@nestjs/cqrs';
-import { Project, ProjectSchema } from './infrastructure/project.schema';
 import { ProjectController } from './presentation/project.controller';
-import { CommandHandlers, QueryHandlers } from './application/handlers';
-import { MongoProjectRepository } from './infrastructure/repositories/mongo-project.repository';
+import { CommandHandlers } from './application/commands/handlers';
+import { QueryHandlers } from './application/queries/handlers';
+import { EventHandlers } from './application/events/handlers';
+import { PrismaProjectRepository } from './infrastructure/repositories/prisma-project.repository';
 import { HttpGithubRepository } from './infrastructure/repositories/http-github.repository';
 import { SharedModule } from '@shared/shared.module';
+import { ProjectRepository } from './application/ports/project.repository';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([{ name: Project.name, schema: ProjectSchema }]),
-    CqrsModule,
-    SharedModule,
-  ],
+  imports: [CqrsModule, SharedModule],
   controllers: [ProjectController],
   providers: [
     {
       provide: 'ProjectRepository',
-      useClass: MongoProjectRepository,
+      useClass: PrismaProjectRepository,
+    },
+    {
+      provide: ProjectRepository,
+      useClass: PrismaProjectRepository,
     },
     {
       provide: 'GithubRepository',
@@ -26,7 +27,8 @@ import { SharedModule } from '@shared/shared.module';
     },
     ...CommandHandlers,
     ...QueryHandlers,
+    ...EventHandlers,
   ],
-  exports: [],
+  exports: [ProjectRepository],
 })
 export class ProjectModule {}

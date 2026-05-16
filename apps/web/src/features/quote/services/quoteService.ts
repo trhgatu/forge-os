@@ -1,7 +1,8 @@
+import type { BackendResponse, PaginatedResponse } from '@forge/core';
+import type { MoodType } from '@forge/reflection';
+
 import { apiClient } from '@/services/apiClient';
-import type { PaginatedResponse } from '@/shared/types';
 import type { QuoteDto, CreateQuoteDto, QuoteFilter } from '@/shared/types/dto/quote.dto';
-import type { MoodType } from '@/shared/types/journal';
 import type { Quote } from '@/shared/types/quote';
 
 const mapDtoToQuote = (dto: QuoteDto): Quote => ({
@@ -17,70 +18,50 @@ const mapDtoToQuote = (dto: QuoteDto): Quote => ({
   analysis: undefined,
 });
 
+export const getRandomQuote = async (): Promise<Quote> => {
+  const res = await apiClient.get<BackendResponse<QuoteDto>>('/quotes/random');
+  return mapDtoToQuote(res.data.data);
+};
+
 export const getQuotes = async (
   page = 1,
   limit = 20,
   filter?: QuoteFilter,
 ): Promise<PaginatedResponse<Quote>> => {
-  const res = await apiClient.get<PaginatedResponse<QuoteDto>>('/quotes', {
+  const res = await apiClient.get<BackendResponse<PaginatedResponse<QuoteDto>>>('/quotes', {
     params: { page, limit, ...filter },
   });
-  const payload = res.data;
 
+  const paginated = res.data.data;
   return {
-    meta: payload.meta,
-    data: payload.data.map(mapDtoToQuote),
+    ...paginated,
+    data: paginated.data.map(mapDtoToQuote),
   };
 };
 
-export const deleteQuote = async (id: string): Promise<void> => {
-  await apiClient.delete(`/admin/quotes/${id}`);
+export const createQuote = async (data: CreateQuoteDto): Promise<Quote> => {
+  const res = await apiClient.post<BackendResponse<QuoteDto>>('/quotes', data);
+  return mapDtoToQuote(res.data.data);
 };
 
 export const updateQuote = async (id: string, data: Partial<CreateQuoteDto>): Promise<Quote> => {
-  const res = await apiClient.patch<QuoteDto>(`/admin/quotes/${id}`, data);
-  return mapDtoToQuote(res.data);
+  const res = await apiClient.patch<BackendResponse<QuoteDto>>(`/quotes/${id}`, data);
+  return mapDtoToQuote(res.data.data);
 };
 
-export const createQuote = async (
-  content: string,
-  author?: string,
-  source?: string,
-  tags?: string[],
-  isFavorite?: boolean,
-  mood?: MoodType,
-): Promise<Quote> => {
-  const payload: CreateQuoteDto = {
-    content: { en: content }, // i18n support
-    author,
-    source,
-    tags,
-    status: isFavorite ? 'favorite' : 'internal',
-    mood,
-  };
-
-  const res = await apiClient.post<QuoteDto>('/admin/quotes', payload);
-  return mapDtoToQuote(res.data);
+export const deleteQuote = async (id: string): Promise<void> => {
+  await apiClient.delete(`/quotes/${id}`);
 };
 
-export const getRandomQuote = async (): Promise<Quote | null> => {
-  try {
-    const res = await apiClient.get<QuoteDto>('/quotes/random');
-    if (!res.data) return null;
-    return mapDtoToQuote(res.data);
-  } catch (error) {
-    console.error('Failed to fetch random quote', error);
-    return null;
-  }
+export const getDailyQuote = async (): Promise<Quote> => {
+  const res = await apiClient.get<BackendResponse<QuoteDto>>('/quotes/random');
+  return mapDtoToQuote(res.data.data);
 };
 
-export const getDailyQuote = async (): Promise<Quote | null> => {
-  try {
-    const res = await apiClient.get<QuoteDto>('/quotes/daily');
-    if (!res.data) return null;
-    return mapDtoToQuote(res.data);
-  } catch (error) {
-    console.error('Failed to fetch daily quote', error);
-    return null;
-  }
+export const quoteService = {
+  getAll: getQuotes,
+  create: createQuote,
+  update: updateQuote,
+  delete: deleteQuote,
+  getDailyQuote,
 };

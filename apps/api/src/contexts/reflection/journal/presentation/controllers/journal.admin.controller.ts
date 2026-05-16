@@ -1,78 +1,89 @@
-import {
-  Controller,
-  Post,
-  Get,
-  Param,
-  Body,
-  Patch,
-  Delete,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-
-import { CreateJournalDto, UpdateJournalDto, QueryJournalDto } from '../dto';
-
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../../../../iam/auth/application/guards/jwt-auth.guard';
+import { PermissionsGuard } from '@shared/guards/permissions.guard';
+import { Permissions } from '@shared/decorators';
+import { JournalId } from '../../domain/value-objects/journal-id.vo';
+import { CreateJournalDto, UpdateJournalDto, QueryJournalDto, JournalResponse } from '../dto';
 import {
   CreateJournalCommand,
   UpdateJournalCommand,
-  DeleteJournalCommand,
   SoftDeleteJournalCommand,
   RestoreJournalCommand,
 } from '../../application/commands';
 import { GetAllJournalsQuery, GetJournalByIdQuery } from '../../application/queries';
+import { JournalPresenter } from '../presenters/journal.presenter';
 
-import { JournalId } from '../../domain/value-objects/journal-id.vo';
-import { JwtAuthGuard } from 'src/contexts/iam/auth/application/guards';
-import { PermissionsGuard } from '@shared/guards/permissions.guard';
-import { Permissions } from '@shared/decorators';
-import { PermissionEnum } from '@shared/enums';
-
-@UseGuards(JwtAuthGuard, PermissionsGuard)
+@ApiTags('Reflection / Journal (Admin)')
+@ApiBearerAuth()
 @Controller('admin/journals')
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class JournalAdminController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
+    private readonly presenter: JournalPresenter,
   ) {}
 
   @Post()
-  @Permissions(PermissionEnum.CREATE_JOURNAL)
-  create(@Body() dto: CreateJournalDto) {
-    return this.commandBus.execute(new CreateJournalCommand(dto));
+  @Permissions('reflection:journal:create')
+  @ApiOperation({ summary: 'Create a new journal entry' })
+  @ApiResponse({ status: 201, type: JournalResponse })
+  async create(@Body() dto: CreateJournalDto) {
+    const journal = await this.commandBus.execute(new CreateJournalCommand(dto));
+    return this.presenter.toResponse(journal);
   }
 
   @Get()
-  @Permissions(PermissionEnum.READ_JOURNAL)
-  findAll(@Query() query: QueryJournalDto) {
-    return this.queryBus.execute(new GetAllJournalsQuery(query));
+  @Permissions('reflection:journal:read')
+  @ApiOperation({ summary: 'Get all journal entries (paginated)' })
+  async findAll(@Query() queryDto: QueryJournalDto) {
+    const filter = this.presenter.toFilter(queryDto);
+    const result = await this.queryBus.execute(new GetAllJournalsQuery(filter));
+    return {
+      ...result,
+      data: this.presenter.toResponseArray(result.data),
+    };
   }
 
   @Get(':id')
-  @Permissions(PermissionEnum.READ_JOURNAL)
-  findById(@Param('id') id: string) {
-    return this.queryBus.execute(new GetJournalByIdQuery(JournalId.create(id)));
+  @Permissions('reflection:journal:read')
+  @ApiOperation({ summary: 'Get a journal entry by ID' })
+  @ApiResponse({ status: 200, type: JournalResponse })
+  async findOne(@Param('id') id: string) {
+    const journal = await this.queryBus.execute(new GetJournalByIdQuery(JournalId.fromString(id)));
+    return this.presenter.toResponse(journal);
   }
 
-  @Patch(':id')
-  @Permissions(PermissionEnum.UPDATE_JOURNAL)
-  update(@Param('id') id: string, @Body() dto: UpdateJournalDto) {
-    return this.commandBus.execute(new UpdateJournalCommand(JournalId.create(id), dto));
+  @Put(':id')
+  @Permissions('reflection:journal:update')
+  @ApiOperation({ summary: 'Update a journal entry' })
+  @ApiResponse({ status: 200, type: JournalResponse })
+  async update(@Param('id') id: string, @Body() dto: UpdateJournalDto) {
+    const journal = await this.commandBus.execute(
+      new UpdateJournalCommand(JournalId.fromString(id), dto),
+    );
+    return this.presenter.toResponse(journal);
   }
 
   @Delete(':id')
-  @Permissions(PermissionEnum.DELETE_JOURNAL)
-  delete(@Param('id') id: string, @Query('hard') hard?: 'true') {
-    const journalId = JournalId.create(id);
-
-    return hard === 'true'
-      ? this.commandBus.execute(new DeleteJournalCommand(journalId))
-      : this.commandBus.execute(new SoftDeleteJournalCommand(journalId));
+  @Permissions('reflection:journal:delete')
+  @ApiOperation({ summary: 'Soft delete a journal entry' })
+  async remove(@Param('id') id: string) {
+    const journal = await this.commandBus.execute(
+      new SoftDeleteJournalCommand(JournalId.fromString(id)),
+    );
+    return this.presenter.toResponse(journal);
   }
 
-  @Patch(':id/restore')
-  @Permissions(PermissionEnum.RESTORE_JOURNAL)
-  restore(@Param('id') id: string) {
-    return this.commandBus.execute(new RestoreJournalCommand(JournalId.create(id)));
+  @Post(':id/restore')
+  @Permissions('reflection:journal:update')
+  @ApiOperation({ summary: 'Restore a soft-deleted journal entry' })
+  async restore(@Param('id') id: string) {
+    const journal = await this.commandBus.execute(
+      new RestoreJournalCommand(JournalId.fromString(id)),
+    );
+    return this.presenter.toResponse(journal);
   }
 }

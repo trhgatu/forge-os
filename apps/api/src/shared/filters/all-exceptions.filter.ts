@@ -7,14 +7,14 @@ import { LoggerService } from '../logging/logger.service';
 import { ApiErrorResponse } from '../interfaces/api-error-response.interface';
 
 // Helper Interfaces
-interface MongoError extends Error {
-  code?: number;
-}
-
 interface NestExceptionResponse {
   message?: string | string[];
   error?: string;
   statusCode?: number;
+}
+
+interface PrismaError extends Error {
+  code?: string;
 }
 
 @Catch()
@@ -39,7 +39,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     let errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
     let message: string | object = 'Internal server error';
 
-    // P2: Capture stack trace for all exceptions (if available)
+    // Capture stack trace for all exceptions (if available)
     let stack: string | undefined;
     if (exception instanceof Error) {
       stack = exception.stack;
@@ -73,14 +73,13 @@ export class AllExceptionsFilter implements ExceptionFilter {
       errorCode = exception.errorCode as ErrorCode;
       message = exception.message;
     } else if (exception instanceof Error) {
-      // Stack already captured above
+      const prismaError = exception as PrismaError;
 
-      // MongoDB Duplicate Key Error (Code 11000)
-      const mongoError = exception as MongoError;
-      if (mongoError.code === 11000) {
+      // Prisma Duplicate Key Error (P2002)
+      if (prismaError.code === 'P2002') {
         httpStatus = HttpStatus.CONFLICT;
         errorCode = ErrorCode.DB_DUPLICATE_KEY;
-        message = 'Duplicate key error';
+        message = 'A record with this value already exists';
       }
     }
 

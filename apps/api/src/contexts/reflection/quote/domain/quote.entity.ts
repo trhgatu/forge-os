@@ -14,11 +14,15 @@ interface QuoteProps {
 
 export class Quote {
   private constructor(
-    public readonly id: QuoteId,
+    private readonly _id: QuoteId,
     private props: QuoteProps,
     private isDeleted = false,
     private deletedAt?: Date,
   ) {}
+
+  public get id(): QuoteId {
+    return this._id;
+  }
 
   static create(props: Omit<QuoteProps, 'createdAt' | 'updatedAt'>, id: QuoteId, now: Date): Quote {
     return new Quote(id, {
@@ -31,20 +35,12 @@ export class Quote {
   }
 
   static createFromPersistence(
-    data: QuoteProps & {
-      id: string;
-      isDeleted?: boolean;
-      deletedAt?: Date;
-    },
+    props: QuoteProps,
+    id: string,
+    isDeleted = false,
+    deletedAt?: Date,
   ): Quote {
-    return new Quote(
-      QuoteId.create(data.id),
-      {
-        ...data,
-      },
-      data.isDeleted ?? false,
-      data.deletedAt,
-    );
+    return new Quote(QuoteId.create(id), props, isDeleted, deletedAt);
   }
 
   updateInfo(props: Partial<Omit<QuoteProps, 'createdAt' | 'updatedAt'>>): void {
@@ -54,25 +50,11 @@ export class Quote {
       }
     }
 
-    if (props.author !== undefined) {
-      this.props.author = props.author;
-    }
-
-    if (props.source !== undefined) {
-      this.props.source = props.source;
-    }
-
-    if (props.tags) {
-      this.props.tags = props.tags;
-    }
-
-    if (props.mood !== undefined) {
-      this.props.mood = props.mood;
-    }
-
-    if (props.status !== undefined) {
-      this.props.status = props.status;
-    }
+    if (props.author !== undefined) this.props.author = props.author;
+    if (props.source !== undefined) this.props.source = props.source;
+    if (props.tags) this.props.tags = props.tags;
+    if (props.mood !== undefined) this.props.mood = props.mood;
+    if (props.status !== undefined) this.props.status = props.status;
 
     this.props.updatedAt = new Date();
   }
@@ -100,46 +82,32 @@ export class Quote {
   get content() {
     return this.props.content;
   }
-
   get author() {
     return this.props.author;
   }
-
   get source() {
     return this.props.source;
   }
-
   get tags() {
     return this.props.tags;
   }
-
   get mood() {
     return this.props.mood;
   }
-
   get status() {
     return this.props.status;
   }
-
   get createdAt() {
     return this.props.createdAt;
   }
-
   get updatedAt() {
     return this.props.updatedAt;
   }
 
   toPersistence() {
     return {
-      id: this.id.toString(),
-      content: this.props.content,
-      author: this.props.author,
-      source: this.props.source,
-      tags: this.props.tags,
-      mood: this.props.mood,
-      status: this.props.status,
-      createdAt: this.props.createdAt,
-      updatedAt: this.props.updatedAt,
+      id: this._id.toString(),
+      ...this.props,
       isDeleted: this.isDeleted,
       deletedAt: this.deletedAt,
     };
@@ -147,7 +115,7 @@ export class Quote {
 
   toPrimitives(lang: string) {
     return {
-      id: this.id.toString(),
+      id: this._id.toString(),
       content: this.localizedContent(lang),
       author: this.author,
       source: this.source,

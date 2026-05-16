@@ -146,3 +146,5 @@ export const KnowledgeDetail: React.FC<KnowledgeDetailProps> = ({ concept, onClo
     </div>
   );
 };
+
+

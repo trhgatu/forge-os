@@ -1,27 +1,39 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import { MongooseModule } from '@nestjs/mongoose';
-import { MoodSchema } from './infrastructure/mood.schema';
-import { SharedModule } from '@shared/shared.module';
-import { MoodHandlers } from './application/handlers';
-import { MongoMoodRepository } from './infrastructure/repositories/mongo-mood.repository';
+import { PrismaMoodRepository } from './infrastructure/repositories/prisma-mood.repository';
+import { MoodMapper } from './infrastructure/repositories/mood.mapper';
+import { MoodRepository } from './application/ports/mood.repository';
 import { MoodAdminController } from './presentation/controllers/mood.admin.controller';
 import { MoodPublicController } from './presentation/controllers/mood.public.controller';
+import {
+  CreateMoodHandler,
+  UpdateMoodHandler,
+  DeleteMoodHandler,
+  GetAllMoodsHandler,
+  GetMoodByIdHandler,
+} from './application/handlers';
+import { SharedModule } from '@shared/shared.module';
+import { AuthModule } from '../../iam/auth/auth.module';
+
+const CommandHandlers = [CreateMoodHandler, UpdateMoodHandler, DeleteMoodHandler];
+const QueryHandlers = [GetAllMoodsHandler, GetMoodByIdHandler];
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([{ name: 'Mood', schema: MoodSchema }]),
-    CqrsModule,
-    SharedModule,
-  ],
+  imports: [CqrsModule, SharedModule, AuthModule],
   controllers: [MoodAdminController, MoodPublicController],
   providers: [
     {
-      provide: 'MoodRepository',
-      useClass: MongoMoodRepository,
+      provide: MoodRepository,
+      useClass: PrismaMoodRepository,
     },
-    MongoMoodRepository,
-    ...MoodHandlers,
+    {
+      provide: 'MoodRepository',
+      useClass: PrismaMoodRepository,
+    },
+    MoodMapper,
+    ...CommandHandlers,
+    ...QueryHandlers,
   ],
+  exports: [MoodRepository],
 })
 export class MoodModule {}

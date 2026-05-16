@@ -164,3 +164,5 @@ export function MemoryCard({ memory, onClick }: MemoryCardProps) {
     </button>
   );
 }
+
+

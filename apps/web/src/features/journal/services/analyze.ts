@@ -1,4 +1,4 @@
-import type { JournalAnalysis } from '@/shared/types/journal';
+import type { JournalAnalysis } from '@forge/reflection';
 
 export async function analyzeJournalEntry(content: string): Promise<JournalAnalysis> {
   void content;
@@ -12,3 +12,6 @@ export async function analyzeJournalEntry(content: string): Promise<JournalAnaly
     suggestedAction: 'Write a follow-up tomorrow.',
   };
 }
+
+
+

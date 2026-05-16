@@ -1,4 +1,5 @@
-import type { MoodType } from './journal';
+import type { MoodType } from '@forge/reflection';
+
 import type {
   MemoryMetadata,
   QuoteMetadata,
@@ -36,3 +37,6 @@ export interface TimelineItem<T extends TimelineType = TimelineType> {
   metadata?: TimelineMetadataMap[T];
   analysis?: TimelineAnalysis;
 }
+
+
+

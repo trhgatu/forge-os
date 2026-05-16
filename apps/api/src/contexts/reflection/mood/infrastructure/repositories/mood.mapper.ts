@@ -1,37 +1,36 @@
 import { Mood } from '../../domain/mood.entity';
-import { MoodId } from '../../domain/value-objects/mood-id.vo';
-import { MoodDocument } from '../mood.schema';
 
 export class MoodMapper {
-  static toDomain(doc: MoodDocument): Mood {
-    return Mood.create(
+  static toDomain(doc: any): Mood | null {
+    if (!doc) return null;
+
+    return Mood.createFromPersistence(
       {
         mood: doc.mood,
         note: doc.note,
-        tags: doc.tags ?? [],
+        intensity: doc.intensity,
+        tags: doc.tags || [],
         loggedAt: doc.loggedAt,
-        isDeleted: doc.isDeleted,
+        isDeleted: doc.isDeleted || false,
         deletedAt: doc.deletedAt,
         createdAt: doc.createdAt,
         updatedAt: doc.updatedAt,
       },
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      MoodId.create(doc._id as any),
+      doc.id,
     );
   }
 
-  static toPersistence(mood: Mood) {
-    const props = mood.toPrimitives();
+  static toPersistence(entity: Mood): any {
+    const props = entity.toPersistence();
     return {
-      _id: props.id,
+      id: entity.id.value,
       mood: props.mood,
       note: props.note,
+      intensity: props.intensity,
       tags: props.tags,
       loggedAt: props.loggedAt,
       isDeleted: props.isDeleted,
       deletedAt: props.deletedAt,
-      createdAt: props.createdAt,
-      updatedAt: props.updatedAt,
     };
   }
 }

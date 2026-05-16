@@ -2,7 +2,7 @@
 
 import { MOOD_COLORS } from '@/shared/constants';
 import { cn } from '@/shared/lib/utils';
-import type { MoodType } from '@/shared/types';
+import { MoodType } from '@forge/reflection';
 
 export function MoodSelector({
   mood,
@@ -12,16 +12,16 @@ export function MoodSelector({
   onSelect: (m: MoodType) => void;
 }) {
   return (
-    <div className="flex gap-2 mb-6">
+    <div className="flex flex-wrap gap-1.5">
       {(Object.keys(MOOD_COLORS) as MoodType[]).map((m) => (
         <button
           key={m}
           onClick={() => onSelect(m)}
           className={cn(
-            'px-3 py-1 rounded-full text-xs capitalize border transition-all',
+            'px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider font-mono border transition-all duration-300',
             mood === m
-              ? MOOD_COLORS[m] + ' border-white/20 scale-105'
-              : 'text-gray-500 hover:bg-white/5',
+              ? MOOD_COLORS[m] + ' border-white/20 scale-105 shadow-lg'
+              : 'text-zinc-600 border-white/5 hover:bg-white/5 hover:text-zinc-400',
           )}
         >
           {m}
@@ -30,3 +30,6 @@ export function MoodSelector({
     </div>
   );
 }
+
+
+

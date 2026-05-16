@@ -65,3 +65,5 @@ export const StatsWidget: React.FC<StatsWidgetProps> = ({ totalCount }) => {
     </div>
   );
 };
+
+
