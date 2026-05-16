@@ -74,9 +74,9 @@ export function Journal() {
       setLocalEntry(null);
       return;
     }
-    const remote = entries.find((e) => e.id === selectedId);
+    const remote = entries.find((e: JournalEntry) => e.id === selectedId);
     if (remote) {
-      setLocalEntry((prev) => (prev?.id === remote.id ? prev : remote));
+      setLocalEntry((prev: JournalEntry | null) => (prev?.id === remote.id ? prev : remote));
       // Update last saved ref when switching entries
       lastSavedRef.current = JSON.stringify({
         title: remote.title,
@@ -176,7 +176,7 @@ export function Journal() {
   };
 
   const handleUpdateLocal = (patch: Partial<JournalEntry>) => {
-    setLocalEntry((prev) => (prev ? { ...prev, ...patch } : null));
+    setLocalEntry((prev: JournalEntry | null) => (prev ? { ...prev, ...patch } : null));
   };
 
   if (isLoading && !localEntry && !createMutation.isPending)

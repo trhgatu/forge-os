@@ -85,7 +85,7 @@ export function JournalSidebar({
 
                 {entry.tags.length > 0 && (
                   <div className="flex flex-wrap gap-1 mt-1">
-                    {entry.tags.slice(0, 2).map(tag => (
+                    {entry.tags.slice(0, 2).map((tag: string) => (
                       <span key={tag} className="text-[9px] px-1.5 py-0.5 rounded-sm bg-white/5 text-zinc-500 border border-white/5">
                         #{tag}
                       </span>
