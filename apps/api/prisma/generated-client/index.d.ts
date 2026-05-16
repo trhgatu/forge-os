@@ -1868,10 +1868,12 @@ export namespace Prisma {
 
   export type UserCountOutputType = {
     connections: number
+    journals: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     connections?: boolean | UserCountOutputTypeCountConnectionsArgs
+    journals?: boolean | UserCountOutputTypeCountJournalsArgs
   }
 
   // Custom InputTypes
@@ -1890,6 +1892,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountConnectionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: UserConnectionWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountJournalsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: JournalWhereInput
   }
 
 
@@ -2206,6 +2215,7 @@ export namespace Prisma {
     role?: boolean | User$roleArgs<ExtArgs>
     stats?: boolean | User$statsArgs<ExtArgs>
     connections?: boolean | User$connectionsArgs<ExtArgs>
+    journals?: boolean | User$journalsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2255,6 +2265,7 @@ export namespace Prisma {
     role?: boolean | User$roleArgs<ExtArgs>
     stats?: boolean | User$statsArgs<ExtArgs>
     connections?: boolean | User$connectionsArgs<ExtArgs>
+    journals?: boolean | User$journalsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2270,6 +2281,7 @@ export namespace Prisma {
       role: Prisma.$RolePayload<ExtArgs> | null
       stats: Prisma.$UserStatsPayload<ExtArgs> | null
       connections: Prisma.$UserConnectionPayload<ExtArgs>[]
+      journals: Prisma.$JournalPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2679,6 +2691,7 @@ export namespace Prisma {
     role<T extends User$roleArgs<ExtArgs> = {}>(args?: Subset<T, User$roleArgs<ExtArgs>>): Prisma__RoleClient<$Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     stats<T extends User$statsArgs<ExtArgs> = {}>(args?: Subset<T, User$statsArgs<ExtArgs>>): Prisma__UserStatsClient<$Result.GetResult<Prisma.$UserStatsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     connections<T extends User$connectionsArgs<ExtArgs> = {}>(args?: Subset<T, User$connectionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserConnectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    journals<T extends User$journalsArgs<ExtArgs> = {}>(args?: Subset<T, User$journalsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JournalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3178,6 +3191,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: UserConnectionScalarFieldEnum | UserConnectionScalarFieldEnum[]
+  }
+
+  /**
+   * User.journals
+   */
+  export type User$journalsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Journal
+     */
+    select?: JournalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Journal
+     */
+    omit?: JournalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JournalInclude<ExtArgs> | null
+    where?: JournalWhereInput
+    orderBy?: JournalOrderByWithRelationInput | JournalOrderByWithRelationInput[]
+    cursor?: JournalWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: JournalScalarFieldEnum | JournalScalarFieldEnum[]
   }
 
   /**
@@ -9964,6 +10001,7 @@ export namespace Prisma {
     type: string | null
     status: string | null
     source: string | null
+    userId: string | null
     isDeleted: boolean | null
     deletedAt: Date | null
     createdAt: Date | null
@@ -9978,6 +10016,7 @@ export namespace Prisma {
     type: string | null
     status: string | null
     source: string | null
+    userId: string | null
     isDeleted: boolean | null
     deletedAt: Date | null
     createdAt: Date | null
@@ -9994,6 +10033,8 @@ export namespace Prisma {
     status: number
     source: number
     relations: number
+    analysis: number
+    userId: number
     isDeleted: number
     deletedAt: number
     createdAt: number
@@ -10010,6 +10051,7 @@ export namespace Prisma {
     type?: true
     status?: true
     source?: true
+    userId?: true
     isDeleted?: true
     deletedAt?: true
     createdAt?: true
@@ -10024,6 +10066,7 @@ export namespace Prisma {
     type?: true
     status?: true
     source?: true
+    userId?: true
     isDeleted?: true
     deletedAt?: true
     createdAt?: true
@@ -10040,6 +10083,8 @@ export namespace Prisma {
     status?: true
     source?: true
     relations?: true
+    analysis?: true
+    userId?: true
     isDeleted?: true
     deletedAt?: true
     createdAt?: true
@@ -10129,6 +10174,8 @@ export namespace Prisma {
     status: string
     source: string
     relations: JsonValue | null
+    analysis: JsonValue | null
+    userId: string | null
     isDeleted: boolean
     deletedAt: Date | null
     createdAt: Date
@@ -10162,10 +10209,13 @@ export namespace Prisma {
     status?: boolean
     source?: boolean
     relations?: boolean
+    analysis?: boolean
+    userId?: boolean
     isDeleted?: boolean
     deletedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    user?: boolean | Journal$userArgs<ExtArgs>
   }, ExtArgs["result"]["journal"]>
 
   export type JournalSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -10178,10 +10228,13 @@ export namespace Prisma {
     status?: boolean
     source?: boolean
     relations?: boolean
+    analysis?: boolean
+    userId?: boolean
     isDeleted?: boolean
     deletedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    user?: boolean | Journal$userArgs<ExtArgs>
   }, ExtArgs["result"]["journal"]>
 
   export type JournalSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -10194,10 +10247,13 @@ export namespace Prisma {
     status?: boolean
     source?: boolean
     relations?: boolean
+    analysis?: boolean
+    userId?: boolean
     isDeleted?: boolean
     deletedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    user?: boolean | Journal$userArgs<ExtArgs>
   }, ExtArgs["result"]["journal"]>
 
   export type JournalSelectScalar = {
@@ -10210,17 +10266,30 @@ export namespace Prisma {
     status?: boolean
     source?: boolean
     relations?: boolean
+    analysis?: boolean
+    userId?: boolean
     isDeleted?: boolean
     deletedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type JournalOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "content" | "mood" | "tags" | "type" | "status" | "source" | "relations" | "isDeleted" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["journal"]>
+  export type JournalOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "content" | "mood" | "tags" | "type" | "status" | "source" | "relations" | "analysis" | "userId" | "isDeleted" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["journal"]>
+  export type JournalInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | Journal$userArgs<ExtArgs>
+  }
+  export type JournalIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | Journal$userArgs<ExtArgs>
+  }
+  export type JournalIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | Journal$userArgs<ExtArgs>
+  }
 
   export type $JournalPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Journal"
-    objects: {}
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs> | null
+    }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       title: string | null
@@ -10231,6 +10300,8 @@ export namespace Prisma {
       status: string
       source: string
       relations: Prisma.JsonValue | null
+      analysis: Prisma.JsonValue | null
+      userId: string | null
       isDeleted: boolean
       deletedAt: Date | null
       createdAt: Date
@@ -10629,6 +10700,7 @@ export namespace Prisma {
    */
   export interface Prisma__JournalClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends Journal$userArgs<ExtArgs> = {}>(args?: Subset<T, Journal$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -10667,6 +10739,8 @@ export namespace Prisma {
     readonly status: FieldRef<"Journal", 'String'>
     readonly source: FieldRef<"Journal", 'String'>
     readonly relations: FieldRef<"Journal", 'Json'>
+    readonly analysis: FieldRef<"Journal", 'Json'>
+    readonly userId: FieldRef<"Journal", 'String'>
     readonly isDeleted: FieldRef<"Journal", 'Boolean'>
     readonly deletedAt: FieldRef<"Journal", 'DateTime'>
     readonly createdAt: FieldRef<"Journal", 'DateTime'>
@@ -10688,6 +10762,10 @@ export namespace Prisma {
      */
     omit?: JournalOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JournalInclude<ExtArgs> | null
+    /**
      * Filter, which Journal to fetch.
      */
     where: JournalWhereUniqueInput
@@ -10706,6 +10784,10 @@ export namespace Prisma {
      */
     omit?: JournalOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JournalInclude<ExtArgs> | null
+    /**
      * Filter, which Journal to fetch.
      */
     where: JournalWhereUniqueInput
@@ -10723,6 +10805,10 @@ export namespace Prisma {
      * Omit specific fields from the Journal
      */
     omit?: JournalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JournalInclude<ExtArgs> | null
     /**
      * Filter, which Journal to fetch.
      */
@@ -10772,6 +10858,10 @@ export namespace Prisma {
      */
     omit?: JournalOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JournalInclude<ExtArgs> | null
+    /**
      * Filter, which Journal to fetch.
      */
     where?: JournalWhereInput
@@ -10819,6 +10909,10 @@ export namespace Prisma {
      * Omit specific fields from the Journal
      */
     omit?: JournalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JournalInclude<ExtArgs> | null
     /**
      * Filter, which Journals to fetch.
      */
@@ -10868,6 +10962,10 @@ export namespace Prisma {
      */
     omit?: JournalOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JournalInclude<ExtArgs> | null
+    /**
      * The data needed to create a Journal.
      */
     data: XOR<JournalCreateInput, JournalUncheckedCreateInput>
@@ -10901,6 +10999,10 @@ export namespace Prisma {
      */
     data: JournalCreateManyInput | JournalCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JournalIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -10915,6 +11017,10 @@ export namespace Prisma {
      * Omit specific fields from the Journal
      */
     omit?: JournalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JournalInclude<ExtArgs> | null
     /**
      * The data needed to update a Journal.
      */
@@ -10967,6 +11073,10 @@ export namespace Prisma {
      * Limit how many Journals to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JournalIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -10981,6 +11091,10 @@ export namespace Prisma {
      * Omit specific fields from the Journal
      */
     omit?: JournalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JournalInclude<ExtArgs> | null
     /**
      * The filter to search for the Journal to update in case it exists.
      */
@@ -11008,6 +11122,10 @@ export namespace Prisma {
      */
     omit?: JournalOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JournalInclude<ExtArgs> | null
+    /**
      * Filter which Journal to delete.
      */
     where: JournalWhereUniqueInput
@@ -11028,6 +11146,25 @@ export namespace Prisma {
   }
 
   /**
+   * Journal.user
+   */
+  export type Journal$userArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
    * Journal without action
    */
   export type JournalDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -11039,6 +11176,10 @@ export namespace Prisma {
      * Omit specific fields from the Journal
      */
     omit?: JournalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JournalInclude<ExtArgs> | null
   }
 
 
@@ -15533,6 +15674,8 @@ export namespace Prisma {
     status: 'status',
     source: 'source',
     relations: 'relations',
+    analysis: 'analysis',
+    userId: 'userId',
     isDeleted: 'isDeleted',
     deletedAt: 'deletedAt',
     createdAt: 'createdAt',
@@ -15752,6 +15895,7 @@ export namespace Prisma {
     role?: XOR<RoleNullableScalarRelationFilter, RoleWhereInput> | null
     stats?: XOR<UserStatsNullableScalarRelationFilter, UserStatsWhereInput> | null
     connections?: UserConnectionListRelationFilter
+    journals?: JournalListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -15768,6 +15912,7 @@ export namespace Prisma {
     role?: RoleOrderByWithRelationInput
     stats?: UserStatsOrderByWithRelationInput
     connections?: UserConnectionOrderByRelationAggregateInput
+    journals?: JournalOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -15787,6 +15932,7 @@ export namespace Prisma {
     role?: XOR<RoleNullableScalarRelationFilter, RoleWhereInput> | null
     stats?: XOR<UserStatsNullableScalarRelationFilter, UserStatsWhereInput> | null
     connections?: UserConnectionListRelationFilter
+    journals?: JournalListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -16313,10 +16459,13 @@ export namespace Prisma {
     status?: StringFilter<"Journal"> | string
     source?: StringFilter<"Journal"> | string
     relations?: JsonNullableFilter<"Journal">
+    analysis?: JsonNullableFilter<"Journal">
+    userId?: StringNullableFilter<"Journal"> | string | null
     isDeleted?: BoolFilter<"Journal"> | boolean
     deletedAt?: DateTimeNullableFilter<"Journal"> | Date | string | null
     createdAt?: DateTimeFilter<"Journal"> | Date | string
     updatedAt?: DateTimeFilter<"Journal"> | Date | string
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }
 
   export type JournalOrderByWithRelationInput = {
@@ -16329,10 +16478,13 @@ export namespace Prisma {
     status?: SortOrder
     source?: SortOrder
     relations?: SortOrderInput | SortOrder
+    analysis?: SortOrderInput | SortOrder
+    userId?: SortOrderInput | SortOrder
     isDeleted?: SortOrder
     deletedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
   }
 
   export type JournalWhereUniqueInput = Prisma.AtLeast<{
@@ -16348,10 +16500,13 @@ export namespace Prisma {
     status?: StringFilter<"Journal"> | string
     source?: StringFilter<"Journal"> | string
     relations?: JsonNullableFilter<"Journal">
+    analysis?: JsonNullableFilter<"Journal">
+    userId?: StringNullableFilter<"Journal"> | string | null
     isDeleted?: BoolFilter<"Journal"> | boolean
     deletedAt?: DateTimeNullableFilter<"Journal"> | Date | string | null
     createdAt?: DateTimeFilter<"Journal"> | Date | string
     updatedAt?: DateTimeFilter<"Journal"> | Date | string
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }, "id">
 
   export type JournalOrderByWithAggregationInput = {
@@ -16364,6 +16519,8 @@ export namespace Prisma {
     status?: SortOrder
     source?: SortOrder
     relations?: SortOrderInput | SortOrder
+    analysis?: SortOrderInput | SortOrder
+    userId?: SortOrderInput | SortOrder
     isDeleted?: SortOrder
     deletedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -16386,6 +16543,8 @@ export namespace Prisma {
     status?: StringWithAggregatesFilter<"Journal"> | string
     source?: StringWithAggregatesFilter<"Journal"> | string
     relations?: JsonNullableWithAggregatesFilter<"Journal">
+    analysis?: JsonNullableWithAggregatesFilter<"Journal">
+    userId?: StringNullableWithAggregatesFilter<"Journal"> | string | null
     isDeleted?: BoolWithAggregatesFilter<"Journal"> | boolean
     deletedAt?: DateTimeNullableWithAggregatesFilter<"Journal"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Journal"> | Date | string
@@ -16701,6 +16860,7 @@ export namespace Prisma {
     role?: RoleCreateNestedOneWithoutUsersInput
     stats?: UserStatsCreateNestedOneWithoutUserInput
     connections?: UserConnectionCreateNestedManyWithoutUserInput
+    journals?: JournalCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -16716,6 +16876,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     stats?: UserStatsUncheckedCreateNestedOneWithoutUserInput
     connections?: UserConnectionUncheckedCreateNestedManyWithoutUserInput
+    journals?: JournalUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -16731,6 +16892,7 @@ export namespace Prisma {
     role?: RoleUpdateOneWithoutUsersNestedInput
     stats?: UserStatsUpdateOneWithoutUserNestedInput
     connections?: UserConnectionUpdateManyWithoutUserNestedInput
+    journals?: JournalUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -16746,6 +16908,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stats?: UserStatsUncheckedUpdateOneWithoutUserNestedInput
     connections?: UserConnectionUncheckedUpdateManyWithoutUserNestedInput
+    journals?: JournalUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -17345,10 +17508,12 @@ export namespace Prisma {
     status?: string
     source?: string
     relations?: NullableJsonNullValueInput | InputJsonValue
+    analysis?: NullableJsonNullValueInput | InputJsonValue
     isDeleted?: boolean
     deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    user?: UserCreateNestedOneWithoutJournalsInput
   }
 
   export type JournalUncheckedCreateInput = {
@@ -17361,6 +17526,8 @@ export namespace Prisma {
     status?: string
     source?: string
     relations?: NullableJsonNullValueInput | InputJsonValue
+    analysis?: NullableJsonNullValueInput | InputJsonValue
+    userId?: string | null
     isDeleted?: boolean
     deletedAt?: Date | string | null
     createdAt?: Date | string
@@ -17377,10 +17544,12 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     source?: StringFieldUpdateOperationsInput | string
     relations?: NullableJsonNullValueInput | InputJsonValue
+    analysis?: NullableJsonNullValueInput | InputJsonValue
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneWithoutJournalsNestedInput
   }
 
   export type JournalUncheckedUpdateInput = {
@@ -17393,6 +17562,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     source?: StringFieldUpdateOperationsInput | string
     relations?: NullableJsonNullValueInput | InputJsonValue
+    analysis?: NullableJsonNullValueInput | InputJsonValue
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17409,6 +17580,8 @@ export namespace Prisma {
     status?: string
     source?: string
     relations?: NullableJsonNullValueInput | InputJsonValue
+    analysis?: NullableJsonNullValueInput | InputJsonValue
+    userId?: string | null
     isDeleted?: boolean
     deletedAt?: Date | string | null
     createdAt?: Date | string
@@ -17425,6 +17598,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     source?: StringFieldUpdateOperationsInput | string
     relations?: NullableJsonNullValueInput | InputJsonValue
+    analysis?: NullableJsonNullValueInput | InputJsonValue
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17441,6 +17615,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     source?: StringFieldUpdateOperationsInput | string
     relations?: NullableJsonNullValueInput | InputJsonValue
+    analysis?: NullableJsonNullValueInput | InputJsonValue
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
     isDeleted?: BoolFieldUpdateOperationsInput | boolean
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17859,12 +18035,22 @@ export namespace Prisma {
     none?: UserConnectionWhereInput
   }
 
+  export type JournalListRelationFilter = {
+    every?: JournalWhereInput
+    some?: JournalWhereInput
+    none?: JournalWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
   }
 
   export type UserConnectionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type JournalOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -18367,6 +18553,11 @@ export namespace Prisma {
     progress?: SortOrder
   }
 
+  export type UserNullableScalarRelationFilter = {
+    is?: UserWhereInput | null
+    isNot?: UserWhereInput | null
+  }
+
   export type JournalCountOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
@@ -18377,6 +18568,8 @@ export namespace Prisma {
     status?: SortOrder
     source?: SortOrder
     relations?: SortOrder
+    analysis?: SortOrder
+    userId?: SortOrder
     isDeleted?: SortOrder
     deletedAt?: SortOrder
     createdAt?: SortOrder
@@ -18391,6 +18584,7 @@ export namespace Prisma {
     type?: SortOrder
     status?: SortOrder
     source?: SortOrder
+    userId?: SortOrder
     isDeleted?: SortOrder
     deletedAt?: SortOrder
     createdAt?: SortOrder
@@ -18405,6 +18599,7 @@ export namespace Prisma {
     type?: SortOrder
     status?: SortOrder
     source?: SortOrder
+    userId?: SortOrder
     isDeleted?: SortOrder
     deletedAt?: SortOrder
     createdAt?: SortOrder
@@ -18634,6 +18829,13 @@ export namespace Prisma {
     connect?: UserConnectionWhereUniqueInput | UserConnectionWhereUniqueInput[]
   }
 
+  export type JournalCreateNestedManyWithoutUserInput = {
+    create?: XOR<JournalCreateWithoutUserInput, JournalUncheckedCreateWithoutUserInput> | JournalCreateWithoutUserInput[] | JournalUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: JournalCreateOrConnectWithoutUserInput | JournalCreateOrConnectWithoutUserInput[]
+    createMany?: JournalCreateManyUserInputEnvelope
+    connect?: JournalWhereUniqueInput | JournalWhereUniqueInput[]
+  }
+
   export type UserStatsUncheckedCreateNestedOneWithoutUserInput = {
     create?: XOR<UserStatsCreateWithoutUserInput, UserStatsUncheckedCreateWithoutUserInput>
     connectOrCreate?: UserStatsCreateOrConnectWithoutUserInput
@@ -18645,6 +18847,13 @@ export namespace Prisma {
     connectOrCreate?: UserConnectionCreateOrConnectWithoutUserInput | UserConnectionCreateOrConnectWithoutUserInput[]
     createMany?: UserConnectionCreateManyUserInputEnvelope
     connect?: UserConnectionWhereUniqueInput | UserConnectionWhereUniqueInput[]
+  }
+
+  export type JournalUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<JournalCreateWithoutUserInput, JournalUncheckedCreateWithoutUserInput> | JournalCreateWithoutUserInput[] | JournalUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: JournalCreateOrConnectWithoutUserInput | JournalCreateOrConnectWithoutUserInput[]
+    createMany?: JournalCreateManyUserInputEnvelope
+    connect?: JournalWhereUniqueInput | JournalWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -18701,6 +18910,20 @@ export namespace Prisma {
     deleteMany?: UserConnectionScalarWhereInput | UserConnectionScalarWhereInput[]
   }
 
+  export type JournalUpdateManyWithoutUserNestedInput = {
+    create?: XOR<JournalCreateWithoutUserInput, JournalUncheckedCreateWithoutUserInput> | JournalCreateWithoutUserInput[] | JournalUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: JournalCreateOrConnectWithoutUserInput | JournalCreateOrConnectWithoutUserInput[]
+    upsert?: JournalUpsertWithWhereUniqueWithoutUserInput | JournalUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: JournalCreateManyUserInputEnvelope
+    set?: JournalWhereUniqueInput | JournalWhereUniqueInput[]
+    disconnect?: JournalWhereUniqueInput | JournalWhereUniqueInput[]
+    delete?: JournalWhereUniqueInput | JournalWhereUniqueInput[]
+    connect?: JournalWhereUniqueInput | JournalWhereUniqueInput[]
+    update?: JournalUpdateWithWhereUniqueWithoutUserInput | JournalUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: JournalUpdateManyWithWhereWithoutUserInput | JournalUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: JournalScalarWhereInput | JournalScalarWhereInput[]
+  }
+
   export type UserStatsUncheckedUpdateOneWithoutUserNestedInput = {
     create?: XOR<UserStatsCreateWithoutUserInput, UserStatsUncheckedCreateWithoutUserInput>
     connectOrCreate?: UserStatsCreateOrConnectWithoutUserInput
@@ -18723,6 +18946,20 @@ export namespace Prisma {
     update?: UserConnectionUpdateWithWhereUniqueWithoutUserInput | UserConnectionUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: UserConnectionUpdateManyWithWhereWithoutUserInput | UserConnectionUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: UserConnectionScalarWhereInput | UserConnectionScalarWhereInput[]
+  }
+
+  export type JournalUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<JournalCreateWithoutUserInput, JournalUncheckedCreateWithoutUserInput> | JournalCreateWithoutUserInput[] | JournalUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: JournalCreateOrConnectWithoutUserInput | JournalCreateOrConnectWithoutUserInput[]
+    upsert?: JournalUpsertWithWhereUniqueWithoutUserInput | JournalUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: JournalCreateManyUserInputEnvelope
+    set?: JournalWhereUniqueInput | JournalWhereUniqueInput[]
+    disconnect?: JournalWhereUniqueInput | JournalWhereUniqueInput[]
+    delete?: JournalWhereUniqueInput | JournalWhereUniqueInput[]
+    connect?: JournalWhereUniqueInput | JournalWhereUniqueInput[]
+    update?: JournalUpdateWithWhereUniqueWithoutUserInput | JournalUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: JournalUpdateManyWithWhereWithoutUserInput | JournalUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: JournalScalarWhereInput | JournalScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutConnectionsInput = {
@@ -18909,9 +19146,25 @@ export namespace Prisma {
     set: string[]
   }
 
+  export type UserCreateNestedOneWithoutJournalsInput = {
+    create?: XOR<UserCreateWithoutJournalsInput, UserUncheckedCreateWithoutJournalsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutJournalsInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type JournalUpdatetagsInput = {
     set?: string[]
     push?: string | string[]
+  }
+
+  export type UserUpdateOneWithoutJournalsNestedInput = {
+    create?: XOR<UserCreateWithoutJournalsInput, UserUncheckedCreateWithoutJournalsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutJournalsInput
+    upsert?: UserUpsertWithoutJournalsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutJournalsInput, UserUpdateWithoutJournalsInput>, UserUncheckedUpdateWithoutJournalsInput>
   }
 
   export type MemoryCreatetagsInput = {
@@ -19324,6 +19577,50 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type JournalCreateWithoutUserInput = {
+    id?: string
+    title?: string | null
+    content: string
+    mood?: string | null
+    tags?: JournalCreatetagsInput | string[]
+    type?: string
+    status?: string
+    source?: string
+    relations?: NullableJsonNullValueInput | InputJsonValue
+    analysis?: NullableJsonNullValueInput | InputJsonValue
+    isDeleted?: boolean
+    deletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type JournalUncheckedCreateWithoutUserInput = {
+    id?: string
+    title?: string | null
+    content: string
+    mood?: string | null
+    tags?: JournalCreatetagsInput | string[]
+    type?: string
+    status?: string
+    source?: string
+    relations?: NullableJsonNullValueInput | InputJsonValue
+    analysis?: NullableJsonNullValueInput | InputJsonValue
+    isDeleted?: boolean
+    deletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type JournalCreateOrConnectWithoutUserInput = {
+    where: JournalWhereUniqueInput
+    create: XOR<JournalCreateWithoutUserInput, JournalUncheckedCreateWithoutUserInput>
+  }
+
+  export type JournalCreateManyUserInputEnvelope = {
+    data: JournalCreateManyUserInput | JournalCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type RoleUpsertWithoutUsersInput = {
     update: XOR<RoleUpdateWithoutUsersInput, RoleUncheckedUpdateWithoutUsersInput>
     create: XOR<RoleCreateWithoutUsersInput, RoleUncheckedCreateWithoutUsersInput>
@@ -19418,6 +19715,43 @@ export namespace Prisma {
     connectedAt?: DateTimeFilter<"UserConnection"> | Date | string
   }
 
+  export type JournalUpsertWithWhereUniqueWithoutUserInput = {
+    where: JournalWhereUniqueInput
+    update: XOR<JournalUpdateWithoutUserInput, JournalUncheckedUpdateWithoutUserInput>
+    create: XOR<JournalCreateWithoutUserInput, JournalUncheckedCreateWithoutUserInput>
+  }
+
+  export type JournalUpdateWithWhereUniqueWithoutUserInput = {
+    where: JournalWhereUniqueInput
+    data: XOR<JournalUpdateWithoutUserInput, JournalUncheckedUpdateWithoutUserInput>
+  }
+
+  export type JournalUpdateManyWithWhereWithoutUserInput = {
+    where: JournalScalarWhereInput
+    data: XOR<JournalUpdateManyMutationInput, JournalUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type JournalScalarWhereInput = {
+    AND?: JournalScalarWhereInput | JournalScalarWhereInput[]
+    OR?: JournalScalarWhereInput[]
+    NOT?: JournalScalarWhereInput | JournalScalarWhereInput[]
+    id?: StringFilter<"Journal"> | string
+    title?: StringNullableFilter<"Journal"> | string | null
+    content?: StringFilter<"Journal"> | string
+    mood?: StringNullableFilter<"Journal"> | string | null
+    tags?: StringNullableListFilter<"Journal">
+    type?: StringFilter<"Journal"> | string
+    status?: StringFilter<"Journal"> | string
+    source?: StringFilter<"Journal"> | string
+    relations?: JsonNullableFilter<"Journal">
+    analysis?: JsonNullableFilter<"Journal">
+    userId?: StringNullableFilter<"Journal"> | string | null
+    isDeleted?: BoolFilter<"Journal"> | boolean
+    deletedAt?: DateTimeNullableFilter<"Journal"> | Date | string | null
+    createdAt?: DateTimeFilter<"Journal"> | Date | string
+    updatedAt?: DateTimeFilter<"Journal"> | Date | string
+  }
+
   export type UserCreateWithoutConnectionsInput = {
     id?: string
     email: string
@@ -19430,6 +19764,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     role?: RoleCreateNestedOneWithoutUsersInput
     stats?: UserStatsCreateNestedOneWithoutUserInput
+    journals?: JournalCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutConnectionsInput = {
@@ -19444,6 +19779,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     stats?: UserStatsUncheckedCreateNestedOneWithoutUserInput
+    journals?: JournalUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutConnectionsInput = {
@@ -19474,6 +19810,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     role?: RoleUpdateOneWithoutUsersNestedInput
     stats?: UserStatsUpdateOneWithoutUserNestedInput
+    journals?: JournalUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutConnectionsInput = {
@@ -19488,6 +19825,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stats?: UserStatsUncheckedUpdateOneWithoutUserNestedInput
+    journals?: JournalUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutStatsInput = {
@@ -19502,6 +19840,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     role?: RoleCreateNestedOneWithoutUsersInput
     connections?: UserConnectionCreateNestedManyWithoutUserInput
+    journals?: JournalCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutStatsInput = {
@@ -19516,6 +19855,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     connections?: UserConnectionUncheckedCreateNestedManyWithoutUserInput
+    journals?: JournalUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutStatsInput = {
@@ -19546,6 +19886,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     role?: RoleUpdateOneWithoutUsersNestedInput
     connections?: UserConnectionUpdateManyWithoutUserNestedInput
+    journals?: JournalUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutStatsInput = {
@@ -19560,6 +19901,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     connections?: UserConnectionUncheckedUpdateManyWithoutUserNestedInput
+    journals?: JournalUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutRoleInput = {
@@ -19574,6 +19916,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     stats?: UserStatsCreateNestedOneWithoutUserInput
     connections?: UserConnectionCreateNestedManyWithoutUserInput
+    journals?: JournalCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutRoleInput = {
@@ -19588,6 +19931,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     stats?: UserStatsUncheckedCreateNestedOneWithoutUserInput
     connections?: UserConnectionUncheckedCreateNestedManyWithoutUserInput
+    journals?: JournalUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutRoleInput = {
@@ -19751,6 +20095,82 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Role"> | Date | string
   }
 
+  export type UserCreateWithoutJournalsInput = {
+    id?: string
+    email: string
+    name: string
+    password: string
+    refreshToken?: string | null
+    isDeleted?: boolean
+    deletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    role?: RoleCreateNestedOneWithoutUsersInput
+    stats?: UserStatsCreateNestedOneWithoutUserInput
+    connections?: UserConnectionCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutJournalsInput = {
+    id?: string
+    email: string
+    name: string
+    password: string
+    refreshToken?: string | null
+    roleId?: string | null
+    isDeleted?: boolean
+    deletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    stats?: UserStatsUncheckedCreateNestedOneWithoutUserInput
+    connections?: UserConnectionUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutJournalsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutJournalsInput, UserUncheckedCreateWithoutJournalsInput>
+  }
+
+  export type UserUpsertWithoutJournalsInput = {
+    update: XOR<UserUpdateWithoutJournalsInput, UserUncheckedUpdateWithoutJournalsInput>
+    create: XOR<UserCreateWithoutJournalsInput, UserUncheckedCreateWithoutJournalsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutJournalsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutJournalsInput, UserUncheckedUpdateWithoutJournalsInput>
+  }
+
+  export type UserUpdateWithoutJournalsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    role?: RoleUpdateOneWithoutUsersNestedInput
+    stats?: UserStatsUpdateOneWithoutUserNestedInput
+    connections?: UserConnectionUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutJournalsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    roleId?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    stats?: UserStatsUncheckedUpdateOneWithoutUserNestedInput
+    connections?: UserConnectionUncheckedUpdateManyWithoutUserNestedInput
+  }
+
   export type DailyQuoteCreateWithoutQuoteInput = {
     id?: string
     date: string
@@ -19882,6 +20302,23 @@ export namespace Prisma {
     connectedAt?: Date | string
   }
 
+  export type JournalCreateManyUserInput = {
+    id?: string
+    title?: string | null
+    content: string
+    mood?: string | null
+    tags?: JournalCreatetagsInput | string[]
+    type?: string
+    status?: string
+    source?: string
+    relations?: NullableJsonNullValueInput | InputJsonValue
+    analysis?: NullableJsonNullValueInput | InputJsonValue
+    isDeleted?: boolean
+    deletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type UserConnectionUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     provider?: StringFieldUpdateOperationsInput | string
@@ -19904,6 +20341,57 @@ export namespace Prisma {
     identifier?: StringFieldUpdateOperationsInput | string
     metadata?: NullableJsonNullValueInput | InputJsonValue
     connectedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type JournalUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    mood?: NullableStringFieldUpdateOperationsInput | string | null
+    tags?: JournalUpdatetagsInput | string[]
+    type?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    source?: StringFieldUpdateOperationsInput | string
+    relations?: NullableJsonNullValueInput | InputJsonValue
+    analysis?: NullableJsonNullValueInput | InputJsonValue
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type JournalUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    mood?: NullableStringFieldUpdateOperationsInput | string | null
+    tags?: JournalUpdatetagsInput | string[]
+    type?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    source?: StringFieldUpdateOperationsInput | string
+    relations?: NullableJsonNullValueInput | InputJsonValue
+    analysis?: NullableJsonNullValueInput | InputJsonValue
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type JournalUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    mood?: NullableStringFieldUpdateOperationsInput | string | null
+    tags?: JournalUpdatetagsInput | string[]
+    type?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    source?: StringFieldUpdateOperationsInput | string
+    relations?: NullableJsonNullValueInput | InputJsonValue
+    analysis?: NullableJsonNullValueInput | InputJsonValue
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserCreateManyRoleInput = {
@@ -19930,6 +20418,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stats?: UserStatsUpdateOneWithoutUserNestedInput
     connections?: UserConnectionUpdateManyWithoutUserNestedInput
+    journals?: JournalUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRoleInput = {
@@ -19944,6 +20433,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stats?: UserStatsUncheckedUpdateOneWithoutUserNestedInput
     connections?: UserConnectionUncheckedUpdateManyWithoutUserNestedInput
+    journals?: JournalUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutRoleInput = {

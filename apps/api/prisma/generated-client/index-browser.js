@@ -220,6 +220,8 @@ exports.Prisma.JournalScalarFieldEnum = {
   status: 'status',
   source: 'source',
   relations: 'relations',
+  analysis: 'analysis',
+  userId: 'userId',
   isDeleted: 'isDeleted',
   deletedAt: 'deletedAt',
   createdAt: 'createdAt',
