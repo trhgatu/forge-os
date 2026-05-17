@@ -1,4 +1,4 @@
-// Vercel Build Trigger: Monorepo "Super Standard" Config
+// Vercel Build Trigger: Clean Next.js Monorepo Setup
 import type { Metadata } from 'next';
 import {
   Geist,
