@@ -1,4 +1,4 @@
-// Vercel Build Trigger 1
+// Vercel Build Trigger 2
 import type { Metadata } from 'next';
 import {
   Geist,
