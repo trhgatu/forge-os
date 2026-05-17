@@ -1,4 +1,4 @@
-// Vercel Build Trigger: Root Dir fixed to apps/web
+// Vercel Build Trigger: Monorepo "Super Standard" Config
 import type { Metadata } from 'next';
 import {
   Geist,
