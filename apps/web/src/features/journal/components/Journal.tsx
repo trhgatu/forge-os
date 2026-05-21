@@ -17,6 +17,7 @@ import {
 
 import { JournalEditor } from './JournalEditor';
 import { JournalSidebar } from './JournalSidebar';
+import { JournalContextPanel } from './JournalContextPanel';
 
 export function Journal() {
   // --- Local State ---
@@ -183,8 +184,7 @@ export function Journal() {
     return <div className="p-10 text-center text-gray-500 font-mono animate-pulse">Initializing Journal...</div>;
 
   return (
-    <div className="h-full flex bg-forge-bg text-white overflow-hidden">
-
+    <div className="h-full flex dark:bg-forge-bg bg-[#fbfaf7] dark:text-white text-[#1c1c1a] overflow-hidden font-serif select-none transition-colors duration-300">
       {!isFocusMode && (
         <JournalSidebar
           entries={entries}
@@ -198,15 +198,20 @@ export function Journal() {
       )}
 
       {localEntry ? (
-        <JournalEditor
-          entry={localEntry}
-          onChange={handleUpdateLocal}
-          isFocusMode={isFocusMode}
-          toggleFocusMode={() => setIsFocusMode((v) => !v)}
-          saveStatus={visualSaveStatus}
-        />
+        <div className="flex-1 flex overflow-hidden">
+          <JournalEditor
+            entry={localEntry}
+            onChange={handleUpdateLocal}
+            isFocusMode={isFocusMode}
+            toggleFocusMode={() => setIsFocusMode((v) => !v)}
+            saveStatus={visualSaveStatus}
+          />
+          {!isFocusMode && (
+            <JournalContextPanel analysis={localEntry.analysis} />
+          )}
+        </div>
       ) : (
-        <div className="flex-1 flex items-center justify-center text-gray-500">
+        <div className="flex-1 flex items-center justify-center dark:text-zinc-500 text-zinc-400 font-serif italic">
           Select an entry or create a new one.
         </div>
       )}

@@ -19,6 +19,7 @@ import {
   Flag,
   CalendarCheck,
   Moon,
+  Sun,
   Orbit,
   Trophy,
   Fingerprint,
@@ -44,7 +45,7 @@ import { usePathname } from 'next/navigation';
 import React, { useState, useEffect, useRef } from 'react';
 
 import type { SoundType } from '@/contexts';
-import { useLanguage, useSound } from '@/contexts';
+import { useLanguage, useSound, useTheme } from '@/contexts';
 import XPBar from '@/features/gamification/components/XPBar';
 import { cn } from '@/shared/lib/utils';
 import { useAuthStore } from '@/shared/store';
@@ -145,6 +146,15 @@ const getPathForView = (view: View): string => {
   }
 };
 
+const GROUP_KANJI: Record<string, string> = {
+  Meta: '界',
+  Main: '殿',
+  Reflection: '記',
+  Creativity: '造',
+  Evolution: '術',
+  System: '制',
+};
+
 const SidebarGroup: React.FC<{
   group: string;
   isSidebarExpanded: boolean;
@@ -184,12 +194,15 @@ const SidebarGroup: React.FC<{
             : 'justify-center opacity-0 -translate-x-2 pointer-events-none h-0 mb-0 overflow-hidden',
         )}
       >
-        <span className="text-sm  font-bold text-gray-500 uppercase tracking-[0.15em] group-hover/header:text-forge-cyan transition-colors">
-          {t(`group.${group.toLowerCase()}`)}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="font-serif text-red-700/60 font-black text-sm tracking-wider">{GROUP_KANJI[group]}</span>
+          <span className="text-[10px] font-serif font-black text-gray-500 uppercase tracking-[0.2em] group-hover/header:text-red-700/80 transition-colors">
+            {t(`group.${group.toLowerCase()}`)}
+          </span>
+        </div>
         <div
           className={cn(
-            'text-gray-600 group-hover/header:text-forge-cyan transition-transform duration-300',
+            'text-gray-600 group-hover/header:text-red-700/80 transition-transform duration-300',
             effectiveCollapsed ? '-rotate-90' : 'rotate-0',
           )}
         >
@@ -215,28 +228,28 @@ const SidebarGroup: React.FC<{
               onClick={() => playSound('click')}
               onMouseEnter={() => playSound('hover')}
               className={cn(
-                'nav-item-btn group relative w-full flex items-center p-3 rounded-xl text-[14px] font-[family-name:var(--font-rajdhani)] font-bold tracking-wide transition-all duration-200',
+                'nav-item-btn group relative w-full flex items-center p-3 rounded-lg text-[13px] font-serif tracking-widest transition-all duration-300',
                 isActive
-                  ? `bg-white/10 text-white shadow-inner border border-white/5`
-                  : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent',
+                  ? `bg-white/[0.03] text-white border-y border-white/5 border-l border-l-red-800/40 border-r-transparent`
+                  : 'text-gray-400 hover:text-white hover:bg-white/[0.015] border border-transparent',
                 isSidebarExpanded ? 'justify-start gap-3' : 'justify-center',
               )}
             >
               {isActive && (
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full bg-forge-cyan shadow-[0_0_10px_#22D3EE] transition-all duration-700" />
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-6 bg-red-700 shadow-[0_0_10px_rgba(185,28,28,0.5)] transition-all duration-500" style={{ filter: "url(#line-torn-filter)" }} />
               )}
               <Icon
-                size={20}
+                size={18}
                 className={cn(
                   'transition-all duration-300 z-10 shrink-0',
-                  isActive ? 'text-forge-cyan' : 'text-gray-400 group-hover:text-gray-200',
+                  isActive ? 'text-red-600' : 'text-gray-400 group-hover:text-gray-200',
                   !isSidebarExpanded && isActive ? 'scale-110' : '',
                 )}
               />
 
               <span
                 className={cn(
-                  'whitespace-nowrap transition-all duration-300 ease-spring-out origin-left font-lato',
+                  'whitespace-nowrap transition-all duration-300 ease-spring-out origin-left font-serif',
                   isSidebarExpanded
                     ? 'opacity-100 translate-x-0 w-auto delay-75'
                     : 'opacity-0 -translate-x-4 w-0',
@@ -258,6 +271,7 @@ export const Sidebar: React.FC = () => {
   const { user: authUser, logout } = useAuthStore();
   const { language, setLanguage, t } = useLanguage();
   const { playSound } = useSound();
+  const { theme, toggleTheme } = useTheme();
   const navContainerRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
@@ -275,11 +289,11 @@ export const Sidebar: React.FC = () => {
     <aside
       className={cn(
         'relative h-full z-50 flex flex-col',
-        'border-r border-white/5 bg-black/40 backdrop-blur-2xl font-lato',
-        'transition-[width] duration-500 ease-spring-out will-change-[width,transform]',
+        'border-r dark:border-white/5 border-black/5 dark:bg-[#080808]/95 bg-[#f7f5f0]/95 backdrop-blur-3xl font-serif select-none transition-all duration-300',
         isExpanded ? 'w-72' : 'w-20',
       )}
     >
+      <div className="absolute right-0 top-0 bottom-0 w-[1px] dark:bg-white/10 bg-black/5 z-50 pointer-events-none" style={{ filter: "url(#line-torn-filter)" }} />
       <div
         className={cn(
           'flex items-center p-6 mb-2 transition-all duration-500',
@@ -293,10 +307,11 @@ export const Sidebar: React.FC = () => {
         >
           <div
             className={cn(
-              'w-10 h-10 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(0,0,0,0.5)] relative z-10 transition-all duration-300 hover:scale-105 border border-white/10 bg-black',
+              'w-10 h-10 rounded-full flex items-center justify-center relative z-10 transition-all duration-500 hover:scale-105 border border-red-800/40 dark:bg-red-950/20 bg-red-50 text-[#8b0000] font-serif text-xl font-bold shadow-[0_0_15px_rgba(139,0,0,0.15)]',
             )}
+            style={{ filter: "url(#line-torn-filter)" }}
           >
-            <Cpu className="w-5 h-5 text-forge-cyan" />
+            煉
           </div>
         </button>
 
@@ -306,8 +321,8 @@ export const Sidebar: React.FC = () => {
             isExpanded ? 'opacity-100 translate-x-0 w-auto' : 'opacity-0 -translate-x-4 w-0',
           )}
         >
-          <span className="font-bold text-xl tracking-wide text-white leading-none">FORGE OS</span>
-          <span className="text-[10px] font-mono mt-1 text-forge-cyan">v2.9.1-beta</span>
+          <span className="font-serif font-black text-xl tracking-[0.2em] dark:text-white text-[#1c1c1a] leading-none">FORGE OS</span>
+          <span className="text-[10px] font-mono mt-1 text-red-600/70 font-semibold uppercase tracking-widest">v2.9.1-beta</span>
         </div>
       </div>
 
@@ -330,7 +345,7 @@ export const Sidebar: React.FC = () => {
         })}
       </nav>
 
-      <div className="mt-auto border-t border-white/5 bg-black/20">
+      <div className="mt-auto border-t dark:border-white/5 border-black/5 dark:bg-black/20 bg-black/[0.01]">
         <div
           className={cn(
             'py-4 transition-all duration-300',
@@ -342,30 +357,30 @@ export const Sidebar: React.FC = () => {
 
         {/* User Profile Section */}
         <div className={cn(
-          "p-4 border-t border-white/5 bg-white/[0.02] flex items-center gap-3 transition-all",
+          "p-4 border-t dark:border-white/5 border-black/5 dark:bg-white/[0.02] bg-black/[0.01] flex items-center gap-3 transition-all",
           !isExpanded && "justify-center"
         )}>
           <div className="relative shrink-0">
-            <div className="w-10 h-10 rounded-full bg-linear-to-br from-forge-cyan/20 to-blue-500/20 border border-white/10 flex items-center justify-center text-forge-cyan font-bold shadow-lg shadow-black">
+            <div className="w-10 h-10 rounded-full dark:bg-zinc-900 bg-zinc-100 dark:border-white/10 border-black/10 flex items-center justify-center dark:text-red-600 text-red-700 font-serif font-black shadow-lg dark:shadow-black" style={{ filter: "url(#line-torn-filter)" }}>
               {authUser?.name?.[0]?.toUpperCase() || <Users size={18} />}
             </div>
-            <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-black rounded-full" />
+            <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-red-700 shadow-[0_0_8px_rgba(185,28,28,0.7)] border-2 dark:border-black border-white rounded-full" />
           </div>
 
           {isExpanded && (
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-white truncate">{authUser?.name || 'Traveller'}</p>
-              <p className="text-[10px] text-gray-500 font-mono truncate">{authUser?.email}</p>
+              <p className="text-sm font-bold dark:text-white text-[#1c1c1a] truncate">{authUser?.name || 'Traveller'}</p>
+              <p className="text-[10px] dark:text-gray-500 text-gray-500 font-mono truncate">{authUser?.email}</p>
             </div>
           )}
 
           {isExpanded && (
-            <button 
+            <button
               onClick={() => {
                 playSound('click');
                 logout();
               }}
-              className="p-2 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-400/10 transition-all"
+              className="p-2 rounded-lg dark:text-gray-500 text-gray-500 hover:text-red-400 hover:bg-red-400/10 transition-all"
               title="Logout"
             >
               <LogOut size={16} />
@@ -373,26 +388,27 @@ export const Sidebar: React.FC = () => {
           )}
         </div>
       </div>
-      <div className="p-4 border-t border-white/5 bg-black/20 space-y-2">
+      <div className="p-4 border-t dark:border-white/5 border-black/5 dark:bg-black/20 bg-black/[0.01] space-y-2">
+        {/* Language switch */}
         <button
           onClick={toggleLanguage}
           onMouseEnter={() => playSound('hover')}
           className={cn(
-            'w-full flex items-center rounded-lg hover:bg-white/5 transition-all border border-transparent hover:border-white/5 group',
+            'w-full flex items-center rounded-lg hover:bg-white/5 dark:hover:bg-white/5 transition-all border border-transparent hover:border-black/5 dark:hover:border-white/5 group',
             isExpanded ? 'p-2 gap-3' : 'p-2 justify-center',
           )}
         >
-          <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-gray-400 group-hover:text-white transition-colors">
+          <div className="w-8 h-8 rounded-lg bg-black/5 dark:bg-white/5 flex items-center justify-center text-gray-500 dark:text-gray-400 group-hover:text-red-700 dark:group-hover:text-white transition-colors">
             <Languages size={16} />
           </div>
           {isExpanded && (
             <div className="flex-1 flex items-center justify-between">
-              <span className="text-sm font-medium text-gray-400">{t('settings.language')}</span>
-              <div className="flex bg-black/40 rounded-md p-0.5 border border-white/10">
+              <span className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('settings.language')}</span>
+              <div className="flex bg-black/[0.04] dark:bg-black/40 rounded-md p-0.5 border dark:border-white/10 border-black/10">
                 <span
                   className={cn(
                     'px-2 py-0.5 text-[10px] rounded font-bold transition-all',
-                    language === 'en' ? 'bg-white text-black' : 'text-gray-500',
+                    language === 'en' ? 'bg-[#1c1c1a] text-white dark:bg-white dark:text-black' : 'text-gray-500',
                   )}
                 >
                   EN
@@ -400,10 +416,50 @@ export const Sidebar: React.FC = () => {
                 <span
                   className={cn(
                     'px-2 py-0.5 text-[10px] rounded font-bold transition-all',
-                    language === 'vi' ? 'bg-white text-black' : 'text-gray-500',
+                    language === 'vi' ? 'bg-[#1c1c1a] text-white dark:bg-white dark:text-black' : 'text-gray-500',
                   )}
                 >
                   VI
+                </span>
+              </div>
+            </div>
+          )}
+        </button>
+
+        {/* Theme toggle */}
+        <button
+          onClick={() => {
+            playSound('click');
+            toggleTheme();
+          }}
+          onMouseEnter={() => playSound('hover')}
+          className={cn(
+            'w-full flex items-center rounded-lg hover:bg-white/5 dark:hover:bg-white/5 transition-all border border-transparent hover:border-black/5 dark:hover:border-white/5 group',
+            isExpanded ? 'p-2 gap-3' : 'p-2 justify-center',
+          )}
+        >
+          <div className="w-8 h-8 rounded-lg bg-black/5 dark:bg-white/5 flex items-center justify-center text-gray-500 dark:text-gray-400 group-hover:text-red-700 dark:group-hover:text-white transition-colors">
+            {theme === 'dark' ? <Moon size={16} /> : <Sun size={16} />}
+          </div>
+          {isExpanded && (
+            <div className="flex-1 flex items-center justify-between">
+              <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Theme</span>
+              <div className="flex bg-black/[0.04] dark:bg-black/40 rounded-md p-0.5 border dark:border-white/10 border-black/10">
+                <span
+                  className={cn(
+                    'px-2 py-0.5 text-[10px] rounded font-bold transition-all',
+                    theme === 'light' ? 'bg-[#1c1c1a] text-white dark:bg-white dark:text-black' : 'text-gray-500',
+                  )}
+                >
+                  LIGHT
+                </span>
+                <span
+                  className={cn(
+                    'px-2 py-0.5 text-[10px] rounded font-bold transition-all',
+                    theme === 'dark' ? 'bg-[#1c1c1a] text-white dark:bg-white dark:text-black' : 'text-gray-500',
+                  )}
+                >
+                  DARK
                 </span>
               </div>
             </div>
@@ -413,5 +469,6 @@ export const Sidebar: React.FC = () => {
     </aside>
   );
 };
+
 
 

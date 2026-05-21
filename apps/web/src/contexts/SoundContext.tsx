@@ -69,10 +69,11 @@ export function SoundProvider({ children }: { children: ReactNode }) {
 
     switch (type) {
       case 'click':
-        playTone(420, 'sine', 0.06, 0.15, 840);
+        playTone(220, 'triangle', 0.05, 0.15, 80);
+        setTimeout(() => playTone(600, 'sine', 0.12, 0.03, 200), 10);
         break;
       case 'hover':
-        playTone(1400, 'triangle', 0.03, 0.04, 2400);
+        playTone(1100, 'sine', 0.02, 0.025, 700);
         break;
       case 'success':
         playTone(440, 'sine', 0.4, 0.12);
