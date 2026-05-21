@@ -1,6 +1,7 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { JWT_CONSTANTS } from '@shared/constants/jwt.constants';
 import { RegisterDto, LoginDto } from '../dtos';
 import { UserRepository } from 'src/contexts/iam/users/application/ports/user.repository';
 import { RoleRepository } from 'src/contexts/iam/roles/application/ports/role.repository';
@@ -85,12 +86,12 @@ export class AuthService {
 
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
-        secret: process.env.JWT_SECRET,
-        expiresIn: (process.env.JWT_EXPIRES_IN || '15m') as any,
+        secret: JWT_CONSTANTS.secret,
+        expiresIn: JWT_CONSTANTS.expiresIn,
       }),
       this.jwtService.signAsync(payload, {
-        secret: process.env.JWT_REFRESH_SECRET,
-        expiresIn: (process.env.JWT_REFRESH_EXPIRES_IN || '7d') as any,
+        secret: JWT_CONSTANTS.refreshSecret,
+        expiresIn: JWT_CONSTANTS.refreshExpiresIn,
       }),
     ]);
 
@@ -119,7 +120,7 @@ export class AuthService {
   async verifyToken(token: string) {
     try {
       return await this.jwtService.verifyAsync(token, {
-        secret: process.env.JWT_SECRET,
+        secret: JWT_CONSTANTS.secret,
       });
     } catch {
       throw new ForbiddenException('Invalid token');

@@ -1,4 +1,4 @@
-import type { MoodType } from './journal';
+import type { MoodType } from '@forge/reflection';
 
 export interface InsightData {
   quote: string;
@@ -47,3 +47,6 @@ export interface GlobalAnalysis {
     suggestion: string;
   };
 }
+
+
+

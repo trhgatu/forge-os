@@ -37,7 +37,9 @@ services:
       - /app/node_modules
       - /app/apps/api/node_modules
       - /app/apps/web/node_modules
-      - /app/packages/shared/node_modules
+      - /app/packages/auth/node_modules
+      - /app/packages/core/node_modules
+      - /app/packages/reflection/node_modules
       - /app/packages/ui/node_modules
       - /app/packages/eslint-config/node_modules
       - /app/packages/typescript-config/node_modules
@@ -49,6 +51,7 @@ services:
     environment:
       DATABASE_URL: postgresql://postgres:password@postgres:5432/forge_os?schema=public
       REDIS_HOST: redis
+      REDIS_PORT: 6379
     depends_on:
       - postgres
       - redis

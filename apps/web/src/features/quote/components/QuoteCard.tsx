@@ -193,3 +193,5 @@ export function QuoteCard({ quote, onClick, onToggleFav, onEdit, onDelete }: Quo
     </div>
   );
 }
+
+

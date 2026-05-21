@@ -1,5 +1,6 @@
 'use client';
 
+import { MoodType } from '@forge/reflection';
 import type { LucideIcon } from 'lucide-react';
 import {
   Activity,
@@ -15,7 +16,6 @@ import {
   History as HistoryIcon,
 } from 'lucide-react';
 
-import type { MoodType } from '@/shared/types';
 
 export interface MoodConfigItem {
   label: string;
@@ -26,98 +26,105 @@ export interface MoodConfigItem {
 }
 
 export const MOOD_CONFIG: Record<MoodType, MoodConfigItem> = {
-  joy: {
+  [MoodType.JOY]: {
     label: 'Joy',
     color: 'text-yellow-400',
     bg: 'bg-yellow-500',
     icon: Sun,
     weight: 9,
   },
-  calm: {
+  [MoodType.HAPPY]: {
+    label: 'Happy',
+    color: 'text-green-400',
+    bg: 'bg-green-500',
+    icon: Sun,
+    weight: 8,
+  },
+  [MoodType.CALM]: {
     label: 'Calm',
     color: 'text-cyan-400',
     bg: 'bg-cyan-500',
     icon: Anchor,
     weight: 6,
   },
-  inspired: {
+  [MoodType.INSPIRED]: {
     label: 'Inspired',
     color: 'text-fuchsia-400',
     bg: 'bg-fuchsia-500',
     icon: Sparkles,
     weight: 10,
   },
-  neutral: {
+  [MoodType.NEUTRAL]: {
     label: 'Neutral',
     color: 'text-gray-300',
     bg: 'bg-gray-500',
     icon: Cloud,
     weight: 5,
   },
-  sad: {
+  [MoodType.SAD]: {
     label: 'Sad',
     color: 'text-indigo-400',
     bg: 'bg-indigo-500',
     icon: Droplets,
     weight: 2,
   },
-  stressed: {
+  [MoodType.STRESSED]: {
     label: 'Stressed',
     color: 'text-red-400',
     bg: 'bg-red-500',
     icon: Flame,
     weight: 3,
   },
-  lonely: {
+  [MoodType.LONELY]: {
     label: 'Lonely',
     color: 'text-blue-400',
     bg: 'bg-blue-500',
     icon: Ghost,
     weight: 1,
   },
-  angry: {
+  [MoodType.ANGRY]: {
     label: 'Angry',
     color: 'text-rose-600',
     bg: 'bg-rose-600',
     icon: Flame,
     weight: 8,
   },
-  energetic: {
+  [MoodType.ENERGETIC]: {
     label: 'Energetic',
     color: 'text-lime-400',
     bg: 'bg-lime-500',
     icon: Activity,
     weight: 9,
   },
-  empty: {
+  [MoodType.EMPTY]: {
     label: 'Empty',
     color: 'text-stone-400',
     bg: 'bg-stone-500',
     icon: Moon,
     weight: 0,
   },
-  focused: {
+  [MoodType.FOCUSED]: {
     label: 'Focused',
     color: 'text-emerald-400',
     bg: 'bg-emerald-500',
     icon: Activity,
     weight: 7,
   },
-  anxious: {
+  [MoodType.ANXIOUS]: {
     label: 'Anxious',
     color: 'text-orange-400',
     bg: 'bg-orange-500',
     icon: Wind,
     weight: 4,
   },
-  tired: {
+  [MoodType.TIRED]: {
     label: 'Tired',
     color: 'text-slate-400',
     bg: 'bg-slate-500',
     icon: Moon,
     weight: 2,
   },
-  nostalgic: {
+  [MoodType.NOSTALGIC]: {
     label: 'Nostalgic',
     color: 'text-amber-400',
     bg: 'bg-amber-500',
@@ -128,3 +135,6 @@ export const MOOD_CONFIG: Record<MoodType, MoodConfigItem> = {
 
 export const MOOD_CHART_COLOR = '#FBBF24';
 export const MOOD_CHART_GRADIENT_ID = 'moodGradient';
+
+
+

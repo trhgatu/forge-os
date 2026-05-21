@@ -1,7 +1,7 @@
+import type { MoodType } from '@forge/reflection';
 import React from 'react';
 
 import { cn } from '@/shared/lib/utils';
-import type { MoodType } from '@/shared/types/journal';
 
 import { SEASON_CONFIG, getSeasonFromMood } from '../../memory/config/seasons';
 
@@ -69,3 +69,6 @@ export const MoodAmbience: React.FC<MoodAmbienceProps> = ({ mood }) => {
     </div>
   );
 };
+
+
+

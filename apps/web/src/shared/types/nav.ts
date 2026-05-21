@@ -6,3 +6,5 @@ export interface NavItem {
   icon: LucideIcon;
   label: string;
 }
+
+

@@ -89,6 +89,7 @@ export class PrismaUserRepository implements UserRepository {
             permissions: true,
           },
         },
+        connections: true,
       },
     });
 
@@ -111,11 +112,24 @@ export class PrismaUserRepository implements UserRepository {
   }
 
   async update(id: string, dto: UpdateUserDto): Promise<UserEntity | null> {
-    const data: any = { ...dto };
+    const { connections, ...rest } = dto;
+    const data: any = { ...rest };
 
     if (dto.password) {
       const salt = await bcrypt.genSalt();
       data.password = await bcrypt.hash(dto.password, salt);
+    }
+
+    if (connections) {
+      data.connections = {
+        deleteMany: {},
+        create: connections.map((conn: any) => ({
+          provider: conn.provider,
+          identifier: conn.identifier,
+          metadata: conn.metadata || {},
+          connectedAt: conn.connectedAt ? new Date(conn.connectedAt) : new Date(),
+        })),
+      };
     }
 
     const user = await this.prisma.user.update({

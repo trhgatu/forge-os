@@ -2,6 +2,7 @@
   "name": "@forge/web",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@9.15.4",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -31,7 +32,9 @@
     "tailwind-merge": "^3.4.0",
     "zod": "^3.24.2",
     "zustand": "^5.0.9",
-    "@forge/shared": "workspace:*"
+    "@forge/core": "workspace:*",
+    "@forge/auth": "workspace:*",
+    "@forge/reflection": "workspace:*"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

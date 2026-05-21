@@ -8,7 +8,7 @@ import type { Project } from '../../../types';
 interface ProjectLink {
   title: string;
   url: string;
-  icon?: 'github' | 'figma' | 'doc' | 'link';
+  icon?: 'github' | 'vercel' | 'figma' | 'doc' | 'link';
 }
 
 interface ProjectResourcesTabProps {
@@ -38,12 +38,24 @@ export const ProjectResourcesTab: React.FC<ProjectResourcesTabProps> = ({
           className="group hover:bg-white/10 cursor-pointer transition-colors relative overflow-hidden"
         >
           <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-100 transition-opacity -rotate-12 translate-x-2 -translate-y-2">
-            {link.icon === 'github' ? <GitBranch size={64} /> : <LinkIcon size={64} />}
+            {link.icon === 'github' ? (
+              <GitBranch size={64} />
+            ) : link.icon === 'vercel' ? (
+              <svg className="w-16 h-16 fill-current text-white" viewBox="0 0 512 512">
+                <path d="M256 48L496 464H16L256 48Z" />
+              </svg>
+            ) : (
+              <LinkIcon size={64} />
+            )}
           </div>
           <div className="flex flex-col h-full justify-between">
             <div className="p-2 w-fit rounded-lg bg-white/5 text-gray-400 group-hover:text-white transition-colors mb-4">
               {link.icon === 'github' ? (
                 <GitBranch size={24} />
+              ) : link.icon === 'vercel' ? (
+                <svg className="w-5 h-5 fill-current text-white" viewBox="0 0 512 512">
+                  <path d="M256 48L496 464H16L256 48Z" />
+                </svg>
               ) : link.icon === 'figma' ? (
                 <PenTool size={24} />
               ) : link.icon === 'doc' ? (
@@ -70,3 +82,5 @@ export const ProjectResourcesTab: React.FC<ProjectResourcesTabProps> = ({
     </div>
   );
 };
+
+

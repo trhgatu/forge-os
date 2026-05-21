@@ -1,4 +1,4 @@
-import type { MoodType } from './journal';
+import type { MoodType } from '@forge/reflection';
 
 export interface MoodEntry {
   id: string;
@@ -16,3 +16,6 @@ export interface MoodAnalysis {
   insight: string;
   actionableStep: string;
 }
+
+
+

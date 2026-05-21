@@ -1,3 +1,4 @@
+// Vercel Build Trigger 6
 import type { Metadata } from 'next';
 import {
   Geist,
@@ -66,3 +67,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+

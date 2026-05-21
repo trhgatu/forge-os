@@ -34,3 +34,5 @@ export interface KnowledgeConcept {
   // Raw extract (optional fallback)
   extract?: string;
 }
+
+

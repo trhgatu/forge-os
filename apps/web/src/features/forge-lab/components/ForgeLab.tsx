@@ -1,6 +1,7 @@
 'use client';
 
 import { LayoutDashboard, Layers, Book, Network, Plus } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 
 import { cn } from '@/shared/lib/utils';
@@ -12,8 +13,9 @@ import {
   useCreateProject,
   useUpdateProject,
   useDeleteProject,
+  useSyncProject,
 } from '../hooks/useProjects';
-import type { ForgeTab, Project, Foundation, ResearchTrail } from '../types';
+import type { ForgeTab, Project, Foundation, ResearchTrail, GithubRepo } from '../types';
 
 // Components
 import { LabDashboard } from './dashboard/LabDashboard';
@@ -88,12 +90,27 @@ const MOCK_TRAILS: ResearchTrail[] = [
   { id: '1', title: 'AI Cognition', nodes: 12, updatedAt: new Date() },
 ];
 
-export const ForgeLab: React.FC = () => {
-  // --- Local State (Journal Pattern) ---
-  const [activeTab, setActiveTab] = useState<ForgeTab>('dashboard');
-  const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
+export const ForgeLab: React.FC<{ slug?: string[] }> = ({ slug }) => {
+  const router = useRouter();
+
+  // --- Derive Active Tab and Project from Router Slug (Enterprise Routing) ---
+  const activeTab = (slug?.[0] as ForgeTab) || 'dashboard';
+  const activeProjectId = slug?.[0] === 'projects' && slug?.[1] ? slug[1] : null;
+
   const [activeFoundation, setActiveFoundation] = useState<Foundation | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
+
+  const setActiveTab = (tab: ForgeTab) => {
+    router.push(`/forge/lab/${tab}`);
+  };
+
+  const setActiveProjectId = (projectId: string | null) => {
+    if (projectId) {
+      router.push(`/forge/lab/projects/${projectId}?tab=overview`);
+    } else {
+      router.push(`/forge/lab/projects`);
+    }
+  };
 
   // --- Identity State ---
   const authUser = useAuthStore((state) => state.user);
@@ -104,6 +121,7 @@ export const ForgeLab: React.FC = () => {
   const createProjectMutation = useCreateProject();
   const updateProjectMutation = useUpdateProject();
   const deleteProjectMutation = useDeleteProject();
+  const syncProjectMutation = useSyncProject();
 
   const projects = React.useMemo(() => {
     if (!projectsData) return [];
@@ -150,10 +168,49 @@ export const ForgeLab: React.FC = () => {
   }, [authUser?.id]);
 
   // --- CRUD Operations ---
-  const handleCreateProject = async (data: { title: string; description: string }) => {
-    createProjectMutation.mutate(data, {
-      onSuccess: () => setShowCreateModal(false),
-    });
+  const handleCreateProject = async (data: {
+    title: string;
+    description: string;
+    linkedRepo?: GithubRepo | null;
+    liveUrl?: string;
+  }) => {
+    try {
+      const newProject = await createProjectMutation.mutateAsync({
+        title: data.title,
+        description: data.description,
+      });
+
+      const updateData: Partial<Project> = {};
+      if (data.liveUrl) {
+        updateData.metadata = { liveUrl: data.liveUrl };
+      }
+
+      if (data.linkedRepo) {
+        updateData.links = [
+          {
+            title: data.linkedRepo.name,
+            url: data.linkedRepo.html_url,
+            icon: 'github',
+          },
+        ];
+      }
+
+      if (Object.keys(updateData).length > 0) {
+        await updateProjectMutation.mutateAsync({
+          id: newProject.id,
+          data: updateData,
+        });
+      }
+
+      if (data.linkedRepo) {
+        // Trigger background sync immediately
+        syncProjectMutation.mutate(newProject.id);
+      }
+
+      setShowCreateModal(false);
+    } catch (err) {
+      console.error('Failed to create project and link repo', err);
+    }
   };
 
   const handleUpdateProject = async (id: string, data: Partial<Project>) => {
@@ -204,7 +261,7 @@ export const ForgeLab: React.FC = () => {
           ref={scrollContainerRef}
           className="flex-1 overflow-y-auto scrollbar-hide relative z-10 pb-32"
         >
-          {activeTab === 'dashboard' && (
+          <div className={cn(activeTab !== 'dashboard' && 'hidden')}>
             <LabDashboard
               projects={parsedProjects}
               foundations={MOCK_FOUNDATIONS}
@@ -212,8 +269,9 @@ export const ForgeLab: React.FC = () => {
               setActiveTab={setActiveTab}
               setActiveProjectId={setActiveProjectId}
             />
-          )}
-          {activeTab === 'projects' && (
+          </div>
+
+          <div className={cn(activeTab !== 'projects' && 'hidden')}>
             <ProjectForge
               projects={parsedProjects}
               activeProjectId={activeProjectId}
@@ -223,15 +281,19 @@ export const ForgeLab: React.FC = () => {
               onDeleteProject={handleDeleteProject}
               onRequestCreate={() => setShowCreateModal(true)}
             />
-          )}
-          {activeTab === 'foundations' && (
+          </div>
+
+          <div className={cn(activeTab !== 'foundations' && 'hidden')}>
             <FoundationLibrary
               foundations={MOCK_FOUNDATIONS}
               activeFoundation={activeFoundation}
               setActiveFoundation={setActiveFoundation}
             />
-          )}
-          {activeTab === 'research' && <ResearchTrails />}
+          </div>
+
+          <div className={cn(activeTab !== 'research' && 'hidden')}>
+            <ResearchTrails />
+          </div>
         </div>
       </div>
 
@@ -295,7 +357,10 @@ export const ForgeLab: React.FC = () => {
         onClose={() => setShowCreateModal(false)}
         onCreate={handleCreateProject}
         isLoading={createProjectMutation.isPending}
+        githubUsername={githubUsername}
       />
     </div>
   );
 };
+
+

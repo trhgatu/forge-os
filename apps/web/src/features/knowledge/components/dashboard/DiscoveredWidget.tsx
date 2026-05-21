@@ -16,9 +16,6 @@ export const DiscoveredWidget: React.FC<DiscoveredWidgetProps> = ({ history, onS
   if (history.length === 0) {
     return (
       <GlassCard className="h-full flex flex-col items-center justify-center text-center p-8 space-y-4 min-h-[300px]">
-        <div className="p-4 rounded-full bg-white/5 text-gray-600">
-          <Layers size={32} />
-        </div>
         <div>
           <h3 className="text-lg font-display font-medium text-white mb-1">No Recent Artifacts</h3>
           <p className="text-sm text-gray-500 max-w-[200px] mx-auto">
@@ -51,8 +48,6 @@ export const DiscoveredWidget: React.FC<DiscoveredWidgetProps> = ({ history, onS
           >
             {/* Hover Glow */}
             <div className="absolute inset-y-0 left-0 w-1 bg-forge-cyan/0 group-hover:bg-forge-cyan transition-colors duration-300" />
-
-            {/* Thumbnail if available */}
             <div className="relative w-12 h-12 rounded-lg bg-[#0A0A0F] border border-white/10 overflow-hidden shrink-0 mr-4">
               {item.imageUrl ? (
                 <Image
@@ -95,3 +90,5 @@ export const DiscoveredWidget: React.FC<DiscoveredWidgetProps> = ({ history, onS
     </GlassCard>
   );
 };
+
+

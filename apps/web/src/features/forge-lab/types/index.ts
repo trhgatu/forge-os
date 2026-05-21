@@ -1,3 +1,7 @@
+import type { User} from '@forge/auth';
+import { Role } from '@forge/auth';
+import { PaginatedResponse } from '@forge/core';
+
 export type ForgeTab = 'dashboard' | 'projects' | 'foundations' | 'research';
 
 // Stats cached from GitHub or Internal metrics
@@ -44,17 +48,14 @@ export interface HybridStats {
   health?: number; // 0-100
 }
 
-export interface PaginatedResponse<T> {
-  data: T[];
-  meta: {
-    page: number;
-    take: number;
-    itemCount: number;
-    pageCount: number;
-    hasPreviousPage: boolean;
-    hasNextPage: boolean;
-  };
+// For legacy compatibility in this feature, defining UserProfile as an alias to User
+export interface UserConnection {
+  provider: string;
+  identifier: string;
+  metadata?: Record<string, unknown>;
+  connectedAt?: Date;
 }
+export type UserProfile = User & { connections: UserConnection[] };
 
 export interface Project {
   id: string;
@@ -79,7 +80,8 @@ export interface Project {
   // Management Data
   technologies?: string[];
   currentMilestone?: { title: string; progress: number; dueDate: Date };
-  links?: Array<{ title: string; url: string; icon?: 'github' | 'figma' | 'doc' | 'link' }>;
+  metadata?: Record<string, any>;
+  links?: Array<{ title: string; url: string; icon?: 'github' | 'figma' | 'doc' | 'link' | 'vercel' }>;
   logs?: Array<{
     id: string;
     content: string;
@@ -134,13 +136,6 @@ export interface ContributionStats {
   }>;
 }
 
-export interface UserConnection {
-  provider: string;
-  identifier: string;
-  metadata?: Record<string, unknown>;
-  connectedAt?: Date;
-}
-
 export interface GithubRepo {
   id: number;
   name: string;
@@ -152,18 +147,6 @@ export interface GithubRepo {
   updated_at: string;
 }
 
-export interface UserProfile {
-  id: string;
-  name: string;
-  email: string;
-  role: {
-    id: string;
-    name: string;
-    permissions: string[];
-  };
-  connections: UserConnection[];
-}
-
 export interface ForgeLabContextType {
   activeTab: ForgeTab;
   setActiveTab: (tab: ForgeTab) => void;
@@ -173,3 +156,4 @@ export interface ForgeLabContextType {
   activeProject: Project | null;
   setActiveProject: (project: Project | null) => void;
 }
+

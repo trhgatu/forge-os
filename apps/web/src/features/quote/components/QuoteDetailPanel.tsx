@@ -209,3 +209,5 @@ function QuoteDetailMetadata({ quote }: { quote: Quote }) {
     </div>
   );
 }
+
+

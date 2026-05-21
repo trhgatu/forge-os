@@ -3,8 +3,8 @@
 import React, { useCallback } from 'react';
 
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useKnowledgeStore } from '@/shared/store/knowledgeStore';
 import type { KnowledgeConcept } from '@/shared/types';
-import { useKnowledgeStore } from '@/store/knowledge.store';
 
 interface KnowledgeProviderProps {
   children: React.ReactNode;
@@ -68,3 +68,5 @@ export const useKnowledge = () => {
     clearResults,
   };
 };
+
+

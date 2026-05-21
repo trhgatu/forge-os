@@ -9,3 +9,5 @@ export const SYSTEM_CONFIG = {
     socketUrl: process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:8000',
   },
 };
+
+

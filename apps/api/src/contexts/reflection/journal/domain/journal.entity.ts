@@ -17,6 +17,7 @@ interface JournalProps {
   status: JournalStatus;
   source: JournalSource;
   relations: JournalRelation[];
+  analysis?: any;
   userId: string;
   createdAt: Date;
   updatedAt: Date;
@@ -96,6 +97,11 @@ export class Journal extends AggregateRoot<JournalId> {
     this.props.updatedAt = new Date();
   }
 
+  public updateAnalysis(analysis: any): void {
+    this.props.analysis = analysis;
+    this.props.updatedAt = new Date();
+  }
+
   public delete(): void {
     if (this.isDeleted) return;
     this.isDeleted = true;
@@ -136,6 +142,9 @@ export class Journal extends AggregateRoot<JournalId> {
   }
   get relations() {
     return this.props.relations;
+  }
+  get analysis() {
+    return this.props.analysis;
   }
   get userId() {
     return this.props.userId;

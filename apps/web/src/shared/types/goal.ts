@@ -30,3 +30,5 @@ export interface Goal {
   analysis?: GoalAnalysis;
   dateCreated: Date;
 }
+
+

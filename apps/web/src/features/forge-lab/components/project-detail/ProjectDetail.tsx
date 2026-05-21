@@ -1,7 +1,6 @@
 import {
   ArrowLeft,
   Github,
-  Link as LinkIcon,
   Layout,
   ListTodo,
   History,
@@ -12,6 +11,7 @@ import {
   Loader2,
   RefreshCw,
 } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -31,11 +31,9 @@ import type { Project, GithubRepo } from '../../types';
 import { GlassCard } from '../ui/GlassCard';
 
 import { EditProjectModal, DeleteConfirmModal } from './ProjectModals';
-import { RepoPicker } from './RepoPicker';
 import { ProjectLogsTab } from './tabs/ProjectLogsTab';
 import { ProjectOverviewTab } from './tabs/ProjectOverviewTab';
 import { ProjectReadmeTab } from './tabs/ProjectReadmeTab';
-import { ProjectResourcesTab } from './tabs/ProjectResourcesTab';
 import { ProjectTasksTab } from './tabs/ProjectTasksTab';
 
 interface ProjectDetailProps {
@@ -55,7 +53,15 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
   onUpdate,
   onDelete,
 }) => {
-  const [activeTab, setActiveTab] = useState<Tab>('overview');
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const activeTab = (searchParams.get('tab') as Tab) || 'overview';
+
+  const setActiveTab = (tab: Tab) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('tab', tab);
+    router.replace(`?${params.toString()}`, { scroll: false });
+  };
 
   const {
     data: projectSummary,
@@ -81,12 +87,8 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
   const deleteProjectMutation = useDeleteProject();
   const syncProjectMutation = useSyncProject();
 
-  const [showResourceModal, setShowResourceModal] = useState(false);
-  const [showRepoPicker, setShowRepoPicker] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [newLink, setNewLink] = useState({ title: '', url: '' });
-  const [editingResourceIndex, setEditingResourceIndex] = useState<number | null>(null);
 
   const project: Project | null = projectSummary
     ? {
@@ -111,6 +113,15 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
           : projectSummary.githubStats,
       }
     : null;
+
+  const liveLink = project?.metadata?.liveUrl || project?.links?.find(
+    (l) =>
+      l.url.toLowerCase().includes('vercel.app') ||
+      l.title.toLowerCase().includes('vercel') ||
+      l.title.toLowerCase().includes('live') ||
+      l.title.toLowerCase().includes('demo') ||
+      l.icon === 'vercel',
+  )?.url;
 
   const loading = isSummaryLoading;
   const error = summaryError ? 'Failed to load project details' : null;
@@ -173,62 +184,6 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
     );
   }
 
-  const handleRepoSelect = (repo: GithubRepo) => {
-    setNewLink({
-      title: repo.full_name,
-      url: repo.html_url,
-    });
-    setShowRepoPicker(false);
-  };
-
-  const handleSaveResource = async () => {
-    if (!project) return;
-    try {
-      const updatedLinks = [...(project.links || [])];
-      const iconType = newLink.url.includes('github') ? 'github' : 'link';
-      const linkData = { ...newLink, icon: iconType as 'github' | 'link' };
-
-      if (editingResourceIndex !== null) {
-        updatedLinks[editingResourceIndex] = linkData;
-      } else {
-        updatedLinks.push(linkData);
-      }
-
-      await updateProjectMutation.mutateAsync({
-        id: project.id,
-        data: { links: updatedLinks },
-      });
-
-      toast.success(editingResourceIndex !== null ? 'Resource updated' : 'Resource added');
-
-      setShowResourceModal(false);
-      setNewLink({ title: '', url: '' });
-      setEditingResourceIndex(null);
-    } catch {
-      // Error handled by mutation hook
-    }
-  };
-
-  const handleDeleteResource = async () => {
-    if (!project || editingResourceIndex === null) return;
-    try {
-      const updatedLinks = [...(project.links || [])];
-      updatedLinks.splice(editingResourceIndex, 1);
-
-      await updateProjectMutation.mutateAsync({
-        id: project.id,
-        data: { links: updatedLinks },
-      });
-
-      toast.success('Resource deleted');
-
-      setShowResourceModal(false);
-      setNewLink({ title: '', url: '' });
-      setEditingResourceIndex(null);
-    } catch {
-      // Error handled by mutation hook
-    }
-  };
 
   const handleSync = async () => {
     if (!project) return;
@@ -240,11 +195,43 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
     }
   };
 
-  const handleUpdate = async (id: string, data: Partial<Project>) => {
+  const handleUpdate = async (
+    id: string,
+    data: Partial<Project> & { linkedRepo?: GithubRepo | null; liveUrl?: string },
+  ) => {
     try {
-      await updateProjectMutation.mutateAsync({ id, data });
+      const { linkedRepo, liveUrl, ...updateData } = data;
+
+      if (liveUrl !== undefined) {
+        updateData.metadata = {
+          ...project?.metadata,
+          liveUrl,
+        };
+      }
+
+      if (linkedRepo !== undefined) {
+        const updatedLinks = [...(project?.links || [])].filter(
+          (l) => !l.url.toLowerCase().includes('github.com'),
+        );
+
+        if (linkedRepo) {
+          updatedLinks.push({
+            title: linkedRepo.name,
+            url: linkedRepo.html_url,
+            icon: 'github',
+          });
+        }
+
+        updateData.links = updatedLinks;
+      }
+
+      await updateProjectMutation.mutateAsync({ id, data: updateData });
+
+      if (linkedRepo) {
+        syncProjectMutation.mutate(id);
+      }
+
       setShowEditModal(false);
-      // Toast handled by mutation
     } catch {
       // Error handled by mutation
     }
@@ -310,7 +297,6 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
               { id: 'overview', icon: Layout, label: 'Overview' },
               { id: 'tasks', icon: ListTodo, label: 'Tasks' },
               { id: 'readme', icon: FileText, label: 'Readme' },
-              { id: 'resources', icon: LinkIcon, label: 'Resources' },
               { id: 'logs', icon: History, label: 'Logs' },
             ].map((tab) => (
               <button
@@ -340,9 +326,26 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
       >
         <div className="pl-6 border-l-2 border-forge-cyan/30">
           <div className="flex items-start justify-between gap-4">
-            <h1 className="text-4xl md:text-5xl font-display font-bold text-white leading-none tracking-tight mb-2">
-              {project.title}
-            </h1>
+            <div className="flex flex-wrap items-center gap-4 mb-2">
+              <h1 className="text-4xl md:text-5xl font-display font-bold text-white leading-none tracking-tight">
+                {project.title}
+              </h1>
+              {liveLink && (
+                <a
+                  href={liveLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="relative inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold hover:bg-emerald-500/20 hover:border-emerald-500/50 transition-all shadow-[0_0_15px_rgba(16,185,129,0.15)] group mt-1"
+                >
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                  </span>
+                  <span>Live Site</span>
+                  <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+                </a>
+              )}
+            </div>
             <div className="flex items-center gap-2 shrink-0">
               {onUpdate && (
                 <button
@@ -375,7 +378,12 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
       {/* CONTENT AREA */}
       <div className="min-h-[400px]">
         {/* 1. OVERVIEW TAB */}
-        {activeTab === 'overview' && <ProjectOverviewTab project={project} />}
+        {activeTab === 'overview' && (
+          <ProjectOverviewTab
+            project={project}
+            onUpdateProject={(data) => handleUpdate(project.id, data)}
+          />
+        )}
 
         {/* 2. README TAB */}
         {activeTab === 'readme' && (
@@ -395,115 +403,16 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
         {/* 4. LOGS TAB */}
         {activeTab === 'logs' && <ProjectLogsTab project={project} isLoading={isLogsLoading} />}
 
-        {/* 5. RESOURCES TAB */}
-        {activeTab === 'resources' && (
-          <ProjectResourcesTab
-            project={project}
-            onAdd={() => {
-              setEditingResourceIndex(null);
-              setNewLink({ title: '', url: '' });
-              setShowResourceModal(true);
-            }}
-            onEdit={(link, index) => {
-              setEditingResourceIndex(index);
-              setNewLink(link);
-              setShowResourceModal(true);
-            }}
-          />
-        )}
 
-        {/* Add Resource Modal */}
-        {showResourceModal && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-            <GlassCard className="w-full max-w-md p-6 space-y-4">
-              <h3 className="text-xl font-bold text-white mb-4">
-                {editingResourceIndex !== null ? 'Edit Resource' : 'Add Resource Link'}
-              </h3>
-              <div className="space-y-3">
-                <div className="flex justify-end -mb-2">
-                  <button
-                    onClick={() => setShowRepoPicker(true)}
-                    className="text-xs text-forge-cyan hover:underline flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
-                    disabled={!githubUsername}
-                    title={!githubUsername ? 'Connect GitHub to import' : 'Import repository'}
-                  >
-                    <Github size={12} /> Import from GitHub
-                  </button>
-                </div>
-                <div>
-                  <label className="text-xs text-gray-400 uppercase font-bold block mb-1">
-                    Title
-                  </label>
-                  <input
-                    type="text"
-                    value={newLink.title}
-                    onChange={(e) => setNewLink({ ...newLink, title: e.target.value })}
-                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-forge-cyan/50"
-                    placeholder="e.g. GitHub Repo"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs text-gray-400 uppercase font-bold block mb-1">
-                    URL
-                  </label>
-                  <input
-                    type="text"
-                    value={newLink.url}
-                    onChange={(e) => setNewLink({ ...newLink, url: e.target.value })}
-                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-forge-cyan/50"
-                    placeholder="https://..."
-                  />
-                </div>
-              </div>
-              <div className="flex justify-between items-center mt-6">
-                {editingResourceIndex !== null ? (
-                  <button
-                    onClick={handleDeleteResource}
-                    className="px-4 py-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors text-sm font-medium"
-                  >
-                    Delete
-                  </button>
-                ) : (
-                  <div />
-                )}
-
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => {
-                      setShowResourceModal(false);
-                      setNewLink({ title: '', url: '' });
-                      setEditingResourceIndex(null);
-                    }}
-                    className="px-4 py-2 rounded-lg text-gray-400 hover:bg-white/5 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleSaveResource}
-                    disabled={!newLink.title || !newLink.url}
-                    className="px-4 py-2 rounded-lg bg-forge-cyan text-black font-bold hover:bg-forge-cyan/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {editingResourceIndex !== null ? 'Save Changes' : 'Add Link'}
-                  </button>
-                </div>
-              </div>
-            </GlassCard>
-          </div>
-        )}
       </div>
       {/* Modals */}
-      <RepoPicker
-        isOpen={showRepoPicker}
-        onClose={() => setShowRepoPicker(false)}
-        onSelect={handleRepoSelect}
-        username={githubUsername}
-      />
 
       <EditProjectModal
         isOpen={showEditModal}
         onClose={() => setShowEditModal(false)}
         onUpdate={handleUpdate}
         project={project}
+        githubUsername={githubUsername}
       />
 
       <DeleteConfirmModal
@@ -515,3 +424,5 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
     </div>
   );
 };
+
+

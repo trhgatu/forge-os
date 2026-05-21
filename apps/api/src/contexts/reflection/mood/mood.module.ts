@@ -13,12 +13,13 @@ import {
   GetMoodByIdHandler,
 } from './application/handlers';
 import { SharedModule } from '@shared/shared.module';
+import { AuthModule } from '../../iam/auth/auth.module';
 
 const CommandHandlers = [CreateMoodHandler, UpdateMoodHandler, DeleteMoodHandler];
 const QueryHandlers = [GetAllMoodsHandler, GetMoodByIdHandler];
 
 @Module({
-  imports: [CqrsModule, SharedModule],
+  imports: [CqrsModule, SharedModule, AuthModule],
   controllers: [MoodAdminController, MoodPublicController],
   providers: [
     {
