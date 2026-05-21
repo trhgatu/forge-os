@@ -10,8 +10,13 @@ import type { View } from '@/shared/types/os';
 
 import { useNovaMessage } from '../hooks/useNovaMessage';
 import { useTypewriter } from '../hooks/useTypewriter';
-
+import dynamic from 'next/dynamic';
 import { NovaVisualizer } from './NovaVisualizer';
+
+const NovaRobot = dynamic(
+  () => import('./NovaRobot').then((mod) => mod.NovaRobot),
+  { ssr: false }
+);
 
 interface NovaGuideProps {
   currentView: View;
@@ -30,7 +35,7 @@ export function NovaGuide({ currentView }: NovaGuideProps) {
   const isVisible = Boolean(rawMessage);
 
   return (
-    <div className="pointer-events-none fixed bottom-8 right-8 z-50 flex flex-col items-end">
+    <div className="pointer-events-none fixed bottom-8 right-16 z-50 flex flex-col items-end">
       {/* Panel */}
       <div
         className={cn(
@@ -98,40 +103,41 @@ export function NovaGuide({ currentView }: NovaGuideProps) {
         </div>
       </div>
 
-      {/* Core button */}
-      <button
-        type="button"
-        onClick={() => setIsExpanded((v) => !v)}
-        className={cn(
-          'pointer-events-auto relative z-50 flex h-14 w-14 items-center justify-center rounded-full transition-all duration-500',
-          isExpanded ? 'scale-100' : 'scale-95 hover:scale-105',
-        )}
-      >
-        {/* Rings */}
-        <div className="absolute inset-0 rounded-full border border-forge-cyan/30 border-t-transparent animate-[spin_4s_linear_infinite]" />
-        <div className="absolute inset-2 rounded-full border border-forge-cyan/50 border-b-transparent animate-[spin_3s_linear_infinite_reverse]" />
+      {/* Button and Robot container */}
+      <div className="relative flex h-16 w-16 items-center justify-center">
+        {/* Core 3D Hologram Robot - Borderless floating projection OUTSIDE button */}
+        <NovaRobot isTalking={isTyping} className="absolute -top-24 -left-24 w-64 h-64 pointer-events-none select-none z-[60]" />
 
-        {/* Glow */}
-        <div
+        {/* Core button */}
+        <button
+          type="button"
+          onClick={() => setIsExpanded((v) => !v)}
           className={cn(
-            'absolute inset-0 rounded-full bg-forge-cyan/20 blur-xl transition-opacity duration-500',
-            isExpanded ? 'opacity-100' : 'opacity-0 group-hover:opacity-60',
+            'pointer-events-auto relative z-50 flex h-full w-full items-center justify-center transition-all duration-500',
+            isExpanded ? 'scale-100' : 'scale-95 hover:scale-105',
           )}
-        />
+        >
+          {/* Rings */}
+          <div className="absolute inset-0 rounded-full border border-forge-cyan/30 border-t-transparent animate-[spin_4s_linear_infinite]" />
+          <div className="absolute inset-2 rounded-full border border-forge-cyan/40 border-b-transparent animate-[spin_3s_linear_infinite_reverse]" />
 
-        {/* Core icon */}
-        <div className="relative z-10 flex h-10 w-10 items-center justify-center rounded-full border border-forge-cyan/50 bg-[#050508] shadow-[0_0_15px_rgba(34,211,238,0.5)] transition-colors group-hover:border-forge-cyan">
-          <Bot className={cn('h-5 w-5 text-forge-cyan', !isExpanded && 'animate-pulse')} />
-        </div>
+          {/* Glow */}
+          <div
+            className={cn(
+              'absolute inset-0 rounded-full bg-forge-cyan/25 blur-xl transition-opacity duration-500',
+              isExpanded ? 'opacity-100' : 'opacity-0 group-hover:opacity-80',
+            )}
+          />
 
-        {/* Status dot */}
-        {!isExpanded && (
-          <span className="absolute right-0 top-0 flex h-3 w-3">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex h-3 w-3 rounded-full border-2 border-black bg-emerald-500" />
-          </span>
-        )}
-      </button>
+          {/* Status dot */}
+          {!isExpanded && (
+            <span className="absolute right-1 top-1 flex h-3 w-3 z-50">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex h-3 w-3 rounded-full border-2 border-black bg-emerald-500" />
+            </span>
+          )}
+        </button>
+      </div>
     </div>
   );
 }

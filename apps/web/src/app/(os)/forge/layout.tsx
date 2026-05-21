@@ -22,8 +22,8 @@ export default function ForgeLayout({ children }: { children: React.ReactNode })
                 <Sidebar />
                 <main className="flex-1 h-full relative overflow-hidden flex flex-col">
                   <div className="flex-1 overflow-hidden">{children}</div>
-                  <NovaGuideWrapper />
                 </main>
+                <NovaGuideWrapper />
               </div>
             </div>
           </QueryProvider>
