@@ -6,6 +6,7 @@ export interface ProjectSummaryResponse {
   tags: string[];
   isPinned: boolean;
   progress: number;
+  metadata: Record<string, unknown>;
   links: Array<{
     title: string;
     url: string;

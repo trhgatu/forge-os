@@ -80,7 +80,8 @@ export interface Project {
   // Management Data
   technologies?: string[];
   currentMilestone?: { title: string; progress: number; dueDate: Date };
-  links?: Array<{ title: string; url: string; icon?: 'github' | 'figma' | 'doc' | 'link' }>;
+  metadata?: Record<string, any>;
+  links?: Array<{ title: string; url: string; icon?: 'github' | 'figma' | 'doc' | 'link' | 'vercel' }>;
   logs?: Array<{
     id: string;
     content: string;

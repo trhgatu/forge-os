@@ -87,4 +87,8 @@ export class UpdateProjectDto {
   @ValidateNested()
   @Type(() => ProjectTaskBoardDto)
   taskBoard?: ProjectTaskBoardDto;
+
+  @IsOptional()
+  @IsObject()
+  metadata?: Record<string, any>;
 }

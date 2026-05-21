@@ -56,6 +56,7 @@ export class ProjectPresenter {
       tags: entity.tags,
       isPinned: entity.isPinned,
       progress: entity.progress,
+      metadata: entity.metadata || {},
       links:
         entity.links?.map((link) => ({
           title: link.title,
