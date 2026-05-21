@@ -1,5 +1,5 @@
 import type { BackendResponse, PaginatedResponse } from '@forge/core';
-import type { MoodType } from '@forge/reflection';
+import { MoodType } from '@forge/reflection';
 
 import { apiClient } from '@/services/apiClient';
 import type { QuoteDto, CreateQuoteDto, QuoteFilter } from '@/shared/types/dto/quote.dto';
@@ -11,7 +11,7 @@ const mapDtoToQuote = (dto: QuoteDto): Quote => {
       id: 'fallback',
       text: 'The only limit to our realization of tomorrow will be our doubts of today.',
       author: 'Franklin D. Roosevelt',
-      mood: 'neutral',
+      mood: MoodType.NEUTRAL,
       tags: [],
       isFavorite: false,
       dateAdded: new Date(),
@@ -23,7 +23,7 @@ const mapDtoToQuote = (dto: QuoteDto): Quote => {
     text: dto.content,
     author: dto.author || 'Unknown',
     source: dto.source,
-    mood: (dto.mood as MoodType) || 'neutral',
+    mood: (dto.mood as MoodType) || MoodType.NEUTRAL,
     tags: dto.tags || [],
     isFavorite: dto.status === 'favorite',
     dateAdded: new Date(dto.createdAt),
