@@ -1,4 +1,4 @@
-'use client';
+'use client'; // Force IDE TS reload
 
 import type { LucideIcon } from 'lucide-react';
 import {
@@ -360,7 +360,7 @@ export const Sidebar: React.FC = () => {
           )}
 
           {isExpanded && (
-            <button 
+            <button
               onClick={() => {
                 playSound('click');
                 logout();
