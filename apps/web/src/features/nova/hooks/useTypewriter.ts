@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 interface UseTypewriterOptions {
   minSpeed?: number;
   maxSpeed?: number;
+  onTick?: () => void;
 }
 
 export function useTypewriter(text: string | null, options?: UseTypewriterOptions) {
@@ -36,6 +37,9 @@ export function useTypewriter(text: string | null, options?: UseTypewriterOption
       if (index < text.length) {
         setDisplayed(text.slice(0, index + 1));
         index++;
+        if (options?.onTick) {
+          options.onTick();
+        }
         const speed = Math.random() * (maxSpeed - minSpeed) + minSpeed;
         timeoutRef.current = window.setTimeout(typeNext, speed);
       } else {

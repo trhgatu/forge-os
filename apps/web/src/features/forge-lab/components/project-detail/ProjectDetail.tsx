@@ -247,11 +247,8 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
       // Error handled by mutation
     }
   };
-
   return (
     <div className="max-w-7xl mx-auto p-4 md:p-8 pb-32 animate-in fade-in slide-in-from-bottom-2 duration-700 ease-spring-out relative">
-      {/* Ambient Background */}
-      <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-forge-cyan/5 rounded-full blur-[120px] -z-10" />
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] [background-size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]pointer-events-none -z-10" />
 
       {/* Navigation & Toolbar */}

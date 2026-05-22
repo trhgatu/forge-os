@@ -73,4 +73,10 @@ export enum PermissionEnum {
 
   // 🧪 SYSTEM
   ACCESS_TEST_ENDPOINT = 'access_test_endpoint',
+
+  // 🛡️ QUEST
+  CREATE_QUEST = 'create_quest',
+  READ_QUEST = 'read_quest',
+  UPDATE_QUEST = 'update_quest',
+  DELETE_QUEST = 'delete_quest',
 }

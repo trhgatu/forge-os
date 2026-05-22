@@ -4,8 +4,10 @@ import { LayoutDashboard, Layers, Book, Network, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 
+import { useNovaView } from '@/contexts';
 import { cn } from '@/shared/lib/utils';
 import { useAuthStore } from '@/shared/store/authStore';
+import { View } from '@/shared/types/os';
 
 import { forgeApi } from '../api';
 import {
@@ -92,6 +94,11 @@ const MOCK_TRAILS: ResearchTrail[] = [
 
 export const ForgeLab: React.FC<{ slug?: string[] }> = ({ slug }) => {
   const router = useRouter();
+  const { setCurrentView } = useNovaView();
+
+  useEffect(() => {
+    setCurrentView(View.FORGE_LAB);
+  }, [setCurrentView]);
 
   // --- Derive Active Tab and Project from Router Slug (Enterprise Routing) ---
   const activeTab = (slug?.[0] as ForgeTab) || 'dashboard';
@@ -245,16 +252,8 @@ export const ForgeLab: React.FC<{ slug?: string[] }> = ({ slug }) => {
       scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [activeTab, activeProjectId]);
-
   return (
     <div className="h-full flex flex-col bg-[#030304] text-white relative overflow-hidden animate-in fade-in duration-1000">
-      {/* Background Ambience */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-indigo-900/10 rounded-full blur-[150px] opacity-40" />
-        <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-cyan-900/10 rounded-full blur-[150px] opacity-30" />
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-overlay" />
-      </div>
-
       {/* Main Content Area - Full Width & Height */}
       <div className="flex-1 h-full relative z-10 flex flex-col min-w-0 overflow-hidden">
         <div

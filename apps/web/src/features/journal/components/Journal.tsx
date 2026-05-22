@@ -19,7 +19,6 @@ import { JournalEditor } from './JournalEditor';
 import { JournalSidebar } from './JournalSidebar';
 
 export function Journal() {
-  // --- Local State ---
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [localEntry, setLocalEntry] = useState<JournalEntry | null>(null);
   const [isFocusMode, setIsFocusMode] = useState(false);
@@ -27,21 +26,18 @@ export function Journal() {
 
   const debouncedSearch = useDebounce(searchQuery, 300);
 
-  // --- Data & Hooks ---
   const { data, isLoading } = useJournals({
     page: 1,
     limit: 100,
     search: debouncedSearch,
   });
 
-  // Memoize entries to prevent exhaustive-deps warnings
   const entries = useMemo(() => data?.data || [], [data]);
 
   const createMutation = useCreateJournal();
   const updateMutation = useUpdateJournal();
   const deleteMutation = useDeleteJournal();
 
-  // --- Visual Save Status ---
   const [visualSaveStatus, setVisualSaveStatus] = useState<'saved' | 'saving' | 'error'>('saved');
 
   useEffect(() => {
@@ -57,18 +53,14 @@ export function Journal() {
     }
   }, [updateMutation.isPending, updateMutation.isError, updateMutation.isSuccess]);
 
-  // --- Auto-Save Logic ---
   const debouncedEntry = useDebounce(localEntry, 1000);
   const lastSavedRef = useRef<string>('');
 
-  // 1. Select first entry on load if none selected
   useEffect(() => {
     if (!selectedId && entries.length > 0) {
       setSelectedId(entries[0].id);
     }
   }, [entries, selectedId]);
-
-  // 2. Sync Local State when Switching Entries (or initial load)
   useEffect(() => {
     if (!selectedId) {
       setLocalEntry(null);
@@ -77,7 +69,6 @@ export function Journal() {
     const remote = entries.find((e: JournalEntry) => e.id === selectedId);
     if (remote) {
       setLocalEntry((prev: JournalEntry | null) => (prev?.id === remote.id ? prev : remote));
-      // Update last saved ref when switching entries
       lastSavedRef.current = JSON.stringify({
         title: remote.title,
         content: remote.content,
@@ -85,12 +76,10 @@ export function Journal() {
         tags: remote.tags,
       });
     } else {
-      // If selected ID not found in entries (e.g., just deleted), clear local entry
       setLocalEntry(null);
     }
   }, [selectedId, entries]);
 
-  // 3. Trigger Auto-Save when Debounced Value Changes
   useEffect(() => {
     if (!debouncedEntry || !selectedId) return;
 
@@ -103,19 +92,16 @@ export function Journal() {
 
     const currentState = JSON.stringify(currentData);
 
-    // Block if data hasn't changed since last save (including in-progress saves)
     if (currentState === lastSavedRef.current) return;
 
-    // Mark as saved/saving immediately to prevent loops
     lastSavedRef.current = currentState;
 
     updateMutation.mutate({
       id: debouncedEntry.id,
       data: currentData,
     });
-  }, [debouncedEntry, selectedId]); // removed updateMutation to be safer
+  }, [debouncedEntry, selectedId]);
 
-  // --- Handlers ---
 
   const handleCreate = async () => {
     try {

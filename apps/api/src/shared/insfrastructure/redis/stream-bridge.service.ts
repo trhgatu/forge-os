@@ -89,7 +89,11 @@ export class StreamBridgeService implements OnModuleInit, OnModuleDestroy {
     //logger must delete when finish coding
     this.logger.debug(`Dispatching event to BullMQ: ${pattern}`);
 
-    if (pattern.startsWith('engineering.')) {
+    if (
+      pattern.startsWith('engineering.') ||
+      pattern.startsWith('reflection.') ||
+      pattern.startsWith('gamification.')
+    ) {
       await this.xpQueue.add(pattern, event);
       this.logger.debug(`[BullMQ] Job added to xp_awarding: ${pattern}`);
     }

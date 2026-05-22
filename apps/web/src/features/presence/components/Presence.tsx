@@ -1,14 +1,19 @@
 'use client';
 
 import { Radar, Eye } from 'lucide-react';
-import React from 'react';
-
+import React, { useEffect } from 'react';
 import { usePresence } from '../hooks/usePresence';
-
 import { CosmicRadar } from './CosmicRadar';
+import { useNovaView } from '@/contexts';
+import { View } from '@/shared/types/os';
 
 export const Presence: React.FC = () => {
   const { echoes, stars } = usePresence();
+  const { setCurrentView } = useNovaView();
+
+  useEffect(() => {
+    setCurrentView(View.PRESENCE);
+  }, [setCurrentView]);
 
   return (
     <div className="h-full flex flex-col bg-[#010103] text-white relative overflow-hidden animate-in fade-in duration-1000 selection:bg-cyan-500/30">
