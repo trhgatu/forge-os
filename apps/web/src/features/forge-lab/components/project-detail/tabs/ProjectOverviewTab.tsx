@@ -1,6 +1,6 @@
-import { Cpu, Activity, Clock, History, Users } from 'lucide-react';
+import { Cpu, Activity, Clock, History, Users, Edit, Check, Settings } from 'lucide-react';
 import Image from 'next/image';
-import React from 'react';
+import React, { useState } from 'react';
 
 import { GlassCard } from '@/shared/components/ui/GlassCard';
 import { cn } from '@/shared/lib/utils';
@@ -9,9 +9,45 @@ import type { Project } from '../../../types';
 
 interface ProjectOverviewTabProps {
   project: Project;
+  onUpdateProject?: (data: Partial<Project>) => void;
 }
 
-export const ProjectOverviewTab: React.FC<ProjectOverviewTabProps> = ({ project }) => {
+export const ProjectOverviewTab: React.FC<ProjectOverviewTabProps> = ({
+  project,
+  onUpdateProject,
+}) => {
+  const [isEditingMilestone, setIsEditingMilestone] = useState(false);
+  const [milestoneTitle, setMilestoneTitle] = useState(
+    project.metadata?.currentMilestone?.title || project.currentMilestone?.title || 'Phase 1 Init',
+  );
+  const [milestoneProgress, setMilestoneProgress] = useState(
+    project.metadata?.currentMilestone?.progress || project.currentMilestone?.progress || 45,
+  );
+  const [milestoneDueDate, setMilestoneDueDate] = useState(
+    project.metadata?.currentMilestone?.dueDate || project.currentMilestone?.dueDate || '2026-06-15',
+  );
+
+  const handleSaveMilestone = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onUpdateProject?.({
+      metadata: {
+        ...project.metadata,
+        currentMilestone: {
+          title: milestoneTitle,
+          progress: Number(milestoneProgress),
+          dueDate: milestoneDueDate,
+        },
+      },
+    });
+    setIsEditingMilestone(false);
+  };
+
+  const displayMilestone = {
+    title: project.metadata?.currentMilestone?.title || project.currentMilestone?.title || 'Phase 1 Init',
+    progress: project.metadata?.currentMilestone?.progress || project.currentMilestone?.progress || 45,
+    dueDate: project.metadata?.currentMilestone?.dueDate || project.currentMilestone?.dueDate || '2026-06-15',
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-backwards">
       {/* LEFT COLUMN: Main Stats & Squad */}
@@ -72,27 +108,104 @@ export const ProjectOverviewTab: React.FC<ProjectOverviewTabProps> = ({ project 
             </div>
           </div>
 
-          <div className="mt-8 space-y-3 relative z-10">
-            <div className="flex justify-between items-center p-3 rounded-lg bg-white/5 border-l-2 border-l-forge-cyan border-y border-r border-white/5">
-              <div>
-                <div className="text-[9px] text-gray-500 uppercase tracking-wider">
-                  Current Milestone
-                </div>
-                <div className="text-sm font-bold text-white max-w-[120px] truncate">
-                  {project.currentMilestone?.title || 'Phase 1 Init'}
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="text-xs font-mono text-forge-accent font-bold">
-                  {project.currentMilestone?.progress}%
-                </div>
-                <div className="text-[9px] text-gray-500">
-                  {project.currentMilestone?.dueDate instanceof Date
-                    ? project.currentMilestone?.dueDate.toLocaleDateString()
-                    : project.currentMilestone?.dueDate}
-                </div>
-              </div>
+          {/* Progress Range Slider */}
+          <div className="mt-4 w-full relative z-10 px-1 mb-6">
+            <div className="flex justify-between items-center text-[9px] text-gray-500 uppercase tracking-widest mb-1.5 font-bold">
+              <span>Optimization Level</span>
+              <span className="text-forge-cyan font-bold font-mono">{project.progress || 0}%</span>
             </div>
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={project.progress || 0}
+              onChange={(e) => {
+                const val = parseInt(e.target.value);
+                onUpdateProject?.({ progress: val });
+              }}
+              className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-forge-cyan focus:outline-none"
+            />
+          </div>
+
+          <div className="mt-4 space-y-3 relative z-10">
+            {isEditingMilestone ? (
+              <div className="p-3 rounded-lg bg-black/40 border border-white/10 space-y-2 animate-in zoom-in-95 duration-150">
+                <div className="text-[9px] text-forge-cyan uppercase tracking-wider font-bold">
+                  Edit Current Milestone
+                </div>
+                <input
+                  type="text"
+                  value={milestoneTitle}
+                  onChange={(e) => setMilestoneTitle(e.target.value)}
+                  className="w-full bg-black/40 border border-white/10 rounded px-2 py-1 text-xs text-white placeholder:text-gray-600 focus:outline-none focus:border-forge-cyan/50"
+                  placeholder="Milestone title..."
+                />
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-[8px] text-gray-500 uppercase">Progress %</label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={milestoneProgress}
+                      onChange={(e) => setMilestoneProgress(Math.min(100, Math.max(0, parseInt(e.target.value) || 0)))}
+                      className="w-full bg-black/40 border border-white/10 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-forge-cyan/50 font-mono"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[8px] text-gray-500 uppercase">Due Date</label>
+                    <input
+                      type="text"
+                      value={milestoneDueDate}
+                      onChange={(e) => setMilestoneDueDate(e.target.value)}
+                      className="w-full bg-black/40 border border-white/10 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-forge-cyan/50 font-mono"
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-end gap-1.5 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setIsEditingMilestone(false)}
+                    className="px-2 py-1 rounded bg-white/5 text-[10px] text-gray-400 hover:text-white"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSaveMilestone}
+                    className="px-2 py-1 rounded bg-forge-cyan/20 border border-forge-cyan/50 text-[10px] text-forge-cyan hover:bg-forge-cyan/30 flex items-center gap-1"
+                  >
+                    <Check size={10} /> Save
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div
+                onClick={() => setIsEditingMilestone(true)}
+                className="flex justify-between items-center p-3 rounded-lg bg-white/5 border-l-2 border-l-forge-cyan border-y border-r border-white/5 hover:bg-white/10 hover:border-white/10 transition-all cursor-pointer group relative"
+                title="Click to edit milestone"
+              >
+                <div>
+                  <div className="text-[9px] text-gray-500 uppercase tracking-wider">
+                    Current Milestone
+                  </div>
+                  <div className="text-sm font-bold text-white max-w-[125px] truncate">
+                    {displayMilestone.title}
+                  </div>
+                </div>
+                <div className="text-right flex items-center gap-2">
+                  <div>
+                    <div className="text-xs font-mono text-forge-accent font-bold">
+                      {displayMilestone.progress}%
+                    </div>
+                    <div className="text-[9px] text-gray-500">
+                      {displayMilestone.dueDate}
+                    </div>
+                  </div>
+                  <Edit size={10} className="text-gray-600 group-hover:text-forge-cyan opacity-0 group-hover:opacity-100 transition-all ml-1" />
+                </div>
+              </div>
+            )}
 
             <div className="grid grid-cols-2 gap-2">
               <div className="p-3 rounded-lg bg-white/5 border border-white/5">

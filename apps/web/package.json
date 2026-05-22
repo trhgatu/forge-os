@@ -10,9 +10,14 @@
     "lint": "eslint \"src/**/*.{ts,tsx}\" --fix"
   },
   "dependencies": {
+    "@forge/auth": "workspace:*",
+    "@forge/core": "workspace:*",
+    "@forge/reflection": "workspace:*",
     "@google/genai": "^1.30.0",
     "@google/generative-ai": "^0.24.1",
     "@hookform/resolvers": "^4.1.3",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.1",
     "@tanstack/react-query": "^5.64.0",
     "axios": "^1.13.2",
     "canvas-confetti": "^1.9.4",
@@ -30,11 +35,9 @@
     "socket.io-client": "^4.8.3",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.4.0",
+    "three": "^0.184.0",
     "zod": "^3.24.2",
-    "zustand": "^5.0.9",
-    "@forge/core": "workspace:*",
-    "@forge/auth": "workspace:*",
-    "@forge/reflection": "workspace:*"
+    "zustand": "^5.0.9"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -43,6 +46,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/three": "^0.184.1",
     "eslint": "^9",
     "eslint-config-next": "16.0.3",
     "tailwindcss": "^4",

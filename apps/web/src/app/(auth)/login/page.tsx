@@ -1,4 +1,4 @@
-'use client';
+'use client'; // Force IDE TS reload
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowRight, Lock, Mail } from 'lucide-react';

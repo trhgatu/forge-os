@@ -36,6 +36,24 @@ export function MemoryDetailPanel({
   const currentSeason = getSeasonFromMood(memory.mood);
   const seasonConfig = SEASON_CONFIG[currentSeason];
 
+  const seasonAccentColor =
+    currentSeason === 'Spring'
+      ? 'text-emerald-400'
+      : currentSeason === 'Summer'
+        ? 'text-amber-400'
+        : currentSeason === 'Autumn'
+          ? 'text-rose-400'
+          : 'text-cyan-400';
+
+  const seasonBorderColor =
+    currentSeason === 'Spring'
+      ? 'border-emerald-500/20 bg-emerald-500/5'
+      : currentSeason === 'Summer'
+        ? 'border-amber-500/20 bg-amber-500/5'
+        : currentSeason === 'Autumn'
+          ? 'border-rose-500/20 bg-rose-500/5'
+          : 'border-cyan-500/20 bg-cyan-500/5';
+
   const handleDelete = () => {
     toast.custom((t) => (
       <div className="flex flex-col gap-2 rounded-xl border border-red-500/20 bg-black/90 p-4 text-sm text-white shadow-xl backdrop-blur-md">
@@ -85,42 +103,27 @@ export function MemoryDetailPanel({
 
   return (
     <>
-      <div className="fixed inset-y-0 right-0 z-50 w-full max-w-2xl border-l border-stone-800/30 bg-gradient-to-br from-[#1c1917]/98 to-[#0c0a09]/98 shadow-2xl backdrop-blur-xl slide-in-panel">
+      <div className="fixed inset-y-0 right-0 z-50 w-full max-w-2xl border-l border-white/10 bg-[#030304]/96 shadow-2xl backdrop-blur-2xl slide-in-panel">
         {/* Visual Effects Layer */}
         <ParticleCanvas mode={seasonConfig.texture} color={seasonConfig.particleColor} />
 
         {/* Soft Background Gradient */}
         <div className={cn('pointer-events-none absolute inset-0 opacity-10', seasonConfig.bg)} />
 
-        {seasonConfig.id === 'Spring' && (
-          <div
-            className="pointer-events-none absolute inset-0 opacity-5 mix-blend-overlay"
-            style={{
-              backgroundImage:
-                "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E\")",
-            }}
-          />
-        )}
-
         <div className="relative z-10 flex h-full flex-col">
-          {/* Header - Soft Stone */}
-          <div className="flex shrink-0 items-start justify-between border-b border-stone-800/30 bg-stone-950/40 backdrop-blur-sm p-6">
+          {/* Header */}
+          <div className="flex shrink-0 items-start justify-between border-b border-white/5 bg-black/40 backdrop-blur-sm p-6">
             <div>
               <div
                 className={cn(
-                  'mb-2 flex items-center gap-2 text-xs font-medium uppercase tracking-[0.2em] font-serif',
-                  seasonConfig.accent,
+                  'mb-2 flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.25em]',
+                  seasonAccentColor,
                 )}
               >
-                <seasonConfig.icon size={14} />
+                <seasonConfig.icon size={13} />
                 Season of {seasonConfig.label}
               </div>
-              <h2
-                className="text-2xl font-light leading-tight text-stone-100"
-                style={{
-                  fontFamily: "'Playfair Display', 'Georgia', serif",
-                }}
-              >
+              <h2 className="text-2xl font-display font-bold text-white tracking-tight">
                 {memory.title}
               </h2>
             </div>
@@ -128,34 +131,34 @@ export function MemoryDetailPanel({
               <button
                 type="button"
                 onClick={() => setIsEditing(true)}
-                className="rounded-full p-2 text-stone-400 transition-all duration-300 hover:bg-stone-800/40 hover:text-stone-200"
+                className="rounded-xl p-2 text-gray-400 transition-all duration-300 hover:bg-white/5 hover:text-white"
                 title="Refine Memory"
               >
-                <Pencil size={20} />
+                <Pencil size={18} />
               </button>
               <button
                 type="button"
                 onClick={handleDelete}
-                className="rounded-full p-2 text-stone-400 transition-all duration-300 hover:bg-red-500/10 hover:text-red-400"
+                className="rounded-xl p-2 text-gray-400 transition-all duration-300 hover:bg-red-500/10 hover:text-red-400"
                 title="Dissolve Memory"
               >
-                <Trash2 size={20} />
+                <Trash2 size={18} />
               </button>
               <button
                 type="button"
                 onClick={onClose}
-                className="rounded-full p-2 text-stone-400 transition-all duration-300 hover:bg-stone-800/40 hover:text-stone-200"
+                className="rounded-xl p-2 text-gray-400 transition-all duration-300 hover:bg-white/5 hover:text-white"
               >
-                <X size={20} />
+                <X size={18} />
               </button>
             </div>
           </div>
 
-          {/* Content - Soft Stone */}
-          <div className="flex-1 space-y-8 overflow-y-auto p-6">
+          {/* Content */}
+          <div className="flex-1 space-y-8 overflow-y-auto p-6 scrollbar-hide">
             {/* Image */}
             {memory.imageUrl && (
-              <div className="relative aspect-video overflow-hidden rounded-xl border border-stone-800/40 shadow-lg">
+              <div className="relative aspect-video overflow-hidden rounded-xl border border-white/10 shadow-lg">
                 <Image
                   src={memory.imageUrl}
                   alt={memory.title}
@@ -167,25 +170,25 @@ export function MemoryDetailPanel({
             )}
 
             {/* Meta Strip */}
-            <div className="flex items-center gap-4 border-b border-stone-800/30 pb-6 text-xs font-serif text-stone-400">
+            <div className="flex items-center gap-4 border-b border-white/5 pb-6 text-[11px] font-mono text-gray-500">
               <span className="flex items-center gap-2">
-                <Calendar size={12} />
+                <Calendar size={12} className="text-gray-600" />
                 {memory.date.toLocaleDateString(undefined, {
-                  weekday: 'long',
+                  weekday: 'short',
                   year: 'numeric',
-                  month: 'long',
+                  month: 'short',
                   day: 'numeric',
                 })}
               </span>
-              <span className="h-3 w-px bg-stone-700/30" />
+              <span className="h-3 w-px bg-white/5" />
               <span className="flex items-center gap-2 capitalize">
-                <Heart size={12} /> {memory.mood}
+                <Heart size={12} className="text-gray-600" /> {memory.mood}
               </span>
             </div>
 
             {/* Description */}
             <div>
-              <p className="whitespace-pre-line font-serif text-base leading-relaxed text-stone-300">
+              <p className="whitespace-pre-line font-sans text-sm leading-relaxed text-gray-300 font-light">
                 {memory.content}
               </p>
             </div>
@@ -196,19 +199,19 @@ export function MemoryDetailPanel({
                 {memory.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="flex items-center gap-1 rounded-lg border border-stone-800/40 bg-stone-900/30 px-3 py-1 text-xs text-stone-400 font-serif"
+                    className="flex items-center gap-1 rounded-lg border border-white/5 bg-white/[0.02] px-2.5 py-1 text-[10px] text-gray-400 font-mono"
                   >
-                    <Tag size={10} /> {tag}
+                    <Tag size={9} /> #{tag}
                   </span>
                 ))}
               </div>
             )}
 
-            {/* AI Analysis - Soft Stone */}
-            <div className="border-t border-stone-800/30 pt-8">
+            {/* AI Analysis */}
+            <div className="border-t border-white/5 pt-8">
               <div className="mb-6 flex items-center justify-between">
-                <h3 className="flex items-center gap-2 text-sm font-medium text-stone-200 font-serif">
-                  <Sparkles size={14} className="text-stone-400" />
+                <h3 className="flex items-center gap-2 text-sm font-display font-semibold text-white">
+                  <Sparkles size={14} className="text-forge-cyan" />
                   Neural Reflection
                 </h3>
 
@@ -217,14 +220,14 @@ export function MemoryDetailPanel({
                     type="button"
                     onClick={() => onAnalyze(memory.id)}
                     disabled={isAnalyzing}
-                    className="flex items-center gap-2 rounded-lg bg-stone-900/40 border border-stone-800/40 px-3 py-1.5 text-xs transition-all duration-300 hover:bg-stone-800/60 hover:border-stone-700/60 hover:text-stone-200 disabled:opacity-50 text-stone-300 font-serif"
+                    className="flex items-center gap-2 rounded-xl bg-forge-cyan/10 border border-forge-cyan/20 px-3 py-1.5 text-xs text-forge-cyan hover:bg-forge-cyan/20 transition-all duration-300 disabled:opacity-50 font-mono cursor-pointer"
                   >
                     {isAnalyzing ? (
                       <Sparkles size={12} className="animate-spin" />
                     ) : (
                       <Mic size={12} />
                     )}
-                    {isAnalyzing ? 'Analyzing...' : 'Analyze'}
+                    {isAnalyzing ? 'Analyzing...' : 'Analyze Node'}
                   </button>
                 )}
               </div>
@@ -234,68 +237,62 @@ export function MemoryDetailPanel({
                   {/* Nova Whisper */}
                   <div
                     className={cn(
-                      'relative overflow-hidden rounded-xl border bg-stone-900/20 p-5',
-                      seasonConfig.border,
+                      'relative overflow-hidden rounded-xl border p-5',
+                      seasonBorderColor,
                     )}
                   >
-                    <div
-                      className={cn(
-                        'pointer-events-none absolute inset-0 bg-gradient-to-br opacity-5',
-                        seasonConfig.gradient,
-                      )}
-                    />
                     <div className="relative z-10">
                       <div
                         className={cn(
-                          'mb-2 text-[10px] font-serif uppercase tracking-[0.2em]',
-                          seasonConfig.accent,
+                          'mb-2 text-[9px] font-mono uppercase tracking-[0.25em] font-semibold',
+                          seasonAccentColor,
                         )}
                       >
                         Nova Whisper
                       </div>
-                      <p className="text-sm italic text-stone-300 font-serif">
+                      <p className="text-sm italic text-gray-300 font-light">
                         &quot;{seasonConfig.whisper}&quot;
                       </p>
                     </div>
                   </div>
 
                   {/* Core Meaning */}
-                  <div className="rounded-xl border border-stone-800/40 bg-stone-900/30 p-4">
-                    <div className="mb-2 text-[10px] text-stone-500 uppercase tracking-[0.2em] font-serif">
+                  <div className="rounded-xl border border-white/5 bg-white/[0.02] p-4">
+                    <div className="mb-2 text-[9px] text-gray-500 uppercase tracking-[0.25em] font-mono">
                       Core Meaning
                     </div>
-                    <p className="text-sm text-stone-200 font-serif">
+                    <p className="text-xs text-gray-300 font-sans leading-relaxed font-light">
                       {memory.analysis.coreMeaning}
                     </p>
                   </div>
 
                   {/* Pattern */}
-                  <div className="rounded-xl border border-stone-800/40 bg-stone-900/30 p-4">
-                    <div className="mb-2 text-[10px] text-stone-500 uppercase tracking-[0.2em] font-serif">
+                  <div className="rounded-xl border border-white/5 bg-white/[0.02] p-4">
+                    <div className="mb-2 text-[9px] text-gray-500 uppercase tracking-[0.25em] font-mono">
                       Detected Pattern
                     </div>
-                    <p className="text-sm text-stone-300 font-serif">
+                    <p className="text-xs text-gray-300 font-sans leading-relaxed font-light">
                       {memory.analysis.emotionalPattern}
                     </p>
                   </div>
 
                   {/* Timeline Connection */}
                   {memory.analysis.timelineConnection && (
-                    <div className="rounded-xl border border-stone-800/40 bg-stone-900/30 p-4">
-                      <div className="mb-2 flex items-center gap-2 text-[10px] text-stone-500 uppercase tracking-[0.2em] font-serif">
+                    <div className="rounded-xl border border-white/5 bg-white/[0.02] p-4">
+                      <div className="mb-2 flex items-center gap-2 text-[9px] text-gray-500 uppercase tracking-[0.25em] font-mono">
                         <ChevronRight size={10} />
                         Timeline Connection
                       </div>
-                      <p className="text-sm text-stone-300 font-serif">
+                      <p className="text-xs text-gray-300 font-sans leading-relaxed font-light">
                         {memory.analysis.timelineConnection}
                       </p>
                     </div>
                   )}
                 </div>
               ) : (
-                <div className="rounded-xl border border-dashed border-stone-800/40 bg-stone-900/20 py-8 text-center">
-                  <p className="text-xs text-stone-500 font-serif italic">
-                    Analyze this memory to reveal hidden patterns and connections.
+                <div className="rounded-xl border border-dashed border-white/10 bg-white/[0.01] py-8 text-center">
+                  <p className="text-xs text-gray-500 italic font-light">
+                    Analyze this memory node to reveal hidden neural patterns and timeline connections.
                   </p>
                 </div>
               )}
@@ -315,5 +312,3 @@ export function MemoryDetailPanel({
     </>
   );
 }
-
-
