@@ -11,10 +11,7 @@ interface FoundationDetailProps {
 export const FoundationDetail: React.FC<FoundationDetailProps> = ({ foundation, onBack }) => {
   return (
     <div className="max-w-7xl mx-auto p-6 md:p-10 pb-32 animate-in fade-in slide-in-from-bottom-2 duration-700 ease-spring-out relative">
-      {/* Creative Background Elements */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-forge-accent/5 rounded-full blur-[100px] -z-10 animate-float" />
       <div className="absolute top-20 left-10 w-full h-full opacity-[0.02] bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none -z-10" />
-
       {/* Header Tools (Floating) */}
       <div className="flex items-center justify-between mb-12 sticky top-4 z-50">
         <button
@@ -34,11 +31,8 @@ export const FoundationDetail: React.FC<FoundationDetailProps> = ({ foundation, 
           </button>
         </div>
       </div>
-
       {/* Immersive Hero Section */}
       <div className="relative mb-16 pt-8 text-center max-w-4xl mx-auto">
-        <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-32 h-32 bg-forge-cyan/20 blur-[60px] rounded-full" />
-
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 mb-6 backdrop-blur-sm animate-in fade-in zoom-in-50 duration-700 delay-100">
           <Sparkles size={12} className="text-yellow-400" />
           <span className="text-[10px] font-mono uppercase tracking-widest text-gray-300">

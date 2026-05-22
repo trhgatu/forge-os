@@ -14,8 +14,12 @@ export const RedisProvider: Provider = {
       port: configService.get<number>('REDIS_PORT') || 6379,
       username: configService.get<string>('REDIS_USERNAME'),
       password: configService.get<string>('REDIS_PASSWORD'),
+      connectTimeout: 500,
+      maxRetriesPerRequest: 1,
+      enableOfflineQueue: false,
       retryStrategy: (times) => {
-        const delay = Math.min(times * 50, 2000);
+        if (times > 3) return null; // Stop reconnecting after 3 attempts
+        const delay = Math.min(times * 100, 2000);
         return delay;
       },
     });

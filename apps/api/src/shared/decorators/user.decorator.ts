@@ -4,5 +4,17 @@ export const User = createParamDecorator((data: string | undefined, ctx: Executi
   const request = ctx.switchToHttp().getRequest();
   const user = request.user;
 
-  return data ? user?.[data] : user;
+  if (!user) return null;
+  if (!data) return user;
+
+  const value = user[data];
+  if (value && typeof value === 'object') {
+    if ('value' in value) {
+      return value.value;
+    }
+    if (typeof value.toString === 'function' && value.toString() !== '[object Object]') {
+      return value.toString();
+    }
+  }
+  return value;
 });

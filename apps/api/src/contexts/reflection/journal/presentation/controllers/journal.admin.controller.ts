@@ -4,6 +4,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagg
 import { JwtAuthGuard } from '../../../../iam/auth/application/guards/jwt-auth.guard';
 import { PermissionsGuard } from '@shared/guards/permissions.guard';
 import { Permissions } from '@shared/decorators';
+import { PermissionEnum } from '@shared/enums';
 import { JournalId } from '../../domain/value-objects/journal-id.vo';
 import { CreateJournalDto, UpdateJournalDto, QueryJournalDto, JournalResponse } from '../dto';
 import {
@@ -27,7 +28,7 @@ export class JournalAdminController {
   ) {}
 
   @Post()
-  @Permissions('reflection:journal:create')
+  @Permissions(PermissionEnum.CREATE_JOURNAL)
   @ApiOperation({ summary: 'Create a new journal entry' })
   @ApiResponse({ status: 201, type: JournalResponse })
   async create(@Body() dto: CreateJournalDto) {
@@ -36,7 +37,7 @@ export class JournalAdminController {
   }
 
   @Get()
-  @Permissions('reflection:journal:read')
+  @Permissions(PermissionEnum.READ_JOURNAL)
   @ApiOperation({ summary: 'Get all journal entries (paginated)' })
   async findAll(@Query() queryDto: QueryJournalDto) {
     const filter = this.presenter.toFilter(queryDto);
@@ -48,7 +49,7 @@ export class JournalAdminController {
   }
 
   @Get(':id')
-  @Permissions('reflection:journal:read')
+  @Permissions(PermissionEnum.READ_JOURNAL)
   @ApiOperation({ summary: 'Get a journal entry by ID' })
   @ApiResponse({ status: 200, type: JournalResponse })
   async findOne(@Param('id') id: string) {
@@ -57,7 +58,7 @@ export class JournalAdminController {
   }
 
   @Put(':id')
-  @Permissions('reflection:journal:update')
+  @Permissions(PermissionEnum.UPDATE_JOURNAL)
   @ApiOperation({ summary: 'Update a journal entry' })
   @ApiResponse({ status: 200, type: JournalResponse })
   async update(@Param('id') id: string, @Body() dto: UpdateJournalDto) {
@@ -68,7 +69,7 @@ export class JournalAdminController {
   }
 
   @Delete(':id')
-  @Permissions('reflection:journal:delete')
+  @Permissions(PermissionEnum.DELETE_JOURNAL)
   @ApiOperation({ summary: 'Soft delete a journal entry' })
   async remove(@Param('id') id: string) {
     const journal = await this.commandBus.execute(
@@ -78,7 +79,7 @@ export class JournalAdminController {
   }
 
   @Post(':id/restore')
-  @Permissions('reflection:journal:update')
+  @Permissions(PermissionEnum.UPDATE_JOURNAL)
   @ApiOperation({ summary: 'Restore a soft-deleted journal entry' })
   async restore(@Param('id') id: string) {
     const journal = await this.commandBus.execute(

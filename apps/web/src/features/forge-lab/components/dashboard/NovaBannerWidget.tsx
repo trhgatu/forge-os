@@ -28,11 +28,8 @@ export const NovaBannerWidget: React.FC = () => {
 
   return (
     <div className="relative p-0.5 rounded-3xl bg-linear-to-r from-forge-cyan/30 via-fuchsia-500/30 to-transparent overflow-hidden">
-      <div className="absolute inset-0 bg-linear-to-r from-forge-cyan/10 via-fuchsia-500/10 to-transparent opacity-50 blur-xl"></div>
       <div className="bg-[#09090b]/90 backdrop-blur-xl rounded-[22px] p-6 md:p-8 relative overflow-hidden">
         {/* Decorative Background */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-forge-cyan/5 rounded-full blur-[100px] pointer-events-none -translate-y-1/2 translate-x-1/2" />
-
         <div className="relative z-10 flex flex-col md:flex-row gap-8 items-center">
           <div className="flex-1">
             <div className="flex items-center gap-2 text-xs font-bold text-forge-cyan uppercase tracking-widest mb-3">

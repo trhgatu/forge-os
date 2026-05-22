@@ -2,10 +2,10 @@
 
 import { X, Sparkles, Calendar, Tag, Mic, Heart, ChevronRight, Trash2, Pencil } from 'lucide-react';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { toast } from 'sonner';
 
-import { ParticleCanvas } from '@/shared/components/effects/ParticleCanvas';
+import { SeasonalAmbience } from '@/shared/components/effects';
 import { cn } from '@/shared/lib/utils';
 import type { Memory } from '@/shared/types/memory';
 
@@ -30,6 +30,7 @@ export function MemoryDetailPanel({
   const [isEditing, setIsEditing] = useState(false);
   const deleteMemory = useDeleteMemory();
   const updateMemory = useUpdateMemory();
+  const panelRef = useRef<HTMLDivElement>(null);
 
   if (!memory) return null;
 
@@ -103,9 +104,9 @@ export function MemoryDetailPanel({
 
   return (
     <>
-      <div className="fixed inset-y-0 right-0 z-50 w-full max-w-2xl border-l border-white/10 bg-[#030304]/96 shadow-2xl backdrop-blur-2xl slide-in-panel">
+      <div ref={panelRef} className="fixed inset-y-0 right-0 z-50 w-full max-w-2xl border-l border-white/10 bg-[#030304]/96 shadow-2xl backdrop-blur-2xl slide-in-panel">
         {/* Visual Effects Layer */}
-        <ParticleCanvas mode={seasonConfig.texture} color={seasonConfig.particleColor} />
+        <SeasonalAmbience season={currentSeason} containerRef={panelRef} leafCount={12} />
 
         {/* Soft Background Gradient */}
         <div className={cn('pointer-events-none absolute inset-0 opacity-10', seasonConfig.bg)} />

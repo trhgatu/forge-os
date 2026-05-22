@@ -37,6 +37,7 @@ import {
   Film,
   ChevronDown,
   WindIcon,
+  Shield,
 } from 'lucide-react';
 import { LogOut } from 'lucide-react';
 import Link from 'next/link';
@@ -84,6 +85,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: View.ACHIEVEMENTS, labelKey: 'nav.achievements', icon: Trophy, group: 'Evolution' },
   { id: View.HABITS, labelKey: 'nav.habits', icon: Repeat, group: 'Evolution' },
   { id: View.ROUTINES, labelKey: 'nav.routines', icon: Clock, group: 'Evolution' },
+  { id: View.QUESTS, labelKey: 'nav.quests', icon: Shield, group: 'Evolution' },
   { id: View.ENERGY, labelKey: 'nav.energy', icon: Zap, group: 'Evolution' },
   { id: View.WEEKLY_REVIEW, labelKey: 'nav.weekly_review', icon: CalendarCheck, group: 'System' },
   { id: View.MONTHLY_REVIEW, labelKey: 'nav.monthly_review', icon: Moon, group: 'System' },
@@ -124,6 +126,8 @@ const getPathForView = (view: View): string => {
       return '/forge/habits';
     case View.ROUTINES:
       return '/forge/routines';
+    case View.QUESTS:
+      return '/forge/quests';
     case View.COMPASS:
       return '/forge/compass';
     case View.SETTINGS:

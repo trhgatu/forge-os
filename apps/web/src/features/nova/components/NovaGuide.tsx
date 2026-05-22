@@ -1,10 +1,11 @@
 // features/nova/components/NovaGuide.tsx
 'use client';
 
-import { Activity, Bot, ChevronRight, Radio, X } from 'lucide-react';
+import { Bot, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useSound } from '@/contexts';
 import { cn } from '@/shared/lib/utils';
 import type { View } from '@/shared/types/os';
 
@@ -25,6 +26,7 @@ interface NovaGuideProps {
 export function NovaGuide({ currentView }: NovaGuideProps) {
   const { language } = useLanguage();
   const [isExpanded, setIsExpanded] = useState(true);
+  const { playSound } = useSound();
 
   // Automatically reopen the chat panel when navigating pages (currentView changes)
   useEffect(() => {
@@ -35,12 +37,14 @@ export function NovaGuide({ currentView }: NovaGuideProps) {
   const { displayed, isTyping } = useTypewriter(rawMessage, {
     minSpeed: 20,
     maxSpeed: 50,
+    onTick: () => playSound('tick'),
   });
 
   const isVisible = Boolean(rawMessage);
 
   return (
     <div className="pointer-events-none fixed bottom-8 right-16 z-50 flex flex-col items-end">
+
       {/* Panel */}
       <div
         className={cn(

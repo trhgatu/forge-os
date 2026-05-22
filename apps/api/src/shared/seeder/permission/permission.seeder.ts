@@ -26,15 +26,23 @@ export class PermissionSeeder {
     for (const name of enumPermissions) {
       const exists = await this.prisma.permission.findUnique({ where: { name } });
       if (!exists) {
-        const parts = name.split('_');
-        const action = parts[0];
-        const resource = parts.slice(1).join('_');
+        let action = 'create';
+        let resource = 'system';
+        if (name.includes(':')) {
+          const parts = name.split(':');
+          action = parts[parts.length - 1];
+          resource = parts.slice(0, parts.length - 1).join(':');
+        } else {
+          const parts = name.split('_');
+          action = parts[0];
+          resource = parts.slice(1).join('_') || 'system';
+        }
 
         await this.prisma.permission.create({
           data: {
             name,
             action,
-            resource: resource || 'system',
+            resource,
           },
         });
         createdCount++;
