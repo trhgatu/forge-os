@@ -2,7 +2,7 @@
 'use client';
 
 import { Activity, Bot, ChevronRight, Radio, X } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/shared/lib/utils';
@@ -26,7 +26,12 @@ export function NovaGuide({ currentView }: NovaGuideProps) {
   const { language } = useLanguage();
   const [isExpanded, setIsExpanded] = useState(true);
 
-  const rawMessage = useNovaMessage(currentView, language);
+  // Automatically reopen the chat panel when navigating pages (currentView changes)
+  useEffect(() => {
+    setIsExpanded(true);
+  }, [currentView]);
+
+  const rawMessage = useNovaMessage(currentView, language, 150);
   const { displayed, isTyping } = useTypewriter(rawMessage, {
     minSpeed: 20,
     maxSpeed: 50,
@@ -45,28 +50,28 @@ export function NovaGuide({ currentView }: NovaGuideProps) {
             : 'translate-y-4 scale-95 opacity-0 pointer-events-none',
         )}
       >
-        {/* Connector line */}
-        <div className="absolute -bottom-6 right-6 z-0 h-6 w-px bg-forge-cyan/50" />
-
-        {/* Glass panel */}
-        <div className="group relative overflow-hidden rounded-tr-2xl rounded-tl-2xl rounded-bl-2xl rounded-br-sm border border-forge-cyan/30 bg-[#050508]/95 shadow-[0_0_40px_rgba(34,211,238,0.15)] backdrop-blur-xl">
-          {/* Scanline overlay */}
-          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-size-[100%_4px,3px_100%] opacity-20" />
+        {/* Elegant frosted glass panel */}
+        <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#07070b]/95 shadow-[0_12px_40px_rgba(0,0,0,0.6)] shadow-cyan-500/5 backdrop-blur-xl">
+          {/* Top glow border */}
+          <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-forge-cyan/50 to-transparent" />
 
           {/* Top bar */}
-          <div className="relative z-10 flex items-center justify-between border-b border-white/10 bg-white/5 px-3 py-2">
+          <div className="relative z-10 flex items-center justify-between border-b border-white/5 bg-white/[0.02] px-4 py-3">
             <div className="flex items-center gap-2">
-              <Radio className="h-3 w-3 animate-pulse text-forge-cyan" />
-              <span className="text-[9px] font-mono font-bold tracking-[0.2em] text-forge-cyan">
-                NOVA_LINK_V∞
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-cyan-500 shadow-[0_0_6px_#22d3ee]"></span>
+              </span>
+              <span className="text-[10px] font-bold tracking-[0.25em] text-white/90 font-mono">
+                NOVA CO-PILOT
               </span>
             </div>
             <button
               type="button"
               onClick={() => setIsExpanded(false)}
-              className="text-gray-500 transition-colors hover:text-white"
+              className="text-gray-400 transition-all duration-200 hover:text-white hover:scale-110"
             >
-              <X className="h-3.5 w-3.5" />
+              <X className="h-4 w-4" />
             </button>
           </div>
 
@@ -76,45 +81,34 @@ export function NovaGuide({ currentView }: NovaGuideProps) {
             <NovaVisualizer isActive={isTyping} />
 
             {/* Message */}
-            <div className="min-h-[60px]">
-              <div className="font-mono text-xs leading-relaxed tracking-wide text-cyan-100 whitespace-pre-line drop-shadow-[0_0_5px_rgba(34,211,238,0.5)]">
+            <div className="min-h-[50px]">
+              <div className="font-sans text-[13px] leading-relaxed tracking-wide text-slate-200 font-medium whitespace-pre-line">
                 {displayed}
                 {isTyping && (
-                  <span className="ml-1 inline-block h-4 w-2 animate-blink bg-forge-cyan align-middle shadow-[0_0_8px_#22D3EE]" />
+                  <span className="ml-1 inline-block h-3.5 w-[2px] bg-forge-cyan animate-[pulse_0.8s_infinite] align-middle shadow-[0_0_8px_#22D3EE]" />
                 )}
               </div>
             </div>
-
-            {/* Footer */}
-            <div className="mt-4 flex items-center justify-between border-t border-white/5 pt-3">
-              <div className="flex items-center gap-2">
-                <Activity className="h-2.5 w-2.5 text-emerald-500" />
-                <div className="text-[8px] font-mono uppercase text-gray-500">Sys: Stable</div>
-              </div>
-              <ChevronRight className="h-2.5 w-2.5 text-forge-cyan" />
-            </div>
           </div>
-
-          {/* Corners */}
-          <div className="absolute left-0 top-0 h-2 w-2 border-l border-t border-forge-cyan opacity-50" />
-          <div className="absolute right-0 top-0 h-2 w-2 border-r border-t border-forge-cyan opacity-50" />
-          <div className="absolute bottom-0 left-0 h-2 w-2 border-b border-l border-forge-cyan opacity-50" />
-          <div className="absolute bottom-0 right-0 h-4 w-4 border-b-2 border-r-2 border-forge-cyan" />
         </div>
       </div>
 
       {/* Button and Robot container */}
-      <div className="relative flex h-16 w-16 items-center justify-center">
+      <div className="relative flex h-16 w-16 items-center justify-center group">
+        {/* Clickable Overlay covering the entire 256px area to handle toggling on 3D model clicks */}
+        <div
+          onClick={() => setIsExpanded((v) => !v)}
+          className="pointer-events-auto cursor-pointer absolute -top-24 -left-24 w-64 h-64 z-[70] rounded-full"
+        />
+
         {/* Core 3D Hologram Robot - Borderless floating projection OUTSIDE button */}
         <NovaRobot isTalking={isTyping} className="absolute -top-24 -left-24 w-64 h-64 pointer-events-none select-none z-[60]" />
 
-        {/* Core button */}
-        <button
-          type="button"
-          onClick={() => setIsExpanded((v) => !v)}
+        {/* Core button rings */}
+        <div
           className={cn(
-            'pointer-events-auto relative z-50 flex h-full w-full items-center justify-center transition-all duration-500',
-            isExpanded ? 'scale-100' : 'scale-95 hover:scale-105',
+            'relative z-50 flex h-full w-full items-center justify-center transition-all duration-500',
+            isExpanded ? 'scale-100' : 'scale-95 group-hover:scale-105',
           )}
         >
           {/* Rings */}
@@ -136,7 +130,7 @@ export function NovaGuide({ currentView }: NovaGuideProps) {
               <span className="relative inline-flex h-3 w-3 rounded-full border-2 border-black bg-emerald-500" />
             </span>
           )}
-        </button>
+        </div>
       </div>
     </div>
   );
