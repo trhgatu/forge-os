@@ -17,15 +17,13 @@ export function SeasonalAmbience({
   season,
   containerRef,
   leafCount = 12,
-  flowOpacity = 0.65,
 }: SeasonalAmbienceProps) {
-  // Encapsulate all seasonal rendering logic in a single source of truth
   switch (season) {
     case 'Autumn':
       return (
         <>
-          <ShaderFlow 
-            className="absolute inset-0 h-full w-full grayscale mix-blend-screen pointer-events-none z-0" 
+          <ShaderFlow
+            className="absolute inset-0 h-full w-full grayscale mix-blend-screen pointer-events-none z-0"
             brightness={1.15}
             scale={3.0}
           />
@@ -36,8 +34,8 @@ export function SeasonalAmbience({
     case 'All':
       return (
         <>
-          <ShaderFlow 
-            className="absolute inset-0 h-full w-full grayscale mix-blend-screen pointer-events-none z-0" 
+          <ShaderFlow
+            className="absolute inset-0 h-full w-full grayscale mix-blend-screen pointer-events-none z-0"
             brightness={1.0}
             scale={3.2}
           />

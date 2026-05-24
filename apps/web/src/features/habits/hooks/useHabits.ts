@@ -21,6 +21,7 @@ export const useCreateHabit = () => {
       description?: string;
       difficulty: string;
       xpReward: number;
+      frequency?: any;
     }) => gamificationApi.createHabit(data),
     onSuccess: () => {
       toast.success('Habit ritual established successfully');
@@ -43,6 +44,8 @@ export const useCompleteHabit = () => {
       queryClient.invalidateQueries({ queryKey: ['habits'] });
       // Invalidate stats or trigger reload so the XPBar updates its level/XP values in real-time!
       queryClient.invalidateQueries({ queryKey: ['userStats'] });
+      // Invalidate active quests so they update in real-time on completing a habit
+      queryClient.invalidateQueries({ queryKey: ['activeQuests'] });
       // Dispatches a global custom event in case XPBar or sidebar components need to know to refresh locally
       window.dispatchEvent(new CustomEvent('xp-gained'));
     },

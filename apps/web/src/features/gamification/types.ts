@@ -15,7 +15,7 @@ export interface Habit {
   title: string;
   description: string | null;
   xpReward: number;
-  difficulty: string;    // easy, medium, hard
+  difficulty: string;
   frequency: any;
   streak: number;
   maxStreak: number;
@@ -38,4 +38,25 @@ export interface Routine {
   isActive: boolean;
   steps: RoutineStep[];
   createdAt: string;
+}
+
+export interface GoalObjective {
+  id: string;
+  type: string;
+  targetCount: number;
+  referenceId: string | null;
+  currentCount?: number;
+  isCompleted?: boolean;
+}
+
+export interface Goal {
+  id: string;
+  title: string;
+  description: string | null;
+  xpReward: number;
+  badgeIcon: string | null;
+  isActive?: boolean;
+  isCompleted?: boolean;
+  completedAt?: string | null;
+  objectives: GoalObjective[];
 }

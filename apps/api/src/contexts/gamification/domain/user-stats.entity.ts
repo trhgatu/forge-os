@@ -14,23 +14,15 @@ export class UserStats extends AggregateRoot {
   }
 
   addXp(amount: number): void {
-    this.xp += amount;
+    this.xp = Math.max(0, this.xp + amount);
     this.checkLevelUp();
   }
 
   private checkLevelUp(): void {
-    // Simple leveling formula: Level = floor(sqrt(XP / 100))
-    // Or constant scaling: Level * 1000 XP
-    // Usage: Level 1 (0-999), Level 2 (1000-1999)
-
-    // Let's use a non-linear curve: XP = Level^2 * 100
-    // Level = sqrt(XP / 100)
     const newLevel = Math.floor(Math.sqrt(this.xp / 100)) + 1;
 
     if (newLevel > this.level) {
       this.level = newLevel;
-      // TODO: Emit LevelUpEvent
-      // this.apply(new LevelUpEvent(this.userId, this.level));
     }
   }
 

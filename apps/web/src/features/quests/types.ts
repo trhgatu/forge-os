@@ -1,6 +1,6 @@
 export interface QuestObjective {
   id: string;
-  type: string;          // CREATE_JOURNAL, CHECK_HABIT, etc.
+  type: string;
   targetCount: number;
   currentCount: number;
   referenceType: string;
@@ -12,7 +12,7 @@ export interface Quest {
   id: string;
   title: string;
   description: string | null;
-  type: string;          // daily, weekly, main, side
+  type: string;
   xpReward: number;
   isCompleted: boolean;
   isActive?: boolean;

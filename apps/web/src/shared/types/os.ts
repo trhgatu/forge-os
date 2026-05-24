@@ -21,6 +21,7 @@ export enum View {
 
   // Personal Systems
   GOALS = 'GOALS',
+  TASKS = 'TASKS',
   HABITS = 'HABITS',
   ROUTINES = 'ROUTINES',
   QUESTS = 'QUESTS',

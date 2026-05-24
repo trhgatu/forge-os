@@ -138,7 +138,7 @@ export function Quote() {
   }
 
   return (
-    <div className="h-full flex flex-col bg-[#030304] relative overflow-hidden">
+    <div className="h-full flex flex-col bg-transparent relative overflow-hidden">
       <MoodAmbience mood={filterMood} />
 
       {/* Background Ambience */}

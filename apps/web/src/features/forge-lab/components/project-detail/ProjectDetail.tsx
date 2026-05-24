@@ -13,7 +13,6 @@ import {
 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useState } from 'react';
-import { toast } from 'sonner';
 
 import { cn } from '@/shared/lib/utils';
 
@@ -92,26 +91,26 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
 
   const project: Project | null = projectSummary
     ? {
-        ...projectSummary,
-        updatedAt: new Date(projectSummary.updatedAt),
-        dueDate: projectSummary.dueDate ? new Date(projectSummary.dueDate) : undefined,
-        logs:
-          projectLogs?.data?.map((l) => ({ ...l, date: new Date(l.date) })) ||
-          projectSummary.logs?.map((l) => ({ ...l, date: new Date(l.date) })),
-        // Merge TaskBoard
-        taskBoard: projectTaskBoard ||
-          projectSummary.taskBoard || { todo: [], inProgress: [], done: [] },
-        links: projectSummary.links || [],
-        // Merge Stats
-        githubStats: projectStats
-          ? {
-              ...projectSummary.githubStats,
-              ...projectStats,
-              // If specific readme fetched, override stats readme
-              readme: projectReadme?.content || projectStats.readme,
-            }
-          : projectSummary.githubStats,
-      }
+      ...projectSummary,
+      updatedAt: new Date(projectSummary.updatedAt),
+      dueDate: projectSummary.dueDate ? new Date(projectSummary.dueDate) : undefined,
+      logs:
+        projectLogs?.data?.map((l) => ({ ...l, date: new Date(l.date) })) ||
+        projectSummary.logs?.map((l) => ({ ...l, date: new Date(l.date) })),
+      // Merge TaskBoard
+      taskBoard: projectTaskBoard ||
+        projectSummary.taskBoard || { todo: [], inProgress: [], done: [] },
+      links: projectSummary.links || [],
+      // Merge Stats
+      githubStats: projectStats
+        ? {
+          ...projectSummary.githubStats,
+          ...projectStats,
+          // If specific readme fetched, override stats readme
+          readme: projectReadme?.content || projectStats.readme,
+        }
+        : projectSummary.githubStats,
+    }
     : null;
 
   const liveLink = project?.metadata?.liveUrl || project?.links?.find(

@@ -11,7 +11,7 @@ export interface HabitCompletedPayload {
 @XpStrategy('reflection.habit.completed')
 export class HabitCompletedXpStrategy implements IXpStrategy<HabitCompletedPayload> {
   calculate(payload: HabitCompletedPayload) {
-    return payload.xpReward || 10;
+    return 0; // Habits yield 0 raw level-up XP directly to prevent farming. XP is concentrated in Quests!
   }
 
   getDescription(payload: HabitCompletedPayload) {

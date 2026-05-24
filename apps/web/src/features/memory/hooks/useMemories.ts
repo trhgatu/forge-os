@@ -48,6 +48,7 @@ export function useCreateMemory() {
       queryClient.invalidateQueries({ queryKey: [...MEMORY_QUERY_KEY, language] });
       // Also invalidate general queries if necessary, but specificity is better
       queryClient.invalidateQueries({ queryKey: MEMORY_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: ['activeQuests'] });
     },
   });
 }

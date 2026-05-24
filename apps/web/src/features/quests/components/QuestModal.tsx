@@ -1,13 +1,16 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
 import { X, Plus } from 'lucide-react';
-import { Button, Dropdown, Input } from '@/shared/components/ui';
+import React, { useState, useEffect } from 'react';
+
 import { useSound } from '@/contexts';
 import type { Habit } from '@/features/gamification/types';
+import { Button, Dropdown, Input } from '@/shared/components/ui';
+
 import type { Quest } from '../types';
 
 interface ObjectiveFormInput {
+  id?: string;
   type: string;
   targetCount: number;
   referenceType: string;
@@ -23,6 +26,7 @@ interface QuestModalProps {
     type: string;
     xpReward: number;
     objectives: Array<{
+      id?: string;
       type: string;
       targetCount: number;
       referenceType: string;
@@ -72,7 +76,7 @@ export function QuestModal({
     ...habits.map((h) => ({
       value: h.id,
       label: h.title,
-      sublabel: `Difficulty: ${h.difficulty} | +${h.xpReward} XP`,
+      sublabel: `Difficulty: ${h.difficulty} | Quest Linked`,
     })),
   ];
 
@@ -85,6 +89,7 @@ export function QuestModal({
       setXpReward(quest.xpReward);
 
       const mapped = quest.objectives.map((o) => ({
+        id: o.id,
         type: o.type,
         targetCount: o.targetCount,
         referenceType: o.referenceType,
@@ -150,6 +155,7 @@ export function QuestModal({
     playSound('click');
 
     const cleanObjectives = objectives.map((o) => ({
+      id: o.id,
       type: o.type,
       targetCount: o.targetCount,
       referenceType: o.referenceType,

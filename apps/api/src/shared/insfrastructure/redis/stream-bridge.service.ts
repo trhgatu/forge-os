@@ -16,15 +16,12 @@ export class StreamBridgeService implements OnModuleInit, OnModuleDestroy {
   constructor(
     @Inject('REDIS_CLIENT') private readonly redis: Redis,
     @InjectQueue('xp_awarding') private readonly xpQueue: Queue,
-  ) {}
+  ) { }
 
   async onModuleInit() {
     this.subscriber = this.redis.duplicate();
     await this.setupGroup();
     void this.pollStream();
-
-    //logger must delete when finish coding
-    this.logger.log('Stream Bridge is active and polling...');
   }
 
   onModuleDestroy() {
