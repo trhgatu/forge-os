@@ -48,4 +48,4 @@ const Strategies = [
   ],
   exports: [UserStatsRepository, 'UserStatsRepository', GamificationGateway],
 })
-export class GamificationModule { }
+export class GamificationModule {}

@@ -1,4 +1,11 @@
-import { IsString, IsNotEmpty, IsOptional, IsNumber, IsBoolean, IsArray, ValidateNested } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsNumber,
+  IsArray,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -13,7 +20,11 @@ export class CreateGoalObjectiveDto {
   @IsNotEmpty()
   targetCount!: number;
 
-  @ApiProperty({ example: 'quest-daily-meta-alignment', description: 'Reference ID of the target Quest (optional)', required: false })
+  @ApiProperty({
+    example: 'quest-daily-meta-alignment',
+    description: 'Reference ID of the target Quest (optional)',
+    required: false,
+  })
   @IsString()
   @IsOptional()
   referenceId?: string;
@@ -25,17 +36,29 @@ export class CreateGoalDto {
   @IsNotEmpty()
   title!: string;
 
-  @ApiProperty({ example: 'Conquer reality through discipline', description: 'Description of the Epic Goal', required: false })
+  @ApiProperty({
+    example: 'Conquer reality through discipline',
+    description: 'Description of the Epic Goal',
+    required: false,
+  })
   @IsString()
   @IsOptional()
   description?: string;
 
-  @ApiProperty({ example: 1000, description: 'XP Reward upon completing the goal', required: false })
+  @ApiProperty({
+    example: 1000,
+    description: 'XP Reward upon completing the goal',
+    required: false,
+  })
   @IsNumber()
   @IsOptional()
   xpReward?: number;
 
-  @ApiProperty({ example: 'achievement_master_of_reality', description: 'Badge Icon and Achievement Key', required: false })
+  @ApiProperty({
+    example: 'achievement_master_of_reality',
+    description: 'Badge Icon and Achievement Key',
+    required: false,
+  })
   @IsString()
   @IsOptional()
   badgeIcon?: string;

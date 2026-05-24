@@ -10,7 +10,8 @@ export interface HabitCompletedPayload {
 @Injectable()
 @XpStrategy('reflection.habit.completed')
 export class HabitCompletedXpStrategy implements IXpStrategy<HabitCompletedPayload> {
-  calculate(payload: HabitCompletedPayload) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  calculate(_payload: HabitCompletedPayload) {
     return 0; // Habits yield 0 raw level-up XP directly to prevent farming. XP is concentrated in Quests!
   }
 

@@ -11,7 +11,7 @@ export class IncrementObjectiveProgressCommand {
     public readonly actionType: string,
     public readonly amount: number,
     public readonly referenceId: string | null,
-  ) { }
+  ) {}
 }
 
 @CommandHandler(IncrementObjectiveProgressCommand)
@@ -25,7 +25,7 @@ export class IncrementObjectiveProgressHandler implements ICommandHandler<Increm
     private readonly userStatsRepository: UserStatsRepository,
     @Inject(ACTIVITY_STREAM_PORT)
     private readonly activityStream: IActivityStreamPort,
-  ) { }
+  ) {}
 
   async execute(command: IncrementObjectiveProgressCommand): Promise<void> {
     const { userId, actionType, amount, referenceId } = command;
@@ -40,7 +40,10 @@ export class IncrementObjectiveProgressHandler implements ICommandHandler<Increm
       const isMatch = objective.referenceId === null || objective.referenceId === referenceId;
 
       if (isMatch) {
-        const isQuestCompletedAlready = await this.repository.isQuestCompleted(userId, objective.questId);
+        const isQuestCompletedAlready = await this.repository.isQuestCompleted(
+          userId,
+          objective.questId,
+        );
         if (isQuestCompletedAlready) {
           continue;
         }
@@ -102,7 +105,7 @@ export class IncrementObjectiveProgressHandler implements ICommandHandler<Increm
           });
 
           await this.commandBus.execute(
-            new IncrementObjectiveProgressCommand(userId, 'COMPLETE_QUEST', 1, quest.id)
+            new IncrementObjectiveProgressCommand(userId, 'COMPLETE_QUEST', 1, quest.id),
           );
           await this.goalsService.incrementGoalProgress(userId, 'COMPLETE_QUEST', 1, quest.id);
         }

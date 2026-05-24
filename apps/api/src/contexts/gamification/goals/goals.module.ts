@@ -19,19 +19,9 @@ const CommandHandlers = [CreateGoalHandler, UpdateGoalHandler, DeleteGoalHandler
 const QueryHandlers = [GetGoalsHandler, GetGoalByIdHandler];
 
 @Module({
-  imports: [
-    CqrsModule,
-    PrismaModule,
-    SharedModule,
-    AuthModule,
-    GamificationModule,
-  ],
+  imports: [CqrsModule, PrismaModule, SharedModule, AuthModule, GamificationModule],
   controllers: [GoalController],
-  providers: [
-    GoalsService,
-    ...CommandHandlers,
-    ...QueryHandlers,
-  ],
+  providers: [GoalsService, ...CommandHandlers, ...QueryHandlers],
   exports: [GoalsService],
 })
 export class GoalsModule {}

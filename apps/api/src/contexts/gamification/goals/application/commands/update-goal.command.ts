@@ -13,12 +13,12 @@ export class UpdateGoalCommand {
     public readonly badgeIcon: string | undefined,
     public readonly isActive: boolean | undefined,
     public readonly objectives: GoalObjectiveInput[] | undefined,
-  ) { }
+  ) {}
 }
 
 @CommandHandler(UpdateGoalCommand)
 export class UpdateGoalHandler implements ICommandHandler<UpdateGoalCommand> {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async execute(command: UpdateGoalCommand) {
     const { goalId, title, description, xpReward, badgeIcon, isActive, objectives } = command;
@@ -32,7 +32,7 @@ export class UpdateGoalHandler implements ICommandHandler<UpdateGoalCommand> {
     }
 
     return this.prisma.$transaction(async (tx) => {
-      const updatedGoal = await tx.goal.update({
+      await tx.goal.update({
         where: { id: goalId },
         data: {
           title: title !== undefined ? title : undefined,

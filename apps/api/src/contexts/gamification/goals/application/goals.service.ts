@@ -14,7 +14,7 @@ export class GoalsService implements OnApplicationBootstrap {
     @Inject('UserStatsRepository')
     private readonly userStatsRepository: UserStatsRepository,
     private readonly gamificationGateway: GamificationGateway,
-  ) { }
+  ) {}
 
   async onApplicationBootstrap() {
     try {
@@ -30,7 +30,8 @@ export class GoalsService implements OnApplicationBootstrap {
         data: {
           id: goalId,
           title: 'Master of Reality',
-          description: 'Chinh phục thực tại Stoic bằng cách hoàn thiện 10 ngày rèn luyện tối hảo (Meta-Quests)',
+          description:
+            'Chinh phục thực tại Stoic bằng cách hoàn thiện 10 ngày rèn luyện tối hảo (Meta-Quests)',
           xpReward: 1000,
           badgeIcon: 'achievement_master_of_reality',
           isActive: true,

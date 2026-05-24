@@ -85,7 +85,8 @@ export class QuestsInitializer implements OnApplicationBootstrap {
         data: {
           id: metaQId,
           title: 'Perfect Alignment (Nghi thức tối hảo)',
-          description: 'Đạt sự hòa hợp tâm thức Stoic bằng cách hoàn thành cả 2 Nhiệm vụ Daily hôm nay',
+          description:
+            'Đạt sự hòa hợp tâm thức Stoic bằng cách hoàn thành cả 2 Nhiệm vụ Daily hôm nay',
           type: 'daily',
           xpReward: 100, // Meta-Quest awards a large reward!
           isActive: true,

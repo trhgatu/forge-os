@@ -22,7 +22,10 @@ export class CreateHabitDto {
   @IsOptional()
   difficulty?: string;
 
-  @ApiPropertyOptional({ description: 'Scheduling frequency configuration', example: { type: 'daily' } })
+  @ApiPropertyOptional({
+    description: 'Scheduling frequency configuration',
+    example: { type: 'daily' },
+  })
   @IsObject()
   @IsOptional()
   frequency?: any;

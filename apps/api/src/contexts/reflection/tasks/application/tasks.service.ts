@@ -2,7 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
 import { CreateTaskDto, UpdateTaskDto } from '../presentation/dto';
-import { AwardXpCommand } from '../../../gamification/application/commands/award-xp.command';
 import { IncrementObjectiveProgressCommand } from '../../../gamification/quests/application/commands/increment-objective-progress.command';
 
 @Injectable()
@@ -10,7 +9,7 @@ export class TasksService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly commandBus: CommandBus,
-  ) { }
+  ) {}
 
   async createTask(userId: string, dto: CreateTaskDto) {
     return this.prisma.task.create({
@@ -57,8 +56,9 @@ export class TasksService {
     const task = await this.getTaskById(userId, id);
 
     const isMarkingCompleted = dto.status === 'done' && task.status !== 'done';
-    const isMarkingUncompleted = dto.status !== undefined && dto.status !== 'done' && task.status === 'done';
-    const completedAt = isMarkingCompleted ? new Date() : (isMarkingUncompleted ? null : undefined);
+    const isMarkingUncompleted =
+      dto.status !== undefined && dto.status !== 'done' && task.status === 'done';
+    const completedAt = isMarkingCompleted ? new Date() : isMarkingUncompleted ? null : undefined;
 
     const updatedTask = await this.prisma.task.update({
       where: { id },
