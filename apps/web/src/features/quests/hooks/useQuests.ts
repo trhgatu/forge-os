@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+
 import { questsService } from '../services/questsService';
 
 export const useQuests = (filter?: { type?: string; isActive?: boolean }) => {

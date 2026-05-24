@@ -30,6 +30,17 @@ export class PrismaQuestsRepository implements QuestsRepository {
         },
       });
 
+      // Get all current objective IDs
+      const objectiveIds = quest.objectives.map((o) => o.id);
+
+      // Delete any objectives in the database that are NOT in the current list
+      await tx.questObjective.deleteMany({
+        where: {
+          questId: quest.id,
+          id: { notIn: objectiveIds },
+        },
+      });
+
       for (const obj of quest.objectives) {
         await tx.questObjective.upsert({
           where: { id: obj.id },

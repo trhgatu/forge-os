@@ -4,6 +4,7 @@ import { Quest, QuestObjective } from '../../domain/quest.entity';
 import { v4 as uuidv4 } from 'uuid';
 
 export interface ObjectiveInput {
+  id?: string;
   type: string;
   targetCount: number;
   referenceType: string;

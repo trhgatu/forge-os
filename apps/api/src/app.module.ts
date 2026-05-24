@@ -33,6 +33,8 @@ import { PrismaModule } from './shared/infrastructure/prisma/prisma.module';
 import { HabitsModule } from '@root/contexts/reflection/habits/habits.module';
 import { RoutinesModule } from '@root/contexts/reflection/routines/routines.module';
 import { QuestsModule } from '@root/contexts/gamification/quests/quests.module';
+import { GoalsModule } from '@root/contexts/gamification/goals/goals.module';
+import { TasksModule } from '@root/contexts/reflection/tasks/tasks.module';
 
 @Module({
   imports: [
@@ -80,6 +82,8 @@ import { QuestsModule } from '@root/contexts/gamification/quests/quests.module';
     HabitsModule,
     RoutinesModule,
     QuestsModule,
+    GoalsModule,
+    TasksModule,
 
     CacheModule,
   ],

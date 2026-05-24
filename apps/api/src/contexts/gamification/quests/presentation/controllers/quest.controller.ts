@@ -6,6 +6,7 @@ import { User } from '@shared/decorators';
 import { CreateQuestDto } from '../dto/create-quest.dto';
 import { CreateQuestCommand } from '../../application/commands/create-quest.command';
 import { GetDailyQuestsQuery } from '../../application/queries/get-daily-quests.query';
+import { GoalsService } from '../../../goals/application/goals.service';
 
 @ApiTags('Evolution / Quests')
 @ApiBearerAuth()
@@ -15,6 +16,7 @@ export class QuestController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
+    private readonly goalsService: GoalsService,
   ) {}
 
   @Post()
@@ -36,5 +38,11 @@ export class QuestController {
   @ApiOperation({ summary: 'Get all daily, main, and side quests with current progress' })
   async findDaily(@User('id') userId: string) {
     return this.queryBus.execute(new GetDailyQuestsQuery(userId));
+  }
+
+  @Get('goals')
+  @ApiOperation({ summary: 'Get all epic goals with dynamic user progress' })
+  async findGoals(@User('id') userId: string) {
+    return this.goalsService.getUserGoals(userId);
   }
 }

@@ -3,6 +3,11 @@ import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class ObjectiveDto {
+  @ApiPropertyOptional({ description: 'Optional Objective UUID' })
+  @IsString()
+  @IsOptional()
+  id?: string;
+
   @ApiProperty({ description: 'Action type, e.g. CREATE_JOURNAL, CHECK_HABIT' })
   @IsString()
   @IsNotEmpty()

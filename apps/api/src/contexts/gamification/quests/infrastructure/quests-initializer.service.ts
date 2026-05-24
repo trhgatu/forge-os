@@ -1,6 +1,5 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
-import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class QuestsInitializer implements OnApplicationBootstrap {
@@ -15,7 +14,13 @@ export class QuestsInitializer implements OnApplicationBootstrap {
 
       console.log('🌱 Seeding default Stoic System Quests...');
 
-      const q1Id = uuidv4();
+      // Static UUIDs for robust referencing across the event hierarchy
+      const q1Id = 'quest-daily-journal-sunset';
+      const q2Id = 'quest-daily-habit-ritual';
+      const q3Id = 'quest-main-stoic-memory';
+      const metaQId = 'quest-daily-meta-alignment';
+
+      // 1. Daily Journal Quest
       await this.prisma.quest.create({
         data: {
           id: q1Id,
@@ -26,7 +31,7 @@ export class QuestsInitializer implements OnApplicationBootstrap {
           isActive: true,
           objectives: {
             create: {
-              id: uuidv4(),
+              id: 'obj-daily-journal',
               type: 'CREATE_JOURNAL',
               targetCount: 1,
               referenceType: 'Journal',
@@ -35,7 +40,7 @@ export class QuestsInitializer implements OnApplicationBootstrap {
         },
       });
 
-      const q2Id = uuidv4();
+      // 2. Daily Habit Quest
       await this.prisma.quest.create({
         data: {
           id: q2Id,
@@ -46,7 +51,7 @@ export class QuestsInitializer implements OnApplicationBootstrap {
           isActive: true,
           objectives: {
             create: {
-              id: uuidv4(),
+              id: 'obj-daily-habit',
               type: 'CHECK_HABIT',
               targetCount: 1,
               referenceType: 'Habit',
@@ -55,7 +60,7 @@ export class QuestsInitializer implements OnApplicationBootstrap {
         },
       });
 
-      const q3Id = uuidv4();
+      // 3. Main Memory Quest
       await this.prisma.quest.create({
         data: {
           id: q3Id,
@@ -66,11 +71,42 @@ export class QuestsInitializer implements OnApplicationBootstrap {
           isActive: true,
           objectives: {
             create: {
-              id: uuidv4(),
+              id: 'obj-main-memory',
               type: 'CREATE_MEMORY',
               targetCount: 1,
               referenceType: 'Memory',
             },
+          },
+        },
+      });
+
+      // 4. Daily Meta-Quest: Perfect Alignment
+      await this.prisma.quest.create({
+        data: {
+          id: metaQId,
+          title: 'Perfect Alignment (Nghi thức tối hảo)',
+          description:
+            'Đạt sự hòa hợp tâm thức Stoic bằng cách hoàn thành cả 2 Nhiệm vụ Daily hôm nay',
+          type: 'daily',
+          xpReward: 100, // Meta-Quest awards a large reward!
+          isActive: true,
+          objectives: {
+            create: [
+              {
+                id: 'obj-meta-journal-quest',
+                type: 'COMPLETE_QUEST',
+                targetCount: 1,
+                referenceType: 'Quest',
+                referenceId: q1Id,
+              },
+              {
+                id: 'obj-meta-habit-quest',
+                type: 'COMPLETE_QUEST',
+                targetCount: 1,
+                referenceType: 'Quest',
+                referenceId: q2Id,
+              },
+            ],
           },
         },
       });

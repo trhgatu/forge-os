@@ -1,13 +1,15 @@
 'use client';
 
+import { Shield, Plus } from 'lucide-react';
 import React, { useState, useEffect, useMemo } from 'react';
-import { Shield, Plus, Search } from 'lucide-react';
-import { useSound, useNovaView } from '@/contexts';
-import { View } from '@/shared/types/os';
 import { toast } from 'sonner';
-import { Button } from '@/shared/components/ui';
-import type { Habit } from '@/features/gamification/types';
+
+import { useSound, useNovaView } from '@/contexts';
 import { gamificationApi } from '@/features/gamification/services/gamificationApi';
+import type { Habit } from '@/features/gamification/types';
+import { Button } from '@/shared/components/ui';
+import { View } from '@/shared/types/os';
+
 import {
   useQuests,
   useCreateQuest,
@@ -15,9 +17,10 @@ import {
   useDeleteQuest,
 } from '../hooks/useQuests';
 import type { Quest } from '../types';
+
 import { QuestCard } from './QuestCard';
-import { QuestSidebar } from './QuestSidebar';
 import { QuestModal } from './QuestModal';
+import { QuestSidebar } from './QuestSidebar';
 
 type CategoryType = 'all' | 'daily' | 'weekly' | 'main' | 'side';
 
@@ -121,38 +124,36 @@ export function QuestsManagement() {
       return matchesSearch && matchesCategory;
     });
   }, [quests, searchQuery, activeCategory]);
+
   return (
-    <div className="h-full flex flex-col bg-[#030304] text-white relative overflow-hidden animate-in fade-in duration-1000">
+    <div className="h-full flex flex-col bg-transparent text-white relative overflow-hidden animate-in fade-in duration-1000 font-sans">
       <div className="flex-1 overflow-y-auto scrollbar-hide relative z-10 p-6 md:p-10 pb-32">
         <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in zoom-in-95 duration-500">
-          {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          {/* Serene Header */}
+          <header className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
             <div>
-              <h1 className="text-3xl font-display font-bold text-white mb-2">Quest Engine</h1>
-              <p className="text-gray-400 font-light">
-                Stoic Discipline & Multi-Module Quest Linker Board.
+              <div className="flex items-center gap-2 opacity-80 mb-3">
+                <div className="h-px w-8 bg-gradient-to-r from-forge-cyan/40 to-transparent" />
+                <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-forge-cyan/80">
+                  Evolution Engine
+                </span>
+              </div>
+              <h1 className="text-4xl md:text-5xl font-display font-bold text-white tracking-tight">
+                Quest Log
+              </h1>
+              <p className="text-xs text-gray-500 mt-2 font-light max-w-xl leading-relaxed italic">
+                "We do not rise to the level of our goals. We fall to the level of our systems." Align your daily disciplines to complete active missions.
               </p>
             </div>
 
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
-                <input
-                  type="text"
-                  placeholder="Search quests..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="bg-white/5 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-sm text-white focus:outline-none focus:border-white/20 w-full md:w-64 transition-colors"
-                />
-              </div>
-              <button
-                onClick={handleOpenCreateModal}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-forge-cyan/10 border border-forge-cyan/20 text-forge-cyan hover:bg-forge-cyan/20 transition-all duration-300 font-medium text-sm cursor-pointer"
-              >
-                <Plus size={16} /> New Quest
-              </button>
-            </div>
-          </div>
+            <button
+              onClick={handleOpenCreateModal}
+              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white text-black font-semibold hover:bg-white/90 transition-all duration-300 shadow-[0_4px_20px_rgba(255,255,255,0.1)] group text-xs uppercase tracking-wider font-mono shrink-0 cursor-pointer"
+            >
+              <Plus size={14} className="group-hover:rotate-90 transition-transform duration-300" />
+              New Quest
+            </button>
+          </header>
 
           {/* Sidebar & Content Layout Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -161,28 +162,30 @@ export function QuestsManagement() {
               quests={quests}
               activeCategory={activeCategory}
               onCategoryChange={setActiveCategory}
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
             />
 
             {/* Content Cards Grid */}
             <div className="lg:col-span-3">
               {isLoading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-pulse">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-pulse">
                   {[1, 2, 4].map((i) => (
-                    <div key={i} className="h-44 rounded-xl bg-white/5 border border-white/5" />
+                    <div key={i} className="h-64 rounded-3xl bg-white/[0.01] border border-white/5" />
                   ))}
                 </div>
               ) : filteredQuests.length === 0 ? (
-                <div className="text-center py-20 text-gray-500 border border-dashed border-white/10 rounded-2xl bg-white/[0.01]">
-                  <Shield className="w-12 h-12 text-gray-600 mx-auto mb-4" />
+                <div className="text-center py-28 text-gray-500 border border-dashed border-white/5 rounded-3xl bg-white/[0.01] backdrop-blur-md">
+                  <Shield className="w-12 h-12 text-white/20 mx-auto mb-4" />
                   <span className="text-sm font-medium text-gray-400">
                     No quests found matching query
                   </span>
-                  <p className="text-xs text-gray-600 mt-1">
+                  <p className="text-xs text-gray-600 mt-1 font-light italic">
                     Configure active stoic goals from category sidebar
                   </p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {filteredQuests.map((quest) => (
                     <QuestCard
                       key={quest.id}

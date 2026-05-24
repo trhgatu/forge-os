@@ -12,5 +12,5 @@ export interface IXpRateLimitConfig {
 export interface IXpStrategy<T = unknown> {
   calculate(payload: T): number;
   getDescription(payload: T): string;
-  getRateLimitConfig(): IXpRateLimitConfig;
+  getRateLimitConfig(payload?: T): IXpRateLimitConfig;
 }

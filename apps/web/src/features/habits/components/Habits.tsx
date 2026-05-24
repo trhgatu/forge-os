@@ -6,11 +6,8 @@ import {
   Flame,
   Zap,
   Check,
-  CheckCircle,
   X,
   Target,
-  Clock,
-  Sparkles,
   TrendingUp,
 } from 'lucide-react';
 import React, { useState } from 'react';
@@ -66,6 +63,7 @@ const CreateHabitModal: React.FC<CreateHabitModalProps> = ({ isOpen, onClose }) 
         description: description || undefined,
         difficulty,
         xpReward: getXpReward(),
+        frequency: { type: 'daily' },
       });
       playSound('success');
       onClose();
@@ -217,15 +215,14 @@ export const Habits: React.FC = () => {
     }
   };
 
-  // Calculate generic high-level stats
   const activeCount = habits.length;
   const totalCompletions = habits.reduce((acc, h) => acc + h.streak, 0);
   const highestStreak = habits.reduce((acc, h) => Math.max(acc, h.streak), 0);
 
   return (
-    <div className="h-full flex bg-[#030304] overflow-hidden text-white font-sans">
+    <div className="h-full flex bg-transparent overflow-hidden text-white font-sans">
       <div className="flex-1 h-full overflow-y-auto scrollbar-hide p-8 pb-32">
-        
+
         {/* Serene Header */}
         <header className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
           <div>
@@ -305,8 +302,8 @@ export const Habits: React.FC = () => {
                       <span className={cn('text-[9px] font-mono uppercase tracking-widest px-2.5 py-1 rounded border', getDifficultyColor(habit.difficulty))}>
                         {habit.difficulty}
                       </span>
-                      <div className="flex items-center gap-1 text-[10px] font-mono text-forge-cyan">
-                        <Zap size={11} /> +{habit.xpReward} XP
+                      <div className="flex items-center gap-1 text-[9px] font-mono text-forge-cyan/70 tracking-wider uppercase">
+                        <Zap size={11} /> Quest Linked
                       </div>
                     </div>
 

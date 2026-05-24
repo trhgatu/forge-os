@@ -10,7 +10,7 @@ export interface JournalCreatedPayload {
 @XpStrategy('reflection.journal.created')
 export class JournalCreatedXpStrategy implements IXpStrategy<JournalCreatedPayload> {
   calculate() {
-    return 15; // Standard 15 XP reward for journaling
+    return 0; // Journal entries yield 0 raw level-up XP directly to prevent farming. XP is concentrated in Quests!
   }
 
   getDescription(payload: JournalCreatedPayload) {

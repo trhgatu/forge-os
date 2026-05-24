@@ -1,10 +1,10 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Image from 'next/image';
+import { useRef, useEffect, useState } from 'react';
 
-// Register ScrollTrigger plugin
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
@@ -25,7 +25,6 @@ export const SumiLeaves = ({ containerRef, count = 15 }: SumiLeavesProps) => {
   useEffect(() => {
     if (!mounted || !containerRef.current || !localRef.current) return;
 
-    // Use gsap.context for bulletproof React 19 cleanup and rendering stability
     const ctx = gsap.context(() => {
       const leaves = gsap.utils.toArray<HTMLElement>('.sumi-leaf-item');
       const h = containerRef.current?.clientHeight || 900;
@@ -110,9 +109,11 @@ export const SumiLeaves = ({ containerRef, count = 15 }: SumiLeavesProps) => {
               transformStyle: "preserve-3d",
             }}
           >
-            <img
+            <Image
               src={`/images/leaf-${leafNum}.png`}
               alt={`Sumi Leaf ${leafNum}`}
+              width={200}
+              height={200}
               className="w-full h-full object-contain pointer-events-none select-none opacity-55 dark:opacity-75 transition-all duration-700"
             />
           </div>

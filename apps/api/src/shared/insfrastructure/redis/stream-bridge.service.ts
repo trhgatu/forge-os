@@ -22,9 +22,6 @@ export class StreamBridgeService implements OnModuleInit, OnModuleDestroy {
     this.subscriber = this.redis.duplicate();
     await this.setupGroup();
     void this.pollStream();
-
-    //logger must delete when finish coding
-    this.logger.log('Stream Bridge is active and polling...');
   }
 
   onModuleDestroy() {

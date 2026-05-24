@@ -177,7 +177,7 @@ const AddStepModal: React.FC<AddStepModalProps> = ({
   const habitOptions = habits.map((h) => ({
     value: h.id,
     label: h.title,
-    description: `${h.difficulty} Difficulty // +${h.xpReward} XP`,
+    description: `${h.difficulty} Difficulty // Quest Linked`,
   }));
 
   return (
@@ -315,7 +315,7 @@ export const Routines: React.FC = () => {
   };
 
   return (
-    <div className="h-full flex bg-[#030304] overflow-hidden text-white font-sans">
+    <div className="h-full flex bg-transparent overflow-hidden text-white font-sans">
       <div className="flex-1 h-full overflow-y-auto scrollbar-hide p-8 pb-32">
         {/* Serene Header */}
         <header className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">

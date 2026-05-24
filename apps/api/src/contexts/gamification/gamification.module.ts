@@ -10,11 +10,9 @@ import { AwardXpHandler } from './application/handlers/award-xp.handler';
 import { SharedModule } from '@shared/shared.module';
 import { AuthModule } from '../iam/auth/auth.module';
 
-// 🚀 BullMQ Processor & Services
 import { XpAwardingProcessor } from './application/processors/xp-awarding.processor';
 import { XpRateLimitService } from './application/services/xp-rate-limit.service';
 
-// 🛡️ XP Awarding Strategies
 import { GithubSyncXpStrategy } from './application/strategies/engineering/github-sync.strategy';
 import { ProjectCreatedXpStrategy } from './application/strategies/engineering/project-created.strategy';
 import { QuestCompletedXpStrategy } from './application/strategies/gamification/quest-completed.strategy';
@@ -48,6 +46,6 @@ const Strategies = [
     ...Handlers,
     ...Strategies,
   ],
-  exports: [UserStatsRepository],
+  exports: [UserStatsRepository, 'UserStatsRepository', GamificationGateway],
 })
 export class GamificationModule {}

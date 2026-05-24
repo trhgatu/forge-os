@@ -18,6 +18,8 @@ import { GetQuestByIdHandler } from './application/queries/get-quest-by-id.query
 import { HabitCompletedQuestHandler } from './application/events/handlers/habit-completed.handler';
 import { JournalCreatedQuestHandler } from './application/events/handlers/journal-created.handler';
 import { QuestsInitializer } from './infrastructure/quests-initializer.service';
+import { GamificationModule } from '../gamification.module';
+import { GoalsModule } from '../goals/goals.module';
 
 const CommandHandlers = [
   CreateQuestHandler,
@@ -29,7 +31,15 @@ const QueryHandlers = [GetDailyQuestsHandler, GetAllQuestsHandler, GetQuestByIdH
 const EventHandlers = [HabitCompletedQuestHandler, JournalCreatedQuestHandler];
 
 @Module({
-  imports: [CqrsModule, PrismaModule, SharedModule, AuthModule, JournalModule],
+  imports: [
+    CqrsModule,
+    PrismaModule,
+    SharedModule,
+    AuthModule,
+    JournalModule,
+    GamificationModule,
+    GoalsModule,
+  ],
   controllers: [QuestController, QuestAdminController],
   providers: [
     {

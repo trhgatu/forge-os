@@ -36,7 +36,7 @@ export class UpdateQuestHandler implements ICommandHandler<UpdateQuestCommand> {
     quest.objectives = objectives.map(
       (o) =>
         new QuestObjective(
-          uuidv4(),
+          o.id || uuidv4(),
           quest.id,
           o.type,
           o.targetCount,

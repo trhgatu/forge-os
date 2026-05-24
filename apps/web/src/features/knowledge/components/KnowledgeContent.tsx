@@ -12,8 +12,7 @@ const KnowledgeContent: React.FC = () => {
   const { activeConcept, clearActive } = useKnowledge();
 
   return (
-    <div className="h-full flex bg-[#020203] text-white relative overflow-hidden selection:bg-indigo-500/30">
-      {/* Background Ambience & Grid */}
+    <div className="h-full flex bg-transparent text-white relative overflow-hidden selection:bg-indigo-500/30">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-[-20%] left-[-10%] w-[1000px] h-[1000px] bg-indigo-900/10 rounded-full blur-[200px] opacity-40" />
         <div className="absolute bottom-[-20%] right-[-10%] w-[1000px] h-[1000px] bg-cyan-900/10 rounded-full blur-[200px] opacity-40" />

@@ -1,11 +1,25 @@
-import { apiClient } from '@/services/apiClient';
-import { Quest, Habit, Routine } from '../types';
 import type { BackendResponse } from '@forge/core';
+
+import { apiClient } from '@/services/apiClient';
+
+import type { Quest, Habit, Routine } from '../types';
 
 export const gamificationApi = {
   // Quests API
   async getDailyQuests(): Promise<Quest[]> {
     const res = await apiClient.get<BackendResponse<Quest[]>>('/quests/daily');
+    return res.data.data;
+  },
+
+  // Goals API
+  async getUserGoals(): Promise<any[]> {
+    const res = await apiClient.get<BackendResponse<any[]>>('/quests/goals');
+    return res.data.data;
+  },
+
+  // Stats API
+  async getUserStats(): Promise<any> {
+    const res = await apiClient.get<BackendResponse<any>>('/gamification/stats');
     return res.data.data;
   },
 

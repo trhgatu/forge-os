@@ -10,9 +10,9 @@ import { cn } from '@/shared/lib/utils';
 import type { Memory as MemoryType } from '@/shared/types/memory';
 
 import { SEASON_CONFIG, type InnerSeason, getSeasonFromMood } from '../config';
+import { MOCK_MEMORIES } from '../data/mockMemories';
 import { analyzeMemory } from '../services/analyze';
 
-import { MOCK_MEMORIES } from '../data/mockMemories';
 import { CreateMemoryModal } from './CreateMemoryModal';
 import { MemoryCard } from './MemoryCard';
 import { MemoryDetailPanel } from './MemoryDetailPanel';
@@ -157,9 +157,9 @@ export function Memory() {
   }
 
   return (
-    <div className="relative flex h-full flex-col overflow-hidden bg-[#030304] text-white animate-in fade-in duration-1000">
+    <div className="relative flex h-full flex-col overflow-hidden bg-transparent text-white animate-in fade-in duration-1000">
       {/* Timeless Header - Flowing Layout */}
-      <div className="sticky top-0 z-20 border-b border-white/5 px-8 py-8 backdrop-blur-xl bg-[#030304]/85">
+      <div className="sticky top-0 z-20 border-b border-white/5 px-8 py-8 backdrop-blur-xl bg-transparent">
         {/* Top row - Title and Actions */}
         <div className="flex items-start justify-between mb-6">
           <div className="flex-1">

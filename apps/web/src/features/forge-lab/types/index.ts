@@ -1,10 +1,7 @@
-import type { User} from '@forge/auth';
-import { Role } from '@forge/auth';
-import { PaginatedResponse } from '@forge/core';
+import type { User } from '@forge/auth';
 
 export type ForgeTab = 'dashboard' | 'projects' | 'foundations' | 'research';
 
-// Stats cached from GitHub or Internal metrics
 export interface HybridStats {
   stars?: number;
   forks?: number;

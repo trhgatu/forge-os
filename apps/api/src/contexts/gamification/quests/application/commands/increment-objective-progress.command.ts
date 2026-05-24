@@ -1,6 +1,8 @@
 import { CommandHandler, ICommandHandler, CommandBus, EventBus } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { QuestsRepository } from '../../domain/quests.repository';
+import { GoalsService } from '../../../goals/application/goals.service';
+import { UserStatsRepository } from '../../../domain/ports/user-stats.repository';
 import { ACTIVITY_STREAM_PORT, IActivityStreamPort } from '@shared/ports/activity-stream.port';
 
 export class IncrementObjectiveProgressCommand {
@@ -18,6 +20,9 @@ export class IncrementObjectiveProgressHandler implements ICommandHandler<Increm
     private readonly repository: QuestsRepository,
     private readonly commandBus: CommandBus,
     private readonly eventBus: EventBus,
+    private readonly goalsService: GoalsService,
+    @Inject('UserStatsRepository')
+    private readonly userStatsRepository: UserStatsRepository,
     @Inject(ACTIVITY_STREAM_PORT)
     private readonly activityStream: IActivityStreamPort,
   ) {}
@@ -35,6 +40,14 @@ export class IncrementObjectiveProgressHandler implements ICommandHandler<Increm
       const isMatch = objective.referenceId === null || objective.referenceId === referenceId;
 
       if (isMatch) {
+        const isQuestCompletedAlready = await this.repository.isQuestCompleted(
+          userId,
+          objective.questId,
+        );
+        if (isQuestCompletedAlready) {
+          continue;
+        }
+
         progress.currentCount += amount;
 
         if (progress.currentCount >= objective.targetCount) {
@@ -43,6 +56,12 @@ export class IncrementObjectiveProgressHandler implements ICommandHandler<Increm
         }
 
         await this.repository.saveObjectiveProgress(progress);
+
+        const stats = await this.userStatsRepository.findByUserId(userId);
+        if (stats) {
+          stats.updateStreak();
+          await this.userStatsRepository.save(stats);
+        }
 
         const quest = await this.repository.findQuestById(objective.questId);
         if (!quest) continue;
@@ -63,13 +82,18 @@ export class IncrementObjectiveProgressHandler implements ICommandHandler<Increm
         }
 
         if (allCompleted) {
+          const finalCheckCompleted = await this.repository.isQuestCompleted(userId, quest.id);
+          if (finalCheckCompleted) {
+            continue;
+          }
+
           await this.repository.completeQuest(userId, quest.id);
 
-          // Emit async event via Redis Stream to let BullMQ award the XP
           await this.activityStream.emit('gamification.quest.completed', userId, {
             title: quest.title,
             questId: quest.id,
             xpReward: quest.xpReward,
+            isCustom: quest.userId !== null,
           });
 
           this.eventBus.publish({
@@ -79,6 +103,11 @@ export class IncrementObjectiveProgressHandler implements ICommandHandler<Increm
             title: quest.title,
             xpReward: quest.xpReward,
           });
+
+          await this.commandBus.execute(
+            new IncrementObjectiveProgressCommand(userId, 'COMPLETE_QUEST', 1, quest.id),
+          );
+          await this.goalsService.incrementGoalProgress(userId, 'COMPLETE_QUEST', 1, quest.id);
         }
       }
     }

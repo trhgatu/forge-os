@@ -22,16 +22,12 @@ export function GlassCard({
   return (
     <div
       className={cn(
-        'relative overflow-hidden rounded-xl border border-white/10 bg-[#0A0A0F]/60 backdrop-blur-xl shadow-2xl transition-all duration-300',
+        'relative overflow-hidden rounded-xl border border-white/10 backdrop-blur-xl shadow-2xl transition-all duration-300',
 
-        // Gradient effect
-        gradient &&
-          'before:absolute before:inset-0 before:bg-linear-to-br before:from-white/5 before:to-transparent before:pointer-events-none',
+        gradient && 'before:absolute before:inset-0 before:pointer-events-none',
 
-        // Interactive hover state
-        interactive && 'hover:border-white/20 hover:bg-[#0A0A0F]/80 cursor-pointer',
+        interactive && 'hover:border-white/20 cursor-pointer',
 
-        // Padding control
         !noPadding && 'p-6',
 
         className,
