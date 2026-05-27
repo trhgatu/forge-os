@@ -135,6 +135,8 @@ const getPathForView = (view: View): string => {
       return '/forge/compass';
     case View.SETTINGS:
       return '/forge/settings';
+    case View.IDENTITY:
+      return '/forge/identity';
     case View.FORGE_CHAMBER:
       return '/forge/chamber';
     case View.SHADOW_WORK:

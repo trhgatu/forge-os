@@ -21,6 +21,11 @@ export class GamificationController {
         streak: 0,
         lastActivityDate: null,
         achievements: [],
+        discipline: 0,
+        consistency: 0,
+        willpower: 0,
+        awareness: 0,
+        presence: 0,
       } as any;
     }
     return stats;

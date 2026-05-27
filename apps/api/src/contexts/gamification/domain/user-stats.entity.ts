@@ -9,6 +9,11 @@ export class UserStats extends AggregateRoot {
     public streak: number,
     public lastActivityDate: Date,
     public achievements: string[],
+    public discipline: number = 0,
+    public consistency: number = 0,
+    public willpower: number = 0,
+    public awareness: number = 0,
+    public presence: number = 0,
   ) {
     super();
   }

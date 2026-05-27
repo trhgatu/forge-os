@@ -22,6 +22,11 @@ export class PrismaUserStatsRepository implements UserStatsRepository {
       data.streak,
       data.lastActivityDate,
       data.achievements,
+      data.discipline,
+      data.consistency,
+      data.willpower,
+      data.awareness,
+      data.presence,
     );
   }
 
@@ -35,6 +40,11 @@ export class PrismaUserStatsRepository implements UserStatsRepository {
         streak: stats.streak,
         lastActivityDate: stats.lastActivityDate,
         achievements: stats.achievements,
+        discipline: stats.discipline,
+        consistency: stats.consistency,
+        willpower: stats.willpower,
+        awareness: stats.awareness,
+        presence: stats.presence,
       },
       create: {
         userId: stats.userId,
@@ -44,6 +54,11 @@ export class PrismaUserStatsRepository implements UserStatsRepository {
         streak: stats.streak,
         lastActivityDate: stats.lastActivityDate,
         achievements: stats.achievements,
+        discipline: stats.discipline,
+        consistency: stats.consistency,
+        willpower: stats.willpower,
+        awareness: stats.awareness,
+        presence: stats.presence,
       },
     });
   }
