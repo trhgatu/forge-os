@@ -31,6 +31,43 @@ export class IncrementObjectiveProgressHandler implements ICommandHandler<Increm
     const { userId, actionType, amount, referenceId } = command;
     const todayStr = new Date().toISOString().split('T')[0];
 
+    // Always increment character attributes and update streak on any action trigger
+    const stats = await this.userStatsRepository.findByUserId(userId);
+    if (stats) {
+      stats.updateStreak();
+
+      switch (actionType) {
+        case 'COMPLETE_TASK':
+          stats.discipline = (stats.discipline || 0) + amount;
+          break;
+        case 'COMPLETE_HABIT':
+          stats.consistency = (stats.consistency || 0) + amount;
+          break;
+        case 'COMPLETE_ROUTINE':
+          stats.discipline = (stats.discipline || 0) + amount * 2;
+          break;
+        case 'COMPLETE_JOURNAL':
+        case 'CREATE_JOURNAL':
+          stats.awareness = (stats.awareness || 0) + amount * 2;
+          break;
+        case 'CREATE_MEMORY':
+        case 'COMPLETE_MEMORY':
+          stats.awareness = (stats.awareness || 0) + amount;
+          break;
+        case 'COMPLETE_QUEST':
+          stats.willpower = (stats.willpower || 0) + amount;
+          break;
+        case 'COMPLETE_GOAL':
+          stats.willpower = (stats.willpower || 0) + amount * 5;
+          break;
+        case 'WS_PRESENCE':
+          stats.presence = (stats.presence || 0) + amount;
+          break;
+      }
+
+      await this.userStatsRepository.save(stats);
+    }
+
     const progresses = await this.repository.findActiveObjectiveProgresses(userId, actionType);
 
     for (const progress of progresses) {
@@ -56,12 +93,6 @@ export class IncrementObjectiveProgressHandler implements ICommandHandler<Increm
         }
 
         await this.repository.saveObjectiveProgress(progress);
-
-        const stats = await this.userStatsRepository.findByUserId(userId);
-        if (stats) {
-          stats.updateStreak();
-          await this.userStatsRepository.save(stats);
-        }
 
         const quest = await this.repository.findQuestById(objective.questId);
         if (!quest) continue;

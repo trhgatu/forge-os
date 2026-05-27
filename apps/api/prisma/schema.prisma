@@ -26,6 +26,7 @@ model User {
   tasks           Task[]
   goals           Goal[]
   goalStatuses    UserGoalStatus[]
+  flowMoments     FlowMoment[]
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
 
@@ -55,6 +56,11 @@ model UserStats {
   streak           Int      @default(0)
   lastActivityDate DateTime @default(now())
   achievements     String[] @default([])
+  discipline       Int      @default(0)
+  consistency      Int      @default(0)
+  willpower        Int      @default(0)
+  awareness        Int      @default(0)
+  presence         Int      @default(0)
 
   @@map("user_stats")
 }
@@ -411,3 +417,18 @@ model UserGoalProgress {
   @@unique([userId, objectiveId])
   @@map("user_goal_progress")
 }
+
+model FlowMoment {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fileName  String   // e.g. "ShadowWork.tsx"
+  gitBranch String   // e.g. "feature/alchemical-reflection"
+  cpuLoad   Int      // e.g. 35
+  coordX    Float    // Coordinate X on cosmic web map
+  coordY    Float    // Coordinate Y on cosmic web map
+  createdAt DateTime @default(now())
+
+  @@map("flow_moments")
+}
+

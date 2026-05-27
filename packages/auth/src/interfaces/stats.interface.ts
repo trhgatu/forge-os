@@ -6,6 +6,11 @@ export interface UserStats {
   streak: number;
   lastActivityDate: string | null;
   achievements: string[];
+  discipline: number;
+  consistency: number;
+  willpower: number;
+  awareness: number;
+  presence: number;
 }
 
 export type UserStatsDto = UserStats;

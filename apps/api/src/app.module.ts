@@ -35,6 +35,7 @@ import { RoutinesModule } from '@root/contexts/reflection/routines/routines.modu
 import { QuestsModule } from '@root/contexts/gamification/quests/quests.module';
 import { GoalsModule } from '@root/contexts/gamification/goals/goals.module';
 import { TasksModule } from '@root/contexts/reflection/tasks/tasks.module';
+import { EchoesModule } from '@root/contexts/reflection/echoes/echoes.module';
 
 @Module({
   imports: [
@@ -84,6 +85,7 @@ import { TasksModule } from '@root/contexts/reflection/tasks/tasks.module';
     QuestsModule,
     GoalsModule,
     TasksModule,
+    EchoesModule,
 
     CacheModule,
   ],

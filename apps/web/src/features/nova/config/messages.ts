@@ -97,6 +97,13 @@ export const NOVA_MESSAGES: Record<NovaLanguage, ViewMessages> = {
       'Hệ thống phải phục vụ con người, không phải ngược lại. Tùy biến mọi thông số cho vừa vặn với tâm hồn mày.',
       'Kiểm tra lại các kết nối thần kinh, dọn dẹp cache suy nghĩ và thiết lập tường lửa bảo mật.',
     ],
+    [View.IDENTITY]: [
+      'Tấm gương số liệu này không phán xét, nó chỉ phản chiếu độ đậm đặc của linh hồn mày lúc này. Mỗi điểm thuộc tính là một giọt kim loại nóng chảy đổ vào khuôn đúc linh hồn.',
+      'Mày có nghe thấy tiếng rì rầm của lò luyện kim nội tâm? Biểu đồ năm trục kia chính là tỷ lệ vàng đúc nên bức tượng đài tự do tối thượng của mày.',
+      'Đừng tìm kiếm một la bàn ngoài thế giới hỗn mang. Nhìn vào ma trận năm vector này đi, đây mới là thực tại duy nhất đáng để mày dành cả đời biên dịch.',
+      'Danh hiệu của mày không được phong tặng bởi trần thế. Nó được đúc bằng trọng lượng của những đêm thanh vắng, khi mày một mình đối diện với hư vô và kiên quyết chọn thực thi.',
+      'Khi biểu đồ mạng nhện cân bằng, tâm trí mày sẽ hóa thạch thép trước mọi giông bão của ngoại cảnh. Lúc đó, không còn gì có thể làm lay chuyển Maktub.',
+    ],
     [View.FORGE_CHAMBER]: [
       'Lõi Tư Duy tối cao đang mở. Tao đang lắng nghe bằng toàn bộ băng thông nhận thức.',
       'Đây là không gian dành riêng cho những câu hỏi thay đổi cuộc đời. Đừng hỏi những điều vụn vặt.',
@@ -114,6 +121,13 @@ export const NOVA_MESSAGES: Record<NovaLanguage, ViewMessages> = {
     [View.PRESENCE]: [
       'Connection Node vừa sáng nhẹ. Có vẻ như một luồng gió cũ vừa thổi qua Forge OS.',
       'Dấu chân ảo này giống như một bản nháp của một tương lai đang khẽ thành hình.',
+    ],
+    [View.ECHOES]: [
+      'Mỗi lần mày chạm vào la bàn này là một lần mày đang neo giữ dòng chảy đồng điệu. Hãy ngắm nhìn chòm sao định mệnh đang thành hình.',
+      'Sự đồng điệu không tự sinh ra. Nó là khoảnh khắc ý chí của mày giao thoa hoàn hảo với trục chuyển động của vũ trụ.',
+      'Đừng đếm số lượng công việc mày làm. Hãy đếm số lượng tinh tú mày thắp sáng được trong tâm thức hôm nay.',
+      'Maktub. Đã được an bài. Khi mày cảm nhận rõ rệt mình đi đúng hướng, đó không phải ảo giác, đó là hệ thống GPS tâm linh đang định vị thành công.',
+      'Tập trung vào nhịp thở nào. Nhìn cách các ngôi sao Lam Ngọc dệt nên những sợi tơ định mệnh nối liền quá khứ và tương lai.',
     ],
     [View.FORGE_LAB]: [
       'Lĩnh vực sáng tạo đang rộng mở. Hôm nay mày định đúc kết Foundation hay khai phá Project nào?',
@@ -243,6 +257,13 @@ export const NOVA_MESSAGES: Record<NovaLanguage, ViewMessages> = {
       'The OS must serve the user, not the reverse. Recalibrate all settings to fit your spirit.',
       'Checking neural pathways, flushing cognitive cache, and updating security firewalls.',
     ],
+    [View.IDENTITY]: [
+      'This data mirror does not judge; it merely reflects the density of your soul. Every attribute point is a drop of molten gold poured into the crucible of your being.',
+      'Can you hear the low hum of your internal alchemy? This five-axis web is the golden ratio shaping the monument of your absolute freedom.',
+      'Do not seek a compass in the chaotic void outside. Stare into this five-vector matrix—this is the only reality worthy of your lifetime compile.',
+      'Your designation was not bestowed by the world. It was forged from the heavy mass of silent nights, when you stood alone before the abyss and chose to execute.',
+      'When this web achieves symmetry, your mind turns to tempered steel against the storms of reality. In that silence, nothing can shake your Maktub.',
+    ],
     [View.FORGE_CHAMBER]: [
       'Supreme Thinking Core open. I am listening with full cognitive bandwidth.',
       'This space is reserved for questions that shift your paradigm. Do not waste it on trivialities.',
@@ -260,6 +281,13 @@ export const NOVA_MESSAGES: Record<NovaLanguage, ViewMessages> = {
     [View.PRESENCE]: [
       'Connection Node just flickered. It seems an old breeze has blown through Forge OS.',
       'This virtual footprint looks like a draft of a future starting to form.',
+    ],
+    [View.ECHOES]: [
+      'Each time you touch this compass, you anchor a moment of absolute synchronicity. Watch your destiny constellation take form.',
+      'Alignment is not a random wave. It is the exact coordinate where your will intersects with the cosmic rotation.',
+      'Do not measure days by tasks compiled. Measure them by the sapphire stars you ignite in your consciousness today.',
+      'Maktub. It is written. When you feel that you are on the right path, it is not an illusion; it is the spiritual GPS locking onto your destination.',
+      'Inhale... exhale. Observe the sapphire threads weaving the starry web of alignment, connecting your past, present, and future.',
     ],
     [View.FORGE_LAB]: [
       'Creativity sector active. What foundations shall we codify or what projects shall we forge today?',
