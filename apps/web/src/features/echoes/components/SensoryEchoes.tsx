@@ -1,24 +1,21 @@
 'use client';
 
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
-import {
-  Volume2,
-  Compass,
-  GitBranch,
-  Cpu,
-} from 'lucide-react';
+import { Volume2 } from 'lucide-react';
 import type { Program } from 'ogl';
 import React, { useState, useEffect, useRef } from 'react';
 
 import { useLanguage, useNovaView } from '@/contexts';
 import { forgeToast } from '@/shared/lib/toast';
-import { cn } from '@/shared/lib/utils';
 import { View } from '@/shared/types/os';
 
 import { echoesService } from '../services/echoesService';
 
+import { AnchorControl } from './AnchorControl';
+import { ConstellationSvg } from './ConstellationSvg';
 import { CosmicCanvas } from './CosmicCanvas';
+import { CosmicTelemetry } from './CosmicTelemetry';
 import { MaktubOverlay } from './MaktubOverlay';
 
 interface FlowMoment {
@@ -411,65 +408,19 @@ export const SensoryEchoes: React.FC = () => {
         language={language}
       />
 
-      {/* GLOBAL UI CONTAINER (Animated by GSAP) */}
       <div ref={mainUiRef} className="absolute inset-0 w-full h-full flex flex-col items-center justify-between p-8 z-10 pointer-events-none">
-
-        {/* Top Right: Cosmic Telemetry */}
-        <div className="absolute top-24 right-8 space-y-2 bg-transparent max-w-sm pointer-events-auto text-right flex flex-col items-end z-20">
-          <h3 className="text-[8px] font-mono text-gray-500 uppercase tracking-[0.35em] font-bold flex items-center justify-end gap-1.5">
-            <span>[ Cosmic Telemetry ]</span>
-          </h3>
-
-          <div className="min-h-[70px] flex flex-col justify-center items-end">
-            <AnimatePresence mode="wait">
-              {lastLoggedMoment ? (
-                <motion.div
-                  key={lastLoggedMoment.id}
-                  initial={{ opacity: 0, x: 3 }}
-                  animate={{ opacity: 0.65, x: 0 }}
-                  exit={{ opacity: 0, x: -3 }}
-                  className="space-y-1.5 flex flex-col items-end"
-                >
-                  <p className="text-[10px] text-gray-400 italic leading-normal font-light text-right max-w-xs">
-                    {language === 'vi'
-                      ? '"Đồng điệu được kích hoạt thành công. Ngôi sao đã gắn kết vào mạng lưới."'
-                      : '"Synchronicity successfully anchored. A new star is woven into your web."'}
-                  </p>
-
-                  <div className="flex flex-col gap-y-1 text-[8.5px] font-mono text-gray-500 mt-2 items-end">
-                    <span className="flex items-center justify-end gap-1.5">
-                      <span>PATH // {(lastLoggedMoment.fileName || 'unknown')}::{(lastLoggedMoment.gitBranch?.slice(0, 15) || 'main')}</span>
-                      <GitBranch size={9} className="text-gray-600" />
-                    </span>
-                    <span className="flex items-center justify-end gap-1.5">
-                      <span>ZENITH TIME // {formatFlowTime(flowSeconds)} [Active Focus]</span>
-                      <span className="w-2.5 h-2.5 rounded-full border border-gray-600 flex items-center justify-center text-[7px] font-bold">⏱</span>
-                    </span>
-                    <span className="flex items-center justify-end gap-1.5">
-                      <span>RESONANCE // {isAudioEnabled ? 'Solfeggio 528Hz [Deep Focus]' : 'Silence [Vipassana Meditation]'}</span>
-                      <span className="w-2.5 h-2.5 rounded-full border border-gray-600 flex items-center justify-center text-[7px] font-bold">♫</span>
-                    </span>
-                    <span className="flex items-center justify-end gap-1.5">
-                      <span>SYSTEM LOAD // {lastLoggedMoment.cpuLoad}% CPU [Cold Run]</span>
-                      <Cpu size={9} className="text-gray-600" />
-                    </span>
-                  </div>
-                </motion.div>
-              ) : (
-                <p className="text-[9.5px] text-gray-500 italic font-light text-right">
-                  {language === 'vi'
-                    ? '// Hơi thở tinh vân lam ngọc đang phập phồng. Vũ trụ lờ lững trôi.'
-                    : '// Nebula breathes sapphire stardust. The cosmos drifts in alignment.'}
-                </p>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
+        <CosmicTelemetry
+          lastLoggedMoment={lastLoggedMoment}
+          flowSeconds={flowSeconds}
+          isAudioEnabled={isAudioEnabled}
+          language={language}
+          formatFlowTime={formatFlowTime}
+        />
 
         {/* Floating Meta Panel Top - BORDERLESS, SILENT SILVER */}
         <div className="w-full max-w-[1550px] flex items-center justify-between py-2 relative mt-2 bg-transparent pointer-events-auto">
           <div className="space-y-1">
-            <span className="text-[9px] font-mono text-gray-555 uppercase tracking-[0.35em] block">
+            <span className="text-[9px] font-mono text-gray-500 uppercase tracking-[0.35em] block">
               Meta // Alignment Scanner
             </span>
             <h1 className="text-base font-display font-light text-gray-300 tracking-[0.2em] uppercase">
@@ -479,7 +430,7 @@ export const SensoryEchoes: React.FC = () => {
 
           {/* Symmetrical HUD Top-Center indicator - Safe from Nova Robot */}
           <div className="absolute left-1/2 -translate-x-1/2 top-1.5 text-center hidden md:block select-none pointer-events-none">
-            <span className="text-[7.5px] font-mono text-gray-500 uppercase tracking-[0.25em] block">
+            <span className="text-[7.5px] font-mono text-gray-550 uppercase tracking-[0.25em] block">
               {language === 'vi' ? 'Hệ thống định vị Maktub' : 'Maktub Positioning System'}
             </span>
             <span className="text-[11px] font-mono font-bold text-[#22d3ee] tracking-widest block mt-0.5">
@@ -512,60 +463,12 @@ export const SensoryEchoes: React.FC = () => {
         {/* CENTRAL MEDITATIVE SINGULARITY & ORBITAL OVERLAY */}
         <div className="relative w-full max-w-md aspect-square flex items-center justify-center my-auto scale-[0.88] md:scale-95">
 
-          {/* Fine, faint silver-gold astrological overlay */}
-          <svg className="absolute w-[98%] h-[98%] pointer-events-none opacity-[0.09]" viewBox="0 0 400 400">
-            <circle cx="200" cy="200" r="185" fill="none" stroke="white" strokeWidth="0.4" strokeDasharray="1, 4" />
-            <circle cx="200" cy="200" r="135" fill="none" stroke="#22d3ee" strokeWidth="0.5" strokeDasharray="4, 6" />
-            <circle cx="200" cy="200" r="85" fill="none" stroke="white" strokeWidth="0.3" />
-            <path d="M 200,20 L 200,380 M 20,200 L 380,200" stroke="white" strokeWidth="0.2" />
-
-            {/* Static SVG Constellation Threads linking existing flow stars */}
-            {flowHistory.map((moment, idx) => {
-              if (idx === flowHistory.length - 1) return null;
-              const nextMoment = flowHistory[idx + 1];
-              return (
-                <line
-                  key={`line-${moment.id || idx}`}
-                  x1={moment.coordinates.x}
-                  y1={moment.coordinates.y}
-                  x2={nextMoment.coordinates.x}
-                  y2={nextMoment.coordinates.y}
-                  stroke="#0891b2"
-                  strokeWidth="1.2"
-                  strokeOpacity="0.45"
-                  strokeDasharray="2, 2"
-                />
-              );
-            })}
-
-            {/* Animated Golden Thread growing and weaving itself to connect the new star */}
-            {lineToDraw && lineToDraw.visible && (
-              <line
-                ref={newestLineRef}
-                x1={lineToDraw.x1}
-                y1={lineToDraw.y1}
-                x2={lineToDraw.x2}
-                y2={lineToDraw.y2}
-                stroke="#22d3ee"
-                strokeWidth="1.8"
-                strokeOpacity="0.95"
-                strokeDasharray="400"
-                strokeDashoffset="400"
-              />
-            )}
-
-            {/* Persistent Flow Stars on the map */}
-            {flowHistory.map((moment, idx) => (
-              <circle
-                key={`star-${moment.id || idx}`}
-                cx={moment.coordinates.x}
-                cy={moment.coordinates.y}
-                r={idx === 0 ? 3.8 : 2.5}
-                fill={idx === 0 ? '#22d3ee' : '#0891b2'}
-                fillOpacity={idx === 0 ? 0.9 : 0.7}
-              />
-            ))}
-          </svg>
+          {/* Fine, faint silver-gold astrological overlay & Constellation Map (Modular) */}
+          <ConstellationSvg
+            flowHistory={flowHistory}
+            lineToDraw={lineToDraw}
+            newestLineRef={newestLineRef}
+          />
 
           {/* Outer rotating text */}
           <motion.div
@@ -583,40 +486,19 @@ export const SensoryEchoes: React.FC = () => {
             </svg>
           </motion.div>
 
-          {/* Main interactive single-touch node - BORDERLESS BREATHING CORE */}
-          <motion.button
-            ref={centralSingularityRef}
-            onClick={triggerMaktubAlignment}
-            disabled={isFlowActive}
-            className={cn(
-              'relative w-48 h-48 rounded-full bg-transparent flex flex-col items-center justify-center gap-2.5 transition-all duration-1000 cursor-pointer pointer-events-auto border-none outline-none focus:outline-none z-20',
-              isFlowActive ? 'scale-[0.97]' : 'hover:scale-[1.02]'
-            )}
-          >
-            {/* Breathing deep cosmic cyan/blue core aura */}
-            <div
-              className={cn(
-                'absolute inset-8 rounded-full blur-3xl opacity-[0.14] transition-all duration-1000 bg-[#0e7490] animate-pulse',
-                isFlowActive && 'scale-[1.4] opacity-[0.3] bg-[#22d3ee] blur-4xl'
-              )}
-              style={{ animationDuration: '4s' }}
-            />
-
-            {/* Central indicator */}
-            <div className="text-center space-y-1 relative z-10">
-              <Compass className="text-gray-500 hover:text-[#22d3ee] transition-colors mx-auto animate-pulse" size={24} />
-              <span className="text-[8px] font-mono text-gray-500 uppercase tracking-[0.35em] block">
-                {isFlowActive ? (language === 'vi' ? 'Đang Dệt Sao' : 'Weaving Star') : (language === 'vi' ? 'Neo Dòng Chảy' : 'Anchor Flow')}
-              </span>
-              <h3 className="text-xs font-mono font-light text-gray-400 tracking-[0.2em] uppercase pl-[0.2em]">
-                {language === 'vi' ? '[ Kích hoạt ]' : '[ Synchronize ]'}
-              </h3>
-            </div>
-          </motion.button>
+          {/* Central Interactive Core Trigger (Modular) */}
+          <AnchorControl
+            isFlowActive={isFlowActive}
+            language={language}
+            onTrigger={triggerMaktubAlignment}
+            anchorButtonRef={centralSingularityRef}
+          />
         </div>
-        <div className="w-full max-w-[1550px] flex justify-end items-end bg-transparent pb-2">
-          <div className="w-[120px] hidden md:block" />
 
+        {/* LOWER FLOATING SYSTEM INFORMATION - DEVOID OF BORDERS AND GLASS PANELS */}
+        <div className="w-full max-w-[1550px] flex justify-end items-end bg-transparent pb-2">
+          {/* Right Side: Left empty and clean to prevent overlay collision with Nova robot */}
+          <div className="w-[120px] hidden md:block" />
         </div>
 
       </div>
