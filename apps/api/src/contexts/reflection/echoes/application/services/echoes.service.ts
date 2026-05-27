@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
 import { CreateFlowMomentDto } from '../../presentation/dto/create-flow-moment.dto';
@@ -12,6 +12,23 @@ export class EchoesService {
   ) {}
 
   async syncMoment(userId: string, dto: CreateFlowMomentDto) {
+    const COOLDOWN_MS = 45 * 60 * 1000; // 45 minutes
+
+    const lastMoment = await this.prisma.flowMoment.findFirst({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    if (lastMoment) {
+      const elapsed = Date.now() - new Date(lastMoment.createdAt).getTime();
+      if (elapsed < COOLDOWN_MS) {
+        const remainingMinutes = Math.ceil((COOLDOWN_MS - elapsed) / 60000);
+        throw new BadRequestException(
+          `Resonance cooldown active. Please remain focused for another ${remainingMinutes} minute(s).`,
+        );
+      }
+    }
+
     const newMoment = await this.prisma.flowMoment.create({
       data: {
         userId,
