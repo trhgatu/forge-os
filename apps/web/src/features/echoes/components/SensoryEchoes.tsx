@@ -52,12 +52,58 @@ export const SensoryEchoes: React.FC = () => {
   const [isFlowActive, setIsFlowActive] = useState(false);
   const [flowSeconds, setFlowSeconds] = useState(0);
 
+  // Persistent Cooldown states for active Maktub flow channeling
+  const [cooldownEnd, setCooldownEnd] = useState<number | null>(null);
+  const [cooldownSecondsLeft, setCooldownSecondsLeft] = useState<number>(0);
+
   useEffect(() => {
     const interval = setInterval(() => {
       setFlowSeconds((prev) => prev + 1);
     }, 1000);
     return () => clearInterval(interval);
   }, []);
+
+  // Load persistent flow cooldown on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('forge_flow_cooldown_end');
+      if (stored) {
+        const endTimestamp = parseInt(stored, 10);
+        if (endTimestamp > Date.now()) {
+          setCooldownEnd(endTimestamp);
+          setCooldownSecondsLeft(Math.ceil((endTimestamp - Date.now()) / 1000));
+        }
+      }
+    }
+  }, []);
+
+  // Cooldown countdown loop with alchemical audio cue
+  useEffect(() => {
+    if (!cooldownEnd) return;
+    const interval = setInterval(() => {
+      const left = Math.ceil((cooldownEnd - Date.now()) / 1000);
+      if (left <= 0) {
+        setCooldownEnd(null);
+        setCooldownSecondsLeft(0);
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('forge_flow_cooldown_end');
+        }
+        clearInterval(interval);
+        // Play high-fidelity Solfeggio bell (523.25 Hz - C5) to mark completion
+        playSynthesizerTone(523.25, 'sine', 2.5, 0.05);
+        forgeToast.calibration(
+          'presence',
+          1,
+          language === 'vi'
+            ? 'Nghi thức dệt sao hoàn thành! Sẵn sàng cho dòng chảy tiếp theo.'
+            : 'Star weaving complete! Ready for the next flow.'
+        );
+      } else {
+        setCooldownSecondsLeft(left);
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [cooldownEnd, language]);
 
   const formatFlowTime = (totalSecs: number) => {
     const hrs = Math.floor(totalSecs / 3600).toString().padStart(2, '0');
@@ -154,7 +200,7 @@ export const SensoryEchoes: React.FC = () => {
 
   // --- Cinematic Scene Transition & Golden Thread Weaving Sequence ---
   const triggerMaktubAlignment = () => {
-    if (isFlowActive) return;
+    if (isFlowActive || cooldownEnd) return;
     setIsFlowActive(true);
 
     // 1. Play deep Tibetan bowl drone chord
@@ -366,11 +412,27 @@ export const SensoryEchoes: React.FC = () => {
               onComplete: () => {
                 setLineToDraw(null);
                 setIsFlowActive(false);
+
+                // Start 45-minute flow cooldown focus period
+                const cdDurationMs = 45 * 60 * 1000;
+                const end = Date.now() + cdDurationMs;
+                if (typeof window !== 'undefined') {
+                  localStorage.setItem('forge_flow_cooldown_end', end.toString());
+                }
+                setCooldownEnd(end);
+                setCooldownSecondsLeft(45 * 60);
               },
             }
           );
         } else {
           setIsFlowActive(false);
+          const cdDurationMs = 45 * 60 * 1000;
+          const end = Date.now() + cdDurationMs;
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('forge_flow_cooldown_end', end.toString());
+          }
+          setCooldownEnd(end);
+          setCooldownSecondsLeft(45 * 60);
         }
       }, 50);
     });
@@ -489,6 +551,8 @@ export const SensoryEchoes: React.FC = () => {
           {/* Central Interactive Core Trigger (Modular) */}
           <AnchorControl
             isFlowActive={isFlowActive}
+            isCooldownActive={!!cooldownEnd}
+            cooldownSecondsLeft={cooldownSecondsLeft}
             language={language}
             onTrigger={triggerMaktubAlignment}
             anchorButtonRef={centralSingularityRef}
