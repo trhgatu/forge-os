@@ -31,40 +31,10 @@ export class IncrementObjectiveProgressHandler implements ICommandHandler<Increm
     const { userId, actionType, amount, referenceId } = command;
     const todayStr = new Date().toISOString().split('T')[0];
 
-    // Always increment character attributes and update streak on any action trigger
+    // Update streak on action trigger (no direct stat increments here to prevent exploits)
     const stats = await this.userStatsRepository.findByUserId(userId);
     if (stats) {
       stats.updateStreak();
-
-      switch (actionType) {
-        case 'COMPLETE_TASK':
-          stats.discipline = (stats.discipline || 0) + amount;
-          break;
-        case 'COMPLETE_HABIT':
-          stats.consistency = (stats.consistency || 0) + amount;
-          break;
-        case 'COMPLETE_ROUTINE':
-          stats.discipline = (stats.discipline || 0) + amount * 2;
-          break;
-        case 'COMPLETE_JOURNAL':
-        case 'CREATE_JOURNAL':
-          stats.awareness = (stats.awareness || 0) + amount * 2;
-          break;
-        case 'CREATE_MEMORY':
-        case 'COMPLETE_MEMORY':
-          stats.awareness = (stats.awareness || 0) + amount;
-          break;
-        case 'COMPLETE_QUEST':
-          stats.willpower = (stats.willpower || 0) + amount;
-          break;
-        case 'COMPLETE_GOAL':
-          stats.willpower = (stats.willpower || 0) + amount * 5;
-          break;
-        case 'WS_PRESENCE':
-          stats.presence = (stats.presence || 0) + amount;
-          break;
-      }
-
       await this.userStatsRepository.save(stats);
     }
 
@@ -119,6 +89,38 @@ export class IncrementObjectiveProgressHandler implements ICommandHandler<Increm
           }
 
           await this.repository.completeQuest(userId, quest.id);
+
+          // QUEST-GATED AUTO-INCREMENT: Award character stats dynamically based on Quest Objectives
+          const statsToUpgrade = await this.userStatsRepository.findByUserId(userId);
+          if (statsToUpgrade) {
+            // Award +1 Willpower as a base reward for completing any Quest
+            statsToUpgrade.willpower = (statsToUpgrade.willpower || 0) + 1;
+
+            // Automatically increment attributes corresponding to quest activities
+            for (const obj of quest.objectives) {
+              switch (obj.type) {
+                case 'COMPLETE_TASK':
+                case 'COMPLETE_ROUTINE':
+                  statsToUpgrade.discipline = (statsToUpgrade.discipline || 0) + 2;
+                  break;
+                case 'COMPLETE_HABIT':
+                case 'CHECK_HABIT':
+                  statsToUpgrade.consistency = (statsToUpgrade.consistency || 0) + 2;
+                  break;
+                case 'CREATE_JOURNAL':
+                case 'COMPLETE_JOURNAL':
+                case 'CREATE_MEMORY':
+                case 'COMPLETE_MEMORY':
+                  statsToUpgrade.awareness = (statsToUpgrade.awareness || 0) + 2;
+                  break;
+                case 'WS_PRESENCE':
+                  statsToUpgrade.presence = (statsToUpgrade.presence || 0) + 2;
+                  break;
+              }
+            }
+
+            await this.userStatsRepository.save(statsToUpgrade);
+          }
 
           await this.activityStream.emit('gamification.quest.completed', userId, {
             title: quest.title,
