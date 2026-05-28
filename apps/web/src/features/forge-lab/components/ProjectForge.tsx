@@ -40,10 +40,9 @@ export const ProjectForge: React.FC<ProjectForgeProps> = ({
 
   return (
     <div className="max-w-7xl mx-auto p-6 md:p-10 pb-32 space-y-8 animate-in fade-in zoom-in-95 duration-500">
-      {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-display font-bold text-white mb-2">Project Forge</h1>
+          <h1 className="text-3xl font-display font-bold text-white mb-2">Projects</h1>
           <p className="text-gray-400 font-light">
             Manage your active systems and creative endeavors.
           </p>
@@ -70,7 +69,6 @@ export const ProjectForge: React.FC<ProjectForgeProps> = ({
         </div>
       </div>
 
-      {/* Project Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {projects.map((project) => (
           <GlassCard

@@ -1,7 +1,10 @@
 'use client';
 
 import { Radar, Eye } from 'lucide-react';
-import React from 'react';
+import React, { useEffect } from 'react';
+
+import { useNovaView } from '@/contexts';
+import { View } from '@/shared/types/os';
 
 import { usePresence } from '../hooks/usePresence';
 
@@ -9,18 +12,18 @@ import { CosmicRadar } from './CosmicRadar';
 
 export const Presence: React.FC = () => {
   const { echoes, stars } = usePresence();
+  const { setCurrentView } = useNovaView();
+
+  useEffect(() => {
+    setCurrentView(View.PRESENCE);
+  }, [setCurrentView]);
 
   return (
-    <div className="h-full flex flex-col bg-[#010103] text-white relative overflow-hidden animate-in fade-in duration-1000 selection:bg-cyan-500/30">
+    <div className="h-full flex flex-col bg-transparent text-white relative overflow-hidden animate-in fade-in duration-1000 selection:bg-cyan-500/30">
       {/* Deep Space Background */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-950/20 via-[#010103] to-black" />
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-overlay" />
-
-        {/* Stabilized Stars */}
-        {stars.map((style, i) => (
-          <div key={i} className="absolute rounded-full bg-white animate-pulse" style={style} />
-        ))}
+      <div className="absolute inset-0 pointer-events-none z-0">
+        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-950/15 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-8 mix-blend-overlay" />
       </div>
 
       {/* Header Overlay */}
@@ -60,5 +63,3 @@ export const Presence: React.FC = () => {
     </div>
   );
 };
-
-

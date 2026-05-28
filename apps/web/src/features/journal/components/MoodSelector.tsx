@@ -1,8 +1,9 @@
 'use client';
 
+import type { MoodType } from '@forge/reflection';
+
 import { MOOD_COLORS } from '@/shared/constants';
 import { cn } from '@/shared/lib/utils';
-import { MoodType } from '@forge/reflection';
 
 export function MoodSelector({
   mood,

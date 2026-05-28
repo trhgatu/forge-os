@@ -19,6 +19,14 @@ model User {
   isDeleted       Boolean          @default(false)
   deletedAt       DateTime?
   journals        Journal[]
+  habits          Habit[]
+  routines        Routine[]
+  quests          Quest[]
+  questStatuses   UserQuestStatus[]
+  tasks           Task[]
+  goals           Goal[]
+  goalStatuses    UserGoalStatus[]
+  flowMoments     FlowMoment[]
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
 
@@ -48,6 +56,11 @@ model UserStats {
   streak           Int      @default(0)
   lastActivityDate DateTime @default(now())
   achievements     String[] @default([])
+  discipline       Int      @default(0)
+  consistency      Int      @default(0)
+  willpower        Int      @default(0)
+  awareness        Int      @default(0)
+  presence         Int      @default(0)
 
   @@map("user_stats")
 }
@@ -199,3 +212,223 @@ model DailyQuote {
 
   @@map("daily_quotes")
 }
+
+// ==========================================
+// HABITS CONTEXT (Bối cảnh Thói Quen Dài Hạn)
+// ==========================================
+model Habit {
+  id             String            @id @default(uuid())
+  userId         String
+  user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title          String
+  description    String?
+  xpReward       Int               @default(10)
+  difficulty     String            @default("easy")   // 'easy', 'medium', 'hard'
+  frequency      Json              // Lịch biểu: {"days": [1,3,5]} (Thứ 2-4-6) hoặc {"every": 1} (mỗi ngày)
+  streak         Int               @default(0)
+  maxStreak      Int               @default(0)
+  habitStrength  Int               @default(0)        // Chỉ số độ bền thói quen (0 - 100)
+  isActive       Boolean           @default(true)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  routines       RoutineHabit[]
+  completions    HabitCompletion[]
+
+  @@map("habits")
+}
+
+model HabitCompletion {
+  id          String   @id @default(uuid())
+  habitId     String
+  habit       Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  userId      String
+  completedAt DateTime @default(now())
+
+  @@map("habit_completions")
+}
+
+// ==========================================
+// ROUTINES CONTEXT (Bối cảnh Chuỗi Nghi Thức)
+// ==========================================
+model Routine {
+  id          String         @id @default(uuid())
+  userId      String
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String         // Ví dụ: "Morning Routine"
+  comboXp     Int            @default(20)
+  isActive    Boolean        @default(true)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  habits      RoutineHabit[]
+
+  @@map("routines")
+}
+
+model RoutineHabit {
+  id        String  @id @default(uuid())
+  routineId String
+  routine   Routine @relation(fields: [routineId], references: [id], onDelete: Cascade)
+  habitId   String
+  habit     Habit   @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  order     Int     // Thứ tự thực hiện: 1, 2, 3...
+
+  @@unique([routineId, habitId])
+  @@map("routine_habits")
+}
+
+// ==========================================
+// QUESTS CONTEXT (Hệ thống Nhiệm vụ Đa hình)
+// ==========================================
+model Quest {
+  id           String              @id @default(uuid())
+  userId       String?             // Nullable: null đại diện cho Global System Quest; String = Custom User Quest
+  user         User?               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title        String              // ví dụ: "Trang sử hoàng hôn"
+  description  String?             // ví dụ: "Viết 1 trang nhật ký để phản tỉnh ngày hôm nay"
+  type         String              @default("daily")      // 'daily', 'weekly', 'main', 'side'
+  xpReward     Int                 @default(15)
+  isActive     Boolean             @default(true)
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  
+  objectives   QuestObjective[]
+  userStatuses UserQuestStatus[]
+
+  @@map("quests")
+}
+
+model QuestObjective {
+  id            String                  @id @default(uuid())
+  questId       String
+  quest         Quest                   @relation(fields: [questId], references: [id], onDelete: Cascade)
+  type          String                  // Loại hành động: 'CREATE_JOURNAL', 'COMPLETE_PROJECT', 'CHECK_HABIT', 'CREATE_MEMORY'
+  targetCount   Int                     @default(1)
+  referenceType String                  // Tên thực thể đích: 'Journal', 'Project', 'Memory', 'Habit'
+  referenceId   String?                 // UUID cụ thể của thực thể đích (nếu trỏ đích danh)
+  createdAt     DateTime                @default(now())
+  updatedAt     DateTime                @updatedAt
+  userProgress  UserObjectiveProgress[]
+
+  @@map("quest_objectives")
+}
+
+model UserQuestStatus {
+  id          String      @id @default(uuid())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questId     String
+  quest       Quest       @relation(fields: [questId], references: [id], onDelete: Cascade)
+  status      String      @default("active")     // 'locked', 'active', 'completed'
+  startedAt   DateTime    @default(now())
+  completedAt DateTime?
+
+  @@unique([userId, questId])
+  @@map("user_quest_statuses")
+}
+
+model UserObjectiveProgress {
+  id           String         @id @default(uuid())
+  userId       String
+  objectiveId  String
+  objective    QuestObjective @relation(fields: [objectiveId], references: [id], onDelete: Cascade)
+  currentCount Int            @default(0)
+  isCompleted  Boolean        @default(false)
+  date         String?        // YYYY-MM-DD (Chỉ dùng cho Daily Quests để reset tiến trình mỗi ngày)
+  updatedAt    DateTime       @updatedAt
+
+  @@unique([userId, objectiveId, date])
+  @@map("user_objective_progress")
+}
+
+model Task {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  status      String    @default("todo")        // 'todo', 'in_progress', 'done'
+  priority    String    @default("medium")      // 'low', 'medium', 'high'
+  xpReward    Int       @default(15)
+  dueDate     DateTime?
+  completedAt DateTime?
+  isDeleted   Boolean   @default(false)
+  deletedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("tasks")
+}
+
+model Goal {
+  id           String            @id @default(uuid())
+  userId       String?           // Nullable: null đại diện cho Global System Goals; String = Custom User Goal
+  user         User?             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title        String            // ví dụ: "Master of Reality" (Bậc Thầy Thực Tại)
+  description  String?           // ví dụ: "Chinh phục thế giới thực tại Stoic bằng cách hoàn tất 10 Meta-Quests"
+  xpReward     Int               @default(1000)
+  badgeIcon    String?           // Mã Achievement (ví dụ: 'achievement_master_of_reality')
+  isActive     Boolean           @default(true)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  objectives   GoalObjective[]
+  userStatuses UserGoalStatus[]
+
+  @@map("goals")
+}
+
+model GoalObjective {
+  id            String                @id @default(uuid())
+  goalId        String
+  goal          Goal                  @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  type          String                // Loại hành động: 'COMPLETE_META_QUEST', 'COMPLETE_DAILY_QUEST'
+  targetCount   Int                   @default(10)
+  referenceId   String?               // UUID cụ thể của Quest Lớn/Nhỏ (nếu trỏ đích danh)
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+  userProgress  UserGoalProgress[]
+
+  @@map("quest_goal_objectives")
+}
+
+model UserGoalStatus {
+  id          String      @id @default(uuid())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goalId      String
+  goal        Goal        @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  status      String      @default("active")     // 'locked', 'active', 'completed'
+  startedAt   DateTime    @default(now())
+  completedAt DateTime?
+
+  @@unique([userId, goalId])
+  @@map("user_goal_statuses")
+}
+
+model UserGoalProgress {
+  id           String         @id @default(uuid())
+  userId       String
+  objectiveId  String
+  objective    GoalObjective  @relation(fields: [objectiveId], references: [id], onDelete: Cascade)
+  currentCount Int            @default(0)
+  isCompleted  Boolean        @default(false)
+  updatedAt    DateTime       @updatedAt
+
+  @@unique([userId, objectiveId])
+  @@map("user_goal_progress")
+}
+
+model FlowMoment {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fileName  String   // e.g. "ShadowWork.tsx"
+  gitBranch String   // e.g. "feature/alchemical-reflection"
+  cpuLoad   Int      // e.g. 35
+  coordX    Float    // Coordinate X on cosmic web map
+  coordY    Float    // Coordinate Y on cosmic web map
+  createdAt DateTime @default(now())
+
+  @@map("flow_moments")
+}
+

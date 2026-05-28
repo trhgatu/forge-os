@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useRef, useEffect, Suspense } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
 import { useGLTF, useAnimations } from '@react-three/drei';
-import * as THREE from 'three';
+import { Canvas, useFrame } from '@react-three/fiber';
+import React, { useRef, useEffect, Suspense } from 'react';
+import type * as THREE from 'three';
 
 interface ModelProps {
   url: string;

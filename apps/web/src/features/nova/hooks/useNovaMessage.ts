@@ -16,11 +16,14 @@ export function useNovaMessage(view: View, languageCode: string, delayMs = 800) 
       const langKey = languageCode === 'vi' ? 'vi' : 'en';
       const langMessages = NOVA_MESSAGES[langKey] ?? NOVA_MESSAGES.en;
 
-      const viewMessages = langMessages[view] ?? langMessages.DEFAULT ?? [];
+      const viewMessages = langMessages[view] ?? [];
+      const defaultMessages = langMessages.DEFAULT ?? [];
 
-      const pool = viewMessages.length > 0 ? viewMessages : (NOVA_MESSAGES.en.DEFAULT ?? []);
+      const useDefault = Math.random() < 0.3 || viewMessages.length === 0;
+      const pool = useDefault && defaultMessages.length > 0 ? defaultMessages : viewMessages;
+      const finalPool = pool.length > 0 ? pool : (NOVA_MESSAGES.en.DEFAULT ?? []);
 
-      const next = pool[Math.floor(Math.random() * pool.length)] ?? '…';
+      const next = finalPool[Math.floor(Math.random() * finalPool.length)] ?? '…';
 
       setMessage(next);
     }, delayMs);

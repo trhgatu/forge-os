@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react';
 import React, { createContext, useContext, useRef, useState, useEffect } from 'react';
 
-export type SoundType = 'click' | 'hover' | 'success' | 'error' | 'on' | 'off';
+export type SoundType = 'click' | 'hover' | 'success' | 'error' | 'on' | 'off' | 'tick';
 
 interface SoundContextType {
   playSound: (type: SoundType) => void;
@@ -87,6 +87,9 @@ export function SoundProvider({ children }: { children: ReactNode }) {
         break;
       case 'off':
         playTone(900, 'triangle', 0.2, 0.1, 300);
+        break;
+      case 'tick':
+        playTone(1800, 'sine', 0.015, 0.02, 2800);
         break;
     }
   };

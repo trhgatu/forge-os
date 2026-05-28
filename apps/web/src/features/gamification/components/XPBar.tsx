@@ -155,7 +155,7 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
               <div className="flex items-center gap-2 text-xs text-amber-500 font-mono bg-amber-500/10 px-2 py-1 rounded-sm border border-amber-500/20">
                 <Flame size={12} fill="currentColor" className="animate-pulse" />
                 <span className="font-bold tracking-wide">
-                  {stats.streak} {t('gamification.day_streak').toUpperCase()}
+                  {t('gamification.day_streak').toUpperCase()}: {stats.streak}
                 </span>
               </div>
               <span className="text-[9px] text-zinc-600 font-mono tracking-tighter">

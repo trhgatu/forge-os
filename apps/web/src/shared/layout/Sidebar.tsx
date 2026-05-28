@@ -37,8 +37,9 @@ import {
   Film,
   ChevronDown,
   WindIcon,
+  Shield,
 } from 'lucide-react';
-import { LogOut } from 'lucide-react';
+import { LogOut, ListTodo } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useState, useEffect, useRef } from 'react';
@@ -77,6 +78,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: View.EPIC_SCENE_VAULT, labelKey: 'nav.epic_scene_vault', icon: Film, group: 'Reflection' },
   { id: View.COMPASS, labelKey: 'nav.compass', icon: Navigation, group: 'Evolution' },
   { id: View.GOALS, labelKey: 'nav.goals', icon: Target, group: 'Evolution' },
+  { id: View.TASKS, labelKey: 'nav.tasks', icon: ListTodo, group: 'Evolution' },
   { id: View.IDENTITY, labelKey: 'nav.identity', icon: Fingerprint, group: 'Evolution' },
   { id: View.CONNECTION, labelKey: 'nav.connection', icon: Users, group: 'Evolution' },
   { id: View.THEMES, labelKey: 'nav.themes', icon: Map, group: 'Evolution' },
@@ -84,6 +86,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: View.ACHIEVEMENTS, labelKey: 'nav.achievements', icon: Trophy, group: 'Evolution' },
   { id: View.HABITS, labelKey: 'nav.habits', icon: Repeat, group: 'Evolution' },
   { id: View.ROUTINES, labelKey: 'nav.routines', icon: Clock, group: 'Evolution' },
+  { id: View.QUESTS, labelKey: 'nav.quests', icon: Shield, group: 'Evolution' },
   { id: View.ENERGY, labelKey: 'nav.energy', icon: Zap, group: 'Evolution' },
   { id: View.WEEKLY_REVIEW, labelKey: 'nav.weekly_review', icon: CalendarCheck, group: 'System' },
   { id: View.MONTHLY_REVIEW, labelKey: 'nav.monthly_review', icon: Moon, group: 'System' },
@@ -122,12 +125,18 @@ const getPathForView = (view: View): string => {
       return '/forge/goals';
     case View.HABITS:
       return '/forge/habits';
+    case View.TASKS:
+      return '/forge/tasks';
     case View.ROUTINES:
       return '/forge/routines';
+    case View.QUESTS:
+      return '/forge/quests';
     case View.COMPASS:
       return '/forge/compass';
     case View.SETTINGS:
       return '/forge/settings';
+    case View.IDENTITY:
+      return '/forge/identity';
     case View.FORGE_CHAMBER:
       return '/forge/chamber';
     case View.SHADOW_WORK:
@@ -155,7 +164,7 @@ const SidebarGroup: React.FC<{
 }> = ({ group, isSidebarExpanded, items, pathname, playSound, t }) => {
   const hasActiveItem = items.some((i) => pathname.startsWith(getPathForView(i.id)));
   const [isCollapsed, setIsCollapsed] = useState(() => {
-    if (group === 'Main' || group === 'Meta') return false;
+    if (group === 'Main' || group === 'Meta' || group === 'Evolution') return false;
     return !hasActiveItem;
   });
 
@@ -199,7 +208,7 @@ const SidebarGroup: React.FC<{
       <div
         className={cn(
           'space-y-1 overflow-hidden transition-all duration-500 ease-in-out',
-          effectiveCollapsed ? 'max-h-0 opacity-50' : 'max-h-[500px] opacity-100',
+          effectiveCollapsed ? 'max-h-0 opacity-50' : 'max-h-[1000px] opacity-100',
         )}
       >
         {items.map((item, index) => {
@@ -215,10 +224,10 @@ const SidebarGroup: React.FC<{
               onClick={() => playSound('click')}
               onMouseEnter={() => playSound('hover')}
               className={cn(
-                'nav-item-btn group relative w-full flex items-center p-3 rounded-xl text-[14px] font-[family-name:var(--font-rajdhani)] font-bold tracking-wide transition-all duration-200',
+                'nav-item-btn group relative w-full flex items-center p-3 rounded-xl text-[14px] font-[family-name:var(--font-rajdhani)] font-bold tracking-wide transition-all duration-300',
                 isActive
-                  ? `bg-white/10 text-white shadow-inner border border-white/5`
-                  : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent',
+                  ? `bg-white/[0.07] text-white shadow-lg shadow-black/25 border border-white/10`
+                  : 'text-gray-400 hover:text-white hover:bg-white/[0.02] border border-transparent hover:border-white/5',
                 isSidebarExpanded ? 'justify-start gap-3' : 'justify-center',
               )}
             >
@@ -275,7 +284,7 @@ export const Sidebar: React.FC = () => {
     <aside
       className={cn(
         'relative h-full z-50 flex flex-col',
-        'border-r border-white/5 bg-black/40 backdrop-blur-2xl font-lato',
+        'border-r border-forge-cyan/15 bg-black/25 backdrop-blur-3xl font-lato transition-all duration-300 hover:border-forge-cyan/25',
         'transition-[width] duration-500 ease-spring-out will-change-[width,transform]',
         isExpanded ? 'w-72' : 'w-20',
       )}
@@ -296,7 +305,7 @@ export const Sidebar: React.FC = () => {
               'w-10 h-10 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(0,0,0,0.5)] relative z-10 transition-all duration-300 hover:scale-105 border border-white/10 bg-black',
             )}
           >
-            <Cpu className="w-5 h-5 text-forge-cyan" />
+            <Cpu className="w-5 h-5 text-forge-cyan animate-pulse" />
           </div>
         </button>
 
@@ -306,8 +315,8 @@ export const Sidebar: React.FC = () => {
             isExpanded ? 'opacity-100 translate-x-0 w-auto' : 'opacity-0 -translate-x-4 w-0',
           )}
         >
-          <span className="font-bold text-xl tracking-wide text-white leading-none">FORGE OS</span>
-          <span className="text-[10px] font-mono mt-1 text-forge-cyan">v2.9.1-beta</span>
+          <span className="font-bold text-xl tracking-wider text-white leading-none drop-shadow-[0_0_8px_rgba(34,211,238,0.3)]">FORGE OS</span>
+          <span className="text-[9px] font-mono mt-1.5 text-forge-cyan tracking-widest uppercase">System Core // Active</span>
         </div>
       </div>
 

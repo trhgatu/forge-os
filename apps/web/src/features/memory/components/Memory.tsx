@@ -4,18 +4,18 @@ import { Search, BookOpen, Feather } from 'lucide-react';
 import { useMemo, useState, useRef, useEffect } from 'react';
 import { toast } from 'sonner';
 
+
 import { useMemories, useCreateMemory } from '@/features/memory/hooks';
 import { cn } from '@/shared/lib/utils';
 import type { Memory as MemoryType } from '@/shared/types/memory';
 
 import { SEASON_CONFIG, type InnerSeason, getSeasonFromMood } from '../config';
+import { MOCK_MEMORIES } from '../data/mockMemories';
 import { analyzeMemory } from '../services/analyze';
 
-import { MOCK_MEMORIES } from '../data/mockMemories';
 import { CreateMemoryModal } from './CreateMemoryModal';
 import { MemoryCard } from './MemoryCard';
 import { MemoryDetailPanel } from './MemoryDetailPanel';
-import { MemoryParticles } from './MemoryParticles';
 
 type SeasonFilter = InnerSeason | 'All';
 
@@ -24,8 +24,6 @@ export function Memory() {
     useMemories();
 
   const memories = useMemo(() => {
-    // If there is an error fetching, or the database is completely empty/fresh,
-    // we fall back gracefully to beautiful mock memory nodes so the UI remains pristine.
     if (isError) {
       return MOCK_MEMORIES;
     }
@@ -45,7 +43,6 @@ export function Memory() {
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [activeFilter, setActiveFilter] = useState<SeasonFilter>('All');
 
-  // Debounce search for performance
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(searchTerm);
@@ -53,8 +50,8 @@ export function Memory() {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  // Infinite Scroll Trigger
   const observerTarget = useRef(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -144,7 +141,6 @@ export function Memory() {
   if (isLoading) {
     return (
       <div className="flex h-full flex-col bg-[#030304] text-white">
-        <MemoryParticles />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center space-y-4">
             <div className="relative">
@@ -160,22 +156,10 @@ export function Memory() {
     );
   }
 
-  // Resolved isError: We bypass blocking error screens and fall back to mock memories.
-
   return (
-    <div className="relative flex h-full flex-col overflow-hidden bg-[#030304] text-white animate-in fade-in duration-1000">
-      {/* Background Ambience (Alchemical Tech) */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-indigo-900/10 rounded-full blur-[150px] opacity-40" />
-        <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-cyan-900/10 rounded-full blur-[150px] opacity-35" />
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] mix-blend-overlay" />
-      </div>
-
-      {/* Floating Particles */}
-      <MemoryParticles />
-
+    <div className="relative flex h-full flex-col overflow-hidden bg-transparent text-white animate-in fade-in duration-1000">
       {/* Timeless Header - Flowing Layout */}
-      <div className="sticky top-0 z-20 border-b border-white/5 px-8 py-8 backdrop-blur-xl bg-[#030304]/85">
+      <div className="sticky top-0 z-20 border-b border-white/5 px-8 py-8 backdrop-blur-xl bg-transparent">
         {/* Top row - Title and Actions */}
         <div className="flex items-start justify-between mb-6">
           <div className="flex-1">
@@ -273,7 +257,7 @@ export function Memory() {
       </div>
 
       {/* Content Area */}
-      <div className="relative z-10 flex-1 overflow-y-auto px-8 pb-32 scrollbar-hide">
+      <div ref={scrollContainerRef} className="relative z-10 flex-1 overflow-y-auto px-8 pb-32 scrollbar-hide">
         <div className="mx-auto max-w-7xl pt-8">
           {filteredMemories.length > 0 ? (
             <div className="space-y-20">

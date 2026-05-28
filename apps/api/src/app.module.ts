@@ -30,6 +30,12 @@ import { EngineeringModule } from '@root/contexts/engineering/engineering.module
 import { GamificationModule } from '@root/contexts/gamification/gamification.module';
 import { RedisModule } from '@shared/insfrastructure/redis/redis.module';
 import { PrismaModule } from './shared/infrastructure/prisma/prisma.module';
+import { HabitsModule } from '@root/contexts/reflection/habits/habits.module';
+import { RoutinesModule } from '@root/contexts/reflection/routines/routines.module';
+import { QuestsModule } from '@root/contexts/gamification/quests/quests.module';
+import { GoalsModule } from '@root/contexts/gamification/goals/goals.module';
+import { TasksModule } from '@root/contexts/reflection/tasks/tasks.module';
+import { EchoesModule } from '@root/contexts/reflection/echoes/echoes.module';
 
 @Module({
   imports: [
@@ -74,6 +80,12 @@ import { PrismaModule } from './shared/infrastructure/prisma/prisma.module';
     PresenceModule,
     EngineeringModule,
     GamificationModule,
+    HabitsModule,
+    RoutinesModule,
+    QuestsModule,
+    GoalsModule,
+    TasksModule,
+    EchoesModule,
 
     CacheModule,
   ],

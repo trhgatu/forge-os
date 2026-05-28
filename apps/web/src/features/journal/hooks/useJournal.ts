@@ -45,9 +45,9 @@ export const useCreateJournal = () => {
         },
       );
 
-      // Also invalidate to ensure potential order/filter correctness eventually
       queryClient.invalidateQueries({ queryKey: ['journals'] });
       queryClient.invalidateQueries({ queryKey: ['timeline'] });
+      queryClient.invalidateQueries({ queryKey: ['activeQuests'] });
     },
     onError: (error) => {
       console.error(error);

@@ -6,7 +6,7 @@ class SocketService {
   private sockets: Map<string, Socket> = new Map();
   private static instance: SocketService;
 
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): SocketService {
     if (!SocketService.instance) {
@@ -16,10 +16,13 @@ class SocketService {
   }
 
   private getBaseUrl(): string {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    if (!apiUrl) {
+      throw new Error('[SocketService] NEXT_PUBLIC_API_URL is not defined');
+    }
     try {
       const url = new URL(apiUrl);
-      return url.origin; // e.g. http://localhost:8000
+      return url.origin;
     } catch {
       return apiUrl;
     }
@@ -74,8 +77,8 @@ class SocketService {
         },
         extraHeaders: token
           ? {
-              Authorization: `Bearer ${token}`,
-            }
+            Authorization: `Bearer ${token}`,
+          }
           : {},
       };
 

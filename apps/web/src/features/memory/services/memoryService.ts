@@ -25,11 +25,11 @@ export const getMemories = async (
   const res = await apiClient.get<BackendResponse<PaginatedResponse<MemoryDto>>>('/memories', {
     params: { lang, page, limit },
   });
-  const payload = res.data.data;
+  const { data, meta } = res.data as any;
 
   return {
-    meta: payload.meta,
-    data: payload.data.map(mapDtoToMemory),
+    meta: meta || { total: 0, page: 1, limit: 12, totalPages: 1 },
+    data: (data || []).map(mapDtoToMemory),
   };
 };
 

@@ -73,7 +73,7 @@ export class XpAwardingProcessor extends WorkerHost implements OnModuleInit {
         };
       }
 
-      const config = strategy.getRateLimitConfig();
+      const config = strategy.getRateLimitConfig(payload);
       const { allowed, reason } = await this.rateLimitService.checkAndRecord(
         targetUserId,
         pattern,

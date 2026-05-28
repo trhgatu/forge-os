@@ -1,4 +1,4 @@
-import { Cpu, Activity, Clock, History, Users, Edit, Check, Settings } from 'lucide-react';
+import { Cpu, Activity, Clock, History, Users, Edit, Check } from 'lucide-react';
 import Image from 'next/image';
 import React, { useState } from 'react';
 
