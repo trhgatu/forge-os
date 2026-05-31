@@ -2,6 +2,7 @@ import { Layers, Book, Network, Terminal, Star, GitBranch } from 'lucide-react';
 import React from 'react';
 
 import { GlassCard } from '@/shared/components/ui/GlassCard';
+import { Label, Tag } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 
 import type { ForgeTab, Project, Foundation } from '../../types';
@@ -75,9 +76,9 @@ export const DirectivesWidget: React.FC<DirectivesWidgetProps> = ({
       {/* Pinned Projects "Active Directives" */}
       <div className="space-y-4">
         <div className="flex items-center justify-between px-1">
-          <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+          <Label variant="dim" className="text-xs font-bold uppercase tracking-widest block">
             Active Directives
-          </h3>
+          </Label>
           <button className="text-xs text-forge-cyan hover:underline">Customize</button>
         </div>
 
@@ -105,20 +106,21 @@ export const DirectivesWidget: React.FC<DirectivesWidgetProps> = ({
                   ) : (
                     <Layers size={16} className="text-forge-cyan" />
                   )}
-                  <span
+                  <Label
+                    variant="default"
                     className={cn(
-                      'font-bold text-white text-sm transition-colors',
+                      'font-bold text-white text-sm transition-colors block',
                       'type' in item
                         ? 'group-hover:text-fuchsia-400'
                         : 'group-hover:text-forge-cyan',
                     )}
                   >
                     {item.title}
-                  </span>
+                  </Label>
                 </div>
-                <span className="px-2 py-0.5 rounded text-[10px] bg-white/5 text-gray-400 border border-white/10">
+                <Tag variant="default" className="px-2 py-0.5 text-[10px] bg-white/5 text-gray-400 border border-white/10">
                   {item.githubStats ? 'Public' : 'Internal'}
-                </span>
+                </Tag>
               </div>
               <p className="text-xs text-gray-400 mb-4 line-clamp-2">{item.description}</p>
               <div className="flex items-center gap-4 text-xs text-gray-500">
