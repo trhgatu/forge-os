@@ -122,48 +122,62 @@ export function Mood() {
     <div className="relative flex h-full overflow-hidden bg-forge-bg text-white animate-in fade-in duration-700">
       {/* Left / Main */}
       <div className="relative z-10 flex h-full flex-1 flex-col overflow-hidden">
-        {/* Header */}
-        <div className="flex items-center justify-between px-8 py-6">
-          <div>
-            <Label variant="cyan" className="text-2xl font-bold tracking-tight block">
-              Emotional Resonance
-            </Label>
-            <p className="mt-1 font-mono text-xs text-gray-500">
-              Tracking internal weather patterns.
-            </p>
-          </div>
+        {/* Header - Flowing Layout */}
+        <div className="sticky top-0 z-20 border-b border-white/5 px-8 py-8 backdrop-blur-xl bg-transparent">
+          {/* Top row - Title and Actions */}
+          <div className="flex items-start justify-between mb-6">
+            <div className="flex-1">
+              {/* Ethereal label */}
+              <div className="mb-3 flex items-center gap-2 opacity-80">
+                <div className="h-px w-8 bg-gradient-to-r from-forge-cyan/40 to-transparent" />
+                <Label variant="cyan" className="text-[10px] font-mono tracking-[0.4em] uppercase">
+                  Mood Resonance
+                </Label>
+              </div>
 
-          <div className="flex gap-3">
-            <Button
-              onClick={handleAnalyze}
-              disabled={isAnalyzing}
-              variant="outline"
-              className="border-white/10 bg-white/5 px-4 py-2 text-sm text-gray-300 transition-all hover:bg-white/10 disabled:opacity-50"
-            >
-              <Sparkles size={16} className={cn(isAnalyzing ? 'animate-spin mr-2' : 'text-forge-accent mr-2', 'inline')} />
-              Analyze Cycles
-            </Button>
+              {/* Poetic Title */}
+              <Label variant="default" className="text-4xl md:text-5xl font-bold text-white tracking-tight leading-tight mb-3 block capitalize">
+                Emotional Resonance
+              </Label>
 
-            {/* Only show Log Mood if authenticated */}
-            {isAuthenticated ? (
+              {/* Flowing Subtitle */}
+              <p className="text-sm text-gray-400 font-light leading-relaxed max-w-xl">
+                Chart your inner weather patterns, cycles, and triggers. Harness alchemical emotional insights to align your psychological state.
+              </p>
+            </div>
+
+            <div className="flex gap-3">
               <Button
-                onClick={() => {
-                  setEditingMood(undefined);
-                  setIsModalOpen(true);
-                }}
-                className="bg-white hover:bg-gray-200 text-black font-semibold"
+                onClick={handleAnalyze}
+                disabled={isAnalyzing}
+                variant="outline"
+                className="border-white/10 bg-white/5 px-4 py-2 text-sm text-gray-300 transition-all hover:bg-white/10 disabled:opacity-50"
               >
-                <Plus size={16} className="inline mr-2" />
-                Log Mood
+                <Sparkles size={16} className={cn(isAnalyzing ? 'animate-spin mr-2' : 'text-forge-accent mr-2', 'inline')} />
+                Analyze Cycles
               </Button>
-            ) : (
-              <Link
-                href="/login"
-                className="flex items-center gap-2 rounded-xl border border-white/20 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
-              >
-                Login to Log
-              </Link>
-            )}
+
+              {/* Only show Log Mood if authenticated */}
+              {isAuthenticated ? (
+                <Button
+                  onClick={() => {
+                    setEditingMood(undefined);
+                    setIsModalOpen(true);
+                  }}
+                  className="bg-white hover:bg-gray-200 text-black font-semibold"
+                >
+                  <Plus size={16} className="inline mr-2" />
+                  Log Mood
+                </Button>
+              ) : (
+                <Link
+                  href="/login"
+                  className="flex items-center gap-2 rounded-xl border border-white/20 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
+                >
+                  Login to Log
+                </Link>
+              )}
+            </div>
           </div>
         </div>
 
