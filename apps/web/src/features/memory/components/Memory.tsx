@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 import { useMemories, useCreateMemory } from '@/features/memory/hooks';
 import { cn } from '@/shared/lib/utils';
 import type { Memory as MemoryType } from '@/shared/types/memory';
-import { Skeleton, Label, Input, EmptyState, Button } from '@/shared/components/ui';
+import { Skeleton, Label, Input, EmptyState, Button, Tag } from '@/shared/components/ui';
 
 import { SEASON_CONFIG, type InnerSeason, getSeasonFromMood } from '../config';
 import { MOCK_MEMORIES } from '../data/mockMemories';
@@ -220,8 +220,6 @@ export function Memory() {
               className="bg-white/5 border-white/10 text-sm h-11"
             />
           </div>
-
-          {/* Filter Pills */}
           <div className="flex items-center gap-2 flex-wrap">
             {(['All', 'Spring', 'Summer', 'Autumn', 'Winter'] as SeasonFilter[]).map(
               (seasonKey) => {
@@ -230,23 +228,23 @@ export function Memory() {
                 const isActive = activeFilter === seasonKey;
 
                 return (
-                  <button
+                  <Tag
                     key={seasonKey}
-                    type="button"
+                    interactive
+                    active={isActive}
+                    variant={
+                      seasonKey === 'Summer'
+                        ? 'accent'
+                        : seasonKey === 'Autumn'
+                          ? 'danger'
+                          : seasonKey === 'Spring' || seasonKey === 'Winter'
+                            ? 'cyan'
+                            : 'default'
+                    }
                     onClick={() => setActiveFilter(seasonKey)}
                     className={cn(
-                      'group flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all duration-300 border backdrop-blur-md cursor-pointer',
-                      isActive
-                        ? seasonKey === 'Spring'
-                          ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]'
-                          : seasonKey === 'Summer'
-                            ? 'bg-amber-500/10 border-amber-500/30 text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.15)]'
-                            : seasonKey === 'Autumn'
-                              ? 'bg-rose-500/10 border-rose-500/30 text-rose-400 shadow-[0_0_15px_rgba(244,63,94,0.15)]'
-                              : seasonKey === 'Winter'
-                                ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.15)]'
-                                : 'bg-white/10 border-white/20 text-white'
-                        : 'bg-white/5 border-white/10 text-gray-400 hover:text-white hover:bg-white/10 hover:border-white/20'
+                      'group flex items-center gap-2 cursor-pointer font-medium border backdrop-blur-md py-2 px-4 rounded-xl text-xs font-mono tracking-wider',
+                      !isActive && 'text-gray-400 hover:text-white bg-white/5 border-white/10'
                     )}
                   >
                     {config && (
@@ -258,8 +256,8 @@ export function Memory() {
                         )}
                       />
                     )}
-                    <span className="font-mono tracking-wider">{seasonKey}</span>
-                  </button>
+                    <span>{seasonKey}</span>
+                  </Tag>
                 );
               },
             )}
