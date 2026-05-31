@@ -25,7 +25,6 @@ export function EditorToolbar({
 }) {
   return (
     <div className="flex items-center justify-between mb-6 pb-2 sticky top-0 z-20">
-      {/* LEFT: Formatting Buttons (Floating Glass Pill) */}
       <div className="flex items-center gap-1 p-1.5 rounded-xl bg-[#0F0F12]/80 border border-white/5 backdrop-blur-xl shadow-lg ring-1 ring-white/5">
         <ToolbarButton title="Bold" onClick={() => onAction('bold')} icon={<Bold size={15} />} />
         <ToolbarButton
@@ -58,7 +57,6 @@ export function EditorToolbar({
         <ToolbarButton title="Code" onClick={() => onAction('code')} icon={<Code size={15} />} />
       </div>
 
-      {/* RIGHT: Mode Switch (Floating Toggle) */}
       <div className="flex items-center p-1 rounded-xl bg-[#0F0F12]/80 border border-white/5 backdrop-blur-xl shadow-lg ring-1 ring-white/5">
         <ModeButton
           active={mode === 'write'}

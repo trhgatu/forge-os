@@ -1,7 +1,9 @@
 import { Hammer, Eye, Quote, X } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
+import { useLanguage } from '@/contexts/LanguageContext';
 import { ForgeEditor } from '@/shared/components/editor/ForgeEditor';
+import { Button, Label, Input, EmptyState } from '@/shared/components/ui';
 import { GlassCard } from '@/shared/components/ui/GlassCard';
 import { cn } from '@/shared/lib/utils';
 
@@ -11,13 +13,17 @@ interface AnvilTabProps {
 }
 
 export const AnvilTab: React.FC<AnvilTabProps> = ({ extracts = [], onRemoveExtract }) => {
+  const { t } = useLanguage();
   const [content, setContent] = useState('');
-  const [title, setTitle] = useState('New Artifact');
+  const [title, setTitle] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    setTitle(t('knowledge.new_artifact'));
+  }, [t]);
 
   const handleSave = () => {
     setIsSaving(true);
-    // Mock save
     setTimeout(() => {
       setIsSaving(false);
     }, 1500);
@@ -32,21 +38,24 @@ export const AnvilTab: React.FC<AnvilTabProps> = ({ extracts = [], onRemoveExtra
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 h-[calc(100vh-140px)] animate-in fade-in slide-in-from-bottom-4 duration-500">
-      {/* LEFT: Research Context / Insights */}
       <div className="w-full lg:w-[320px] shrink-0 flex flex-col gap-4 h-full min-h-0">
         <GlassCard
           className="h-full flex flex-col bg-[#050508]/50 overflow-hidden"
           innerClassName="h-full flex flex-col overflow-hidden"
         >
-          <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2 shrink-0">
-            <Eye size={14} /> Context & Extracts
-          </h3>
+          <Label icon={<Eye size={14} />} className="mb-4 shrink-0">
+            {t('knowledge.context_extracts')}
+          </Label>
 
           <div className="flex-1 overflow-y-auto space-y-3 pr-2 scrollbar-thin min-h-0">
             {extracts.length === 0 ? (
-              <div className="p-3 rounded-lg border border-dashed border-white/10 bg-white/5 text-xs text-gray-500 text-center">
-                Drag extracts here or select text from Source to visualize context.
-              </div>
+              <EmptyState
+                icon={<Quote size={16} />}
+                title={t('knowledge.drag_extracts_here')}
+                glowColor="default"
+                size="sm"
+                className="border-dashed border-white/10 bg-white/5 py-6 px-4"
+              />
             ) : (
               extracts.map((e) => (
                 <div
@@ -61,19 +70,19 @@ export const AnvilTab: React.FC<AnvilTabProps> = ({ extracts = [], onRemoveExtra
                   <p className="text-xs text-gray-300 line-clamp-4 leading-relaxed font-serif italic text-pretty">
                     &quot;{e.text}&quot;
                   </p>
-
-                  {/* Delete Button */}
                   {onRemoveExtract && (
-                    <button
+                    <Button
                       onClick={(ev) => {
                         ev.stopPropagation();
                         onRemoveExtract(e.id);
                       }}
-                      className="absolute top-2 right-2 p-1.5 rounded-full bg-black/40 hover:bg-red-500/80 text-gray-400 hover:text-white opacity-0 group-hover:opacity-100 transition-all duration-200 backdrop-blur-sm z-10"
+                      variant="ghost"
+                      size="icon"
+                      className="absolute top-2 right-2 p-1.5 rounded-full bg-black/40 hover:bg-red-500/80 text-gray-400 hover:text-white opacity-0 group-hover:opacity-100 transition-all duration-200 backdrop-blur-sm z-10 h-7 w-7"
                       title="Remove Extract"
                     >
                       <X size={12} />
-                    </button>
+                    </Button>
                   )}
                 </div>
               ))
@@ -82,23 +91,20 @@ export const AnvilTab: React.FC<AnvilTabProps> = ({ extracts = [], onRemoveExtra
         </GlassCard>
       </div>
 
-      {/* RIGHT: Main Editor Area */}
       <div className="flex-1 flex flex-col h-full gap-4 min-h-0">
-        {/* Editor Canvas */}
         <GlassCard
           className="flex-1 p-0 flex flex-col overflow-hidden bg-[#0c0c0e] relative group min-h-0"
           innerClassName="h-full flex flex-col relative"
         >
           <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5 mix-blend-overlay pointer-events-none" />
-
-          {/* Title Input */}
           <div className="px-8 pt-8 pb-4 z-10 shrink-0">
-            <input
+            <Input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full bg-transparent text-4xl font-display font-bold text-white placeholder-gray-600 focus:outline-none"
-              placeholder="Artifact Title..."
+              variant="unstyled"
+              className="text-4xl font-display font-bold text-white placeholder-gray-600"
+              placeholder={t('knowledge.artifact_title_placeholder')}
             />
           </div>
 
@@ -107,19 +113,19 @@ export const AnvilTab: React.FC<AnvilTabProps> = ({ extracts = [], onRemoveExtra
             <ForgeEditor
               content={content}
               onChange={setContent}
-              placeholder="Begin forging your insight here... (Markdown supported)"
+              placeholder={t('knowledge.editor_placeholder')}
               className="flex-1 h-full min-h-0"
             />
           </div>
         </GlassCard>
 
-        {/* Action Bar */}
         <div className="flex justify-end shrink-0">
-          <button
+          <Button
             onClick={handleSave}
             disabled={isSaving}
+            variant="glass"
             className={cn(
-              'flex items-center gap-2 px-6 py-3 rounded-xl font-bold bg-white text-black transition-all hover:bg-gray-200 disabled:opacity-50',
+              'flex items-center gap-2 px-6 py-3 rounded-xl font-bold bg-white text-black transition-all hover:bg-gray-200 disabled:opacity-50 h-auto',
               isSaving ? 'cursor-wait' : '',
             )}
           >
@@ -128,8 +134,8 @@ export const AnvilTab: React.FC<AnvilTabProps> = ({ extracts = [], onRemoveExtra
             ) : (
               <Hammer size={18} className={isSaving ? 'animate-bounce' : ''} />
             )}
-            <span>{isSaving ? 'Forging...' : 'Crystallize Artifact'}</span>
-          </button>
+            <span>{isSaving ? t('knowledge.forging') : t('knowledge.crystallize_artifact')}</span>
+          </Button>
         </div>
       </div>
     </div>

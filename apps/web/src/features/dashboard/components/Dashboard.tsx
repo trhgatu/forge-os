@@ -1,25 +1,22 @@
 'use client';
 
-/* import { getDailyInsight } from "@/services/geminiService"; */
-/* import { getDailyInsight } from "@/services/geminiService"; */
-
 import {
   Clock,
   Calendar,
   ArrowUpRight,
   Target,
-  Sparkles,
   BrainCircuit,
   TrendingUp,
   Activity,
   ChevronRight,
-  Maximize2,
   CheckCircle2,
+  Sparkles
 } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import { AreaChart, Area, Tooltip, ResponsiveContainer } from 'recharts';
 
 import { AGENTS } from '@/features/chamber/components/AgentDock';
+import { WidgetShell } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 
 import { QuoteOfTheDayWidget } from './QuoteOfTheDayWidget';
@@ -64,55 +61,6 @@ const TIMELINE_SNAPSHOT = [
   { id: 3, time: '4:45 PM', label: 'Captured Memory', type: 'memory' },
 ];
 
-// -------------------- WIDGET SHELL --------------------
-
-export interface WidgetProps {
-  children: React.ReactNode;
-  className?: string;
-  title?: React.ReactNode;
-  delay?: number;
-  noPadding?: boolean;
-}
-
-export const WidgetShell: React.FC<WidgetProps> = ({
-  children,
-  className,
-  title,
-  delay = 0,
-  noPadding = false,
-}) => (
-  <div
-    className={cn(
-      'relative group flex flex-col',
-      'bg-[#ffffff]/[0.015] backdrop-blur-xl border border-white/5 rounded-[24px]',
-      'hover:bg-[#ffffff]/[0.035] hover:border-forge-cyan/20 hover:-translate-y-1',
-      'hover:shadow-[0_20px_50px_rgba(34,211,238,0.06)]',
-      'transition-all duration-500 ease-spring-out',
-      'overflow-hidden',
-      className,
-    )}
-    style={{ animationDelay: `${delay}ms` }}
-  >
-    {/* Floating top glow highlight */}
-    <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-forge-cyan/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-30" />
-
-    {title && (
-      <div className="flex items-center justify-between px-6 pt-6 pb-2 relative z-10">
-        <div className="text-[10px] font-mono text-gray-500 uppercase tracking-[0.2em] flex items-center gap-2 font-bold group-hover:text-gray-400 transition-colors">
-          {title}
-        </div>
-        <button className="text-gray-600 hover:text-white transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110">
-          <Maximize2 size={12} />
-        </button>
-      </div>
-    )}
-
-    <div className={cn('flex-1 relative z-10', noPadding ? '' : 'p-6 pt-2')}>{children}</div>
-  </div>
-);
-
-// -------------------- MAIN DASHBOARD --------------------
-
 export const Dashboard: React.FC = () => {
   const [time, setTime] = useState(new Date());
   const [focusScore] = useState(85);
@@ -130,8 +78,6 @@ export const Dashboard: React.FC = () => {
     const timer = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
-
-  // Removed insight useEffect as state is now lazy-initialized
 
   const timeString = time.toLocaleTimeString([], {
     hour: '2-digit',
@@ -386,7 +332,7 @@ export const Dashboard: React.FC = () => {
             <h3 className="text-xs font-mono text-gray-500 uppercase tracking-[0.15em] mb-4 font-bold">
               Cognitive Diagnostics
             </h3>
-            
+
             <div className="space-y-4">
               {/* Cognitive Load */}
               <div>
@@ -455,8 +401,8 @@ export const Dashboard: React.FC = () => {
                   <span
                     className={cn(
                       'text-sm transition-all duration-300 select-none',
-                      task.checked 
-                        ? 'text-gray-500 line-through opacity-60 scale-[0.97] origin-left' 
+                      task.checked
+                        ? 'text-gray-500 line-through opacity-60 scale-[0.97] origin-left'
                         : 'text-gray-300 group-hover:text-white',
                     )}
                   >

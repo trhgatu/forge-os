@@ -27,6 +27,10 @@ model User {
   goals           Goal[]
   goalStatuses    UserGoalStatus[]
   flowMoments     FlowMoment[]
+  knowledgeConcepts KnowledgeConcept[]
+  flashcardDecks    FlashcardDeck[]
+  flashcards        UserFlashcard[]
+  reviewLogs        FlashcardReviewLog[]
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
 
@@ -257,6 +261,8 @@ model Routine {
   title       String         // Ví dụ: "Morning Routine"
   comboXp     Int            @default(20)
   isActive    Boolean        @default(true)
+  streak      Int            @default(0)
+  maxStreak   Int            @default(0)
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
   habits      RoutineHabit[]
@@ -431,4 +437,112 @@ model FlowMoment {
 
   @@map("flow_moments")
 }
+
+// ==========================================
+// KNOWLEDGE CONTEXT (Bộ xử lý Tri thức Đa nguồn)
+// ==========================================
+enum KnowledgeSourceType {
+  WIKIPEDIA
+  WEB_ARTICLE
+  CODEX_BOOK
+  PERSONAL_NOTE
+}
+
+model KnowledgeConcept {
+  id           String              @id @default(uuid())
+  userId       String
+  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title        String              @db.VarChar(255)
+  sourceType   KnowledgeSourceType @default(WIKIPEDIA)
+  sourceUrl    String?             @db.VarChar(512)
+  content      String              @db.Text
+  summary      String?             @db.Text
+  insights     Json?               
+  reflection   String?             @db.Text
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  flashcards   UserFlashcard[]
+
+  @@index([userId, sourceType])
+  @@map("knowledge_concepts")
+}
+
+// ==========================================
+// VOCABULARY & FLASHCARDS (Trí nhớ & Học ngoại ngữ)
+// ==========================================
+model Vocabulary {
+  id           String          @id @default(uuid())
+  word         String          @unique @db.VarChar(100)
+  ipa          String?         @db.VarChar(100)
+  audioUrl     String?         @db.VarChar(512)
+  partOfSpeech String          @db.VarChar(50)
+  meanings     Json            
+  examples     Json            
+  difficulty   String?         @db.VarChar(10)
+  language     String          @default("en")
+  createdAt    DateTime        @default(now())
+  flashcards   UserFlashcard[]
+
+  @@map("vocabularies")
+}
+
+model FlashcardDeck {
+  id           String          @id @default(uuid())
+  userId       String
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title        String          @db.VarChar(100)
+  description  String?         @db.VarChar(255)
+  colorTheme   String?         @db.VarChar(50)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  cards        UserFlashcard[]
+
+  @@map("flashcard_decks")
+}
+
+model UserFlashcard {
+  id             String            @id @default(uuid())
+  userId         String
+  user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deckId         String
+  deck           FlashcardDeck     @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  vocabularyId   String?
+  vocabulary     Vocabulary?       @relation(fields: [vocabularyId], references: [id], onDelete: SetNull)
+  conceptId      String?
+  concept        KnowledgeConcept? @relation(fields: [conceptId], references: [id], onDelete: SetNull)
+  customFront    String?           @db.VarChar(255)
+  customBack     String?           @db.Text
+  personalNote   String?           @db.Text
+  highlightText  String?           @db.Text
+  state          String            @default("new")
+  interval       Int               @default(0)
+  easiness       Float             @default(2.5)
+  repetitions    Int               @default(0)
+  nextReviewDate DateTime          @default(now())
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  logs           FlashcardReviewLog[]
+
+  @@index([userId, nextReviewDate])
+  @@map("user_flashcards")
+}
+
+model FlashcardReviewLog {
+  id               String        @id @default(uuid())
+  cardId           String
+  card             UserFlashcard @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  userId           String
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rating           Int
+  previousInterval Int
+  newInterval      Int
+  previousEasiness Float
+  newEasiness      Float
+  responseTimeMs   Int           
+  reviewedAt       DateTime      @default(now())
+
+  @@index([userId, reviewedAt])
+  @@map("flashcard_review_logs")
+}
+
 

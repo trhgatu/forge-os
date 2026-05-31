@@ -4,10 +4,10 @@ import { KnowledgeProvider } from '../../../contexts/KnowledgeContext';
 
 import KnowledgeContent from './KnowledgeContent';
 
-export function Knowledge() {
+export function Knowledge({ slug }: { slug?: string[] }) {
   return (
     <KnowledgeProvider>
-      <KnowledgeContent />
+      <KnowledgeContent slug={slug} />
     </KnowledgeProvider>
   );
 }

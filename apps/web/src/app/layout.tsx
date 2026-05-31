@@ -7,6 +7,7 @@ import {
   Playfair_Display,
   Dancing_Script,
   Lato,
+  Roboto
 } from 'next/font/google';
 import { Toaster } from 'sonner';
 
@@ -20,6 +21,12 @@ const geistSans = Geist({
 
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
+  subsets: ['latin'],
+});
+
+const roboto = Roboto({
+  variable: '--font-roboto',
+  weight: ['300', '400', '500', '600', '700'],
   subsets: ['latin'],
 });
 
@@ -58,7 +65,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${lato.variable} ${geistMono.variable} ${rajdhani.variable} ${playfair.variable} ${dancingScript.variable} antialiased`}
+        className={` ${roboto.variable} ${geistSans.variable} ${lato.variable} ${geistMono.variable} ${rajdhani.variable} ${playfair.variable} ${dancingScript.variable} antialiased`}
       >
         {children}
         <PresenceTracker />

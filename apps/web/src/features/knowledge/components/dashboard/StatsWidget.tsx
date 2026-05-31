@@ -3,65 +3,63 @@
 import { BrainCircuit, Database, Share2, TrendingUp } from 'lucide-react';
 import React from 'react';
 
-import { GlassCard } from '@/shared/components/ui/GlassCard';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { WidgetShell } from '@/shared/components/ui';
 
 interface StatsWidgetProps {
   totalCount: number;
 }
 
 export const StatsWidget: React.FC<StatsWidgetProps> = ({ totalCount }) => {
+  const { t } = useLanguage();
+
   const stats = [
     {
-      label: 'Artifacts Collected',
+      label: t('knowledge.artifacts_collected'),
       value: totalCount,
       icon: Database,
-      color: 'text-forge-cyan',
-      trend: '+12% this week',
+      trend: `+12% ${t('knowledge.this_week')}`,
     },
     {
-      label: 'Synapses Active',
-      value: totalCount * 4 + 7, // Fake stats for "connections"
+      label: t('knowledge.synapses_active'),
+      value: totalCount * 4 + 7,
       icon: Share2,
-      color: 'text-purple-400',
-      trend: 'Optimal Flow',
+      trend: t('knowledge.optimal_flow'),
     },
     {
-      label: 'Cognitive Load',
-      value: '42%', // Fake metric
+      label: t('knowledge.cognitive_load'),
+      value: '42%',
       icon: BrainCircuit,
-      color: 'text-emerald-400',
-      trend: 'Stable',
+      trend: t('knowledge.stable'),
     },
   ];
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      {stats.map((stat, i) => (
-        <GlassCard
-          key={i}
-          className="p-4 flex flex-col justify-between relative overflow-hidden group"
-        >
-          {/* Bg Blob */}
-          <div
-            className={`absolute -right-4 -top-4 w-24 h-24 rounded-full opacity-10 blur-xl bg-current ${stat.color}`}
-          />
-
-          <div className="flex items-start justify-between mb-2">
-            <span className="text-xs font-mono text-gray-500 uppercase tracking-widest">
-              {stat.label}
-            </span>
-            <stat.icon size={16} className={stat.color} />
-          </div>
-
-          <div>
-            <div className="text-2xl font-bold font-display text-white mb-1">{stat.value}</div>
-            <div className="flex items-center gap-1 text-[10px] text-gray-400">
-              <TrendingUp size={10} />
-              {stat.trend}
+      {stats.map((stat, i) => {
+        return (
+          <WidgetShell
+            key={i}
+            className="h-full relative overflow-hidden"
+            interactive={true}
+          >
+            <div className="flex items-start justify-between mb-4 relative z-10">
+              <span className="text-xs font-mono text-gray-500 uppercase tracking-widest font-bold">
+                {stat.label}
+              </span>
+              <stat.icon size={16} className="text-gray-400 group-hover:text-white transition-colors" />
             </div>
-          </div>
-        </GlassCard>
-      ))}
+
+            <div className="relative z-10">
+              <div className="text-2xl font-bold font-display text-white mb-1">{stat.value}</div>
+              <div className="flex items-center gap-1 text-[10px] text-gray-400">
+                <TrendingUp size={10} />
+                {stat.trend}
+              </div>
+            </div>
+          </WidgetShell>
+        );
+      })}
     </div>
   );
 };
