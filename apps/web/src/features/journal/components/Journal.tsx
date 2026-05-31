@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 
 import type { JournalEntry } from '@/features/journal/types';
 import { JournalStatus, JournalType } from '@/features/journal/types';
-import { Button } from '@/shared/components/ui';
+import { Button, Skeleton, EmptyState } from '@/shared/components/ui';
 import { useDebounce } from '@/shared/hooks/useDebounce';
 
 import {
@@ -165,8 +165,26 @@ export function Journal() {
     setLocalEntry((prev: JournalEntry | null) => (prev ? { ...prev, ...patch } : null));
   };
 
-  if (isLoading && !localEntry && !createMutation.isPending)
-    return <div className="p-10 text-center text-gray-500 font-mono animate-pulse">Initializing Journal...</div>;
+  if (isLoading && !localEntry && !createMutation.isPending) {
+    return (
+      <div className="h-full flex bg-forge-bg text-white overflow-hidden p-6 gap-6">
+        <div className="w-80 flex flex-col gap-4">
+          <Skeleton variant="glowing" className="h-10 w-full rounded-md" />
+          <Skeleton variant="default" className="h-9 w-full rounded-md" />
+          <div className="flex-1 flex flex-col gap-3 mt-4">
+            <Skeleton variant="default" className="h-24 w-full rounded-lg" />
+            <Skeleton variant="default" className="h-24 w-full rounded-lg" />
+            <Skeleton variant="default" className="h-24 w-full rounded-lg" />
+          </div>
+        </div>
+        <div className="flex-1 flex flex-col gap-6 max-w-2xl mx-auto py-8">
+          <Skeleton variant="glowing" className="h-8 w-24 rounded-full" />
+          <Skeleton variant="glowing" className="h-14 w-3/4 rounded-md" />
+          <Skeleton variant="default" className="flex-1 w-full rounded-lg" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-full flex bg-forge-bg text-white overflow-hidden">
@@ -192,8 +210,22 @@ export function Journal() {
           saveStatus={visualSaveStatus}
         />
       ) : (
-        <div className="flex-1 flex items-center justify-center text-gray-500">
-          Select an entry or create a new one.
+        <div className="flex-1 flex items-center justify-center">
+          <EmptyState
+            title="Sổ Tay Nhật Ký Giả Kim"
+            description="Lưu giữ các ghi chép cá nhân, suy ngẫm Khắc kỷ học và phân tích trạng thái năng lượng tâm trí của bạn."
+            glowColor="cyan"
+            size="lg"
+            className="max-w-md bg-transparent border-none"
+          >
+            <Button
+              onClick={handleCreate}
+              variant="outline"
+              className="mt-4 hover:border-forge-cyan/50 hover:text-forge-cyan border-white/10 text-white font-mono tracking-wider text-xs"
+            >
+              Khởi Tạo Bản Ghi Mới
+            </Button>
+          </EmptyState>
         </div>
       )}
     </div>
