@@ -21,14 +21,24 @@ export const FoundationLibrary: React.FC<FoundationLibraryProps> = ({
   setActiveFoundation,
 }) => {
   const [searchTerm, setSearchTerm] = React.useState('');
+  const [activeCategory, setActiveCategory] = React.useState('All Foundations');
 
   const filteredFoundations = React.useMemo(() => {
-    return foundations.filter(
-      (doc) =>
+    return foundations.filter((doc) => {
+      const matchesSearch =
         doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (doc.description || '').toLowerCase().includes(searchTerm.toLowerCase()),
-    );
-  }, [foundations, searchTerm]);
+        (doc.description || '').toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesCategory =
+        activeCategory === 'All Foundations' ||
+        doc.type.toLowerCase() === activeCategory.toLowerCase() ||
+        (activeCategory === 'Technical' && doc.type.toLowerCase() === 'technical') ||
+        (activeCategory === 'Frameworks' && doc.type.toLowerCase() === 'framework') ||
+        (activeCategory === 'Guides' && doc.type.toLowerCase() === 'guide');
+
+      return matchesSearch && matchesCategory;
+    });
+  }, [foundations, searchTerm, activeCategory]);
 
   if (activeFoundation) {
     return (
@@ -78,22 +88,41 @@ export const FoundationLibrary: React.FC<FoundationLibraryProps> = ({
             </Label>
             <div className="space-y-1">
               {['All Foundations', 'Frameworks', 'Guides', 'Technical', 'Philosophy'].map(
-                (cat, i) => (
-                  <Tag
-                    interactive
-                    active={i === 0}
-                    variant={i === 0 ? 'cyan' : 'default'}
-                    key={cat}
-                    className="w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center justify-between border-none cursor-pointer"
-                  >
-                    {cat}
-                    {i === 0 && (
-                      <span className="text-[10px] bg-white/20 px-1.5 rounded text-white font-bold">
-                        {foundations.length}
+                (cat) => {
+                  const isActive = activeCategory === cat;
+                  const count = cat === 'All Foundations'
+                    ? foundations.length
+                    : foundations.filter(
+                        (doc) =>
+                          doc.type.toLowerCase() === cat.toLowerCase() ||
+                          (cat === 'Frameworks' && doc.type.toLowerCase() === 'framework') ||
+                          (cat === 'Guides' && doc.type.toLowerCase() === 'guide')
+                      ).length;
+
+                  return (
+                    <Tag
+                      interactive
+                      active={isActive}
+                      variant="default"
+                      key={cat}
+                      onClick={() => setActiveCategory(cat)}
+                      className={cn(
+                        "w-full text-left px-3 py-2.5 rounded-xl text-xs font-mono tracking-wide transition-all flex items-center justify-between cursor-pointer border",
+                        isActive
+                          ? "border-fuchsia-500/30 bg-fuchsia-500/10 text-fuchsia-400 shadow-[0_0_15px_rgba(217,70,239,0.15)]"
+                          : "border-white/5 bg-white/5 text-gray-400 hover:text-white hover:border-white/10 hover:bg-white/[0.08]"
+                      )}
+                    >
+                      <span>{cat}</span>
+                      <span className={cn(
+                        "text-[9px] px-1.5 py-0.5 rounded-sm font-bold font-mono",
+                        isActive ? "bg-fuchsia-500/20 text-fuchsia-400" : "bg-white/10 text-gray-500"
+                      )}>
+                        {count}
                       </span>
-                    )}
-                  </Tag>
-                ),
+                    </Tag>
+                  );
+                }
               )}
             </div>
           </div>
@@ -105,7 +134,7 @@ export const FoundationLibrary: React.FC<FoundationLibraryProps> = ({
             filteredFoundations.map((doc) => (
               <GlassCard
                 key={doc.id}
-                className="group hover:border-white/20 cursor-pointer flex flex-col"
+                className="group hover:border-fuchsia-500/30 cursor-pointer flex flex-col"
                 noPadding
                 onClick={() => setActiveFoundation(doc)}
               >
