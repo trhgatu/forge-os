@@ -49,7 +49,7 @@ export class KnowledgeService {
       const summary = bodyText.length > 200 ? bodyText.substring(0, 200) + '...' : bodyText;
 
       return { title, content: bodyText, summary };
-    } catch (err) {
+    } catch {
       const domain = new URL(url).hostname;
       return {
         title: `Nghiên cứu từ ${domain}`,

@@ -243,7 +243,7 @@ export class FlashcardsService {
         synonyms: m.synonyms || [],
         antonyms: m.antonyms || []
       })) || [];
-    } catch (e) {
+    } catch {
       // Fallback values if word is not in Dictionary API
       ipa = '';
       audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=${encodeURIComponent(word)}`;
@@ -257,7 +257,7 @@ export class FlashcardsService {
         { timeout: 3000 }
       );
       vietnameseTranslation = transRes.data[0][0][0] || 'Chưa rõ nghĩa';
-    } catch (e) {
+    } catch {
       vietnameseTranslation = word;
     }
 
