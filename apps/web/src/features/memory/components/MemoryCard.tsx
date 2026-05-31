@@ -4,6 +4,7 @@ import Image from 'next/image';
 
 import { cn } from '@/shared/lib/utils';
 import type { Memory } from '@/shared/types/memory';
+import { Tag } from '@/shared/components/ui';
 
 import { SEASON_CONFIG, getSeasonFromMood } from '../config';
 
@@ -100,17 +101,19 @@ export function MemoryCard({ memory, onClick }: MemoryCardProps) {
           {memory.tags.length > 0 && (
             <div className="flex flex-wrap gap-1.5 pt-2 border-t border-white/5">
               {memory.tags.slice(0, 3).map((tag) => (
-                <span
+                <Tag
                   key={tag}
-                  className="px-1.5 py-0.5 rounded bg-white/[0.02] font-mono text-[9px] text-gray-500 border border-white/5 group-hover:text-gray-400 transition-colors"
+                  size="sm"
+                  variant="default"
+                  className="bg-white/[0.02] text-[9px] text-gray-500 border border-white/5 group-hover:text-gray-400"
                 >
                   #{tag}
-                </span>
+                </Tag>
               ))}
               {memory.tags.length > 3 && (
-                <span className="font-mono text-[9px] text-gray-600 self-center">
+                <Tag size="sm" variant="default" className="text-[9px] font-mono self-center border-none py-0">
                   +{memory.tags.length - 3}
-                </span>
+                </Tag>
               )}
             </div>
           )}

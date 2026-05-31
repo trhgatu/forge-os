@@ -7,6 +7,7 @@ import { useState } from 'react';
 
 import { cn } from '@/shared/lib/utils';
 import type { Memory } from '@/shared/types/memory';
+import { Input, Label, Button } from '@/shared/components/ui';
 
 interface CreateMemoryModalProps {
   onClose: () => void;
@@ -55,24 +56,25 @@ export function CreateMemoryModal({ onClose, onSave, initialData }: CreateMemory
       <div className="flex h-[550px] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0c0c0e] shadow-2xl slide-in-from-bottom-4">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-white/5 px-6 py-4 bg-black/20">
-          <h3 className="font-display text-base font-bold tracking-wide text-white">
+          <Label variant="cyan" className="text-base font-bold tracking-wide uppercase">
             {initialData ? 'Refine Memory Node' : 'Preserve Memory Node'}
-          </h3>
+          </Label>
           <div className="flex items-center gap-3">
-            <button
-              type="button"
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={onClose}
-              className="rounded-xl p-2 text-gray-500 transition-colors hover:bg-white/5 hover:text-white"
+              className="text-gray-500 hover:text-white"
             >
               <X size={16} />
-            </button>
-            <button
-              type="button"
+            </Button>
+            <Button
+              variant="glass"
               onClick={handleSave}
-              className="rounded-xl bg-forge-cyan/10 border border-forge-cyan/20 px-4 py-2 text-xs font-semibold text-forge-cyan transition-all hover:bg-forge-cyan/20 shadow-[0_0_15px_rgba(34,211,238,0.1)] cursor-pointer"
+              className="border-forge-cyan/20 text-forge-cyan hover:border-forge-cyan/40 px-4 py-2 font-mono text-xs font-semibold shadow-[0_0_15px_rgba(34,211,238,0.1)]"
             >
               {initialData ? 'Update Node' : 'Crystallize'}
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -80,8 +82,9 @@ export function CreateMemoryModal({ onClose, onSave, initialData }: CreateMemory
         <div className="flex flex-1 overflow-hidden">
           {/* Left: Main Content */}
           <div className="flex-1 flex flex-col border-r border-white/5 bg-white/[0.01]">
-            <input
-              className="w-full bg-transparent px-8 pt-8 pb-4 font-display text-2xl font-bold text-white placeholder-white/10 outline-none border-b border-white/5"
+            <Input
+              variant="unstyled"
+              className="w-full bg-transparent px-8 pt-8 pb-4 font-display text-2xl font-bold text-white placeholder-white/10 outline-none border-b border-white/5 focus:outline-none"
               placeholder="Give this memory a name..."
               value={title}
               onChange={(event) => setTitle(event.target.value)}
@@ -99,9 +102,9 @@ export function CreateMemoryModal({ onClose, onSave, initialData }: CreateMemory
           <div className="w-80 space-y-8 overflow-y-auto bg-black/40 p-6 scrollbar-hide">
             {/* Mood */}
             <div>
-              <label className="mb-3 block text-[9px] font-mono uppercase tracking-widest text-gray-500">
+              <Label variant="dim" className="mb-3 block text-[9px] uppercase tracking-widest">
                 Emotional Charge
-              </label>
+              </Label>
               <div className="flex flex-wrap gap-2">
                 {EMOTION_OPTIONS.map((option) => (
                   <button
@@ -123,18 +126,18 @@ export function CreateMemoryModal({ onClose, onSave, initialData }: CreateMemory
 
             {/* Image */}
             <div>
-              <label className="mb-3 block text-[9px] font-mono uppercase tracking-widest text-gray-500">
+              <Label variant="dim" className="mb-3 block text-[9px] uppercase tracking-widest">
                 Visual Artifact (URL)
-              </label>
+              </Label>
               <div className="space-y-3">
-                <input
-                  className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-white outline-none transition-colors focus:border-white/20"
+                <Input
                   placeholder="https://..."
                   value={imageUrl}
                   onChange={(event) => {
                     setImageUrl(event.target.value);
                     setImgError(false);
                   }}
+                  className="bg-white/5 border-white/10 text-xs px-3 py-2"
                 />
                 {imageUrl && !imgError && (
                   <div className="relative aspect-video w-full overflow-hidden rounded-xl border border-white/10 shadow-lg">

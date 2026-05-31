@@ -65,7 +65,6 @@ export class FlashcardsService {
       }
     }
 
-    // 3. Create the customized UserFlashcard
     return this.prisma.userFlashcard.create({
       data: {
         userId,

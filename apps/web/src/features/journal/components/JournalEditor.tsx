@@ -2,6 +2,7 @@
 
 import { MoodType } from '@forge/reflection';
 import { Calendar, Save } from 'lucide-react';
+import { Input } from '@/shared/components/ui';
 
 import type { JournalEntry } from '@/features/journal/types';
 import { ForgeEditor } from '@/shared/components/editor/ForgeEditor';
@@ -71,13 +72,13 @@ export function JournalEditor({
             <MoodSelector mood={entry.mood || MoodType.NEUTRAL} onSelect={(m) => onChange({ mood: m })} />
           </div>
 
-          {/* Title */}
-          <input
+          <Input
             type="text"
+            variant="unstyled"
             value={entry.title || ''}
             onChange={(e) => onChange({ title: e.target.value })}
             placeholder="Title your thought..."
-            className="w-full bg-transparent border-none text-4xl font-display font-bold text-white placeholder-gray-700 focus:ring-0 px-0 py-4 mb-4"
+            className="w-full text-4xl font-display font-bold text-white placeholder-gray-700 focus:ring-0 px-0 py-4 mb-4 focus:outline-none bg-transparent border-none"
           />
 
           {/* Content */}
