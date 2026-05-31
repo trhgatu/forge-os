@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { useMemories, useCreateMemory } from '@/features/memory/hooks';
 import { cn } from '@/shared/lib/utils';
 import type { Memory as MemoryType } from '@/shared/types/memory';
+import { Skeleton, Label, Input, EmptyState, Button } from '@/shared/components/ui';
 
 import { SEASON_CONFIG, type InnerSeason, getSeasonFromMood } from '../config';
 import { MOCK_MEMORIES } from '../data/mockMemories';
@@ -140,17 +141,27 @@ export function Memory() {
 
   if (isLoading) {
     return (
-      <div className="flex h-full flex-col bg-[#030304] text-white">
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center space-y-4">
-            <div className="relative">
-              <div className="absolute inset-0 animate-pulse bg-forge-cyan/10 blur-3xl" />
-              <BookOpen size={48} className="relative text-forge-cyan/40 animate-pulse" />
-            </div>
-            <p className="text-sm text-gray-400 font-mono tracking-wide animate-pulse">
-              Retrieving memory archives...
-            </p>
+      <div className="flex h-full flex-col bg-forge-bg text-white p-8 gap-6 animate-pulse">
+        <div className="flex items-start justify-between mb-6">
+          <div className="flex-1 space-y-3">
+            <Skeleton variant="glowing" className="h-4 w-32 rounded-md" />
+            <Skeleton variant="glowing" className="h-12 w-48 rounded-md" />
+            <Skeleton variant="default" className="h-4 w-3/4 rounded-md" />
           </div>
+          <Skeleton variant="glowing" className="h-10 w-36 rounded-xl" />
+        </div>
+        <div className="flex gap-6 items-center justify-between pb-4 border-b border-white/5">
+          <Skeleton variant="default" className="h-10 w-96 rounded-xl" />
+          <div className="flex gap-2">
+            <Skeleton variant="default" className="h-9 w-20 rounded-xl" />
+            <Skeleton variant="default" className="h-9 w-20 rounded-xl" />
+            <Skeleton variant="default" className="h-9 w-20 rounded-xl" />
+          </div>
+        </div>
+        <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
+          <Skeleton variant="default" className="h-64 w-full rounded-xl" />
+          <Skeleton variant="default" className="h-80 w-full rounded-xl" />
+          <Skeleton variant="default" className="h-72 w-full rounded-xl" />
         </div>
       </div>
     );
@@ -166,15 +177,15 @@ export function Memory() {
             {/* Ethereal label */}
             <div className="mb-3 flex items-center gap-2 opacity-80">
               <div className="h-px w-8 bg-gradient-to-r from-forge-cyan/40 to-transparent" />
-              <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-forge-cyan/70">
+              <Label variant="cyan" className="text-[10px] font-mono tracking-[0.4em] uppercase">
                 Memory Vault
-              </span>
+              </Label>
             </div>
 
             {/* Poetic Title */}
-            <h1 className="text-4xl md:text-5xl font-display font-bold text-white tracking-tight leading-tight mb-3">
+            <Label variant="default" className="text-4xl md:text-5xl font-bold text-white tracking-tight leading-tight mb-3 block">
               Memories
-            </h1>
+            </Label>
 
             {/* Flowing Subtitle */}
             <p className="text-sm text-gray-400 font-light leading-relaxed max-w-xl">
@@ -183,30 +194,30 @@ export function Memory() {
           </div>
 
           {/* Preserve Button - Glass Tech Glowing */}
-          <button
-            type="button"
+          <Button
             onClick={() => setIsCreating(true)}
-            className="group relative flex items-center gap-2.5 rounded-xl px-5 py-3 text-xs font-semibold uppercase tracking-wider transition-all duration-300 bg-forge-cyan/10 border border-forge-cyan/20 text-forge-cyan hover:bg-forge-cyan/20 shadow-[0_0_15px_rgba(34,211,238,0.1)]"
+            variant="glass"
+            className="border-forge-cyan/20 text-forge-cyan hover:border-forge-cyan/40 px-5 py-3 font-mono text-xs font-semibold shadow-[0_0_15px_rgba(34,211,238,0.1)]"
           >
             <Feather
               size={14}
-              className="transition-transform duration-300 group-hover:rotate-12"
+              className="transition-transform duration-300 group-hover:rotate-12 mr-2 inline"
             />
-            <span className="font-mono">Preserve Memory</span>
-          </button>
+            Preserve Memory
+          </Button>
         </div>
 
         {/* Search and Filters */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pt-4">
           {/* Search Bar */}
           <div className="relative flex-1 max-w-md">
-            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
-            <input
+            <Input
               type="text"
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
               placeholder="Search memories..."
-              className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-white/20 transition-colors placeholder-gray-500 font-sans"
+              icon={<Search size={16} />}
+              className="bg-white/5 border-white/10 text-sm h-11"
             />
           </div>
 
@@ -345,34 +356,34 @@ export function Memory() {
               })}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-32 animate-in fade-in duration-700">
-              <div className="relative mb-8">
-                <div className="absolute inset-0 animate-pulse bg-forge-cyan/5 blur-3xl" />
-                <BookOpen size={64} className="relative text-white/20 animate-pulse" />
-              </div>
-              <p className="mb-2 text-xl font-display font-semibold text-white">
-                {activeFilter !== 'All'
-                  ? `No ${activeFilter.toLowerCase()} memory nodes found`
+            <EmptyState
+              title={
+                activeFilter !== 'All'
+                  ? `Không tìm thấy lưu trữ ${activeFilter.toLowerCase()}`
                   : searchTerm
-                    ? 'No memory nodes match your query'
-                    : 'The vault is empty...'}
-              </p>
-              <p className="mb-8 text-sm text-gray-500 leading-relaxed max-w-sm text-center">
-                {activeFilter !== 'All' || searchTerm
-                  ? 'Try adjusting your search criteria'
-                  : 'Every neural log begins with a single preserved memory node.'}
-              </p>
+                    ? 'Không có kết quả khớp với tìm kiếm'
+                    : 'Hộp ký ức trống rỗng'
+              }
+              description={
+                activeFilter !== 'All' || searchTerm
+                  ? 'Hãy thử điều chỉnh lại bộ lọc hoặc từ khóa tìm kiếm.'
+                  : 'Mọi nhật ký thần kinh đều bắt đầu từ một nút ký ức đầu tiên được lưu giữ.'
+              }
+              glowColor="cyan"
+              size="lg"
+              className="py-24 max-w-md mx-auto border-none bg-transparent"
+            >
               {!searchTerm && (
-                <button
-                  type="button"
+                <Button
                   onClick={() => setIsCreating(true)}
-                  className="flex items-center gap-2 rounded-xl px-5 py-3 text-xs font-semibold uppercase tracking-wider transition-all duration-300 bg-forge-cyan/10 border border-forge-cyan/20 text-forge-cyan hover:bg-forge-cyan/20 shadow-[0_0_15px_rgba(34,211,238,0.1)]"
+                  variant="glass"
+                  className="mt-4 border-forge-cyan/20 text-forge-cyan hover:border-forge-cyan/40 px-5 py-3 font-mono text-xs font-semibold shadow-[0_0_15px_rgba(34,211,238,0.1)] mr-0"
                 >
-                  <Feather size={14} />
-                  <span className="font-mono">Begin Writing</span>
-                </button>
+                  <Feather size={14} className="mr-2 inline" />
+                  Ghi Lại Ký Ức
+                </Button>
               )}
-            </div>
+            </EmptyState>
           )}
 
           {/* Infinite Scroll Sentinel */}
