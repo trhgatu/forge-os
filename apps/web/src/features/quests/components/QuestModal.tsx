@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 
 import { useSound } from '@/contexts';
 import type { Habit } from '@/features/gamification/types';
-import { Button, Dropdown, Input } from '@/shared/components/ui';
+import { Button, Dropdown, Input, Label } from '@/shared/components/ui';
 
 import type { Quest } from '../types';
 
@@ -175,25 +175,27 @@ export function QuestModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-300">
       <div className="w-full max-w-xl rounded-2xl bg-[#09090b] border border-white/10 overflow-visible shadow-2xl animate-in zoom-in-95 duration-300">
         <div className="flex items-center justify-between p-5 border-b border-white/5 bg-white/[0.01]">
-          <h2 className="text-lg font-semibold text-white">
+          <Label variant="cyan" className="text-lg font-semibold block">
             {quest ? 'Configure Quest Profile' : 'Initialize New Quest'}
-          </h2>
-          <button
+          </Label>
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => {
               playSound('click');
               onClose();
             }}
-            className="p-1 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+            className="p-1 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer h-8 w-8"
           >
             <X size={18} />
-          </button>
+          </Button>
         </div>
 
         <form onSubmit={handleFormSubmit} className="p-5 space-y-4">
           <div>
-            <label className="block text-xs font-mono uppercase text-gray-500 tracking-wider mb-1.5">
+            <Label variant="dim" className="block text-xs font-mono uppercase tracking-wider mb-1.5">
               Title
-            </label>
+            </Label>
             <Input
               required
               value={title}
@@ -203,9 +205,9 @@ export function QuestModal({
           </div>
 
           <div>
-            <label className="block text-xs font-mono uppercase text-gray-500 tracking-wider mb-1.5">
+            <Label variant="dim" className="block text-xs font-mono uppercase tracking-wider mb-1.5">
               Description
-            </label>
+            </Label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -216,9 +218,9 @@ export function QuestModal({
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-mono uppercase text-gray-500 tracking-wider mb-1.5">
+              <Label variant="dim" className="block text-xs font-mono uppercase tracking-wider mb-1.5">
                 Quest Type
-              </label>
+              </Label>
               <Dropdown
                 options={questTypeOptions}
                 value={type}
@@ -227,9 +229,9 @@ export function QuestModal({
             </div>
 
             <div>
-              <label className="block text-xs font-mono uppercase text-gray-500 tracking-wider mb-1.5">
+              <Label variant="dim" className="block text-xs font-mono uppercase tracking-wider mb-1.5">
                 XP Reward
-              </label>
+              </Label>
               <Input
                 type="number"
                 required
@@ -242,9 +244,9 @@ export function QuestModal({
 
           <div className="space-y-2.5">
             <div className="flex items-center justify-between">
-              <label className="block text-xs font-mono uppercase text-gray-500 tracking-wider">
+              <Label variant="dim" className="block text-xs font-mono uppercase tracking-wider">
                 Linked Objectives
-              </label>
+              </Label>
               <button
                 type="button"
                 onClick={handleAddObjectiveField}
