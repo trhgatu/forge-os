@@ -33,7 +33,7 @@ export const Presence: React.FC = () => {
         <div className="mb-3 flex items-center gap-2 opacity-85">
           <div className="h-px w-8 bg-gradient-to-r from-forge-cyan/40 to-transparent" />
           <Label variant="cyan" className="text-[10px] font-mono tracking-[0.4em] uppercase flex items-center gap-1.5">
-            <Radar size={10} className="animate-spin-slow text-forge-cyan" /> Presence Sensor Active
+            Presence Sensor Active
           </Label>
         </div>
 

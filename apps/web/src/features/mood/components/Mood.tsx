@@ -119,7 +119,7 @@ export function Mood() {
   };
 
   return (
-    <div className="relative flex h-full overflow-hidden bg-forge-bg text-white animate-in fade-in duration-700">
+    <div className="relative flex h-full overflow-hidden bg-transparent text-white animate-in fade-in duration-700">
       {/* Left / Main */}
       <div className="relative z-10 flex h-full flex-1 flex-col overflow-hidden">
         {/* Header - Flowing Layout */}
