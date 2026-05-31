@@ -13,7 +13,6 @@ import { SEASON_CONFIG, getSeasonFromMood } from '../../memory/config/seasons';
 import { useQuotes, useCreateQuote, useDeleteQuote, useUpdateQuote } from '../hooks/useQuote';
 
 import { DailyInspiration } from './DailyInspiration';
-import { MoodAmbience } from './MoodAmbience';
 import { QuoteCard } from './QuoteCard';
 import { QuoteDetailPanel } from './QuoteDetailPanel';
 import { QuoteModal, EMOTION_OPTIONS } from './QuoteModal';
@@ -154,8 +153,6 @@ export function Quote() {
 
   return (
     <div className="h-full w-full flex flex-col bg-transparent relative overflow-hidden animate-in fade-in duration-1000">
-      <MoodAmbience mood={filterMood} />
-
       {/* Background Ambience */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute top-0 right-0 w-[1000px] h-[1000px] bg-purple-900/5 rounded-full blur-[200px] opacity-30" />
