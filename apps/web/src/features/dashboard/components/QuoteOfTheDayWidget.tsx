@@ -2,18 +2,15 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { Quote, Sparkles } from 'lucide-react';
-import React from 'react';
 
 import { getRandomQuote } from '@/features/quote/services/quoteService';
-
-// Let's assume I will export WidgetShell from Dashboard.tsx for now.
-import { WidgetShell } from './Dashboard';
+import { WidgetShell } from '@/shared/components/ui';
 
 export const QuoteOfTheDayWidget = () => {
   const { data: quote, isLoading } = useQuery({
     queryKey: ['quote-of-the-day'],
     queryFn: getRandomQuote,
-    staleTime: 1000 * 60 * 60, // 1 hour
+    staleTime: 1000 * 60 * 60,
     refetchOnWindowFocus: false,
   });
 

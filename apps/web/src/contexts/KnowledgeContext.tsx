@@ -37,15 +37,15 @@ export const useKnowledge = () => {
   const selectAction = useKnowledgeStore((state) => state.selectConcept);
 
   const search = useCallback(
-    async (query: string) => {
-      await searchAction(query, language);
+    async (query: string, searchLang?: string) => {
+      await searchAction(query, searchLang || language);
     },
     [searchAction, language],
   );
 
   const selectConcept = useCallback(
-    async (concept: KnowledgeConcept) => {
-      await selectAction(concept, language);
+    async (concept: KnowledgeConcept, selectLang?: string) => {
+      await selectAction(concept, selectLang || language);
     },
     [selectAction, language],
   );

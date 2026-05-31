@@ -83,20 +83,26 @@ export const useKnowledgeStore = create<KnowledgeState>()(
       // Discovery
       discoveryItems: [],
       loadDiscovery: async (lang: string) => {
-        // Guard: Check if we already have items or are currently loading (partial implementation)
-        // Since we don't have isDiscoveryLoading, we check the length as a proxy for "already loaded"
-        if (get().discoveryItems.length >= 10) return;
+        const currentItems = get().discoveryItems;
+        const currentLang = currentItems[0]?.language;
 
+        // If we already have items in the correct language, don't re-fetch
+        if (currentItems.length > 0 && currentLang === lang) return;
+
+        if (get().isLoading) return;
+
+        set({ isLoading: true });
         // Dynamically import to separate logic
         const { getRandomConcepts } = await import('@/features/knowledge/services');
         try {
-          const items = await getRandomConcepts(lang, 20);
-          // Only update if we still need them
-          if (get().discoveryItems.length < 10) {
+          const items = await getRandomConcepts(lang, 15);
+          if (items.length > 0) {
             set({ discoveryItems: items });
           }
         } catch (e) {
           console.error('Discovery load failed', e);
+        } finally {
+          set({ isLoading: false });
         }
       },
     }),
@@ -104,8 +110,6 @@ export const useKnowledgeStore = create<KnowledgeState>()(
       name: 'forge-knowledge-storage',
       partialize: (state) => ({
         history: state.history,
-        // Optional: persist discovery items too if desired
-        discoveryItems: state.discoveryItems,
       }),
     },
   ),
