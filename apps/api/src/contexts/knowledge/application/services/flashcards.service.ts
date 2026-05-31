@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
-import axios from 'axios';
 
 @Injectable()
 export class FlashcardsService {
@@ -41,28 +40,21 @@ export class FlashcardsService {
     return { success: true };
   }
 
-  // --------------------------------------------------
-  // FLASHCARD ENRICHMENT & CREATION
-  // --------------------------------------------------
   async forgeCard(userId: string, data: {
     deckId: string;
-    word: string;             // Từ vựng muốn rèn
-    conceptId?: string;       // ID bài nghiên cứu nguồn
-    highlightText?: string;   // Ngữ cảnh bôi đen thực tế
+    word: string;
+    conceptId?: string;
+    highlightText?: string;
     personalNote?: string;
   }) {
-    // 1. Check if Vocabulary exists in Central Dictionary
     const cleanWord = data.word.trim().toLowerCase();
     let vocab = await this.prisma.vocabulary.findUnique({
       where: { word: cleanWord },
     });
 
     if (!vocab) {
-      // 2. Fetch from APIs & Enrich dynamically
       vocab = await this.enrichAndSaveVocabulary(cleanWord);
     }
-
-    // Verify concept exists in DB to avoid Foreign Key constraint violations
     let dbConceptId: string | undefined = undefined;
     if (data.conceptId) {
       const dbConcept = await this.prisma.knowledgeConcept.findUnique({
@@ -212,8 +204,14 @@ export class FlashcardsService {
 
     // 1. Call Dictionary API
     try {
-      const dictRes = await axios.get(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`, { timeout: 4000 });
-      const entry = dictRes.data[0];
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
+      const dictRes = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`, { signal: controller.signal });
+      clearTimeout(timeoutId);
+      if (!dictRes.ok) throw new Error('Dictionary request failed');
+
+      const dictData = await dictRes.json();
+      const entry = dictData[0];
 
       // Extract IPA
       const phoneticObjWithText = entry.phonetics?.find((p: any) => p.text && p.text.trim() !== '');
@@ -252,11 +250,17 @@ export class FlashcardsService {
     // 2. Translate to Vietnamese via Google Translate Public API
     let vietnameseTranslation = 'Chưa rõ nghĩa';
     try {
-      const transRes = await axios.get(
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000);
+      const transRes = await fetch(
         `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=vi&dt=t&q=${encodeURIComponent(word)}`,
-        { timeout: 3000 }
+        { signal: controller.signal }
       );
-      vietnameseTranslation = transRes.data[0][0][0] || 'Chưa rõ nghĩa';
+      clearTimeout(timeoutId);
+      if (!transRes.ok) throw new Error('Translation request failed');
+
+      const transData = await transRes.json();
+      vietnameseTranslation = transData[0][0][0] || 'Chưa rõ nghĩa';
     } catch {
       vietnameseTranslation = word;
     }

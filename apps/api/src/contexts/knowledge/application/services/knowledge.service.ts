@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
 import { KnowledgeSourceType } from '@prisma/client';
-import axios from 'axios';
 
 @Injectable()
 export class KnowledgeService {
@@ -32,8 +31,12 @@ export class KnowledgeService {
 
   async scrapeUrl(url: string): Promise<{ title: string; content: string; summary: string }> {
     try {
-      const response = await axios.get(url, { timeout: 5000 });
-      const html = response.data;
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      const response = await fetch(url, { signal: controller.signal });
+      clearTimeout(timeoutId);
+      if (!response.ok) throw new Error('Scrape request failed');
+      const html = await response.text();
 
       const titleMatch = html.match(/<title>([^<]*)<\/title>/i);
       const title = titleMatch ? titleMatch[1].trim() : 'External Wisdom Source';
