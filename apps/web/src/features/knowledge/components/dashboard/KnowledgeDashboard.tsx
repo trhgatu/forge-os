@@ -41,13 +41,21 @@ export const KnowledgeDashboard: React.FC = () => {
       <div className="flex-1 lg:flex-[2] flex flex-col gap-6 overflow-y-auto pr-2 scrollbar-hide min-h-0">
         {/* 1. Header Section */}
         <div className="flex flex-col gap-2 shrink-0">
-          <div className="inline-flex items-center gap-2 self-start px-3 py-1 rounded-full border border-white/10 bg-white/5 text-xs font-mono text-forge-cyan backdrop-blur-md">
-            <Globe size={12} className="animate-pulse-slow" /> {t('knowledge.global_grid')}
+          {/* Ethereal label */}
+          <div className="mb-3 flex items-center gap-2 opacity-85">
+            <div className="h-px w-8 bg-gradient-to-r from-forge-cyan/40 to-transparent" />
+            <Label variant="cyan" className="text-[10px] font-mono tracking-[0.4em] uppercase flex items-center gap-1.5">
+              {t('knowledge.global_grid')}
+            </Label>
           </div>
-          <h1 className="uppercase text-2xl md:text-3xl font-display font-bold text-white tracking-tight">
+
+          {/* Poetic Title */}
+          <Label variant="default" className="text-4xl md:text-5xl font-bold text-white tracking-tight leading-tight mb-3 block capitalize">
             {t('knowledge.dashboard_title')}
-          </h1>
-          <p className="text-gray-400 font-light text-sm md:text-base">
+          </Label>
+
+          {/* Flowing Subtitle */}
+          <p className="text-sm text-gray-400 font-light leading-relaxed max-w-xl">
             {t('knowledge.dashboard_desc')}
           </p>
         </div>

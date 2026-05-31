@@ -4,6 +4,7 @@ import { Activity } from 'lucide-react';
 import React from 'react';
 
 import { useLanguage } from '@/contexts';
+import { Label } from '@/shared/components/ui';
 
 import type { UserStats } from '../../gamification/types';
 
@@ -62,9 +63,9 @@ export const RadarChart: React.FC<RadarChartProps> = ({ stats }) => {
     <div className="lg:col-span-2 p-6 rounded-sm bg-[#050507]/60 border border-white/5 shadow-2xl backdrop-blur-2xl flex flex-col items-center justify-center relative overflow-hidden hover:border-forge-cyan/20 transition-all duration-300">
       <div className="absolute top-3 left-4 flex items-center gap-2">
         <Activity size={12} className="text-forge-cyan animate-pulse" />
-        <span className="text-[10px] font-mono tracking-widest text-zinc-400 uppercase">
+        <Label variant="dim" className="text-[10px] font-mono tracking-widest text-zinc-400 uppercase block">
           {t('identity.mind_vector')}
-        </span>
+        </Label>
       </div>
 
       <svg viewBox="0 0 300 300" className="w-full max-w-[280px] h-auto mt-4 drop-shadow-[0_0_20px_rgba(34,211,238,0.15)]">

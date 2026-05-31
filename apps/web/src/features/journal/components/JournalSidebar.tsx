@@ -31,14 +31,17 @@ export function JournalSidebar({
     <div className="w-80 flex flex-col border-r border-white/5 bg-black/20 backdrop-blur-xl h-full font-lato">
       <div className="p-4 border-b border-white/5 space-y-4">
         <div className="flex items-center justify-between">
-          <Label variant="cyan" className="text-sm font-semibold tracking-widest uppercase">JOURNAL</Label>
+          <div className="flex items-center gap-2 opacity-80">
+            <div className="h-px w-6 bg-gradient-to-r from-forge-cyan/40 to-transparent" />
+            <Label variant="cyan" className="text-[10px] font-mono tracking-[0.25em] uppercase">JOURNAL</Label>
+          </div>
           <Button
             variant="outline"
             size="icon"
             onClick={onNew}
-            className="hover:border-forge-cyan/50 hover:text-forge-cyan"
+            className="hover:border-forge-cyan/50 hover:text-forge-cyan h-8 w-8 rounded-lg"
           >
-            <Plus size={18} />
+            <Plus size={14} />
           </Button>
         </div>
         <Input

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Label } from '@/shared/components/ui';
 import { useAuthStore } from '@/shared/store/authStore';
 
 import { forgeApi } from '../../api';
@@ -82,13 +83,24 @@ export const LabDashboard: React.FC<LabDashboardProps> = ({
 
   return (
     <div className="max-w-[1600px] mx-auto p-6 md:p-10 pb-32 space-y-10 animate-in fade-in zoom-in-95 duration-700">
-      {/* Header Section */}
+      {/* Header Section - Synchronized Alchemical Style */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h1 className="text-5xl md:text-7xl font-display font-bold text-white tracking-tight mb-2">
+          {/* Ethereal label */}
+          <div className="mb-3 flex items-center gap-2 opacity-85">
+            <div className="h-px w-8 bg-gradient-to-r from-forge-cyan/40 to-transparent" />
+            <Label variant="cyan" className="text-[10px] font-mono tracking-[0.4em] uppercase">
+              System Operations
+            </Label>
+          </div>
+
+          {/* Poetic Title */}
+          <Label variant="default" className="text-5xl md:text-7xl font-bold text-white tracking-tight leading-none mb-3 block capitalize">
             Forge Lab
-          </h1>
-          <p className="text-lg text-gray-400 font-light max-w-xl">
+          </Label>
+
+          {/* Flowing Subtitle */}
+          <p className="text-lg text-gray-400 font-light max-w-xl leading-relaxed">
             Central Command for{' '}
             <span className="text-forge-cyan font-medium">System Evolution</span> &{' '}
             <span className="text-fuchsia-400 font-medium">Neural Research</span>.

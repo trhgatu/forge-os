@@ -196,7 +196,7 @@ export const FlashcardDashboard: React.FC = () => {
                     )} />
 
                     {/* Subtle noise overlay */}
-                    <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.02] mix-blend-overlay pointer-events-none" />
+                    <div className="absolute inset-0 bg-[url('/images/noise.svg')] opacity-[0.02] mix-blend-overlay pointer-events-none" />
 
                     {/* Top Header */}
                     <div className="flex justify-between items-start mb-4 relative z-10">

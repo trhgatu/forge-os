@@ -96,7 +96,7 @@ export const AnvilTab: React.FC<AnvilTabProps> = ({ extracts = [], onRemoveExtra
           className="flex-1 p-0 flex flex-col overflow-hidden bg-[#0c0c0e] relative group min-h-0"
           innerClassName="h-full flex flex-col relative"
         >
-          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5 mix-blend-overlay pointer-events-none" />
+          <div className="absolute inset-0 bg-[url('/images/noise.svg')] opacity-5 mix-blend-overlay pointer-events-none" />
           <div className="px-8 pt-8 pb-4 z-10 shrink-0">
             <Input
               type="text"

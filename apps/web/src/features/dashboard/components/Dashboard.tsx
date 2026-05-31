@@ -16,7 +16,7 @@ import React, { useState, useEffect } from 'react';
 import { AreaChart, Area, Tooltip, ResponsiveContainer } from 'recharts';
 
 import { AGENTS } from '@/features/chamber/components/AgentDock';
-import { WidgetShell } from '@/shared/components/ui';
+import { WidgetShell, Label, Tag } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 
 import { QuoteOfTheDayWidget } from './QuoteOfTheDayWidget';
@@ -99,21 +99,29 @@ export const Dashboard: React.FC = () => {
       <div className="flex-1 h-full overflow-y-auto overflow-x-hidden scrollbar-hide p-8 pb-24">
         {/* Greeting */}
         <header className="mb-10 relative group">
-          <h1 className="text-5xl font-display font-bold text-white mb-2 tracking-tight">
+          {/* Ethereal label */}
+          <div className="mb-3 flex items-center gap-2 opacity-80 animate-in fade-in slide-in-from-left-4 duration-500">
+            <div className="h-px w-8 bg-gradient-to-r from-forge-cyan/40 to-transparent" />
+            <Label variant="cyan" className="text-[10px] font-mono tracking-[0.4em] uppercase">
+              Mission Control
+            </Label>
+          </div>
+
+          <Label variant="default" className="text-4xl md:text-5xl font-bold text-white tracking-tight leading-tight mb-3 block capitalize animate-in fade-in slide-in-from-left-4 duration-500 delay-75">
             {greeting},{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-forge-cyan via-cyan-300 to-forge-accent">
               Traveler.
             </span>
-          </h1>
+          </Label>
 
-          <div className="flex items-center gap-4 text-gray-400">
-            <span className="flex items-center gap-2 font-light">
-              <Calendar size={14} /> {dateString}
+          <div className="flex items-center gap-4 text-gray-400 animate-in fade-in slide-in-from-left-4 duration-500 delay-100">
+            <span className="flex items-center gap-2 font-light text-xs">
+              <Calendar size={13} /> {dateString}
             </span>
             <span className="w-1 h-1 rounded-full bg-gray-600" />
-            <span className="text-forge-cyan font-mono text-xs uppercase tracking-wider">
+            <Tag variant="cyan" className="text-[9px] font-mono uppercase tracking-wider py-0.5 px-2">
               Systems Nominal
-            </span>
+            </Tag>
           </div>
         </header>
 
@@ -131,7 +139,7 @@ export const Dashboard: React.FC = () => {
                 </div>
 
                 <div className="text-right">
-                  <div className="text-[10px] text-gray-500 font-mono uppercase tracking-wider">Focus Score</div>
+                  <Label variant="dim" className="text-[10px] uppercase tracking-wider block">Focus Score</Label>
                   <div className="text-xl font-bold text-white tracking-tight">{focusScore}%</div>
                 </div>
               </div>
@@ -269,7 +277,7 @@ export const Dashboard: React.FC = () => {
                         i === 0 ? 'bg-forge-cyan' : 'bg-gray-700',
                       )}
                     />
-                    <div className="text-[10px] text-gray-500 font-mono mb-0.5">{item.time}</div>
+                    <Label variant="dim" className="text-[10px] font-mono mb-0.5 block">{item.time}</Label>
                     <div className="text-xs font-medium text-gray-200 line-clamp-1">
                       {item.label}
                     </div>
@@ -308,8 +316,8 @@ export const Dashboard: React.FC = () => {
                   </div>
 
                   <div className="mt-auto flex justify-between items-center text-[10px] text-gray-500">
-                    <span>{item.type}</span>
-                    <span>{item.date}</span>
+                    <Tag variant="default" className="text-[8px] py-0 px-1 border-white/5 bg-white/5 text-zinc-400">{item.type}</Tag>
+                    <Label variant="dim" className="text-[9px] font-mono">{item.date}</Label>
                   </div>
                 </div>
               ))}
@@ -321,24 +329,24 @@ export const Dashboard: React.FC = () => {
       {/* RIGHT PANEL */}
       <div className="w-80 shrink-0 border-l border-white/5 bg-black/20 backdrop-blur-xl h-full flex-col overflow-hidden flex xl:flex">
         <div className="p-6 border-b border-white/5">
-          <h2 className="text-sm font-display font-bold text-white uppercase tracking-wider flex items-center gap-2">
+          <Label variant="default" className="text-sm font-display font-bold text-white uppercase tracking-wider flex items-center gap-2 block">
             <Sparkles size={14} className="text-forge-accent" /> Daily Synthesis
-          </h2>
+          </Label>
         </div>
 
         <div className="flex-1 overflow-y-auto p-6 space-y-8">
           {/* Cognitive Diagnostics */}
           <div>
-            <h3 className="text-xs font-mono text-gray-500 uppercase tracking-[0.15em] mb-4 font-bold">
+            <Label variant="dim" className="text-xs font-mono text-gray-500 uppercase tracking-[0.15em] mb-4 font-bold block">
               Cognitive Diagnostics
-            </h3>
+            </Label>
 
             <div className="space-y-4">
               {/* Cognitive Load */}
               <div>
                 <div className="flex justify-between text-[11px] font-mono text-gray-400 mb-1.5">
-                  <span>Cognitive Load</span>
-                  <span className="text-forge-cyan">62%</span>
+                  <Label variant="default" className="text-[11px] font-mono text-zinc-400 block">Cognitive Load</Label>
+                  <Label variant="cyan" className="text-[11px] font-mono text-forge-cyan block">62%</Label>
                 </div>
                 <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
                   <div className="h-full bg-forge-cyan rounded-full w-[62%] transition-all duration-500" />
@@ -348,8 +356,8 @@ export const Dashboard: React.FC = () => {
               {/* Mental RAM */}
               <div>
                 <div className="flex justify-between text-[11px] font-mono text-gray-400 mb-1.5">
-                  <span>Mental RAM</span>
-                  <span className="text-forge-accent">30%</span>
+                  <Label variant="default" className="text-[11px] font-mono text-zinc-400 block">Mental RAM</Label>
+                  <Label variant="accent" className="text-[11px] font-mono text-forge-accent block">30%</Label>
                 </div>
                 <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
                   <div className="h-full bg-forge-accent rounded-full w-[30%] transition-all duration-500" />
@@ -358,17 +366,17 @@ export const Dashboard: React.FC = () => {
 
               {/* Focus Index */}
               <div className="flex justify-between items-center text-[11px] font-mono text-gray-400">
-                <span>Focus Stability</span>
-                <span className="text-emerald-400 font-bold">STABLE / HIGH</span>
+                <Label variant="default" className="text-[11px] font-mono text-zinc-400 block">Focus Stability</Label>
+                <Tag variant="cyan" className="text-[9px] px-1.5 py-0.5 font-bold">STABLE / HIGH</Tag>
               </div>
             </div>
           </div>
 
           {/* AI Synthesis Summary */}
           <div>
-            <h3 className="text-xs font-mono text-gray-500 uppercase tracking-[0.15em] mb-3 font-bold">
+            <Label variant="dim" className="text-xs font-mono text-gray-500 uppercase tracking-[0.15em] mb-3 font-bold block">
               AI Synthesis Report
-            </h3>
+            </Label>
             <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 text-xs text-gray-300 leading-relaxed font-light italic">
               "Tâm trí hôm nay duy trì sự tập trung cao độ vào buổi sáng, biểu đồ cảm xúc ổn định ở trạng thái tĩnh tâm. Hệ thống đề xuất duy trì nhịp độ làm việc hiện tại và dành 20 phút ngắt kết nối ngắn vào cuối ngày."
             </div>
@@ -376,9 +384,9 @@ export const Dashboard: React.FC = () => {
 
           {/* Suggested Actions */}
           <div>
-            <h3 className="text-xs font-mono text-gray-500 uppercase tracking-[0.15em] mb-3 font-bold">
+            <Label variant="dim" className="text-xs font-mono text-gray-500 uppercase tracking-[0.15em] mb-3 font-bold block">
               Suggested Actions
-            </h3>
+            </Label>
 
             <div className="space-y-2">
               {tasks.map((task) => (

@@ -18,7 +18,7 @@ export const Background = () => (
       className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-cyan-900/20 rounded-full blur-[100px]"
     />
 
-    <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5 mix-blend-overlay" />
+    <div className="absolute inset-0 bg-[url('/images/noise.svg')] opacity-5 mix-blend-overlay" />
   </div>
 );
 

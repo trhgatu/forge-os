@@ -39,14 +39,10 @@ export function DailyInspiration() {
 
         <div className="relative w-full rounded-[22px] overflow-hidden group isolate bg-[#09090b]/90 backdrop-blur-xl">
           {/* -- Cinematic Background Layers -- */}
-          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] text-white mix-blend-overlay pointer-events-none z-10" />
+          <div className="absolute inset-0 bg-[url('/images/noise.svg')] opacity-[0.03] text-white mix-blend-overlay pointer-events-none z-10" />
 
-          <div
-            className={cn(
-              'absolute -top-[100px] -right-[100px] w-[600px] h-[600px] rounded-full blur-[120px] opacity-10 transition-all duration-1000 pointer-events-none',
-              seasonConfig.particleColor.replace('bg-', 'bg-'),
-            )}
-          />
+          {/* Clean gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-tr from-white/[0.01] via-transparent to-white/[0.01] pointer-events-none" />
 
           {/* -- Content Grid -- */}
           <div className="grid grid-cols-1 lg:grid-cols-12 relative z-20 min-h-[380px]">

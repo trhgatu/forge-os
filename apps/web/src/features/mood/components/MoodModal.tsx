@@ -6,6 +6,7 @@ import { useState } from 'react';
 
 import { cn } from '@/shared/lib/utils';
 import type { MoodEntry } from '@/shared/types/mood';
+import { Label, Button } from '@/shared/components/ui';
 
 import { MOOD_CONFIG } from '../config';
 import type { CreateMoodDto } from '../services/moodService';
@@ -63,22 +64,23 @@ export function MoodModal({ initialData, onClose, onSave }: MoodModalProps) {
           {/* Header */}
           <div className="mb-8 flex items-start justify-between">
             <div>
-              <h2 className="font-display text-2xl font-bold text-white">
+              <Label variant="cyan" className="text-2xl font-bold tracking-tight block">
                 {initialData ? 'Reflect & Edit' : 'Emotional Log'}
-              </h2>
+              </Label>
               <p className="mt-1 text-sm text-gray-400">
                 {initialData
                   ? 'Update your emotional record'
                   : 'How does the inner world feel right now?'}
               </p>
             </div>
-            <button
-              type="button"
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={onClose}
-              className="rounded-full p-2 text-gray-500 hover:bg-white/10 hover:text-white"
+              className="text-gray-500 hover:text-white rounded-full p-2"
             >
               <X size={20} />
-            </button>
+            </Button>
           </div>
 
           {step === 1 ? (
@@ -134,8 +136,8 @@ export function MoodModal({ initialData, onClose, onSave }: MoodModalProps) {
 
               {/* Intensity */}
               <div>
-                <div className="mb-2 flex justify-between text-sm text-gray-400">
-                  <span>Intensity</span>
+                <div className="mb-2 flex justify-between text-sm">
+                  <Label variant="dim">Intensity</Label>
                   <span className="font-mono text-white">{intensity}/10</span>
                 </div>
                 <input
@@ -154,7 +156,7 @@ export function MoodModal({ initialData, onClose, onSave }: MoodModalProps) {
 
               {/* Note */}
               <div>
-                <label className="mb-2 block text-sm text-gray-400">Context / Triggers</label>
+                <Label variant="dim" className="mb-2 block text-sm">Context / Triggers</Label>
                 <textarea
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
@@ -164,14 +166,14 @@ export function MoodModal({ initialData, onClose, onSave }: MoodModalProps) {
               </div>
 
               <div className="flex justify-end gap-3 pt-4">
-                <button
-                  type="button"
+                <Button
                   onClick={handleSave}
                   disabled={!selectedMood}
-                  className="w-full rounded-xl bg-forge-accent px-6 py-3 text-sm font-medium text-white shadow-lg shadow-forge-accent/20 transition-colors hover:bg-forge-accent/80 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                  variant="glass"
+                  className="w-full sm:w-auto border-forge-accent/20 text-forge-accent hover:border-forge-accent/40 shadow-[0_0_15px_rgba(245,158,11,0.1)] px-6 py-3"
                 >
                   {initialData ? 'Update Record' : 'Log Emotion'}
-                </button>
+                </Button>
               </div>
             </div>
           )}

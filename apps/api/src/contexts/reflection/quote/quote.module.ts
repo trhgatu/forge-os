@@ -5,25 +5,8 @@ import { QuoteMapper } from './infrastructure/repositories/quote.mapper';
 import { QuoteRepository } from './application/ports/quote.repository';
 import { QuoteAdminController } from './presentation/controllers/quote.admin.controller';
 import { QuotePublicController } from './presentation/controllers/quote.public.controller';
-import {
-  CreateQuoteHandler,
-  UpdateQuoteHandler,
-  DeleteQuoteHandler,
-  GetAllQuotesHandler,
-  GetQuoteByIdHandler,
-  GetRandomQuoteHandler,
-  GetDailyQuoteHandler,
-} from './application/handlers';
+import { QuoteHandlers } from './application/handlers';
 import { SharedModule } from '@shared/shared.module';
-
-const CommandHandlers = [CreateQuoteHandler, UpdateQuoteHandler, DeleteQuoteHandler];
-
-const QueryHandlers = [
-  GetAllQuotesHandler,
-  GetQuoteByIdHandler,
-  GetRandomQuoteHandler,
-  GetDailyQuoteHandler,
-];
 
 @Module({
   imports: [CqrsModule, SharedModule],
@@ -38,8 +21,7 @@ const QueryHandlers = [
       useClass: PrismaQuoteRepository,
     },
     QuoteMapper,
-    ...CommandHandlers,
-    ...QueryHandlers,
+    ...QuoteHandlers,
   ],
   exports: [QuoteRepository],
 })

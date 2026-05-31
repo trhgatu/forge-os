@@ -4,6 +4,7 @@ import { Search, Shield } from 'lucide-react';
 import React from 'react';
 
 import { useSound } from '@/contexts';
+import { Label, Input, Tag } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 
 import type { Quest } from '../types';
@@ -39,28 +40,25 @@ export function QuestSidebar({
     <div className="space-y-6">
       {/* 🔍 Search Mission node */}
       <div className="p-5 rounded-2xl border border-white/5 bg-white/[0.01] backdrop-blur-md space-y-2">
-        <label className="text-[10px] font-mono text-gray-500 uppercase tracking-widest block">
+        <Label variant="dim" className="text-[10px] font-mono uppercase tracking-widest block mb-2">
           Search Quests
-        </label>
-        <div className="relative">
-          <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
-          <input
-            type="text"
-            placeholder="Search active target..."
-            value={searchQuery}
-            onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full bg-white/5 border border-white/10 rounded-xl pl-9 pr-4 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-white/20 transition-all font-sans"
-          />
-        </div>
+        </Label>
+        <Input
+          placeholder="Search active target..."
+          icon={<Search size={14} />}
+          value={searchQuery}
+          onChange={(e) => onSearchChange(e.target.value)}
+          className="bg-black/40 text-xs h-10 border-white/10"
+        />
       </div>
 
       {/* 🧭 Category Navigation tabs */}
       <div className="p-5 rounded-2xl border border-white/5 bg-white/[0.01] backdrop-blur-md space-y-4">
         <div className="flex items-center gap-2">
           <Shield size={12} className="text-forge-cyan" />
-          <label className="text-[10px] font-mono text-gray-500 uppercase tracking-widest block leading-none">
+          <Label variant="dim" className="text-[10px] font-mono uppercase tracking-widest block leading-none">
             Quest Categories
-          </label>
+          </Label>
         </div>
         <div className="space-y-1.5">
           {categories.map((cat) => {
@@ -71,17 +69,18 @@ export function QuestSidebar({
             const isActive = activeCategory === cat.id;
 
             return (
-              <button
+              <Tag
                 key={cat.id}
+                interactive
+                active={isActive}
+                variant={isActive ? 'cyan' : 'default'}
                 onClick={() => {
                   playSound('click');
                   onCategoryChange(cat.id);
                 }}
                 className={cn(
-                  'w-full text-left px-3 py-2.5 rounded-xl text-xs transition-all duration-300 flex items-center justify-between cursor-pointer border select-none',
-                  isActive
-                    ? 'bg-forge-cyan/5 border-forge-cyan/20 text-forge-cyan font-semibold shadow-[0_0_15px_rgba(34,211,238,0.03)]'
-                    : 'bg-transparent border-transparent text-gray-400 hover:text-white hover:bg-white/5',
+                  'w-full text-left px-3 py-2.5 rounded-xl text-xs transition-all duration-300 flex items-center justify-between cursor-pointer border select-none font-sans',
+                  !isActive && 'bg-transparent border-transparent text-gray-400 hover:text-white hover:bg-white/5'
                 )}
               >
                 <span>{cat.label}</span>
@@ -93,7 +92,7 @@ export function QuestSidebar({
                 >
                   {count}
                 </span>
-              </button>
+              </Tag>
             );
           })}
         </div>
