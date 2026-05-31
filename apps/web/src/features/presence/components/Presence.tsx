@@ -24,7 +24,7 @@ export const Presence: React.FC = () => {
       {/* Deep Space Background */}
       <div className="absolute inset-0 pointer-events-none z-0">
         <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-950/15 via-transparent to-transparent" />
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-8 mix-blend-overlay" />
+        <div className="absolute inset-0 bg-[url('/images/noise.svg')] opacity-8 mix-blend-overlay" />
       </div>
 
       {/* Header Overlay */}

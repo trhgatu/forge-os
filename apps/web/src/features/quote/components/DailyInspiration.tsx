@@ -39,7 +39,7 @@ export function DailyInspiration() {
 
         <div className="relative w-full rounded-[22px] overflow-hidden group isolate bg-[#09090b]/90 backdrop-blur-xl">
           {/* -- Cinematic Background Layers -- */}
-          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] text-white mix-blend-overlay pointer-events-none z-10" />
+          <div className="absolute inset-0 bg-[url('/images/noise.svg')] opacity-[0.03] text-white mix-blend-overlay pointer-events-none z-10" />
 
           <div
             className={cn(

@@ -160,7 +160,7 @@ export function Quote() {
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute top-0 right-0 w-[1000px] h-[1000px] bg-purple-900/5 rounded-full blur-[200px] opacity-30" />
         <div className="absolute bottom-0 left-0 w-[1000px] h-[1000px] bg-cyan-900/5 rounded-full blur-[200px] opacity-20" />
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.015] mix-blend-overlay" />
+        <div className="absolute inset-0 bg-[url('/images/noise.svg')] opacity-[0.015] mix-blend-overlay" />
       </div>
 
       {/* Header - Flowing Layout */}
