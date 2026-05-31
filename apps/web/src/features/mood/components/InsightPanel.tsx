@@ -3,6 +3,7 @@
 import { Activity, Sparkles } from 'lucide-react';
 
 import type { MoodAnalysis } from '@/shared/types/mood';
+import { Skeleton, Label, EmptyState, Tag } from '@/shared/components/ui';
 
 interface InsightPanelProps {
   analysis: MoodAnalysis | null;
@@ -12,19 +13,30 @@ interface InsightPanelProps {
 export function InsightPanel({ analysis, isAnalyzing }: InsightPanelProps) {
   if (isAnalyzing) {
     return (
-      <div className="flex h-full flex-col items-center justify-center p-8 text-center">
-        <div className="mb-4 h-12 w-12 animate-spin rounded-full border-2 border-forge-accent border-t-transparent" />
-        <p className="text-gray-400">Detecting emotional patterns...</p>
+      <div className="flex h-full flex-col p-6 gap-6 animate-pulse">
+        <Skeleton variant="glowing" className="h-32 w-full rounded-2xl bg-forge-accent/5" />
+        <div className="grid grid-cols-2 gap-4">
+          <Skeleton variant="default" className="h-16 w-full rounded-xl" />
+          <Skeleton variant="default" className="h-16 w-full rounded-xl" />
+        </div>
+        <div className="space-y-2">
+          <Skeleton variant="default" className="h-4 w-32 rounded-md" />
+          <Skeleton variant="default" className="h-20 w-full rounded-xl" />
+        </div>
+        <Skeleton variant="default" className="h-16 w-full rounded-xl" />
       </div>
     );
   }
 
   if (!analysis) {
     return (
-      <div className="flex h-full flex-col items-center justify-center p-8 text-center text-gray-500">
-        <Sparkles size={32} className="mb-4 opacity-30" />
-        <p>No patterns detected yet. Log more data to unlock insights.</p>
-      </div>
+      <EmptyState
+        title="Chưa Phát Hiện Chu Kỳ"
+        description="Ghi chép nhiều trạng thái cảm xúc hơn để AI tự động nhận diện và đề xuất lời khuyên."
+        glowColor="accent"
+        size="sm"
+        className="h-full border-none bg-transparent"
+      />
     );
   }
 
@@ -34,9 +46,9 @@ export function InsightPanel({ analysis, isAnalyzing }: InsightPanelProps) {
       <div className="relative overflow-hidden rounded-2xl border border-forge-accent/20 bg-linear-to-br from-forge-accent/10 to-transparent p-5">
         <div className="pointer-events-none absolute -right-4 -top-4 h-24 w-24 rounded-full bg-forge-accent/20 blur-2xl" />
         <div className="relative z-10">
-          <div className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-forge-accent">
+          <Label variant="accent" className="mb-2 flex items-center gap-2 text-xs uppercase tracking-widest block">
             <Activity size={12} /> Forecast
-          </div>
+          </Label>
           <p className="leading-relaxed text-white font-medium">
             &quot;{analysis.prediction}&quot;
           </p>
@@ -46,17 +58,17 @@ export function InsightPanel({ analysis, isAnalyzing }: InsightPanelProps) {
       {/* Stats */}
       <div className="grid grid-cols-2 gap-4">
         <div className="rounded-xl border border-white/5 bg-white/5 p-4">
-          <div className="mb-1 text-[10px] uppercase tracking-widest text-gray-500">Trend</div>
+          <Label variant="dim" className="mb-1 text-[10px] uppercase tracking-widest block">Trend</Label>
           <div className="text-lg text-white">{analysis.overallTrend}</div>
         </div>
 
         <div className="rounded-xl border border-white/5 bg-white/5 p-4">
-          <div className="mb-1 text-[10px] uppercase tracking-widest text-gray-500">Triggers</div>
+          <Label variant="dim" className="mb-1 text-[10px] uppercase tracking-widest block">Triggers</Label>
           <div className="flex flex-wrap gap-1 text-sm text-gray-300">
             {analysis.triggers.map((t) => (
-              <span key={t} className="rounded bg-white/10 px-1.5 text-xs">
+              <Tag key={t} size="sm" variant="default" className="border-none py-0.5 px-1.5">
                 {t}
-              </span>
+              </Tag>
             ))}
           </div>
         </div>
@@ -64,7 +76,7 @@ export function InsightPanel({ analysis, isAnalyzing }: InsightPanelProps) {
 
       {/* Insight */}
       <div>
-        <h4 className="mb-3 text-xs uppercase tracking-widest text-gray-500">Pattern Analysis</h4>
+        <Label variant="dim" className="mb-3 text-xs uppercase tracking-widest block">Pattern Analysis</Label>
         <p className="border-l-2 border-white/10 pl-4 text-sm leading-relaxed text-gray-300">
           {analysis.insight}
         </p>
@@ -72,9 +84,9 @@ export function InsightPanel({ analysis, isAnalyzing }: InsightPanelProps) {
 
       {/* Action */}
       <div className="rounded-xl border border-white/5 bg-white/2 p-4">
-        <div className="mb-2 text-[10px] uppercase tracking-widest text-forge-cyan">
+        <Label variant="cyan" className="mb-2 text-[10px] uppercase tracking-widest block">
           Recommendation
-        </div>
+        </Label>
         <p className="text-sm italic text-gray-400">{analysis.actionableStep}</p>
       </div>
     </div>

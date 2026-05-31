@@ -6,6 +6,8 @@ import { toast } from 'sonner';
 
 import { useAuthStore } from '@/shared/store/authStore';
 import type { MoodAnalysis, MoodEntry } from '@/shared/types/mood';
+import { Label, Button, Link } from '@/shared/components/ui';
+import { cn } from '@/shared/lib/utils';
 
 import { useMoods, useCreateMood, useUpdateMood, useDeleteMood } from '../hooks/useMood';
 import type { CreateMoodDto } from '../services/moodService';
@@ -61,23 +63,25 @@ export function Mood() {
         <p className="font-bold">Dissolve this emotion?</p>
         <p className="text-gray-400">It will fade into the void.</p>
         <div className="mt-2 flex gap-2">
-          <button
+          <Button
             onClick={() => {
               toast.dismiss(t);
               deleteMood.mutate(id, {
                 onSuccess: () => toast.success('Emotion dissolved.'),
               });
             }}
-            className="rounded-md bg-red-500/20 px-3 py-1.5 text-red-200 transition-colors hover:bg-red-500/30"
+            variant="danger"
+            size="sm"
           >
             Confirm
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => toast.dismiss(t)}
-            className="rounded-md bg-white/10 px-3 py-1.5 text-gray-300 transition-colors hover:bg-white/20"
+            variant="outline"
+            size="sm"
           >
             Cancel
-          </button>
+          </Button>
         </div>
       </div>
     ));
@@ -121,43 +125,44 @@ export function Mood() {
         {/* Header */}
         <div className="flex items-center justify-between px-8 py-6">
           <div>
-            <h1 className="font-display text-2xl font-bold text-white">Emotional Resonance</h1>
+            <Label variant="cyan" className="text-2xl font-bold tracking-tight block">
+              Emotional Resonance
+            </Label>
             <p className="mt-1 font-mono text-xs text-gray-500">
               Tracking internal weather patterns.
             </p>
           </div>
 
           <div className="flex gap-3">
-            <button
-              type="button"
+            <Button
               onClick={handleAnalyze}
               disabled={isAnalyzing}
-              className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-gray-300 transition-all hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
+              variant="outline"
+              className="border-white/10 bg-white/5 px-4 py-2 text-sm text-gray-300 transition-all hover:bg-white/10 disabled:opacity-50"
             >
-              <Sparkles size={16} className={isAnalyzing ? 'animate-spin' : 'text-forge-accent'} />
+              <Sparkles size={16} className={cn(isAnalyzing ? 'animate-spin mr-2' : 'text-forge-accent mr-2', 'inline')} />
               Analyze Cycles
-            </button>
+            </Button>
 
             {/* Only show Log Mood if authenticated */}
             {isAuthenticated ? (
-              <button
-                type="button"
+              <Button
                 onClick={() => {
                   setEditingMood(undefined);
                   setIsModalOpen(true);
                 }}
-                className="flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-medium text-black shadow-lg shadow-white/10 transition-colors hover:bg-gray-200"
+                className="bg-white hover:bg-gray-200 text-black font-semibold"
               >
-                <Plus size={16} />
+                <Plus size={16} className="inline mr-2" />
                 Log Mood
-              </button>
+              </Button>
             ) : (
-              <a
+              <Link
                 href="/login"
                 className="flex items-center gap-2 rounded-xl border border-white/20 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
               >
                 Login to Log
-              </a>
+              </Link>
             )}
           </div>
         </div>
@@ -172,9 +177,9 @@ export function Mood() {
       {/* Right Panel – desktop */}
       <div className="hidden h-full w-80 border-l border-white/5 bg-black/20 backdrop-blur-xl xl:block">
         <div className="border-b border-white/5 p-6">
-          <h3 className="text-sm font-bold uppercase tracking-widest text-white">
+          <Label variant="default" className="text-sm font-semibold tracking-widest uppercase block">
             Pattern Recognition
-          </h3>
+          </Label>
         </div>
         <InsightPanel analysis={analysis} isAnalyzing={isAnalyzing} />
       </div>

@@ -4,6 +4,7 @@ import { Edit2, Trash2 } from 'lucide-react';
 
 import { cn } from '@/shared/lib/utils';
 import type { MoodEntry } from '@/shared/types/mood';
+import { Tag, Label, Button } from '@/shared/components/ui';
 
 import { MOOD_CONFIG } from '../config';
 
@@ -28,30 +29,32 @@ export function MoodHistoryList({ history, onEdit, onDelete }: MoodHistoryListPr
           >
             {/* Actions (visible on hover or focus) */}
             <div className="absolute right-4 top-4 flex gap-2 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
-              <button
-                type="button"
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={(e) => {
                   e.stopPropagation();
                   onEdit(entry);
                 }}
-                className="rounded-lg bg-white/10 p-1.5 text-gray-300 hover:bg-white/20 hover:text-white"
+                className="bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white"
                 title="Edit"
                 aria-label="Edit mood entry"
               >
                 <Edit2 size={14} />
-              </button>
-              <button
-                type="button"
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={(e) => {
                   e.stopPropagation();
                   onDelete(entry.id);
                 }}
-                className="rounded-lg bg-red-500/10 p-1.5 text-red-500 hover:bg-red-500/20"
+                className="bg-red-500/10 text-red-500 hover:bg-red-500/20"
                 title="Delete"
                 aria-label="Delete mood entry"
               >
                 <Trash2 size={14} />
-              </button>
+              </Button>
             </div>
 
             <div className="mb-3 flex items-start justify-between">
@@ -65,7 +68,9 @@ export function MoodHistoryList({ history, onEdit, onDelete }: MoodHistoryListPr
                   <config.icon size={18} />
                 </div>
                 <div>
-                  <div className="capitalize text-white font-bold">{entry.mood}</div>
+                  <Label variant="default" className="capitalize text-white font-bold block">
+                    {entry.mood}
+                  </Label>
                   <div className="text-[10px] text-gray-500">
                     {entry.date.toLocaleTimeString([], {
                       hour: '2-digit',
@@ -75,9 +80,9 @@ export function MoodHistoryList({ history, onEdit, onDelete }: MoodHistoryListPr
                 </div>
               </div>
               {/* Hide Intensity if actions show up? Or just shift it? */}
-              <div className="text-xs font-mono text-gray-600 transition-opacity group-hover:opacity-0">
+              <Tag size="sm" variant="default" className="font-mono text-gray-600 border-none transition-opacity group-hover:opacity-0 self-center">
                 Int: {entry.intensity}
-              </div>
+              </Tag>
             </div>
 
             {entry.note && <p className="line-clamp-2 text-xs text-gray-400 mt-2">{entry.note}</p>}
