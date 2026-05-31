@@ -18,7 +18,7 @@ import { toast } from 'sonner';
 
 import { useLanguage, useSound } from '@/contexts';
 import { useHabits, useCompleteHabit } from '@/features/habits/hooks/useHabits';
-import { Button, Dropdown, Input } from '@/shared/components/ui';
+import { Button, Dropdown, Input, Label, Tag, EmptyState, Skeleton } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 
 import { useRoutines, useCreateRoutine, useAddHabitToRoutine } from '../hooks/useRoutines';
@@ -64,20 +64,26 @@ const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({ isOpen, onClose
       />
 
       <div className="relative w-full max-w-md overflow-visible rounded-3xl border border-white/10 bg-[#09090b] p-8 shadow-[0_20px_50px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-300">
-        <button
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={onClose}
-          className="absolute top-6 right-6 p-2 rounded-xl text-gray-500 hover:text-white hover:bg-white/5 transition-all"
+          className="absolute top-6 right-6 p-2 rounded-xl text-gray-500 hover:text-white hover:bg-white/5 transition-all h-8 w-8"
         >
           <X size={18} />
-        </button>
+        </Button>
 
         <div className="mb-6">
-          <div className="flex items-center gap-2 text-xs font-bold text-forge-cyan uppercase tracking-widest mb-2">
-            <Clock size={14} /> Initialize Routine Chain
+          {/* Ethereal label */}
+          <div className="mb-3 flex items-center gap-2 opacity-85">
+            <div className="h-px w-8 bg-gradient-to-r from-forge-cyan/40 to-transparent" />
+            <Label variant="cyan" className="text-[10px] font-mono tracking-[0.4em] uppercase flex items-center gap-1.5">
+              <Clock size={10} className="text-forge-cyan" /> Initialize Routine Chain
+            </Label>
           </div>
-          <h2 className="text-2xl font-display font-bold text-white tracking-tight">
+          <Label variant="default" className="text-2xl font-bold tracking-tight block">
             Establish Combo Routine
-          </h2>
+          </Label>
           <p className="text-xs text-gray-500 mt-1 italic">
             "Order is the foundation upon which focus thrives."
           </p>
@@ -85,9 +91,9 @@ const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({ isOpen, onClose
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <label className="text-[10px] font-mono text-gray-500 uppercase tracking-widest block">
+            <Label variant="dim" className="text-[10px] font-mono uppercase tracking-widest block">
               Routine Title
-            </label>
+            </Label>
             <Input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -97,9 +103,9 @@ const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({ isOpen, onClose
           </div>
 
           <div className="space-y-2">
-            <label className="text-[10px] font-mono text-gray-500 uppercase tracking-widest block">
+            <Label variant="dim" className="text-[10px] font-mono uppercase tracking-widest block">
               Combo Completion XP
-            </label>
+            </Label>
             <Input
               type="number"
               value={comboXp}
@@ -188,20 +194,26 @@ const AddStepModal: React.FC<AddStepModalProps> = ({
       />
 
       <div className="relative w-full max-w-md overflow-visible rounded-3xl border border-white/10 bg-[#09090b] p-8 shadow-[0_20px_50px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-300">
-        <button
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={onClose}
-          className="absolute top-6 right-6 p-2 rounded-xl text-gray-500 hover:text-white hover:bg-white/5 transition-all"
+          className="absolute top-6 right-6 p-2 rounded-xl text-gray-500 hover:text-white hover:bg-white/5 transition-all h-8 w-8"
         >
           <X size={18} />
-        </button>
+        </Button>
 
         <div className="mb-6">
-          <div className="flex items-center gap-2 text-xs font-bold text-forge-cyan uppercase tracking-widest mb-2">
-            <Plus size={14} /> Append Ritual Step
+          {/* Ethereal label */}
+          <div className="mb-3 flex items-center gap-2 opacity-85">
+            <div className="h-px w-8 bg-gradient-to-r from-forge-cyan/40 to-transparent" />
+            <Label variant="cyan" className="text-[10px] font-mono tracking-[0.4em] uppercase flex items-center gap-1.5">
+              <Plus size={10} className="text-forge-cyan" /> Append Ritual Step
+            </Label>
           </div>
-          <h2 className="text-2xl font-display font-bold text-white tracking-tight">
+          <Label variant="default" className="text-2xl font-bold tracking-tight block">
             Integrate Habit Step
-          </h2>
+          </Label>
           <p className="text-xs text-gray-500 mt-1 italic">
             Associate active disciplines to construct this routine chain.
           </p>
@@ -209,9 +221,9 @@ const AddStepModal: React.FC<AddStepModalProps> = ({
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2 relative">
-            <label className="text-[10px] font-mono text-gray-500 uppercase tracking-widest block">
+            <Label variant="dim" className="text-[10px] font-mono uppercase tracking-widest block">
               Select Target Habit
-            </label>
+            </Label>
             {habitOptions.length > 0 ? (
               <Dropdown
                 value={selectedHabitId}
@@ -231,9 +243,9 @@ const AddStepModal: React.FC<AddStepModalProps> = ({
           </div>
 
           <div className="space-y-2">
-            <label className="text-[10px] font-mono text-gray-500 uppercase tracking-widest block">
+            <Label variant="dim" className="text-[10px] font-mono uppercase tracking-widest block">
               Step Execution Order
-            </label>
+            </Label>
             <Input
               type="number"
               value={order}
@@ -317,33 +329,38 @@ export const Routines: React.FC = () => {
   return (
     <div className="h-full flex bg-transparent overflow-hidden text-white font-sans">
       <div className="flex-1 h-full overflow-y-auto scrollbar-hide p-8 pb-32">
-        {/* Serene Header */}
+        {/* Serene Header - Synchronized Alchemical Style */}
         <header className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
           <div>
-            <div className="flex items-center gap-2 opacity-80 mb-3">
+            {/* Ethereal label */}
+            <div className="mb-3 flex items-center gap-2 opacity-85">
               <div className="h-px w-8 bg-gradient-to-r from-forge-cyan/40 to-transparent" />
-              <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-forge-cyan/80">
+              <Label variant="cyan" className="text-[10px] font-mono tracking-[0.4em] uppercase">
                 Evolution Engine
-              </span>
+              </Label>
             </div>
-            <h1 className="text-4xl md:text-5xl font-display font-bold text-white tracking-tight">
+
+            {/* Poetic Title */}
+            <Label variant="default" className="text-4xl md:text-5xl font-bold text-white tracking-tight leading-tight mb-3 block capitalize">
               Routine Chains
-            </h1>
-            <p className="text-xs text-gray-500 mt-2 font-light max-w-xl leading-relaxed italic">
+            </Label>
+
+            {/* Flowing Subtitle */}
+            <p className="text-sm text-gray-400 font-light leading-relaxed max-w-xl italic">
               "First we shape our routines, then our routines shape us." Organize habits into sequential daily paths.
             </p>
           </div>
 
-          <button
+          <Button
             onClick={() => {
               playSound('click');
               setShowCreateModal(true);
             }}
-            className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white text-black font-semibold hover:bg-white/90 transition-all duration-300 shadow-[0_4px_20px_rgba(255,255,255,0.1)] group text-xs uppercase tracking-wider font-mono shrink-0 cursor-pointer"
+            className="bg-white hover:bg-gray-200 text-black font-semibold shadow-[0_4px_20px_rgba(255,255,255,0.1)] text-xs uppercase tracking-wider font-mono shrink-0 cursor-pointer p-4 rounded-xl"
           >
-            <Plus size={14} className="group-hover:rotate-90 transition-transform duration-300" />
+            <Plus size={14} className="inline mr-2" />
             Establish Chain
-          </button>
+          </Button>
         </header>
 
         {/* Quiet Overview stats */}
@@ -368,9 +385,9 @@ export const Routines: React.FC = () => {
               className="p-6 rounded-2xl border border-white/5 bg-white/[0.01] backdrop-blur-md flex items-center justify-between"
             >
               <div className="space-y-1">
-                <span className="text-[10px] font-mono uppercase tracking-wider text-gray-500 block">
+                <Label variant="dim" className="text-[10px] font-mono uppercase tracking-wider block">
                   {stat.label}
-                </span>
+                </Label>
                 <span className="text-2xl font-bold text-white block">
                   {isLoading ? '...' : stat.value}
                 </span>
@@ -390,7 +407,7 @@ export const Routines: React.FC = () => {
           {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[...Array(3)].map((_, i) => (
-                <div key={i} className="h-64 bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse" />
+                <Skeleton key={i} variant="glowing" className="h-64 rounded-2xl" />
               ))}
             </div>
           ) : routines.length > 0 ? (
@@ -426,20 +443,25 @@ export const Routines: React.FC = () => {
 
                       {/* Header info */}
                       <div className="flex justify-between items-start gap-4">
-                        <h3 className="text-lg font-display font-medium text-gray-200 group-hover:text-white transition-colors duration-500">
+                        <Label
+                          variant="default"
+                          className="text-lg font-medium text-gray-200 group-hover:text-white transition-colors duration-500 block"
+                        >
                           {routine.title}
-                        </h3>
-                        <button
+                        </Label>
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           onClick={() => {
                             playSound('click');
                             setActiveRoutineForStep(routine.id);
                             setActiveStepCount(routine.steps.length);
                           }}
-                          className="p-1.5 rounded-lg border border-white/5 hover:border-white/20 text-gray-500 hover:text-white hover:bg-white/5 transition-all cursor-pointer"
+                          className="p-1.5 rounded-lg border border-white/5 hover:border-white/20 text-gray-500 hover:text-white hover:bg-white/5 transition-all cursor-pointer h-7 w-7"
                           title="Add step habit"
                         >
                           <Settings size={12} />
-                        </button>
+                        </Button>
                       </div>
 
                       {/* Steps listing */}
@@ -518,22 +540,23 @@ export const Routines: React.FC = () => {
             </div>
           ) : (
             // Serene Empty state
-            <div className="flex flex-col items-center justify-center py-28 border border-dashed border-white/5 rounded-3xl bg-white/[0.01] backdrop-blur-md">
-              <Clock size={48} className="text-white/20 mb-4 animate-pulse" />
-              <h3 className="text-lg font-display font-semibold text-white mb-2">No Routine Chains Established</h3>
-              <p className="text-xs text-gray-500 max-w-sm text-center leading-relaxed mb-6 font-light">
-                Routine chains allow you to execute multiple related thói quen sequentially to gain large Combo XP bonuses.
-              </p>
-              <button
+            <EmptyState
+              title="Chưa Có Chuỗi Hằng Ngày Nào"
+              description="Chuỗi quy trình cho phép bạn thực hiện nhiều thói quen liên quan một cách tuần tự để nhận được phần thưởng Combo XP cực lớn."
+              glowColor="cyan"
+              size="lg"
+              className="bg-transparent border border-dashed border-white/5 py-20 rounded-3xl"
+            >
+              <Button
                 onClick={() => {
                   playSound('click');
                   setShowCreateModal(true);
                 }}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-forge-cyan/20 bg-forge-cyan/5 text-forge-cyan hover:bg-forge-cyan/10 transition-all text-xs font-mono font-semibold tracking-wider uppercase"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-forge-cyan/20 bg-forge-cyan/5 text-forge-cyan hover:bg-forge-cyan/10 transition-all text-xs font-mono font-semibold tracking-wider uppercase cursor-pointer"
               >
                 Establish Routine
-              </button>
-            </div>
+              </Button>
+            </EmptyState>
           )}
         </div>
       </div>

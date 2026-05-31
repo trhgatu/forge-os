@@ -14,7 +14,7 @@ import React, { useState } from 'react';
 import { toast } from 'sonner';
 
 import { useLanguage, useSound } from '@/contexts';
-import { Button, Dropdown, Input } from '@/shared/components/ui';
+import { Button, Dropdown, Input, Label, Tag, EmptyState, Skeleton } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 
 import { useHabits, useCreateHabit, useCompleteHabit } from '../hooks/useHabits';
@@ -89,20 +89,26 @@ const CreateHabitModal: React.FC<CreateHabitModalProps> = ({ isOpen, onClose }) 
       {/* Modal Card */}
       <div className="relative w-full max-w-lg overflow-visible rounded-3xl border border-white/10 bg-[#09090b] p-8 shadow-[0_20px_50px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-300">
         {/* Close Button */}
-        <button
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={onClose}
-          className="absolute top-6 right-6 p-2 rounded-xl text-gray-500 hover:text-white hover:bg-white/5 transition-all"
+          className="absolute top-6 right-6 p-2 rounded-xl text-gray-500 hover:text-white hover:bg-white/5 transition-all h-8 w-8"
         >
           <X size={18} />
-        </button>
+        </Button>
 
         <div className="mb-6">
-          <div className="flex items-center gap-2 text-xs font-bold text-forge-cyan uppercase tracking-widest mb-2">
-            <Repeat size={14} /> Establish New Ritual
+          {/* Ethereal label */}
+          <div className="mb-3 flex items-center gap-2 opacity-85">
+            <div className="h-px w-8 bg-gradient-to-r from-forge-cyan/40 to-transparent" />
+            <Label variant="cyan" className="text-[10px] font-mono tracking-[0.4em] uppercase flex items-center gap-1.5">
+              <Repeat size={10} className="text-forge-cyan" /> Establish New Ritual
+            </Label>
           </div>
-          <h2 className="text-2xl font-display font-bold text-white tracking-tight">
+          <Label variant="default" className="text-2xl font-bold tracking-tight block">
             Define Habit Profile
-          </h2>
+          </Label>
           <p className="text-xs text-gray-500 mt-1 italic">
             "Rituals are the silent architecture of personal sovereignty."
           </p>
@@ -111,9 +117,9 @@ const CreateHabitModal: React.FC<CreateHabitModalProps> = ({ isOpen, onClose }) 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Title input */}
           <div className="space-y-2">
-            <label className="text-[10px] font-mono text-gray-500 uppercase tracking-widest block">
+            <Label variant="dim" className="text-[10px] font-mono uppercase tracking-widest block">
               Ritual Title
-            </label>
+            </Label>
             <Input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -124,9 +130,9 @@ const CreateHabitModal: React.FC<CreateHabitModalProps> = ({ isOpen, onClose }) 
 
           {/* Description input */}
           <div className="space-y-2">
-            <label className="text-[10px] font-mono text-gray-500 uppercase tracking-widest block">
+            <Label variant="dim" className="text-[10px] font-mono uppercase tracking-widest block">
               Description / Intent
-            </label>
+            </Label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -138,9 +144,9 @@ const CreateHabitModal: React.FC<CreateHabitModalProps> = ({ isOpen, onClose }) 
 
           {/* Difficulty Dropdown */}
           <div className="space-y-2 relative">
-            <label className="text-[10px] font-mono text-gray-500 uppercase tracking-widest block">
+            <Label variant="dim" className="text-[10px] font-mono uppercase tracking-widest block">
               Discipline Difficulty
-            </label>
+            </Label>
             <Dropdown
               value={difficulty}
               onChange={handleDifficultyChange}
@@ -223,33 +229,38 @@ export const Habits: React.FC = () => {
     <div className="h-full flex bg-transparent overflow-hidden text-white font-sans">
       <div className="flex-1 h-full overflow-y-auto scrollbar-hide p-8 pb-32">
 
-        {/* Serene Header */}
+        {/* Serene Header - Synchronized Alchemical Style */}
         <header className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
           <div>
-            <div className="flex items-center gap-2 opacity-80 mb-3">
+            {/* Ethereal label */}
+            <div className="mb-3 flex items-center gap-2 opacity-85">
               <div className="h-px w-8 bg-gradient-to-r from-forge-cyan/40 to-transparent" />
-              <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-forge-cyan/80">
+              <Label variant="cyan" className="text-[10px] font-mono tracking-[0.4em] uppercase">
                 Evolution Engine
-              </span>
+              </Label>
             </div>
-            <h1 className="text-4xl md:text-5xl font-display font-bold text-white tracking-tight">
+
+            {/* Poetic Title */}
+            <Label variant="default" className="text-4xl md:text-5xl font-bold text-white tracking-tight leading-tight mb-3 block capitalize">
               Habit Rituals
-            </h1>
-            <p className="text-xs text-gray-500 mt-2 font-light max-w-xl leading-relaxed italic">
+            </Label>
+
+            {/* Flowing Subtitle */}
+            <p className="text-sm text-gray-400 font-light leading-relaxed max-w-xl italic">
               "We are what we repeatedly do. Excellence, then, is not an act, but a habit." — Aristotle
             </p>
           </div>
 
-          <button
+          <Button
             onClick={() => {
               playSound('click');
               setShowCreateModal(true);
             }}
-            className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white text-black font-semibold hover:bg-white/90 transition-all duration-300 shadow-[0_4px_20px_rgba(255,255,255,0.1)] group text-xs uppercase tracking-wider font-mono shrink-0 cursor-pointer"
+            className="bg-white hover:bg-gray-200 text-black font-semibold shadow-[0_4px_20px_rgba(255,255,255,0.1)] text-xs uppercase tracking-wider font-mono shrink-0 cursor-pointer p-4 rounded-xl"
           >
-            <Plus size={14} className="group-hover:rotate-90 transition-transform duration-300" />
+            <Plus size={14} className="inline mr-2" />
             Establish Ritual
-          </button>
+          </Button>
         </header>
 
         {/* Quiet Diagnostic Overview Cards */}
@@ -264,9 +275,9 @@ export const Habits: React.FC = () => {
               className="p-6 rounded-2xl border border-white/5 bg-white/[0.01] backdrop-blur-md flex items-center justify-between"
             >
               <div className="space-y-1">
-                <span className="text-[10px] font-mono uppercase tracking-wider text-gray-500 block">
+                <Label variant="dim" className="text-[10px] font-mono uppercase tracking-wider block">
                   {stat.label}
-                </span>
+                </Label>
                 <span className="text-2xl font-bold text-white block">
                   {isLoading ? '...' : stat.value}
                 </span>
@@ -286,7 +297,7 @@ export const Habits: React.FC = () => {
           {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-44 bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse" />
+                <Skeleton key={i} variant="glowing" className="h-44 rounded-2xl" />
               ))}
             </div>
           ) : habits.length > 0 ? (
@@ -299,9 +310,21 @@ export const Habits: React.FC = () => {
                   <div className="space-y-3">
                     {/* Top tags */}
                     <div className="flex items-center justify-between">
-                      <span className={cn('text-[9px] font-mono uppercase tracking-widest px-2.5 py-1 rounded border', getDifficultyColor(habit.difficulty))}>
+                      <Tag
+                        variant={
+                          habit.difficulty === 'hard'
+                            ? 'danger'
+                            : habit.difficulty === 'medium'
+                              ? 'accent'
+                              : 'cyan'
+                        }
+                        className={cn(
+                          'text-[9px] font-mono uppercase tracking-widest border-none py-1 px-2.5 font-bold',
+                          getDifficultyColor(habit.difficulty)
+                        )}
+                      >
                         {habit.difficulty}
-                      </span>
+                      </Tag>
                       <div className="flex items-center gap-1 text-[9px] font-mono text-forge-cyan/70 tracking-wider uppercase">
                         <Zap size={11} /> Quest Linked
                       </div>
@@ -309,9 +332,12 @@ export const Habits: React.FC = () => {
 
                     {/* Title & Desc */}
                     <div className="space-y-1.5">
-                      <h3 className="text-base font-display font-medium text-gray-200 group-hover:text-white transition-colors duration-500">
+                      <Label
+                        variant="default"
+                        className="text-base font-display font-medium text-gray-200 group-hover:text-white transition-colors duration-500 block"
+                      >
                         {habit.title}
-                      </h3>
+                      </Label>
                       {habit.description && (
                         <p className="text-xs text-gray-500 font-sans line-clamp-2 leading-relaxed font-light">
                           {habit.description}
@@ -329,39 +355,42 @@ export const Habits: React.FC = () => {
                     </div>
 
                     {/* Complete button circle */}
-                    <button
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       onClick={() => handleComplete(habit.id)}
                       disabled={completeHabitMutation.isPending}
                       className={cn(
-                        'w-8 h-8 rounded-full border border-white/10 hover:border-forge-cyan bg-white/5 hover:bg-forge-cyan/10 transition-all duration-300 flex items-center justify-center cursor-pointer hover:scale-105 active:scale-95 group/btn',
+                        'w-8 h-8 rounded-full border border-white/10 hover:border-forge-cyan bg-white/5 hover:bg-forge-cyan/10 transition-all duration-300 flex items-center justify-center cursor-pointer hover:scale-105 active:scale-95 group/btn h-8 w-8',
                         completeHabitMutation.isPending && 'opacity-50 pointer-events-none'
                       )}
                       title="Perform Ritual"
                     >
                       <Check size={14} className="text-gray-400 group-hover/btn:text-forge-cyan transition-colors" />
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
             // Serene Empty state
-            <div className="flex flex-col items-center justify-center py-28 border border-dashed border-white/5 rounded-3xl bg-white/[0.01] backdrop-blur-md">
-              <Repeat size={48} className="text-white/20 mb-4 animate-pulse" />
-              <h3 className="text-lg font-display font-semibold text-white mb-2">No Rituals Established</h3>
-              <p className="text-xs text-gray-500 max-w-sm text-center leading-relaxed mb-6 font-light">
-                Discipline is built on repeating quiet, purposeful actions. Establish your first recurring habit ritual above.
-              </p>
-              <button
+            <EmptyState
+              title="Chưa Thiết Lập Nghi Kỷ Nào"
+              description="Kỷ luật tự thân được xây dựng từ những hành động nhỏ bé nhưng kiên định mỗi ngày. Hãy thiết lập nghi kỷ đầu tiên của bạn để bắt đầu hành trình."
+              glowColor="cyan"
+              size="lg"
+              className="bg-transparent border border-dashed border-white/5 py-20 rounded-3xl"
+            >
+              <Button
                 onClick={() => {
                   playSound('click');
                   setShowCreateModal(true);
                 }}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-forge-cyan/20 bg-forge-cyan/5 text-forge-cyan hover:bg-forge-cyan/10 transition-all text-xs font-mono font-semibold tracking-wider uppercase"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-forge-cyan/20 bg-forge-cyan/5 text-forge-cyan hover:bg-forge-cyan/10 transition-all text-xs font-mono font-semibold tracking-wider uppercase cursor-pointer"
               >
                 Establish Ritual
-              </button>
-            </div>
+              </Button>
+            </EmptyState>
           )}
         </div>
       </div>
