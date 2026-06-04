@@ -1,7 +1,7 @@
-import { Memory } from '../../domain/memory.entity';
-import { MemoryId } from '../../domain/value-objects/memory-id.vo';
+import { Memory } from './memory.entity';
+import { MemoryId } from './value-objects/memory-id.vo';
 import { PaginatedResult } from '@shared/types/paginated-result';
-import { MemoryFilter } from '../queries/memory-filter';
+import { MemoryFilter } from '../application/queries/memory-filter';
 
 export abstract class MemoryRepository {
   abstract save(memory: Memory): Promise<void>;

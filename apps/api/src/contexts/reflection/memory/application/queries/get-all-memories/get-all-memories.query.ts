@@ -11,6 +11,7 @@ export class GetAllMemoriesQuery {
       mood?: string;
       tags?: string[];
       isDeleted?: boolean;
+      userId?: string;
     },
   ) {}
 }

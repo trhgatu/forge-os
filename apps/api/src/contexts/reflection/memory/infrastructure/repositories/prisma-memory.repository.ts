@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { MemoryRepository } from '../../application/ports/memory.repository';
+import { MemoryRepository } from '../../domain/memory.repository';
 import { Memory as MemoryEntity } from '../../domain/memory.entity';
 import { MemoryId } from '../../domain/value-objects/memory-id.vo';
 import { MemoryFilter } from '../../application/queries/memory-filter';
