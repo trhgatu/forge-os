@@ -1,10 +1,10 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { GetAllMemoriesQuery } from '../queries/get-all-memories.query';
+import { GetAllMemoriesQuery } from './get-all-memories.query';
 import { Inject } from '@nestjs/common';
-import { MemoryRepository } from '../../application/ports/memory.repository';
+import { MemoryRepository } from '../../../domain/memory.repository';
 import { CacheService } from '@shared/services';
 import { PaginatedResult } from '@shared/types/paginated-result';
-import { Memory } from '../../domain/memory.entity';
+import { Memory } from '../../../domain/memory.entity';
 
 @QueryHandler(GetAllMemoriesQuery)
 export class GetAllMemoriesHandler implements IQueryHandler<

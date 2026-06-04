@@ -10,4 +10,5 @@ export interface MemoryResponse {
   createdAt: string;
   updatedAt: string;
   isDeleted: boolean;
+  userId?: string;
 }

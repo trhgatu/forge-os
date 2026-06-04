@@ -1,4 +1,4 @@
-import { MemoryId } from '../../domain/value-objects/memory-id.vo';
+import { MemoryId } from '../../../domain/value-objects/memory-id.vo';
 
 export class RestoreMemoryCommand {
   constructor(

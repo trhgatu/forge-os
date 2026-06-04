@@ -1,8 +1,8 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { GetMemoryByIdQuery } from '../queries/get-memory-by-id.query';
+import { GetMemoryByIdQuery } from './get-memory-by-id.query';
 import { Inject, NotFoundException } from '@nestjs/common';
-import { MemoryRepository } from '../../application/ports/memory.repository';
-import { Memory } from '../../domain/memory.entity';
+import { MemoryRepository } from '../../../domain/memory.repository';
+import { Memory } from '../../../domain/memory.entity';
 
 @QueryHandler(GetMemoryByIdQuery)
 export class GetMemoryByIdHandler implements IQueryHandler<GetMemoryByIdQuery, Memory> {

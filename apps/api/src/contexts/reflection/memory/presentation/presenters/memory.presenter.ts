@@ -1,5 +1,5 @@
-import { Memory } from '../domain/memory.entity';
-import { MemoryResponse } from '../presentation/dto/memory.response';
+import { Memory } from '../../domain/memory.entity';
+import { MemoryResponse } from '../dto/memory.response';
 
 export class MemoryPresenter {
   static toResponse(memory: Memory, lang: string): MemoryResponse {
@@ -15,6 +15,7 @@ export class MemoryPresenter {
       createdAt: props.createdAt?.toISOString() ?? '',
       updatedAt: props.updatedAt?.toISOString() ?? '',
       isDeleted: props.isDeleted,
+      userId: props.userId,
     };
   }
 }

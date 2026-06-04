@@ -8,6 +8,7 @@ export interface GetAllMemoriesForPublicPayload {
   tags?: string[];
   mood?: string;
   lang?: string;
+  userId?: string;
 }
 
 export class GetAllMemoriesForPublicQuery {

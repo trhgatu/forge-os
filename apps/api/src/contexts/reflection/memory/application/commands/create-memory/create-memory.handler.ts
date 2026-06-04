@@ -1,26 +1,22 @@
-// 📁 File: contexts/reflection/memory/application/handlers/create-memory.handler.ts
-
 import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
-import { CreateMemoryCommand } from '../commands/create-memory.command';
+import { CreateMemoryCommand } from './create-memory.command';
 import { Inject } from '@nestjs/common';
-import { MemoryRepository } from '../ports/memory.repository';
-import { Memory } from '../../domain/memory.entity';
-import { MemoryId } from '../../domain/value-objects/memory-id.vo';
-import { MemoryPresenter } from '../../presentation/memory.presenter';
-import { MemoryResponse } from '../../presentation/dto/memory.response';
-import { MemoryModifiedEvent } from '../events/memory-modified.event';
+import { MemoryRepository } from '../../../domain/memory.repository';
+import { Memory } from '../../../domain/memory.entity';
+import { MemoryId } from '../../../domain/value-objects/memory-id.vo';
+import { MemoryModifiedEvent } from '../../events/memory-modified.event';
 import { MemoryStatus, MoodType } from '@shared/enums';
 
 @CommandHandler(CreateMemoryCommand)
-export class CreateMemoryHandler implements ICommandHandler<CreateMemoryCommand, MemoryResponse> {
+export class CreateMemoryHandler implements ICommandHandler<CreateMemoryCommand, Memory> {
   constructor(
     @Inject('MemoryRepository')
     private readonly memoryRepo: MemoryRepository,
     private readonly eventBus: EventBus,
   ) {}
 
-  async execute(command: CreateMemoryCommand): Promise<MemoryResponse> {
-    const { payload, lang } = command;
+  async execute(command: CreateMemoryCommand): Promise<Memory> {
+    const { payload } = command;
 
     const now = new Date();
     const id = MemoryId.random();
@@ -42,6 +38,6 @@ export class CreateMemoryHandler implements ICommandHandler<CreateMemoryCommand,
     await this.memoryRepo.save(memory);
     this.eventBus.publish(new MemoryModifiedEvent(id, 'create'));
 
-    return MemoryPresenter.toResponse(memory, lang);
+    return memory;
   }
 }

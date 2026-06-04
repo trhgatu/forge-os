@@ -22,8 +22,11 @@ import { GetAllMemoriesQuery, GetMemoryByIdQuery } from '../../application/queri
 import { MemoryId } from '../../domain/value-objects/memory-id.vo';
 import { JwtAuthGuard } from 'src/contexts/iam/auth/application/guards';
 import { PermissionsGuard } from '@shared/guards/permissions.guard';
-import { Permissions } from '@shared/decorators';
+import { Permissions, User } from '@shared/decorators';
 import { PermissionEnum } from '@shared/enums';
+import { MemoryPresenter } from '../presenters/memory.presenter';
+import { Memory } from '../../domain/memory.entity';
+import { PaginatedResult } from '@shared/types/paginated-result';
 
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @Controller('admin/memories')
@@ -35,40 +38,83 @@ export class MemoryAdminController {
 
   @Post()
   @Permissions(PermissionEnum.CREATE_MEMORY)
-  create(@Body() dto: CreateMemoryDto) {
-    return this.commandBus.execute(new CreateMemoryCommand(dto));
+  async create(
+    @Body() dto: CreateMemoryDto,
+    @User('id') userId: string,
+    @Query('lang') lang?: string,
+  ) {
+    const memory = (await this.commandBus.execute(
+      new CreateMemoryCommand({ ...dto, userId }, lang ?? 'en'),
+    )) as Memory;
+    return MemoryPresenter.toResponse(memory, lang ?? 'en');
   }
 
   @Get()
   @Permissions(PermissionEnum.READ_MEMORY)
-  findAll(@Query() query: QueryMemoryDto) {
-    return this.queryBus.execute(new GetAllMemoriesQuery(query));
+  async findAll(@Query() query: QueryMemoryDto) {
+    const result: PaginatedResult<Memory> = await this.queryBus.execute(
+      new GetAllMemoriesQuery({
+        page: query.page,
+        limit: query.limit,
+        keyword: query.keyword,
+        status: query.status,
+        mood: query.mood,
+        tags: query.tags,
+        isDeleted: query.isDeleted,
+      }),
+    );
+
+    return {
+      meta: result.meta,
+      data: result.data.map((m) => MemoryPresenter.toResponse(m, query.lang ?? 'en')),
+    };
   }
 
   @Get(':id')
   @Permissions(PermissionEnum.READ_MEMORY)
-  findById(@Param('id') id: string, @Query('lang') lang?: string) {
-    return this.queryBus.execute(new GetMemoryByIdQuery(MemoryId.create(id), lang ?? 'en'));
+  async findById(@Param('id') id: string, @Query('lang') lang?: string) {
+    const memory: Memory = await this.queryBus.execute(
+      new GetMemoryByIdQuery(MemoryId.create(id), lang ?? 'en'),
+    );
+    return MemoryPresenter.toResponse(memory, lang ?? 'en');
   }
 
   @Patch(':id')
   @Permissions(PermissionEnum.UPDATE_MEMORY)
-  update(@Param('id') id: string, @Body() dto: UpdateMemoryDto) {
-    return this.commandBus.execute(new UpdateMemoryCommand(MemoryId.create(id), dto));
+  async update(
+    @Param('id') id: string,
+    @Body() dto: UpdateMemoryDto,
+    @User('id') userId: string,
+    @Query('lang') lang?: string,
+  ) {
+    const memory = (await this.commandBus.execute(
+      new UpdateMemoryCommand(MemoryId.create(id), { ...dto, userId }, lang ?? 'en'),
+    )) as Memory;
+    return MemoryPresenter.toResponse(memory, lang ?? 'en');
   }
 
   @Delete(':id')
   @Permissions(PermissionEnum.DELETE_MEMORY)
-  delete(@Param('id') id: string, @Query('hard') hard?: 'true') {
+  async delete(
+    @Param('id') id: string,
+    @Query('hard') hard?: 'true',
+    @Query('lang') lang?: string,
+  ) {
     const memoryId = MemoryId.create(id);
-    return hard === 'true'
-      ? this.commandBus.execute(new DeleteMemoryCommand(memoryId))
-      : this.commandBus.execute(new SoftDeleteMemoryCommand(memoryId));
+    if (hard === 'true') {
+      await this.commandBus.execute(new DeleteMemoryCommand(memoryId));
+      return { success: true };
+    }
+    const memory = (await this.commandBus.execute(new SoftDeleteMemoryCommand(memoryId))) as Memory;
+    return MemoryPresenter.toResponse(memory, lang ?? 'en');
   }
 
   @Patch(':id/restore')
   @Permissions(PermissionEnum.RESTORE_MEMORY)
-  restore(@Param('id') id: string) {
-    return this.commandBus.execute(new RestoreMemoryCommand(MemoryId.create(id)));
+  async restore(@Param('id') id: string, @Query('lang') lang?: string) {
+    const memory = (await this.commandBus.execute(
+      new RestoreMemoryCommand(MemoryId.create(id)),
+    )) as Memory;
+    return MemoryPresenter.toResponse(memory, lang ?? 'en');
   }
 }
