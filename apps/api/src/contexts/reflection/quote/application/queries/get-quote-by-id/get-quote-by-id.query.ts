@@ -1,4 +1,4 @@
-import { QuoteId } from '../../domain/value-objects/quote-id.vo';
+import { QuoteId } from '../../../domain/value-objects/quote-id.vo';
 
 export class GetQuoteByIdQuery {
   constructor(

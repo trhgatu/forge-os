@@ -2,10 +2,12 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { PrismaQuoteRepository } from './infrastructure/repositories/prisma-quote.repository';
 import { QuoteMapper } from './infrastructure/repositories/quote.mapper';
-import { QuoteRepository } from './application/ports/quote.repository';
+import { QuoteRepository } from './domain/quote.repository';
 import { QuoteAdminController } from './presentation/controllers/quote.admin.controller';
 import { QuotePublicController } from './presentation/controllers/quote.public.controller';
-import { QuoteHandlers } from './application/handlers';
+import { QuoteCommandHandlers } from './application/commands';
+import { QuoteQueryHandlers } from './application/queries';
+import { QuoteEventHandlers } from './application/events';
 import { SharedModule } from '@shared/shared.module';
 
 @Module({
@@ -21,7 +23,9 @@ import { SharedModule } from '@shared/shared.module';
       useClass: PrismaQuoteRepository,
     },
     QuoteMapper,
-    ...QuoteHandlers,
+    ...QuoteCommandHandlers,
+    ...QuoteQueryHandlers,
+    ...QuoteEventHandlers,
   ],
   exports: [QuoteRepository],
 })

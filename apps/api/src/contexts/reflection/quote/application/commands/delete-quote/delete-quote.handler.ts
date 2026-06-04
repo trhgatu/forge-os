@@ -1,13 +1,13 @@
 import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
-import { NotFoundException } from '@nestjs/common';
-
-import { DeleteQuoteCommand } from '../commands/delete-quote.command';
-import { QuoteRepository } from '../ports/quote.repository';
-import { QuoteModifiedEvent } from '../events/quote-modified.event';
+import { NotFoundException, Inject } from '@nestjs/common';
+import { DeleteQuoteCommand } from './delete-quote.command';
+import { QuoteRepository } from '../../../domain/quote.repository';
+import { QuoteModifiedEvent } from '../../events/quote-modified.event';
 
 @CommandHandler(DeleteQuoteCommand)
-export class DeleteQuoteHandler implements ICommandHandler<DeleteQuoteCommand> {
+export class DeleteQuoteHandler implements ICommandHandler<DeleteQuoteCommand, void> {
   constructor(
+    @Inject('QuoteRepository')
     private readonly quoteRepo: QuoteRepository,
     private readonly eventBus: EventBus,
   ) {}

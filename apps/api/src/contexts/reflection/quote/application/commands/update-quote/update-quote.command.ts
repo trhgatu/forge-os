@@ -1,8 +1,8 @@
-import { QuoteId } from '../../domain/value-objects/quote-id.vo';
+import { QuoteId } from '../../../domain/value-objects/quote-id.vo';
 import { QuoteStatus } from '@shared/enums';
 
 export interface UpdateQuotePayload {
-  content?: Map<string, string>;
+  content?: Record<string, string>;
   author?: string;
   source?: string;
   tags?: string[];

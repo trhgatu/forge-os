@@ -1,7 +1,7 @@
-import { Quote } from '../../domain/quote.entity';
-import { QuoteId } from '../../domain/value-objects/quote-id.vo';
+import { Quote } from './quote.entity';
+import { QuoteId } from './value-objects/quote-id.vo';
 import { PaginatedResult } from '@shared/types/paginated-result';
-import { QuoteFilter } from '../queries/quote-filter';
+import { QuoteFilter } from '../application/queries/quote-filter';
 
 export abstract class QuoteRepository {
   abstract save(quote: Quote): Promise<void>;

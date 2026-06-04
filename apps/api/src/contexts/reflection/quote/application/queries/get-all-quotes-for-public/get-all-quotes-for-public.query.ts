@@ -1,6 +1,6 @@
-import { QuoteFilter } from './quote-filter';
+import { QuoteFilter } from '../quote-filter';
 
-export class GetAllQuotesQuery {
+export class GetAllQuotesForPublicQuery {
   constructor(
     public readonly payload: QuoteFilter,
     public readonly lang: string = 'en',

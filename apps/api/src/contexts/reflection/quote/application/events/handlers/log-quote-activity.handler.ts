@@ -1,5 +1,5 @@
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
-import { QuoteModifiedEvent } from '../events/quote-modified.event';
+import { QuoteModifiedEvent } from '../quote-modified.event';
 import { LoggerService } from '@shared/logging/logger.service';
 
 @EventsHandler(QuoteModifiedEvent)

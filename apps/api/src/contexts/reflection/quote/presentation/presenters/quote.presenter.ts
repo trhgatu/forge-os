@@ -1,5 +1,5 @@
-import { Quote } from '../domain/quote.entity';
-import { QuoteResponse } from './dto/quote.response';
+import { Quote } from '../../domain/quote.entity';
+import { QuoteResponse } from '../dto/quote.response';
 
 export class QuotePresenter {
   static toResponse(quote: Quote, lang: string): QuoteResponse {
