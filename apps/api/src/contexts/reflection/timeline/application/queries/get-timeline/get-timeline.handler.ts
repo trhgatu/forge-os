@@ -1,10 +1,10 @@
 import { IQueryHandler, QueryBus, QueryHandler } from '@nestjs/cqrs';
 import { GetTimelineQuery } from './get-timeline.query';
 import { PaginatedResponse } from '@shared/types';
-import { TimelineResponse } from '../../presentation/dto/timeline.response';
-import { GetAllMemoriesForPublicQuery } from '../../../memory/application/queries';
-import { GetAllJournalsForPublicQuery } from '../../../journal/application/queries';
-import { GetAllMoodsQuery } from '../../../mood/application/queries';
+import { TimelineResponse } from '../../../presentation/dto/timeline.response';
+import { GetAllMemoriesForPublicQuery } from '../../../../memory/application/queries';
+import { GetAllJournalsForPublicQuery } from '../../../../journal/application/queries';
+import { GetAllMoodsQuery } from '../../../../mood/application/queries';
 
 @QueryHandler(GetTimelineQuery)
 export class GetTimelineHandler implements IQueryHandler<GetTimelineQuery> {
@@ -14,13 +14,6 @@ export class GetTimelineHandler implements IQueryHandler<GetTimelineQuery> {
     const { page = 1, limit = 20, lang } = queryDto.query;
 
     // Fetch more than needed to ensure sorting correctness across pagination boundaries (Naive Aggregation)
-    // Ideally, we fetch 'limit' from EACH, then sort and slice.
-    // But for deep pagination this is tricky.
-    // For now, we fetch 'page * limit' items from each source to be safe, or just fetch all?
-    // Fetching all might be too heavy.
-    // Fetching (page * limit) from each ensures we have enough candidates to fill the top (page * limit).
-    // Then we slice the specific page window.
-
     const fetchLimit = page * limit;
 
     const [memories, journals, moods] = await Promise.all([
