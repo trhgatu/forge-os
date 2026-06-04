@@ -22,7 +22,7 @@ export class ProjectPresenter {
       progress: entity.progress,
       taskBoard: entity.taskBoard,
       links: entity.links,
-      logs: entity.logs.map((log, index) => ({
+      logs: (entity.logs || []).map((log, index) => ({
         ...log,
         id: log.id || `log-${index}-${new Date(log.date).getTime()}`,
       })),
