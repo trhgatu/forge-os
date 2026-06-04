@@ -3,12 +3,13 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { PrismaModule } from '@shared/infrastructure/prisma/prisma.module';
 import { AuthModule } from '../../iam/auth/auth.module';
 import { TasksController } from './presentation/tasks.controller';
-import { TasksService } from './application/tasks.service';
+import { CommandHandlers } from './application/commands';
+import { QueryHandlers } from './application/queries';
+import { TaskEventHandlers } from './application/events';
 
 @Module({
   imports: [CqrsModule, PrismaModule, AuthModule],
   controllers: [TasksController],
-  providers: [TasksService],
-  exports: [TasksService],
+  providers: [...CommandHandlers, ...QueryHandlers, ...TaskEventHandlers],
 })
 export class TasksModule {}

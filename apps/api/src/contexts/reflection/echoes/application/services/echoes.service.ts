@@ -1,14 +1,14 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
+import { EventBus } from '@nestjs/cqrs';
 import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
 import { CreateFlowMomentDto } from '../../presentation/dto/create-flow-moment.dto';
-import { IncrementObjectiveProgressCommand } from '../../../../gamification/quests/application/commands';
+import { FlowMomentSyncedEvent } from '../events/flow-moment-synced.event';
 
 @Injectable()
 export class EchoesService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly commandBus: CommandBus,
+    private readonly eventBus: EventBus,
   ) {}
 
   async syncMoment(userId: string, dto: CreateFlowMomentDto) {
@@ -53,13 +53,7 @@ export class EchoesService {
       });
     }
 
-    try {
-      await this.commandBus.execute(
-        new IncrementObjectiveProgressCommand(userId, 'WS_PRESENCE', 1, null),
-      );
-    } catch (err) {
-      console.warn('Failed to increment presence attribute for flow moment', err);
-    }
+    this.eventBus.publish(new FlowMomentSyncedEvent(userId, newMoment.id));
 
     return newMoment;
   }
