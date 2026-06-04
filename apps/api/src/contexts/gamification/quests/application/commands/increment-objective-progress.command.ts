@@ -101,6 +101,7 @@ export class IncrementObjectiveProgressHandler implements ICommandHandler<Increm
               switch (obj.type) {
                 case 'COMPLETE_TASK':
                 case 'COMPLETE_ROUTINE':
+                case 'LOG_TRANSACTION':
                   statsToUpgrade.discipline = (statsToUpgrade.discipline || 0) + 2;
                   break;
                 case 'COMPLETE_HABIT':
@@ -112,6 +113,10 @@ export class IncrementObjectiveProgressHandler implements ICommandHandler<Increm
                 case 'CREATE_MEMORY':
                 case 'COMPLETE_MEMORY':
                   statsToUpgrade.awareness = (statsToUpgrade.awareness || 0) + 2;
+                  break;
+                case 'CREATE_REFLECTION':
+                  statsToUpgrade.awareness = (statsToUpgrade.awareness || 0) + 2;
+                  statsToUpgrade.willpower = (statsToUpgrade.willpower || 0) + 2;
                   break;
                 case 'WS_PRESENCE':
                   statsToUpgrade.presence = (statsToUpgrade.presence || 0) + 2;

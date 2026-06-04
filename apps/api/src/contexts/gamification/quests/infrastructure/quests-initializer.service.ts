@@ -16,6 +16,8 @@ export class QuestsInitializer implements OnApplicationBootstrap {
       const q4Id = 'quest-daily-routine-loop';
       const q5Id = 'quest-daily-study-light';
       const q6Id = 'quest-daily-spaced-review';
+      const q7Id = 'quest-daily-wealth-ledger';
+      const q8Id = 'quest-daily-wealth-reflection';
       const metaQId = 'quest-daily-meta-alignment';
 
       // Helper function to seed or update a quest with its objective(s)
@@ -25,7 +27,13 @@ export class QuestsInitializer implements OnApplicationBootstrap {
         description: string;
         type: string;
         xpReward: number;
-        objectives: { id: string; type: string; targetCount: number; referenceType: string; referenceId?: string }[];
+        objectives: {
+          id: string;
+          type: string;
+          targetCount: number;
+          referenceType: string;
+          referenceId?: string;
+        }[];
       }) => {
         const existing = await this.prisma.quest.findUnique({
           where: { id: questData.id },
@@ -42,7 +50,7 @@ export class QuestsInitializer implements OnApplicationBootstrap {
               xpReward: questData.xpReward,
               isActive: true,
               objectives: {
-                create: questData.objectives.map(obj => ({
+                create: questData.objectives.map((obj) => ({
                   id: obj.id,
                   type: obj.type,
                   targetCount: obj.targetCount,
@@ -211,6 +219,40 @@ export class QuestsInitializer implements OnApplicationBootstrap {
           },
         });
       }
+
+      // 8. Daily Wealth Ledger Quest
+      await upsertQuest({
+        id: q7Id,
+        title: 'Lập thư tịch kim tiền',
+        description: 'Ghi nhận ít nhất 1 dòng chảy tài chính hôm nay để rèn luyện sự tự chủ',
+        type: 'daily',
+        xpReward: 20,
+        objectives: [
+          {
+            id: 'obj-daily-wealth-ledger',
+            type: 'LOG_TRANSACTION',
+            targetCount: 1,
+            referenceType: 'FinancialTransaction',
+          },
+        ],
+      });
+
+      // 9. Daily Wealth Reflection Quest
+      await upsertQuest({
+        id: q8Id,
+        title: 'Đại ngộ vật chất',
+        description: 'Viết cảm nhận phản tỉnh sau khi chi tiêu một khoản xa xỉ để nuôi dưỡng ý chí',
+        type: 'daily',
+        xpReward: 25,
+        objectives: [
+          {
+            id: 'obj-daily-wealth-reflection',
+            type: 'CREATE_REFLECTION',
+            targetCount: 1,
+            referenceType: 'FinancialTransaction',
+          },
+        ],
+      });
 
       console.log('✅ Default Stoic System Quests successfully seeded & synchronized!');
     } catch (err) {

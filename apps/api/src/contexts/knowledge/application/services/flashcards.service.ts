@@ -3,7 +3,7 @@ import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
 
 @Injectable()
 export class FlashcardsService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async getDecks(userId: string) {
     return this.prisma.flashcardDeck.findMany({
@@ -16,7 +16,10 @@ export class FlashcardsService {
     });
   }
 
-  async createDeck(userId: string, data: { title: string; description?: string; colorTheme?: string }) {
+  async createDeck(
+    userId: string,
+    data: { title: string; description?: string; colorTheme?: string },
+  ) {
     return this.prisma.flashcardDeck.create({
       data: {
         userId,
@@ -40,13 +43,16 @@ export class FlashcardsService {
     return { success: true };
   }
 
-  async forgeCard(userId: string, data: {
-    deckId: string;
-    word: string;
-    conceptId?: string;
-    highlightText?: string;
-    personalNote?: string;
-  }) {
+  async forgeCard(
+    userId: string,
+    data: {
+      deckId: string;
+      word: string;
+      conceptId?: string;
+      highlightText?: string;
+      personalNote?: string;
+    },
+  ) {
     const cleanWord = data.word.trim().toLowerCase();
     let vocab = await this.prisma.vocabulary.findUnique({
       where: { word: cleanWord },
@@ -128,7 +134,8 @@ export class FlashcardsService {
 
       // Adjust Easiness Factor
       const normalizedQuality = rating + 1; // Translate our rating 1-4 scale to 2-5 scale
-      easiness = prevEasiness + (0.1 - (5 - normalizedQuality) * (0.08 + (5 - normalizedQuality) * 0.02));
+      easiness =
+        prevEasiness + (0.1 - (5 - normalizedQuality) * (0.08 + (5 - normalizedQuality) * 0.02));
       easiness = Math.max(1.3, easiness);
     }
 
@@ -205,7 +212,9 @@ export class FlashcardsService {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 4000);
-      const dictRes = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`, { signal: controller.signal });
+      const dictRes = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`, {
+        signal: controller.signal,
+      });
       clearTimeout(timeoutId);
       if (!dictRes.ok) throw new Error('Dictionary request failed');
 
@@ -214,7 +223,7 @@ export class FlashcardsService {
 
       // Extract IPA
       const phoneticObjWithText = entry.phonetics?.find((p: any) => p.text && p.text.trim() !== '');
-      ipa = phoneticObjWithText ? phoneticObjWithText.text : (entry.phonetic || '');
+      ipa = phoneticObjWithText ? phoneticObjWithText.text : entry.phonetic || '';
 
       // Extract Audio MP3 URL (Prefer US, then UK, then any)
       const phoneticsList = entry.phonetics || [];
@@ -225,21 +234,24 @@ export class FlashcardsService {
       if (usAudio) audioUrl = usAudio.audio;
       else if (ukAudio) audioUrl = ukAudio.audio;
       else if (anyAudio) audioUrl = anyAudio.audio;
-      else audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=${encodeURIComponent(word)}`;
+      else
+        audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=${encodeURIComponent(word)}`;
 
       const primaryMeaning = entry.meanings?.[0] || {};
       partOfSpeech = primaryMeaning.partOfSpeech || 'noun';
 
-      examples = primaryMeaning.definitions
-        ?.filter((d: any) => d.example)
-        ?.map((d: any) => ({ en: d.example, vi: '' })) || [];
+      examples =
+        primaryMeaning.definitions
+          ?.filter((d: any) => d.example)
+          ?.map((d: any) => ({ en: d.example, vi: '' })) || [];
 
-      meaningsData = entry.meanings?.map((m: any) => ({
-        partOfSpeech: m.partOfSpeech,
-        definitions: m.definitions?.map((d: any) => d.definition) || [],
-        synonyms: m.synonyms || [],
-        antonyms: m.antonyms || []
-      })) || [];
+      meaningsData =
+        entry.meanings?.map((m: any) => ({
+          partOfSpeech: m.partOfSpeech,
+          definitions: m.definitions?.map((d: any) => d.definition) || [],
+          synonyms: m.synonyms || [],
+          antonyms: m.antonyms || [],
+        })) || [];
     } catch {
       // Fallback values if word is not in Dictionary API
       ipa = '';
@@ -253,7 +265,7 @@ export class FlashcardsService {
       const timeoutId = setTimeout(() => controller.abort(), 3000);
       const transRes = await fetch(
         `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=vi&dt=t&q=${encodeURIComponent(word)}`,
-        { signal: controller.signal }
+        { signal: controller.signal },
       );
       clearTimeout(timeoutId);
       if (!transRes.ok) throw new Error('Translation request failed');
@@ -269,14 +281,14 @@ export class FlashcardsService {
         partOfSpeech,
         definitions: [vietnameseTranslation],
         synonyms: [],
-        antonyms: []
+        antonyms: [],
       });
     } else {
       meaningsData.unshift({
         partOfSpeech: 'Vietnamese',
         definitions: [vietnameseTranslation],
         synonyms: [],
-        antonyms: []
+        antonyms: [],
       });
     }
     return this.prisma.vocabulary.create({

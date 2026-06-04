@@ -21,4 +21,8 @@ export class CreateMemoryDto {
   @IsOptional()
   @IsEnum(MemoryStatus)
   status?: MemoryStatus;
+
+  @IsOptional()
+  @IsString()
+  userId?: string;
 }

@@ -1,8 +1,8 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { GetMoodByIdQuery } from '../queries';
+import { GetMoodByIdQuery } from './get-mood-by-id.query';
 import { Inject, NotFoundException } from '@nestjs/common';
-import { MoodRepository } from '../ports/mood.repository';
-import { Mood } from '../../domain/mood.entity';
+import { MoodRepository } from '../../../domain/mood.repository';
+import { Mood } from '../../../domain/mood.entity';
 
 @QueryHandler(GetMoodByIdQuery)
 export class GetMoodByIdHandler implements IQueryHandler<GetMoodByIdQuery, Mood> {

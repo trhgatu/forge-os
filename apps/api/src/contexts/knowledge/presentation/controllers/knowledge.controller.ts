@@ -18,11 +18,14 @@ export class KnowledgeController {
     return this.knowledgeService.scrapeUrl(url);
   }
 
-  @ApiOperation({ summary: 'Save a polymorphic knowledge concept (Wikipedia, URL, Codex, or Personal Note)' })
+  @ApiOperation({
+    summary: 'Save a polymorphic knowledge concept (Wikipedia, URL, Codex, or Personal Note)',
+  })
   @Post()
   async saveConcept(
     @User('id') userId: string,
-    @Body() data: {
+    @Body()
+    data: {
       title: string;
       sourceType: KnowledgeSourceType;
       sourceUrl?: string;
@@ -35,10 +38,7 @@ export class KnowledgeController {
 
   @ApiOperation({ summary: 'Get all saved knowledge concepts for the current user' })
   @Get()
-  async findAll(
-    @User('id') userId: string,
-    @Query('sourceType') sourceType?: KnowledgeSourceType,
-  ) {
+  async findAll(@User('id') userId: string, @Query('sourceType') sourceType?: KnowledgeSourceType) {
     return this.knowledgeService.findAll(userId, sourceType);
   }
 

@@ -167,20 +167,29 @@ export function Journal() {
 
   if (isLoading && !localEntry && !createMutation.isPending) {
     return (
-      <div className="h-full flex bg-forge-bg text-white overflow-hidden p-6 gap-6">
-        <div className="w-80 flex flex-col gap-4">
-          <Skeleton variant="glowing" className="h-10 w-full rounded-md" />
-          <Skeleton variant="default" className="h-9 w-full rounded-md" />
-          <div className="flex-1 flex flex-col gap-3 mt-4">
-            <Skeleton variant="default" className="h-24 w-full rounded-lg" />
-            <Skeleton variant="default" className="h-24 w-full rounded-lg" />
-            <Skeleton variant="default" className="h-24 w-full rounded-lg" />
+      <div className="flex-1 h-full flex flex-col items-center justify-center p-6 md:p-10 bg-transparent text-white font-sans animate-pulse">
+        <div className="relative flex flex-col items-center gap-4 w-full max-w-[1600px] mx-auto">
+          <div className="flex w-full gap-6">
+            <div className="w-80 flex flex-col gap-4">
+              <Skeleton variant="glowing" className="h-10 w-full rounded-md" />
+              <Skeleton variant="default" className="h-9 w-full rounded-md" />
+              <div className="flex-1 flex flex-col gap-3 mt-4">
+                <Skeleton variant="default" className="h-24 w-full rounded-lg" />
+                <Skeleton variant="default" className="h-24 w-full rounded-lg" />
+                <Skeleton variant="default" className="h-24 w-full rounded-lg" />
+              </div>
+            </div>
+            <div className="flex-1 flex flex-col gap-6 max-w-2xl mx-auto py-8">
+              <Skeleton variant="glowing" className="h-8 w-24 rounded-full" />
+              <Skeleton variant="glowing" className="h-14 w-3/4 rounded-md" />
+              <Skeleton variant="default" className="flex-1 w-full rounded-lg h-[200px]" />
+            </div>
           </div>
-        </div>
-        <div className="flex-1 flex flex-col gap-6 max-w-2xl mx-auto py-8">
-          <Skeleton variant="glowing" className="h-8 w-24 rounded-full" />
-          <Skeleton variant="glowing" className="h-14 w-3/4 rounded-md" />
-          <Skeleton variant="default" className="flex-1 w-full rounded-lg" />
+          
+          {/* Status message */}
+          <span className="text-xs uppercase tracking-[0.25em] text-forge-cyan/60 animate-pulse mt-6 font-mono">
+            Calibrating Neural Thought Logs...
+          </span>
         </div>
       </div>
     );

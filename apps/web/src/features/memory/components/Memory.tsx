@@ -141,27 +141,38 @@ export function Memory() {
 
   if (isLoading) {
     return (
-      <div className="flex h-full flex-col bg-forge-bg text-white p-8 gap-6 animate-pulse">
-        <div className="flex items-start justify-between mb-6">
-          <div className="flex-1 space-y-3">
-            <Skeleton variant="glowing" className="h-4 w-32 rounded-md" />
-            <Skeleton variant="glowing" className="h-12 w-48 rounded-md" />
-            <Skeleton variant="default" className="h-4 w-3/4 rounded-md" />
+      <div className="flex-1 h-full flex flex-col items-center justify-center p-6 md:p-10 bg-transparent text-white font-sans animate-pulse">
+        <div className="relative flex flex-col items-center gap-4 w-full max-w-[1600px] mx-auto">
+          {/* Header Skeleton */}
+          <div className="flex items-start justify-between w-full mb-6">
+            <div className="flex-1 space-y-3">
+              <Skeleton variant="glowing" className="h-4 w-32 rounded-md" />
+              <Skeleton variant="glowing" className="h-12 w-48 rounded-md" />
+              <Skeleton variant="default" className="h-4 w-3/4 rounded-md" />
+            </div>
+            <Skeleton variant="glowing" className="h-10 w-36 rounded-xl" />
           </div>
-          <Skeleton variant="glowing" className="h-10 w-36 rounded-xl" />
-        </div>
-        <div className="flex gap-6 items-center justify-between pb-4 border-b border-white/5">
-          <Skeleton variant="default" className="h-10 w-96 rounded-xl" />
-          <div className="flex gap-2">
-            <Skeleton variant="default" className="h-9 w-20 rounded-xl" />
-            <Skeleton variant="default" className="h-9 w-20 rounded-xl" />
-            <Skeleton variant="default" className="h-9 w-20 rounded-xl" />
+          
+          <div className="flex gap-6 items-center justify-between w-full pb-4 border-b border-white/5">
+            <Skeleton variant="default" className="h-10 w-96 rounded-xl" />
+            <div className="flex gap-2">
+              <Skeleton variant="default" className="h-9 w-20 rounded-xl" />
+              <Skeleton variant="default" className="h-9 w-20 rounded-xl" />
+              <Skeleton variant="default" className="h-9 w-20 rounded-xl" />
+            </div>
           </div>
-        </div>
-        <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
-          <Skeleton variant="default" className="h-64 w-full rounded-xl" />
-          <Skeleton variant="default" className="h-80 w-full rounded-xl" />
-          <Skeleton variant="default" className="h-72 w-full rounded-xl" />
+          
+          {/* Grid Layout Skeleton */}
+          <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-6 w-full pt-6">
+            <Skeleton variant="default" className="h-64 w-full rounded-xl" />
+            <Skeleton variant="default" className="h-80 w-full rounded-xl" />
+            <Skeleton variant="default" className="h-72 w-full rounded-xl" />
+          </div>
+          
+          {/* Status message */}
+          <span className="text-xs uppercase tracking-[0.25em] text-forge-cyan/60 animate-pulse mt-6 font-mono">
+            Calibrating Memory Vault Telemetry...
+          </span>
         </div>
       </div>
     );

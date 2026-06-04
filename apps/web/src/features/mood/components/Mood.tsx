@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 
 import { useAuthStore } from '@/shared/store/authStore';
 import type { MoodAnalysis, MoodEntry } from '@/shared/types/mood';
-import { Label, Button, Link } from '@/shared/components/ui';
+import { Label, Button, Link, Skeleton } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 
 import { useMoods, useCreateMood, useUpdateMood, useDeleteMood } from '../hooks/useMood';
@@ -19,7 +19,7 @@ import { MoodModal } from './MoodModal';
 
 export function Mood() {
   // Real Data Hook
-  const { data: moodData } = useMoods({ limit: 100 }); // Fetch last 100 for charts
+  const { data: moodData, isLoading } = useMoods({ limit: 100 }); // Fetch last 100 for charts
   const history = moodData?.data || [];
 
   const createMood = useCreateMood();
@@ -33,6 +33,30 @@ export function Mood() {
 
   const [analysis, setAnalysis] = useState<MoodAnalysis | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+  if (isLoading) {
+    return (
+      <div className="flex-1 h-full flex flex-col items-center justify-center p-6 md:p-10 bg-transparent text-white font-sans animate-pulse">
+        <div className="relative flex flex-col items-center gap-4 w-full max-w-[1600px] mx-auto">
+          {/* Header Skeleton */}
+          <Skeleton variant="glowing" className="w-full h-[100px] rounded-xl" />
+          
+          {/* Content Layout Skeleton */}
+          <div className="grid grid-cols-1 xl:grid-cols-4 gap-6 w-full mt-4">
+            <Skeleton variant="glowing" className="h-[280px] rounded-xl col-span-1 xl:col-span-3" />
+            <Skeleton variant="glowing" className="h-[280px] rounded-xl col-span-1" />
+          </div>
+          
+          <Skeleton variant="default" className="w-full h-[150px] rounded-xl mt-4" />
+          
+          {/* Status message */}
+          <span className="text-xs uppercase tracking-[0.25em] text-forge-cyan/60 animate-pulse mt-6 font-mono">
+            Calibrating Emotional Resonance Telemetry...
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   // Handle Save (Create or Update)
   const handleSave = async (data: CreateMoodDto) => {

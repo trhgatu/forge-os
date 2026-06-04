@@ -40,13 +40,32 @@ export const Identity: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex-1 h-full flex flex-col items-center justify-center p-6 md:p-10 bg-transparent text-white font-sans">
-        <div className="relative flex flex-col items-center gap-4 w-full max-w-6xl">
-          <Skeleton variant="glowing" className="w-full h-[180px] rounded-xl" />
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-6 w-full mt-4">
-            <Skeleton variant="glowing" className="h-[280px] md:col-span-2 rounded-xl" />
-            <Skeleton variant="glowing" className="h-[280px] md:col-span-3 rounded-xl" />
+      <div className="flex-1 h-full flex flex-col items-center justify-center p-6 md:p-10 bg-transparent text-white font-sans animate-pulse">
+        <div className="relative flex flex-col items-center gap-6 w-full max-w-6xl">
+          {/* Header Skeleton */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between w-full border-b border-white/5 pb-6">
+            <div className="space-y-3">
+              <Skeleton variant="glowing" className="h-3 w-28 rounded-md" />
+              <Skeleton variant="glowing" className="h-10 w-48 rounded-md" />
+              <Skeleton variant="default" className="h-4 w-72 rounded-md" />
+            </div>
+            <Skeleton variant="glowing" className="h-8 w-40 rounded-xl" />
           </div>
+
+          {/* Profile Card Skeleton */}
+          <Skeleton variant="glowing" className="w-full h-[180px] rounded-xl" />
+
+          {/* Grid Layout Skeleton */}
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 w-full mt-4">
+            {/* Radar Chart */}
+            <Skeleton variant="glowing" className="h-[320px] lg:col-span-2 rounded-xl" />
+            {/* Attribute Cards */}
+            <Skeleton variant="default" className="h-[320px] lg:col-span-3 rounded-xl" />
+          </div>
+
+          {/* Unlocked Achievements Skeleton */}
+          <Skeleton variant="default" className="w-full h-[150px] rounded-xl" />
+
           <span className="text-xs uppercase tracking-[0.25em] text-forge-cyan/60 animate-pulse mt-4 font-mono">
             {t('identity.calibration_active') || 'Calibrating Operator Frequency...'}
           </span>

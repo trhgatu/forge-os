@@ -18,6 +18,7 @@ export const useKnowledge = () => {
   const searchResults = useKnowledgeStore((state) => state.searchResults);
   const activeConcept = useKnowledgeStore((state) => state.activeConcept);
   const history = useKnowledgeStore((state) => state.history);
+  const savedConcepts = useKnowledgeStore((state) => state.savedConcepts);
   const isLoading = useKnowledgeStore((state) => state.isLoading);
   const clearActive = useKnowledgeStore((state) => state.clearActive);
   const clearHistory = useKnowledgeStore((state) => state.clearHistory);
@@ -25,6 +26,10 @@ export const useKnowledge = () => {
   const clearResults = useKnowledgeStore((state) => state.clearResults);
   const discoveryItems = useKnowledgeStore((state) => state.discoveryItems);
   const loadDiscovery = useKnowledgeStore((state) => state.loadDiscovery);
+
+  const loadSavedConcepts = useKnowledgeStore((state) => state.loadSavedConcepts);
+  const saveConcept = useKnowledgeStore((state) => state.saveConcept);
+  const deleteConcept = useKnowledgeStore((state) => state.deleteConcept);
 
   // Actions that need dynamic arguments (language)
   const { language } = useLanguage();
@@ -58,6 +63,7 @@ export const useKnowledge = () => {
     searchResults,
     activeConcept,
     history,
+    savedConcepts,
     isLoading,
     discoveryItems,
     loadDiscovery: loadDiscoveryWrapper,
@@ -66,6 +72,9 @@ export const useKnowledge = () => {
     clearActive,
     clearHistory,
     clearResults,
+    loadSavedConcepts,
+    saveConcept,
+    deleteConcept,
   };
 };
 

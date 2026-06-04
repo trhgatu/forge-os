@@ -113,7 +113,11 @@ export class PrismaQuoteRepository implements QuoteRepository {
       return QuoteMapper.toDomain(daily.quote);
     }
 
-    const randomQuote = await this.findRandom('public');
+    let randomQuote = await this.findRandom('public');
+    if (!randomQuote) {
+      randomQuote = await this.findRandom();
+    }
+
     if (randomQuote) {
       await this.prisma.dailyQuote.create({
         data: {

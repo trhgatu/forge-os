@@ -3,7 +3,7 @@ import { QueryBus } from '@nestjs/cqrs';
 import { QueryMoodDto } from '../dto/query-mood.dto';
 import { GetAllMoodsQuery, GetMoodByIdQuery } from '../../application/queries';
 import { MoodId } from '../../domain/value-objects/mood-id.vo';
-import { MoodPresenter } from '../mood.presenter';
+import { MoodPresenter } from '../presenters/mood.presenter';
 import { Mood } from '../../domain/mood.entity';
 import { PaginatedResult } from '@shared/types/paginated-result';
 

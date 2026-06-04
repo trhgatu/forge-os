@@ -7,6 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { useNovaView } from '@/contexts';
 import { cn } from '@/shared/lib/utils';
 import { useAuthStore } from '@/shared/store/authStore';
+import { Skeleton, Label } from '@/shared/components/ui';
 import { View } from '@/shared/types/os';
 
 import { forgeApi } from '../api';
@@ -121,7 +122,7 @@ export const ForgeLab: React.FC<{ slug?: string[] }> = ({ slug }) => {
   const [githubUsername, setGithubUsername] = useState<string | undefined>(undefined);
 
   // --- React Query Integration ---
-  const { data: projectsData } = useProjects();
+  const { data: projectsData, isLoading } = useProjects();
   const createProjectMutation = useCreateProject();
   const updateProjectMutation = useUpdateProject();
   const deleteProjectMutation = useDeleteProject();
@@ -168,6 +169,51 @@ export const ForgeLab: React.FC<{ slug?: string[] }> = ({ slug }) => {
       isMounted = false;
     };
   }, [authUser?.id]);
+
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [activeTab, activeProjectId]);
+
+  if (isLoading) {
+    return (
+      <div className="flex-1 h-full flex flex-col items-center justify-center p-6 md:p-10 bg-transparent text-white font-sans animate-pulse">
+        <div className="relative flex flex-col items-center gap-6 w-full max-w-[1600px] mx-auto">
+          {/* Header Skeleton */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between w-full gap-6 border-b border-white/5 pb-6">
+            <div className="space-y-3">
+              <Skeleton variant="glowing" className="h-3 w-28 rounded-md" />
+              <Skeleton variant="glowing" className="h-14 w-64 rounded-md" />
+              <Skeleton variant="default" className="h-5 w-80 rounded-md" />
+            </div>
+            <Skeleton variant="glowing" className="h-16 w-80 rounded-xl" />
+          </div>
+
+          {/* Banner Skeleton */}
+          <Skeleton variant="glowing" className="w-full h-[100px] rounded-xl" />
+
+          {/* Grid Layout Skeleton */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full">
+            {/* DirectivesWidget (lg:col-span-4) */}
+            <Skeleton variant="glowing" className="h-[380px] lg:col-span-4 rounded-xl" />
+            
+            {/* MissionGraph & SystemLogs (lg:col-span-8) */}
+            <div className="lg:col-span-8 space-y-6">
+              <Skeleton variant="default" className="h-[180px] w-full rounded-xl" />
+              <Skeleton variant="default" className="h-[180px] w-full rounded-xl" />
+            </div>
+          </div>
+
+          {/* Status message */}
+          <span className="text-xs uppercase tracking-[0.25em] text-forge-cyan/60 animate-pulse mt-6 font-mono">
+            Calibrating Forge Lab Telemetry...
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   const handleCreateProject = async (data: {
     title: string;
@@ -238,12 +284,6 @@ export const ForgeLab: React.FC<{ slug?: string[] }> = ({ slug }) => {
     { id: 'research', label: 'Research', icon: Network },
   ];
 
-  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }, [activeTab, activeProjectId]);
   return (
     <div className="h-full flex flex-col bg-[#030304] text-white relative overflow-hidden animate-in fade-in duration-1000">
       <div className="flex-1 h-full relative z-10 flex flex-col min-w-0 overflow-hidden">

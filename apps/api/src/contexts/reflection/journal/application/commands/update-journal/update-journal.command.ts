@@ -1,9 +1,8 @@
 import { JournalId } from '../../../domain/value-objects/journal-id.vo';
-import { JournalRelationType, JournalType, JournalStatus } from '../../../domain/enums';
 import { MoodType } from '@shared/enums';
 
 export interface UpdateJournalRelationPayload {
-  type: JournalRelationType;
+  type: string;
   id: string;
 }
 
@@ -12,8 +11,8 @@ export interface UpdateJournalPayload {
   content?: string;
   mood?: MoodType;
   tags?: string[];
-  type?: JournalType;
-  status?: JournalStatus;
+  type?: string;
+  status?: string;
   source?: 'user' | 'ai' | 'system';
   relations?: UpdateJournalRelationPayload[];
   analysis?: any;
