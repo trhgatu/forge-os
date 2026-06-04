@@ -1,20 +1,8 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { UpdateGoalCommand } from './update-goal.command';
 import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
 import { NotFoundException } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import { GoalObjectiveInput } from './create-goal.command';
-
-export class UpdateGoalCommand {
-  constructor(
-    public readonly goalId: string,
-    public readonly title: string | undefined,
-    public readonly description: string | undefined,
-    public readonly xpReward: number | undefined,
-    public readonly badgeIcon: string | undefined,
-    public readonly isActive: boolean | undefined,
-    public readonly objectives: GoalObjectiveInput[] | undefined,
-  ) {}
-}
 
 @CommandHandler(UpdateGoalCommand)
 export class UpdateGoalHandler implements ICommandHandler<UpdateGoalCommand> {

@@ -1,13 +1,7 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { GetGoalByIdQuery } from './get-goal-by-id.query';
 import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
 import { NotFoundException } from '@nestjs/common';
-
-export class GetGoalByIdQuery {
-  constructor(
-    public readonly goalId: string,
-    public readonly userId?: string,
-  ) {}
-}
 
 @QueryHandler(GetGoalByIdQuery)
 export class GetGoalByIdHandler implements IQueryHandler<GetGoalByIdQuery> {
@@ -31,7 +25,6 @@ export class GetGoalByIdHandler implements IQueryHandler<GetGoalByIdQuery> {
       return goal;
     }
 
-    // Map single goal progress
     const statusDoc = await this.prisma.userGoalStatus.findUnique({
       where: {
         userId_goalId: {
