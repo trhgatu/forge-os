@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { RestoreMoodCommand } from '../commands';
+import { RestoreMoodCommand } from './restore-mood.command';
 import { Inject } from '@nestjs/common';
-import { MoodRepository } from '../ports/mood.repository';
+import { MoodRepository } from '../../../domain/mood.repository';
 
 @CommandHandler(RestoreMoodCommand)
 export class RestoreMoodHandler implements ICommandHandler<RestoreMoodCommand, void> {

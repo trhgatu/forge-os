@@ -7,6 +7,9 @@ import { Button, Label, Input, EmptyState } from '@/shared/components/ui';
 import { GlassCard } from '@/shared/components/ui/GlassCard';
 import { cn } from '@/shared/lib/utils';
 
+import { useKnowledge } from '@/contexts';
+import { forgeToast } from '@/shared/lib/toast';
+
 interface AnvilTabProps {
   extracts?: { id: string; text: string }[];
   onRemoveExtract?: (id: string) => void;
@@ -17,16 +20,43 @@ export const AnvilTab: React.FC<AnvilTabProps> = ({ extracts = [], onRemoveExtra
   const [content, setContent] = useState('');
   const [title, setTitle] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  
+  const { saveConcept } = useKnowledge();
 
   useEffect(() => {
     setTitle(t('knowledge.new_artifact'));
   }, [t]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    if (!content.trim() || !title.trim()) {
+      forgeToast.system(t('knowledge.artifact_empty') || 'Title and content cannot be empty.');
+      return;
+    }
+    
     setIsSaving(true);
-    setTimeout(() => {
+    try {
+      await saveConcept({
+        id: `custom-${Date.now()}`,
+        title,
+        content,
+        summary: content.length > 200 ? content.substring(0, 200) + '...' : content,
+        language: 'en',
+        createdAt: new Date().toISOString(),
+      });
+      
+      forgeToast.system(
+        t('knowledge.crystallize_success_title') || 'ARTiFACT CRYSTALLiZED',
+        t('knowledge.crystallize_success_desc') || `Saved '${title}' into the knowledge base.`
+      );
+      
+      setContent('');
+      setTitle(t('knowledge.new_artifact'));
+    } catch (err) {
+      console.error(err);
+      forgeToast.system('FORGE ERROR', 'Failed to crystallize the artifact.');
+    } finally {
       setIsSaving(false);
-    }, 1500);
+    }
   };
 
   const insertExtract = (text: string) => {

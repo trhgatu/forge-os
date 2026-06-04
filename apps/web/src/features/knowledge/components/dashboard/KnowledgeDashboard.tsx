@@ -17,13 +17,14 @@ import { StatsWidget } from './StatsWidget';
 
 export const KnowledgeDashboard: React.FC = () => {
   const router = useRouter();
-  const { history } = useKnowledge();
+  const { history, savedConcepts, loadSavedConcepts } = useKnowledge();
   const { t, language } = useLanguage();
   const [activeSector, setActiveSector] = useState<string | null>(null);
 
   useEffect(() => {
     setActiveSector(null);
-  }, []);
+    loadSavedConcepts();
+  }, [loadSavedConcepts]);
 
   const sectorList = language === 'vi'
     ? ['Công nghệ', 'Khoa học', 'Lịch sử', 'Triết học', 'Nghệ thuật', 'Vũ trụ']
@@ -152,7 +153,7 @@ export const KnowledgeDashboard: React.FC = () => {
         {/* Recently Discovered Feed Widget */}
         <div className="flex-1 min-h-0 overflow-hidden relative">
           <DiscoveredWidget
-            history={history}
+            history={savedConcepts.length > 0 ? savedConcepts : history}
             onSelect={(c) => router.push(`/forge/knowledge/nexus/${encodeURIComponent(c.title)}?tab=source`)}
           />
         </div>

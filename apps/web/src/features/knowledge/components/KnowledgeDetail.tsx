@@ -18,6 +18,8 @@ interface KnowledgeDetailProps {
 
 type Tab = 'source' | 'anvil' | 'nexus';
 
+import { useKnowledge } from '@/contexts';
+
 export const KnowledgeDetail: React.FC<KnowledgeDetailProps> = ({ concept, onClose }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -29,7 +31,20 @@ export const KnowledgeDetail: React.FC<KnowledgeDetailProps> = ({ concept, onClo
     router.replace(`?${params.toString()}`, { scroll: false });
   };
 
-  const [isSaved, setIsSaved] = useState(false);
+  const { savedConcepts, saveConcept, deleteConcept } = useKnowledge();
+
+  const dbConcept = savedConcepts.find(
+    (c) => c.title.toLowerCase().trim() === concept.title.toLowerCase().trim()
+  );
+  const isSaved = !!dbConcept;
+
+  const handleToggleSave = async () => {
+    if (isSaved && dbConcept) {
+      await deleteConcept(dbConcept.id);
+    } else {
+      await saveConcept(concept);
+    }
+  };
 
   interface ExtractItem {
     id: string;
@@ -111,7 +126,7 @@ export const KnowledgeDetail: React.FC<KnowledgeDetailProps> = ({ concept, onClo
 
           <div className="flex items-center justify-end gap-2">
             <button
-              onClick={() => setIsSaved(!isSaved)}
+              onClick={handleToggleSave}
               className={cn(
                 'p-2 rounded-lg transition-colors',
                 isSaved ? 'text-forge-accent' : 'text-gray-400 hover:text-white',
@@ -142,7 +157,7 @@ export const KnowledgeDetail: React.FC<KnowledgeDetailProps> = ({ concept, onClo
         {activeTab === 'anvil' && (
           <AnvilTab extracts={committedExtracts} onRemoveExtract={handleRemoveCommitted} />
         )}
-        {activeTab === 'nexus' && <NexusTab />}
+        {activeTab === 'nexus' && <NexusTab concept={concept} />}
       </div>
     </div>
   );

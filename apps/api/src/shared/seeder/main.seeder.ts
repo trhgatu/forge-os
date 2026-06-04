@@ -6,6 +6,7 @@ import { AssignRolePermissionsSeeder } from './assign-role-permissions/assign-ro
 import { UserSeeder } from './user/user.seeder';
 
 import { ProjectSeeder } from './project/project.seeder';
+import { QuoteSeeder } from './quote/quote.seeder';
 
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(SeederModule);
@@ -15,12 +16,14 @@ async function bootstrap() {
   const assignSeeder = app.get(AssignRolePermissionsSeeder);
   const userSeeder = app.get(UserSeeder);
   const projectSeeder = app.get(ProjectSeeder);
+  const quoteSeeder = app.get(QuoteSeeder);
 
   await permissionSeeder.seed();
   await roleSeeder.seed();
   await assignSeeder.seed();
   await userSeeder.seed();
   await projectSeeder.seed();
+  await quoteSeeder.seed();
   await app.close();
 }
 

@@ -12,7 +12,7 @@ import {
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { JwtAuthGuard } from 'src/contexts/iam/auth/application/guards';
 import { PermissionsGuard } from '@shared/guards/permissions.guard';
-import { Permissions } from '@shared/decorators';
+import { Permissions, User } from '@shared/decorators';
 import { PermissionEnum } from '@shared/enums';
 import { CreateMoodDto } from '../dto/create-mood.dto';
 import { UpdateMoodDto } from '../dto/update-mood.dto';
@@ -26,7 +26,7 @@ import {
 } from '../../application/commands';
 import { GetAllMoodsQuery, GetMoodByIdQuery } from '../../application/queries';
 import { MoodId } from '../../domain/value-objects/mood-id.vo';
-import { MoodPresenter } from '../mood.presenter';
+import { MoodPresenter } from '../presenters/mood.presenter';
 import { Mood } from '../../domain/mood.entity';
 import { PaginatedResult } from '@shared/types/paginated-result';
 
@@ -40,8 +40,8 @@ export class MoodAdminController {
 
   @Post()
   @Permissions(PermissionEnum.CREATE_MOOD)
-  async create(@Body() dto: CreateMoodDto) {
-    const mood: Mood = await this.commandBus.execute(new CreateMoodCommand(dto));
+  async create(@Body() dto: CreateMoodDto, @User('id') userId: string) {
+    const mood = (await this.commandBus.execute(new CreateMoodCommand({ ...dto, userId }))) as Mood;
     return MoodPresenter.toResponse(mood);
   }
 
@@ -75,8 +75,10 @@ export class MoodAdminController {
 
   @Patch(':id')
   @Permissions(PermissionEnum.UPDATE_MOOD)
-  async update(@Param('id') id: string, @Body() dto: UpdateMoodDto) {
-    const mood: Mood = await this.commandBus.execute(new UpdateMoodCommand(MoodId.create(id), dto));
+  async update(@Param('id') id: string, @Body() dto: UpdateMoodDto, @User('id') userId: string) {
+    const mood = (await this.commandBus.execute(
+      new UpdateMoodCommand(MoodId.create(id), { ...dto, userId }),
+    )) as Mood;
     return MoodPresenter.toResponse(mood);
   }
 

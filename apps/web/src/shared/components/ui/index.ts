@@ -9,3 +9,5 @@ export * from './Label';
 export * from './Skeleton';
 export * from './EmptyState';
 export * from './Link';
+export * from './Modal';
+

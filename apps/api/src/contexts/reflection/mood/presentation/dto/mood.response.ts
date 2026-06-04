@@ -8,4 +8,6 @@ export class MoodResponse {
   updatedAt!: string;
   isDeleted!: boolean;
   deletedAt?: string;
+  intensity?: number;
+  userId?: string;
 }

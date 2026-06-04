@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { SoftDeleteMoodCommand } from '../commands';
+import { SoftDeleteMoodCommand } from './soft-delete-mood.command';
 import { Inject } from '@nestjs/common';
-import { MoodRepository } from '../ports/mood.repository';
+import { MoodRepository } from '../../../domain/mood.repository';
 
 @CommandHandler(SoftDeleteMoodCommand)
 export class SoftDeleteMoodHandler implements ICommandHandler<SoftDeleteMoodCommand, void> {

@@ -38,6 +38,7 @@ import {
   ChevronDown,
   WindIcon,
   Shield,
+  Wallet,
 } from 'lucide-react';
 import { LogOut, ListTodo } from 'lucide-react';
 import Link from 'next/link';
@@ -88,6 +89,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: View.ROUTINES, labelKey: 'nav.routines', icon: Clock, group: 'Evolution' },
   { id: View.QUESTS, labelKey: 'nav.quests', icon: Shield, group: 'Evolution' },
   { id: View.ENERGY, labelKey: 'nav.energy', icon: Zap, group: 'Evolution' },
+  { id: View.WEALTH, labelKey: 'nav.wealth', icon: Wallet, group: 'Evolution' },
   { id: View.WEEKLY_REVIEW, labelKey: 'nav.weekly_review', icon: CalendarCheck, group: 'System' },
   { id: View.MONTHLY_REVIEW, labelKey: 'nav.monthly_review', icon: Moon, group: 'System' },
   { id: View.YEARLY_REVIEW, labelKey: 'nav.yearly_review', icon: Orbit, group: 'System' },
@@ -149,6 +151,8 @@ const getPathForView = (view: View): string => {
       return '/forge/lab';
     case View.WIKI:
       return '/forge/knowledge';
+    case View.WEALTH:
+      return '/forge/wealth';
     default:
       return `/forge/${view.toLowerCase().replace(/_/g, '-')}`;
   }

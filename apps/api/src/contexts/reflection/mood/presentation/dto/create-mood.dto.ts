@@ -32,4 +32,8 @@ export class CreateMoodDto {
   @IsOptional()
   @IsDateString()
   loggedAt?: string;
+
+  @IsOptional()
+  @IsString()
+  userId?: string;
 }

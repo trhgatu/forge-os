@@ -29,10 +29,10 @@ export class CreateJournalHandler implements ICommandHandler<CreateJournalComman
         content: payload.content,
         mood: payload.mood ?? MoodType.NEUTRAL,
         tags: payload.tags ?? [],
-        type: payload.type ?? JournalType.THOUGHT,
-        status: payload.status ?? JournalStatus.PRIVATE,
-        source: payload.source ?? JournalSource.USER,
-        relations: payload.relations ?? [],
+        type: (payload.type as JournalType) ?? JournalType.THOUGHT,
+        status: (payload.status as JournalStatus) ?? JournalStatus.PRIVATE,
+        source: (payload.source as JournalSource) ?? JournalSource.USER,
+        relations: (payload.relations ?? []) as any,
         userId: payload.userId!,
       },
       journalId,
@@ -40,10 +40,8 @@ export class CreateJournalHandler implements ICommandHandler<CreateJournalComman
 
     await this.journalRepo.save(journal);
 
-    // Invalidate journal cache
     await this.cacheService.deleteByPattern('journals:*');
 
-    // Publish NestJS event for Gamification Quest tracking
     await this.eventBus.publish(new JournalCreatedEvent(journal.id));
 
     return journal;

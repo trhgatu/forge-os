@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { MoodRepository } from '../../application/ports/mood.repository';
+import { MoodRepository } from '../../domain/mood.repository';
 import { Mood as MoodEntity } from '../../domain/mood.entity';
 import { MoodId } from '../../domain/value-objects/mood-id.vo';
 import { MoodFilter } from '../../application/queries/mood-filter';
@@ -23,6 +23,7 @@ export class PrismaMoodRepository implements MoodRepository {
         intensity: persistence.intensity,
         tags: persistence.tags,
         loggedAt: persistence.loggedAt,
+        userId: persistence.userId || null,
         isDeleted: persistence.isDeleted,
         deletedAt: persistence.deletedAt,
       },
@@ -33,6 +34,7 @@ export class PrismaMoodRepository implements MoodRepository {
         intensity: persistence.intensity,
         tags: persistence.tags,
         loggedAt: persistence.loggedAt,
+        userId: persistence.userId || null,
         isDeleted: persistence.isDeleted,
         deletedAt: persistence.deletedAt,
       },

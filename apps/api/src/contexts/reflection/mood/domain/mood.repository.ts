@@ -1,7 +1,7 @@
 import { PaginatedResult } from '@shared/types/paginated-result';
-import { Mood } from '../../domain/mood.entity';
-import { MoodId } from '../../domain/value-objects/mood-id.vo';
-import { MoodFilter } from '../queries/mood-filter';
+import { Mood } from './mood.entity';
+import { MoodId } from './value-objects/mood-id.vo';
+import { MoodFilter } from '../application/queries/mood-filter';
 
 export abstract class MoodRepository {
   abstract save(mood: Mood): Promise<void>;

@@ -16,7 +16,7 @@ import React, { useState, useEffect } from 'react';
 import { AreaChart, Area, Tooltip, ResponsiveContainer } from 'recharts';
 
 import { AGENTS } from '@/features/chamber/components/AgentDock';
-import { WidgetShell, Label, Tag } from '@/shared/components/ui';
+import { WidgetShell, Label, Tag, Skeleton } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 
 import { QuoteOfTheDayWidget } from './QuoteOfTheDayWidget';
@@ -64,6 +64,7 @@ const TIMELINE_SNAPSHOT = [
 export const Dashboard: React.FC = () => {
   const [time, setTime] = useState(new Date());
   const [focusScore] = useState(85);
+  const [loading, setLoading] = useState(true);
   const [tasks, setTasks] = useState([
     { id: 1, label: "Log a reflection on 'Focus'", checked: false },
     { id: 2, label: "Review yesterday's journal", checked: true },
@@ -76,7 +77,11 @@ export const Dashboard: React.FC = () => {
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(timer);
+    const loadTimer = setTimeout(() => setLoading(false), 1200);
+    return () => {
+      clearInterval(timer);
+      clearTimeout(loadTimer);
+    };
   }, []);
 
   const timeString = time.toLocaleTimeString([], {
@@ -92,6 +97,66 @@ export const Dashboard: React.FC = () => {
 
   const hour = time.getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+
+  if (loading) {
+    return (
+      <div className="h-full flex bg-forge-bg overflow-hidden animate-pulse w-full">
+        {/* MAIN CONTENT SKELETON */}
+        <div className="flex-1 h-full overflow-y-auto scrollbar-hide p-8 pb-24 flex flex-col gap-6">
+          {/* Greeting Header Skeleton */}
+          <header className="mb-10 relative group space-y-3">
+            <Skeleton variant="glowing" className="h-3 w-28 rounded-md" />
+            <Skeleton variant="glowing" className="h-12 w-80 rounded-md" />
+            <Skeleton variant="default" className="h-4 w-64 rounded-md" />
+          </header>
+
+          {/* Bento Grid Skeleton */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 auto-rows-min">
+            {/* TIME WIDGET: col-span-1 md:col-span-2 min-h-[220px] */}
+            <Skeleton variant="glowing" className="col-span-1 md:col-span-2 min-h-[220px] rounded-2xl" />
+
+            {/* WISDOM WIDGET: col-span-1 md:col-span-2 min-h-[220px] */}
+            <Skeleton variant="glowing" className="col-span-1 md:col-span-2 min-h-[220px] rounded-2xl" />
+
+            {/* MOOD CHART: col-span-1 md:col-span-2 lg:col-span-2 min-h-[200px] */}
+            <Skeleton variant="default" className="col-span-1 md:col-span-2 lg:col-span-2 min-h-[200px] rounded-2xl" />
+
+            {/* NEURAL CORE: col-span-1 min-h-[200px] */}
+            <Skeleton variant="default" className="col-span-1 min-h-[200px] rounded-2xl" />
+
+            {/* TIMELINE: col-span-1 min-h-[200px] */}
+            <Skeleton variant="default" className="col-span-1 min-h-[200px] rounded-2xl" />
+
+            {/* MEMORY DIGEST: col-span-1 md:col-span-2 min-h-[180px] */}
+            <Skeleton variant="default" className="col-span-1 md:col-span-2 min-h-[180px] rounded-2xl" />
+          </div>
+          
+          {/* Status message */}
+          <span className="text-xs uppercase tracking-[0.25em] text-forge-cyan/60 animate-pulse mt-6 font-mono self-center">
+            Calibrating Mission Control Telemetry...
+          </span>
+        </div>
+
+        {/* RIGHT PANEL SKELETON */}
+        <div className="w-80 shrink-0 border-l border-white/5 bg-black/20 backdrop-blur-xl h-full flex flex-col p-6 gap-8 hidden xl:flex">
+          <div className="border-b border-white/5 pb-4">
+            <Skeleton variant="glowing" className="h-6 w-40 rounded-md" />
+          </div>
+          
+          <div className="space-y-6">
+            <Skeleton variant="default" className="h-4 w-32 rounded-md" />
+            <Skeleton variant="default" className="h-8 w-full rounded-md" />
+            <Skeleton variant="default" className="h-8 w-full rounded-md" />
+          </div>
+
+          <div className="space-y-4 mt-4">
+            <Skeleton variant="glowing" className="h-4 w-36 rounded-md" />
+            <Skeleton variant="default" className="h-24 w-full rounded-2xl" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-full flex bg-forge-bg overflow-hidden">

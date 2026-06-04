@@ -312,4 +312,83 @@ export async function getRandomConcepts(
   }
 }
 
+import { apiClient } from '@/services/apiClient';
+import type { BackendResponse } from '@forge/core';
+
+export async function saveConceptToDb(data: {
+  title: string;
+  sourceType: 'WIKIPEDIA' | 'WEB_ARTICLE' | 'CODEX_BOOK' | 'PERSONAL_NOTE';
+  sourceUrl?: string;
+  content: string;
+  summary?: string;
+}): Promise<KnowledgeConcept> {
+  const res = await apiClient.post<BackendResponse<any>>('/knowledge', data);
+  const dbConcept = res.data.data;
+  return {
+    id: dbConcept.id,
+    title: dbConcept.title,
+    content: dbConcept.content,
+    summary: dbConcept.summary,
+    url: dbConcept.sourceUrl,
+    language: 'en',
+    createdAt: dbConcept.createdAt,
+    insights: dbConcept.insights,
+    reflection: dbConcept.reflection,
+    metadata: {
+      categories: [],
+      keywords: [],
+    },
+  };
+}
+
+export async function getConceptsFromDb(sourceType?: string): Promise<KnowledgeConcept[]> {
+  const params = sourceType ? { sourceType } : {};
+  const res = await apiClient.get<BackendResponse<any[]>>('/knowledge', { params });
+  return res.data.data.map((dbConcept) => ({
+    id: dbConcept.id,
+    title: dbConcept.title,
+    content: dbConcept.content,
+    summary: dbConcept.summary,
+    url: dbConcept.sourceUrl,
+    language: 'en',
+    createdAt: dbConcept.createdAt,
+    insights: dbConcept.insights,
+    reflection: dbConcept.reflection,
+    metadata: {
+      categories: [],
+      keywords: [],
+    },
+  }));
+}
+
+export async function getConceptDetailsFromDb(id: string): Promise<KnowledgeConcept & { flashcards: any[] }> {
+  const res = await apiClient.get<BackendResponse<any>>(`/knowledge/${id}`);
+  const dbConcept = res.data.data;
+  return {
+    id: dbConcept.id,
+    title: dbConcept.title,
+    content: dbConcept.content,
+    summary: dbConcept.summary,
+    url: dbConcept.sourceUrl,
+    language: 'en',
+    createdAt: dbConcept.createdAt,
+    insights: dbConcept.insights,
+    reflection: dbConcept.reflection,
+    metadata: {
+      categories: [],
+      keywords: [],
+    },
+    flashcards: dbConcept.flashcards || [],
+  };
+}
+
+export async function deleteConceptFromDb(id: string): Promise<void> {
+  await apiClient.delete(`/knowledge/${id}`);
+}
+
+export async function scrapeUrl(url: string): Promise<{ title: string; content: string; summary: string }> {
+  const res = await apiClient.post<BackendResponse<{ title: string; content: string; summary: string }>>('/knowledge/scrape', { url });
+  return res.data.data;
+}
+
 

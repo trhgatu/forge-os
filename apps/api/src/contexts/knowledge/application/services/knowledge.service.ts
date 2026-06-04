@@ -4,15 +4,18 @@ import { KnowledgeSourceType } from '@prisma/client';
 
 @Injectable()
 export class KnowledgeService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
-  async saveConcept(userId: string, data: {
-    title: string;
-    sourceType: KnowledgeSourceType;
-    sourceUrl?: string;
-    content: string;
-    summary?: string;
-  }) {
+  async saveConcept(
+    userId: string,
+    data: {
+      title: string;
+      sourceType: KnowledgeSourceType;
+      sourceUrl?: string;
+      content: string;
+      summary?: string;
+    },
+  ) {
     const { insights, reflection } = this.generateAutomaticMetadata(data.title, data.content);
 
     return this.prisma.knowledgeConcept.create({
@@ -22,7 +25,9 @@ export class KnowledgeService {
         sourceType: data.sourceType,
         sourceUrl: data.sourceUrl,
         content: data.content,
-        summary: data.summary || (data.content.length > 200 ? data.content.substring(0, 200) + '...' : data.content),
+        summary:
+          data.summary ||
+          (data.content.length > 200 ? data.content.substring(0, 200) + '...' : data.content),
         insights: insights as any,
         reflection,
       },
@@ -90,7 +95,9 @@ export class KnowledgeService {
     });
 
     if (!concept) {
-      throw new NotFoundException('Tri thức này không tồn tại hoặc không thuộc quyền sở hữu của bạn.');
+      throw new NotFoundException(
+        'Tri thức này không tồn tại hoặc không thuộc quyền sở hữu của bạn.',
+      );
     }
 
     return concept;
@@ -112,7 +119,10 @@ export class KnowledgeService {
     return { success: true };
   }
 
-  private generateAutomaticMetadata(title: string, content: string): { insights: string[]; reflection: string } {
+  private generateAutomaticMetadata(
+    title: string,
+    content: string,
+  ): { insights: string[]; reflection: string } {
     const sentences = content
       .replace(/<[^>]*>/g, '')
       .split(/[.!?]+?/)
@@ -123,7 +133,9 @@ export class KnowledgeService {
     if (insights.length < 3) {
       insights.push(`Tri thức về '${title}' khai mở cho tâm thức những góc nhìn mới.`);
       insights.push(`Sự tập trung phân tích bài học giúp củng cố liên kết thần kinh.`);
-      insights.push(`Crystallization (Kết tinh) là giao thức chuyển hóa thông tin thô thành trí tuệ.`);
+      insights.push(
+        `Crystallization (Kết tinh) là giao thức chuyển hóa thông tin thô thành trí tuệ.`,
+      );
     }
 
     const reflectionPrompts = [

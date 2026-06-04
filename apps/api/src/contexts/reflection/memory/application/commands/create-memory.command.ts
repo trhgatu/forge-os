@@ -6,6 +6,7 @@ export interface CreateMemoryPayload {
   mood?: MoodType;
   tags?: string[];
   status?: MemoryStatus;
+  userId?: string;
 }
 
 export class CreateMemoryCommand {

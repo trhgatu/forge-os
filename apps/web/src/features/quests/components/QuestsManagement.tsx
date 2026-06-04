@@ -145,7 +145,6 @@ export function QuestsManagement() {
                 Quest Log
               </Label>
 
-              {/* Flowing Subtitle */}
               <p className="text-sm text-gray-400 font-light leading-relaxed max-w-xl italic">
                 "We do not rise to the level of our goals. We fall to the level of our systems." Align your daily disciplines to complete active missions.
               </p>

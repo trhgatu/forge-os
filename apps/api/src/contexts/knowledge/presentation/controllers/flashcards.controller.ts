@@ -32,11 +32,14 @@ export class FlashcardsController {
     return this.flashcardsService.deleteDeck(userId, id);
   }
 
-  @ApiOperation({ summary: 'Forge a new flashcard, automatically enriching IPA, audios, and translation' })
+  @ApiOperation({
+    summary: 'Forge a new flashcard, automatically enriching IPA, audios, and translation',
+  })
   @Post('forge')
   async forgeCard(
     @User('id') userId: string,
-    @Body() data: {
+    @Body()
+    data: {
       deckId: string;
       word: string;
       conceptId?: string;
@@ -49,10 +52,7 @@ export class FlashcardsController {
 
   @ApiOperation({ summary: 'Get all cards due hằng ngày for spaced repetition review' })
   @Get('due')
-  async getDueCards(
-    @User('id') userId: string,
-    @Query('deckId') deckId?: string,
-  ) {
+  async getDueCards(@User('id') userId: string, @Query('deckId') deckId?: string) {
     return this.flashcardsService.getDueCards(userId, deckId);
   }
 
@@ -60,7 +60,8 @@ export class FlashcardsController {
   @Post('review')
   async reviewCard(
     @User('id') userId: string,
-    @Body() data: {
+    @Body()
+    data: {
       cardId: string;
       rating: number; // 1 (Again), 2 (Hard), 3 (Good), 4 (Easy)
       responseTimeMs: number;

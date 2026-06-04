@@ -27,6 +27,7 @@ export class CreateProjectHandler implements ICommandHandler<CreateProjectComman
       {
         title: payload.title ?? 'New Project',
         description: payload.description || '',
+        userId,
       },
       projectId,
     );

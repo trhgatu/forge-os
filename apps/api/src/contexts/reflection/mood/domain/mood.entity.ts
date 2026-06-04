@@ -8,6 +8,7 @@ export type MoodProps = {
   loggedAt: Date;
   isDeleted: boolean;
   deletedAt?: Date;
+  userId?: string;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -21,6 +22,9 @@ export class Mood {
   public get id(): MoodId {
     return this._id;
   }
+  public get userId(): string | undefined {
+    return this.props.userId;
+  }
 
   static create(props: Partial<MoodProps>, id: MoodId): Mood {
     const now = new Date();
@@ -33,6 +37,7 @@ export class Mood {
         loggedAt: props.loggedAt ?? now,
         isDeleted: props.isDeleted ?? false,
         deletedAt: props.deletedAt,
+        userId: props.userId,
         createdAt: props.createdAt ?? now,
         updatedAt: props.updatedAt ?? now,
       },

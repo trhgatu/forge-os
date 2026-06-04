@@ -12,6 +12,7 @@ export class MemoryMapper {
         mood: doc.mood,
         tags: doc.tags || [],
         status: doc.status,
+        userId: doc.userId || undefined,
         createdAt: doc.createdAt,
         updatedAt: doc.updatedAt,
       },
@@ -30,6 +31,7 @@ export class MemoryMapper {
       mood: props.mood,
       tags: props.tags,
       status: props.status,
+      userId: props.userId || null,
       isDeleted: props.isDeleted,
       deletedAt: props.deletedAt,
     };

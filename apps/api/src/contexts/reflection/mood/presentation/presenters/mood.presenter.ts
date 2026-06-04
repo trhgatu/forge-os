@@ -1,4 +1,4 @@
-import { MoodResponse } from './dto/mood.response';
+import { MoodResponse } from '../dto/mood.response';
 
 export class MoodPresenter {
   static toResponse(mood: any): MoodResponse {
@@ -8,6 +8,7 @@ export class MoodPresenter {
       id: String(data.id),
       mood: data.mood,
       note: data.note,
+      intensity: data.intensity,
       tags: data.tags,
       loggedAt: data.loggedAt instanceof Date ? data.loggedAt.toISOString() : (data.loggedAt ?? ''),
       createdAt:
@@ -17,6 +18,7 @@ export class MoodPresenter {
       isDeleted: data.isDeleted,
       deletedAt:
         data.deletedAt instanceof Date ? data.deletedAt.toISOString() : (data.deletedAt ?? null),
+      userId: data.userId,
     };
   }
 }

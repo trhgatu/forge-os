@@ -17,6 +17,7 @@ export class ProjectMapper {
       taskBoard: doc.taskBoard || { todo: [], inProgress: [], done: [] },
       links: doc.links || [],
       logs: doc.logs || [],
+      userId: doc.userId || undefined,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
       isDeleted: doc.isDeleted || false,
@@ -39,6 +40,7 @@ export class ProjectMapper {
       taskBoard: props.taskBoard,
       links: props.links,
       logs: props.logs,
+      userId: props.userId || null,
       isDeleted: props.isDeleted,
       deletedAt: props.deletedAt,
     };

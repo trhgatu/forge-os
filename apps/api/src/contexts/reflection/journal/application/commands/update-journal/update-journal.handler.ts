@@ -32,8 +32,9 @@ export class UpdateJournalHandler implements ICommandHandler<UpdateJournalComman
     }
 
     if (payload.status) {
-      if (payload.status === JournalStatus.PUBLISHED) journal.publish();
-      if (payload.status === JournalStatus.ARCHIVED) journal.archive();
+      const status = payload.status as JournalStatus;
+      if (status === JournalStatus.PUBLISHED) journal.publish();
+      if (status === JournalStatus.ARCHIVED) journal.archive();
     }
 
     if (payload.tags) {

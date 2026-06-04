@@ -37,6 +37,7 @@ import { GoalsModule } from '@root/contexts/gamification/goals/goals.module';
 import { TasksModule } from '@root/contexts/reflection/tasks/tasks.module';
 import { EchoesModule } from '@root/contexts/reflection/echoes/echoes.module';
 import { KnowledgeModule } from '@root/contexts/knowledge/knowledge.module';
+import { WealthModule } from '@root/contexts/wealth/wealth.module';
 
 @Module({
   imports: [
@@ -88,6 +89,7 @@ import { KnowledgeModule } from '@root/contexts/knowledge/knowledge.module';
     TasksModule,
     EchoesModule,
     KnowledgeModule,
+    WealthModule,
 
     CacheModule,
   ],

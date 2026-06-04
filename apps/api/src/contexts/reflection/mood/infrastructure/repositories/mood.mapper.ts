@@ -13,6 +13,7 @@ export class MoodMapper {
         loggedAt: doc.loggedAt,
         isDeleted: doc.isDeleted || false,
         deletedAt: doc.deletedAt,
+        userId: doc.userId || undefined,
         createdAt: doc.createdAt,
         updatedAt: doc.updatedAt,
       },
@@ -29,6 +30,7 @@ export class MoodMapper {
       intensity: props.intensity,
       tags: props.tags,
       loggedAt: props.loggedAt,
+      userId: props.userId || null,
       isDeleted: props.isDeleted,
       deletedAt: props.deletedAt,
     };
