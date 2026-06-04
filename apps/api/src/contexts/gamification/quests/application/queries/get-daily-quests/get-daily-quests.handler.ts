@@ -1,11 +1,8 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
-import { QuestsRepository } from '../../domain/quests.repository';
-import { UserObjectiveProgress } from '../../domain/quest.entity';
+import { GetDailyQuestsQuery } from './get-daily-quests.query';
+import { QuestsRepository } from '../../../domain/quests.repository';
+import { UserObjectiveProgress } from '../../../domain/quest.entity';
 import { v4 as uuidv4 } from 'uuid';
-
-export class GetDailyQuestsQuery {
-  constructor(public readonly userId: string) {}
-}
 
 @QueryHandler(GetDailyQuestsQuery)
 export class GetDailyQuestsHandler implements IQueryHandler<GetDailyQuestsQuery> {

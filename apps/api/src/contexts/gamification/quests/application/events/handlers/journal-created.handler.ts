@@ -1,7 +1,7 @@
 import { EventsHandler, IEventHandler, CommandBus } from '@nestjs/cqrs';
 import { JournalCreatedEvent } from '../../../../../reflection/journal/application/events/journal-created.event';
 import { JournalRepository } from '../../../../../reflection/journal/domain/journal.repository';
-import { IncrementObjectiveProgressCommand } from '../../commands/increment-objective-progress.command';
+import { IncrementObjectiveProgressCommand } from '../../commands';
 
 @EventsHandler(JournalCreatedEvent)
 export class JournalCreatedQuestHandler implements IEventHandler<JournalCreatedEvent> {

@@ -1,10 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { QuestsRepository } from '../../domain/quests.repository';
+import { DeleteQuestCommand } from './delete-quest.command';
+import { QuestsRepository } from '../../../domain/quests.repository';
 import { NotFoundException } from '@nestjs/common';
-
-export class DeleteQuestCommand {
-  constructor(public readonly id: string) {}
-}
 
 @CommandHandler(DeleteQuestCommand)
 export class DeleteQuestHandler implements ICommandHandler<DeleteQuestCommand> {

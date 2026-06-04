@@ -3,7 +3,7 @@ import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
 import { AssetType, ExpenseCategoryType } from '@prisma/client';
 import { EventBus, CommandBus } from '@nestjs/cqrs';
 import { TransactionCreatedEvent } from '../events/transaction-created.event';
-import { IncrementObjectiveProgressCommand } from '../../../gamification/quests/application/commands/increment-objective-progress.command';
+import { IncrementObjectiveProgressCommand } from '../../../gamification/quests/application/commands';
 
 @Injectable()
 export class WealthService {

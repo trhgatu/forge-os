@@ -1,18 +1,10 @@
 import { CommandHandler, ICommandHandler, CommandBus, EventBus } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { QuestsRepository } from '../../domain/quests.repository';
-import { GoalsService } from '../../../goals/application/goals.service';
-import { UserStatsRepository } from '../../../domain/ports/user-stats.repository';
+import { IncrementObjectiveProgressCommand } from './increment-objective-progress.command';
+import { QuestsRepository } from '../../../domain/quests.repository';
+import { GoalsService } from '../../../../goals/application/goals.service';
+import { UserStatsRepository } from '../../../../domain/ports/user-stats.repository';
 import { ACTIVITY_STREAM_PORT, IActivityStreamPort } from '@shared/ports/activity-stream.port';
-
-export class IncrementObjectiveProgressCommand {
-  constructor(
-    public readonly userId: string,
-    public readonly actionType: string,
-    public readonly amount: number,
-    public readonly referenceId: string | null,
-  ) {}
-}
 
 @CommandHandler(IncrementObjectiveProgressCommand)
 export class IncrementObjectiveProgressHandler implements ICommandHandler<IncrementObjectiveProgressCommand> {
@@ -31,7 +23,6 @@ export class IncrementObjectiveProgressHandler implements ICommandHandler<Increm
     const { userId, actionType, amount, referenceId } = command;
     const todayStr = new Date().toISOString().split('T')[0];
 
-    // Update streak on action trigger (no direct stat increments here to prevent exploits)
     const stats = await this.userStatsRepository.findByUserId(userId);
     if (stats) {
       stats.updateStreak();
@@ -90,13 +81,9 @@ export class IncrementObjectiveProgressHandler implements ICommandHandler<Increm
 
           await this.repository.completeQuest(userId, quest.id);
 
-          // QUEST-GATED AUTO-INCREMENT: Award character stats dynamically based on Quest Objectives
           const statsToUpgrade = await this.userStatsRepository.findByUserId(userId);
           if (statsToUpgrade) {
-            // Award +1 Willpower as a base reward for completing any Quest
             statsToUpgrade.willpower = (statsToUpgrade.willpower || 0) + 1;
-
-            // Automatically increment attributes corresponding to quest activities
             for (const obj of quest.objectives) {
               switch (obj.type) {
                 case 'COMPLETE_TASK':

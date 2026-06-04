@@ -1,6 +1,6 @@
 import { EventsHandler, IEventHandler, CommandBus } from '@nestjs/cqrs';
 import { HabitCompletedEvent } from '../../../../../reflection/habits/domain/events/habit-completed.event';
-import { IncrementObjectiveProgressCommand } from '../../commands/increment-objective-progress.command';
+import { IncrementObjectiveProgressCommand } from '../../commands';
 
 @EventsHandler(HabitCompletedEvent)
 export class HabitCompletedQuestHandler implements IEventHandler<HabitCompletedEvent> {

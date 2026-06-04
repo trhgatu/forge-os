@@ -2,7 +2,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
 import { CreateFlowMomentDto } from '../../presentation/dto/create-flow-moment.dto';
-import { IncrementObjectiveProgressCommand } from '../../../../gamification/quests/application/commands/increment-objective-progress.command';
+import { IncrementObjectiveProgressCommand } from '../../../../gamification/quests/application/commands';
 
 @Injectable()
 export class EchoesService {

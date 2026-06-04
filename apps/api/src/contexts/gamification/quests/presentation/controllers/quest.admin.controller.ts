@@ -7,11 +7,14 @@ import { Permissions } from '@shared/decorators';
 import { PermissionEnum } from '@shared/enums';
 import { CreateQuestDto } from '../dto/create-quest.dto';
 import { UpdateQuestDto } from '../dto/update-quest.dto';
-import { CreateQuestCommand } from '../../application/commands/create-quest.command';
-import { UpdateQuestCommand } from '../../application/commands/update-quest.command';
-import { DeleteQuestCommand } from '../../application/commands/delete-quest.command';
-import { GetAllQuestsQuery } from '../../application/queries/get-all-quests.query';
-import { GetQuestByIdQuery } from '../../application/queries/get-quest-by-id.query';
+import {
+  CreateQuestCommand,
+  UpdateQuestCommand,
+  DeleteQuestCommand,
+} from '../../application/commands';
+import { GetAllQuestsQuery, GetQuestByIdQuery } from '../../application/queries';
+import { QuestPresenter } from '../presenters/quest.presenter';
+import { Quest } from '../../domain/quest.entity';
 
 @ApiTags('Evolution / Quests (Admin)')
 @ApiBearerAuth()
@@ -27,7 +30,7 @@ export class QuestAdminController {
   @Permissions(PermissionEnum.CREATE_QUEST)
   @ApiOperation({ summary: 'Create a global system quest' })
   async create(@Body() dto: CreateQuestDto) {
-    return this.commandBus.execute(
+    const quest = await this.commandBus.execute<CreateQuestCommand, Quest>(
       new CreateQuestCommand(
         null,
         dto.title,
@@ -37,27 +40,32 @@ export class QuestAdminController {
         dto.objectives,
       ),
     );
+    return QuestPresenter.toResponse(quest);
   }
 
   @Get()
   @Permissions(PermissionEnum.READ_QUEST)
   @ApiOperation({ summary: 'Get all system and custom quests' })
   async findAll(@Query('type') type?: string, @Query('isActive') isActive?: boolean) {
-    return this.queryBus.execute(new GetAllQuestsQuery(type, isActive));
+    const quests = await this.queryBus.execute<GetAllQuestsQuery, Quest[]>(
+      new GetAllQuestsQuery(type, isActive),
+    );
+    return QuestPresenter.toResponseArray(quests);
   }
 
   @Get(':id')
   @Permissions(PermissionEnum.READ_QUEST)
   @ApiOperation({ summary: 'Get a quest by ID' })
   async findOne(@Param('id') id: string) {
-    return this.queryBus.execute(new GetQuestByIdQuery(id));
+    const quest = await this.queryBus.execute<GetQuestByIdQuery, Quest>(new GetQuestByIdQuery(id));
+    return QuestPresenter.toResponse(quest);
   }
 
   @Put(':id')
   @Permissions(PermissionEnum.UPDATE_QUEST)
   @ApiOperation({ summary: 'Update a quest and its objectives' })
   async update(@Param('id') id: string, @Body() dto: UpdateQuestDto) {
-    return this.commandBus.execute(
+    const quest = await this.commandBus.execute<UpdateQuestCommand, Quest>(
       new UpdateQuestCommand(
         id,
         dto.title,
@@ -67,6 +75,7 @@ export class QuestAdminController {
         dto.objectives,
       ),
     );
+    return QuestPresenter.toResponse(quest);
   }
 
   @Delete(':id')

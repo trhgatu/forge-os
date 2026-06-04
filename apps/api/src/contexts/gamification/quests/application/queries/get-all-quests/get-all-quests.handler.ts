@@ -1,12 +1,6 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
+import { GetAllQuestsQuery } from './get-all-quests.query';
 import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
-
-export class GetAllQuestsQuery {
-  constructor(
-    public readonly type?: string,
-    public readonly isActive?: boolean,
-  ) {}
-}
 
 @QueryHandler(GetAllQuestsQuery)
 export class GetAllQuestsHandler implements IQueryHandler<GetAllQuestsQuery> {

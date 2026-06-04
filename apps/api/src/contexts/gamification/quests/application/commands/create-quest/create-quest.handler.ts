@@ -1,26 +1,8 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { QuestsRepository } from '../../domain/quests.repository';
-import { Quest, QuestObjective } from '../../domain/quest.entity';
+import { CreateQuestCommand } from './create-quest.command';
+import { QuestsRepository } from '../../../domain/quests.repository';
+import { Quest, QuestObjective } from '../../../domain/quest.entity';
 import { v4 as uuidv4 } from 'uuid';
-
-export interface ObjectiveInput {
-  id?: string;
-  type: string;
-  targetCount: number;
-  referenceType: string;
-  referenceId?: string | null;
-}
-
-export class CreateQuestCommand {
-  constructor(
-    public readonly userId: string | null,
-    public readonly title: string,
-    public readonly description: string | undefined,
-    public readonly type: string | undefined,
-    public readonly xpReward: number | undefined,
-    public readonly objectives: ObjectiveInput[],
-  ) {}
-}
 
 @CommandHandler(CreateQuestCommand)
 export class CreateQuestHandler implements ICommandHandler<CreateQuestCommand> {
