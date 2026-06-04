@@ -1,15 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { RoutinesRepository } from '../../domain/routines.repository';
+import { AddHabitToRoutineCommand } from './add-habit-to-routine.command';
+import { RoutinesRepository } from '../../../domain/routines.repository';
 import { NotFoundException } from '@nestjs/common';
-
-export class AddHabitToRoutineCommand {
-  constructor(
-    public readonly userId: string,
-    public readonly routineId: string,
-    public readonly habitId: string,
-    public readonly order: number,
-  ) {}
-}
 
 @CommandHandler(AddHabitToRoutineCommand)
 export class AddHabitToRoutineHandler implements ICommandHandler<AddHabitToRoutineCommand> {
