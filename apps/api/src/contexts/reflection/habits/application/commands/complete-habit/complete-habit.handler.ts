@@ -1,14 +1,8 @@
 import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
-import { HabitsRepository } from '../../domain/habits.repository';
-import { HabitCompletedEvent } from '../../domain/events/habit-completed.event';
+import { CompleteHabitCommand } from './complete-habit.command';
+import { HabitsRepository } from '../../../domain/habits.repository';
+import { HabitCompletedEvent } from '../../../domain/events/habit-completed.event';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
-
-export class CompleteHabitCommand {
-  constructor(
-    public readonly userId: string,
-    public readonly habitId: string,
-  ) {}
-}
 
 @CommandHandler(CompleteHabitCommand)
 export class CompleteHabitHandler implements ICommandHandler<CompleteHabitCommand> {

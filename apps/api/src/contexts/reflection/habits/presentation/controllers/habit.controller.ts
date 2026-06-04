@@ -4,9 +4,10 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../../../iam/auth/application/guards/jwt-auth.guard';
 import { User } from '@shared/decorators';
 import { CreateHabitDto } from '../dto/create-habit.dto';
-import { CreateHabitCommand } from '../../application/commands/create-habit.command';
-import { CompleteHabitCommand } from '../../application/commands/complete-habit.command';
-import { GetAllHabitsQuery } from '../../application/queries/get-all-habits.query';
+import { CreateHabitCommand, CompleteHabitCommand } from '../../application/commands';
+import { GetAllHabitsQuery } from '../../application/queries';
+import { HabitPresenter } from '../presenters/habit.presenter';
+import { Habit } from '../../domain/habit.entity';
 
 @ApiTags('Reflection / Habits')
 @ApiBearerAuth()
@@ -21,7 +22,7 @@ export class HabitController {
   @Post()
   @ApiOperation({ summary: 'Create a new habit' })
   async create(@Body() dto: CreateHabitDto, @User('id') userId: string) {
-    return this.commandBus.execute(
+    const habit = await this.commandBus.execute<CreateHabitCommand, Habit>(
       new CreateHabitCommand(
         userId,
         dto.title,
@@ -31,12 +32,16 @@ export class HabitController {
         dto.frequency,
       ),
     );
+    return HabitPresenter.toResponse(habit);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all active habits for the user' })
   async findAll(@User('id') userId: string) {
-    return this.queryBus.execute(new GetAllHabitsQuery(userId));
+    const habits = await this.queryBus.execute<GetAllHabitsQuery, Habit[]>(
+      new GetAllHabitsQuery(userId),
+    );
+    return HabitPresenter.toResponseArray(habits);
   }
 
   @Post(':id/complete')
