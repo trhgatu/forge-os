@@ -1,4 +1,4 @@
-import { Project } from '../domain/entities/project.entity';
+import { Project } from '../../domain/entities/project.entity';
 import {
   ProjectResponse,
   ProjectSummaryResponse,
@@ -6,7 +6,7 @@ import {
   GithubStatsResponse,
   ReadmeResponse,
   TaskBoardResponse,
-} from './dto';
+} from '../dto';
 
 export class ProjectPresenter {
   static toResponse(entity: Project): ProjectResponse {

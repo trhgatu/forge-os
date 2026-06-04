@@ -12,26 +12,31 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 
-import { GetAllProjectsQuery } from '../application/queries/get-all-projects.query';
-import { GetProjectByIdQuery } from '../application/queries/get-project-by-id.query';
+import {
+  GetAllProjectsQuery,
+  GetProjectByIdQuery,
+  GetGithubStatsQuery,
+  GetGithubReposQuery,
+} from '../application/queries';
 import { QueryProjectDto } from './dto/query-project.dto';
-import { GetGithubStatsQuery } from '../application/queries/get-github-stats.query';
-import { GetGithubReposQuery } from '../application/queries/get-github-repos.query';
-import { CreateProjectCommand } from '../application/commands/create-project.command';
-import { SyncProjectCommand } from '../application/commands/sync-project.command';
+import {
+  CreateProjectCommand,
+  SyncProjectCommand,
+  UpdateProjectCommand,
+  DeleteProjectCommand,
+} from '../application/commands';
 import { ProjectId } from '../domain/value-objects/project-id.vo';
 import { Project } from '../domain/entities/project.entity';
-import { UpdateProjectCommand } from '../application/commands/update-project.command';
 
 import { CreateProjectDto } from '../application/dtos/create-project.dto';
 import { UpdateProjectDto } from '../application/dtos/update-project.dto';
-import { DeleteProjectCommand } from '../application/commands/delete-project.command';
-import { ProjectPresenter } from './project.presenter';
+import { ProjectPresenter } from './presenters/project.presenter';
 import { Permissions, User } from '@shared/decorators';
 import { PermissionEnum } from '@shared/enums/permission.enum';
 import { JwtAuthGuard } from '../../../iam/auth/application/guards/jwt-auth.guard';
 import { PermissionsGuard } from '@shared/guards/permissions.guard';
 import { UseGuards } from '@nestjs/common';
+import { PaginatedResult } from '@shared/types/paginated-result';
 
 import { CacheInvalidate } from '@shared/decorators/cache-invalidate.decorator';
 
@@ -47,7 +52,13 @@ export class ProjectController {
   @Get()
   @Permissions(PermissionEnum.READ_PROJECT)
   async findAll(@Query() query: QueryProjectDto) {
-    return this.queryBus.execute(new GetAllProjectsQuery(query));
+    const result = (await this.queryBus.execute(
+      new GetAllProjectsQuery(query),
+    )) as PaginatedResult<Project>;
+    return {
+      meta: result.meta,
+      data: result.data.map((project) => ProjectPresenter.toResponse(project)),
+    };
   }
 
   @Get(':id')
@@ -59,6 +70,7 @@ export class ProjectController {
     const baseUrl = this.configService.get<string>('API_URL') || '/engineering';
     return ProjectPresenter.toSummaryResponse(project, baseUrl);
   }
+
   @Get(':id/github-stats')
   @Permissions(PermissionEnum.READ_PROJECT)
   async getProjectGithubStats(@Param('id') id: string) {

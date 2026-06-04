@@ -1,5 +1,5 @@
-import { ProjectId } from '../../domain/value-objects/project-id.vo';
-import { ProjectLink, ProjectTaskBoard } from '../../domain/project.interfaces';
+import { ProjectId } from '../../../domain/value-objects/project-id.vo';
+import { ProjectLink, ProjectTaskBoard } from '../../../domain/project.interfaces';
 
 export interface UpdateProjectPayload {
   title?: string;

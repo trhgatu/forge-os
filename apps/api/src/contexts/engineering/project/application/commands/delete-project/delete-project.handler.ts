@@ -1,12 +1,13 @@
 import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
-import { DeleteProjectCommand } from '../delete-project.command';
+import { DeleteProjectCommand } from './delete-project.command';
 import { Inject, NotFoundException } from '@nestjs/common';
-import { ProjectRepository } from '../../ports/project.repository';
+import { ProjectRepository } from '../../../domain/project.repository';
 import { LoggerService } from '@shared/logging/logger.service';
 import { ProjectModifiedEvent } from '../../events/project-modified.event';
+import { Project } from '../../../domain/entities/project.entity';
 
 @CommandHandler(DeleteProjectCommand)
-export class DeleteProjectHandler implements ICommandHandler<DeleteProjectCommand> {
+export class DeleteProjectHandler implements ICommandHandler<DeleteProjectCommand, Project> {
   constructor(
     @Inject('ProjectRepository')
     private readonly projectRepository: ProjectRepository,
@@ -14,7 +15,7 @@ export class DeleteProjectHandler implements ICommandHandler<DeleteProjectComman
     private readonly eventBus: EventBus,
   ) {}
 
-  async execute(command: DeleteProjectCommand): Promise<void> {
+  async execute(command: DeleteProjectCommand): Promise<Project> {
     const { id, userId } = command;
     const project = await this.projectRepository.findById(id);
 
@@ -32,6 +33,6 @@ export class DeleteProjectHandler implements ICommandHandler<DeleteProjectComman
 
     await this.eventBus.publish(new ProjectModifiedEvent(id, 'soft-delete', userId));
 
-    return;
+    return project;
   }
 }

@@ -2,7 +2,7 @@ import { IEventHandler, EventsHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { ACTIVITY_STREAM_PORT, IActivityStreamPort } from '@shared/ports/activity-stream.port';
 import { ProjectModifiedEvent } from '../../events/project-modified.event';
-import { ProjectRepository } from '../../../application/ports/project.repository';
+import { ProjectRepository } from '../../../domain/project.repository';
 import { LoggerService } from '@shared/logging';
 
 @EventsHandler(ProjectModifiedEvent)

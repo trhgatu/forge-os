@@ -1,7 +1,7 @@
-import { Project } from '../../domain/entities/project.entity';
-import { ProjectId } from '../../domain/value-objects/project-id.vo';
+import { Project } from './entities/project.entity';
+import { ProjectId } from './value-objects/project-id.vo';
 import { PaginatedResult } from '@shared/types/paginated-result';
-import { ProjectFilter } from '../queries/project-filter';
+import { ProjectFilter } from '../application/queries/project-filter';
 
 export abstract class ProjectRepository {
   abstract save(project: Project): Promise<void>;

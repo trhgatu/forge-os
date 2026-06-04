@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject, NotFoundException } from '@nestjs/common';
-import { SyncProjectCommand } from '../sync-project.command';
-import { ProjectRepository } from '../../ports/project.repository';
+import { SyncProjectCommand } from './sync-project.command';
+import { ProjectRepository } from '../../../domain/project.repository';
 import { GithubRepository } from '../../ports/github.repository';
 import { Project } from '../../../domain/entities/project.entity';
 import { LoggerService } from '@shared/logging/logger.service';
@@ -9,7 +9,7 @@ import { ACTIVITY_STREAM_PORT, IActivityStreamPort } from '@shared/ports/activit
 import { CacheService } from '@shared/services';
 
 @CommandHandler(SyncProjectCommand)
-export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand> {
+export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand, Project> {
   constructor(
     @Inject('ProjectRepository')
     private readonly projectRepository: ProjectRepository,

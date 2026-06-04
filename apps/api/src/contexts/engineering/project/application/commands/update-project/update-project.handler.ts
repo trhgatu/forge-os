@@ -1,12 +1,12 @@
 import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 import { Inject, NotFoundException } from '@nestjs/common';
-import { UpdateProjectCommand } from '../update-project.command';
-import { ProjectRepository } from '../../ports/project.repository';
+import { UpdateProjectCommand } from './update-project.command';
+import { ProjectRepository } from '../../../domain/project.repository';
 import { Project } from '../../../domain/entities/project.entity';
 import { ProjectModifiedEvent } from '../../events/project-modified.event';
 
 @CommandHandler(UpdateProjectCommand)
-export class UpdateProjectHandler implements ICommandHandler<UpdateProjectCommand> {
+export class UpdateProjectHandler implements ICommandHandler<UpdateProjectCommand, Project> {
   constructor(
     @Inject('ProjectRepository')
     private readonly projectRepository: ProjectRepository,

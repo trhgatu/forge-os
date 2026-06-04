@@ -1,11 +1,11 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { GetProjectByIdQuery } from '../get-project-by-id.query';
+import { GetProjectByIdQuery } from './get-project-by-id.query';
 import { Inject, NotFoundException } from '@nestjs/common';
-import { ProjectRepository } from '../../ports/project.repository';
+import { ProjectRepository } from '../../../domain/project.repository';
 import { Project } from '../../../domain/entities/project.entity';
 
 @QueryHandler(GetProjectByIdQuery)
-export class GetProjectByIdHandler implements IQueryHandler<GetProjectByIdQuery> {
+export class GetProjectByIdHandler implements IQueryHandler<GetProjectByIdQuery, Project> {
   constructor(
     @Inject('ProjectRepository')
     private readonly projectRepository: ProjectRepository,

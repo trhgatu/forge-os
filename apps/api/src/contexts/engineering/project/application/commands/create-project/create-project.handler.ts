@@ -1,10 +1,9 @@
 import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { CreateProjectCommand } from '../create-project.command';
-import { ProjectRepository } from '../../ports/project.repository';
+import { CreateProjectCommand } from './create-project.command';
+import { ProjectRepository } from '../../../domain/project.repository';
 import { Project } from '../../../domain/entities/project.entity';
 import { ProjectId } from '../../../domain/value-objects/project-id.vo';
-
 import { ProjectModifiedEvent } from '../../events/project-modified.event';
 import { LoggerService } from '@shared/logging';
 
