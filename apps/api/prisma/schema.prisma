@@ -160,6 +160,8 @@ model Journal {
   user      User?     @relation(fields: [userId], references: [id])
   isDeleted Boolean   @default(false)
   deletedAt DateTime?
+  createdBy String?
+  updatedBy String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
@@ -178,6 +180,8 @@ model Memory {
   deletedAt DateTime?
   userId    String?
   user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdBy String?
+  updatedBy String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
@@ -195,6 +199,8 @@ model Mood {
   deletedAt DateTime?
   userId    String?
   user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdBy String?
+  updatedBy String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
@@ -371,6 +377,8 @@ model Task {
   completedAt DateTime?
   isDeleted   Boolean   @default(false)
   deletedAt   DateTime?
+  createdBy   String?
+  updatedBy   String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 

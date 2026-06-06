@@ -23,18 +23,27 @@ export class GetTimelineHandler implements IQueryHandler<GetTimelineQuery> {
     ]);
 
     // Map and Tag
-    const memoryItems: TimelineResponse[] = memories.data.map((m: any) => ({
-      ...m,
-      type: 'memory',
-    }));
-    const journalItems: TimelineResponse[] = journals.data.map((j: any) => ({
-      ...j,
-      type: 'journal',
-    }));
-    const moodItems: TimelineResponse[] = moods.data.map((m: any) => ({
-      ...m,
-      type: 'mood',
-    }));
+    const memoryItems: TimelineResponse[] = memories.data.map((m: any) => {
+      const prims = typeof m.toPrimitives === 'function' ? m.toPrimitives(lang ?? 'en') : m;
+      return {
+        ...prims,
+        type: 'memory',
+      };
+    });
+    const journalItems: TimelineResponse[] = journals.data.map((j: any) => {
+      const prims = typeof j.toPrimitives === 'function' ? j.toPrimitives() : j;
+      return {
+        ...prims,
+        type: 'journal',
+      };
+    });
+    const moodItems: TimelineResponse[] = moods.data.map((m: any) => {
+      const prims = typeof m.toPrimitives === 'function' ? m.toPrimitives() : m;
+      return {
+        ...prims,
+        type: 'mood',
+      };
+    });
 
     // Combine
     const allItems = [...memoryItems, ...journalItems, ...moodItems];

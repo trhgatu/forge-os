@@ -42,14 +42,14 @@ export const getQuotes = async (
   limit = 20,
   filter?: QuoteFilter,
 ): Promise<PaginatedResponse<Quote>> => {
-  const res = await apiClient.get<BackendResponse<PaginatedResponse<QuoteDto>>>('/quotes', {
+  const res = await apiClient.get<BackendResponse<QuoteDto[]>>('/quotes', {
     params: { page, limit, ...filter },
   });
 
-  const paginated = res.data.data;
+  const { data = [], meta } = res.data as any;
   return {
-    ...paginated,
-    data: paginated.data.map(mapDtoToQuote),
+    meta: meta || { total: 0, page: 1, limit: 20, totalPages: 1 },
+    data: data.map(mapDtoToQuote),
   };
 };
 
