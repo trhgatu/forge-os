@@ -36,13 +36,14 @@ export class MoodAdminController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
+    private readonly presenter: MoodPresenter,
   ) {}
 
   @Post()
   @Permissions(PermissionEnum.CREATE_MOOD)
   async create(@Body() dto: CreateMoodDto, @User('id') userId: string) {
     const mood = (await this.commandBus.execute(new CreateMoodCommand({ ...dto, userId }))) as Mood;
-    return MoodPresenter.toResponse(mood);
+    return this.presenter.toResponse(mood);
   }
 
   @Get()
@@ -62,7 +63,7 @@ export class MoodAdminController {
 
     return {
       meta: result.meta,
-      data: result.data.map(MoodPresenter.toResponse),
+      data: result.data.map((m) => this.presenter.toResponse(m)),
     };
   }
 
@@ -70,7 +71,7 @@ export class MoodAdminController {
   @Permissions(PermissionEnum.READ_MOOD)
   async findById(@Param('id') id: string) {
     const mood: Mood = await this.queryBus.execute(new GetMoodByIdQuery(MoodId.create(id)));
-    return MoodPresenter.toResponse(mood);
+    return this.presenter.toResponse(mood);
   }
 
   @Patch(':id')
@@ -79,7 +80,7 @@ export class MoodAdminController {
     const mood = (await this.commandBus.execute(
       new UpdateMoodCommand(MoodId.create(id), { ...dto, userId }),
     )) as Mood;
-    return MoodPresenter.toResponse(mood);
+    return this.presenter.toResponse(mood);
   }
 
   @Delete(':id')

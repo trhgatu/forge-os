@@ -34,6 +34,7 @@ export class MemoryAdminController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
+    private readonly presenter: MemoryPresenter,
   ) {}
 
   @Post()
@@ -46,7 +47,7 @@ export class MemoryAdminController {
     const memory = (await this.commandBus.execute(
       new CreateMemoryCommand({ ...dto, userId }, lang ?? 'en'),
     )) as Memory;
-    return MemoryPresenter.toResponse(memory, lang ?? 'en');
+    return this.presenter.toResponse(memory, lang ?? 'en');
   }
 
   @Get()
@@ -66,7 +67,7 @@ export class MemoryAdminController {
 
     return {
       meta: result.meta,
-      data: result.data.map((m) => MemoryPresenter.toResponse(m, query.lang ?? 'en')),
+      data: result.data.map((m) => this.presenter.toResponse(m, query.lang ?? 'en')),
     };
   }
 
@@ -76,7 +77,7 @@ export class MemoryAdminController {
     const memory: Memory = await this.queryBus.execute(
       new GetMemoryByIdQuery(MemoryId.create(id), lang ?? 'en'),
     );
-    return MemoryPresenter.toResponse(memory, lang ?? 'en');
+    return this.presenter.toResponse(memory, lang ?? 'en');
   }
 
   @Patch(':id')
@@ -90,7 +91,7 @@ export class MemoryAdminController {
     const memory = (await this.commandBus.execute(
       new UpdateMemoryCommand(MemoryId.create(id), { ...dto, userId }, lang ?? 'en'),
     )) as Memory;
-    return MemoryPresenter.toResponse(memory, lang ?? 'en');
+    return this.presenter.toResponse(memory, lang ?? 'en');
   }
 
   @Delete(':id')
@@ -106,7 +107,7 @@ export class MemoryAdminController {
       return { success: true };
     }
     const memory = (await this.commandBus.execute(new SoftDeleteMemoryCommand(memoryId))) as Memory;
-    return MemoryPresenter.toResponse(memory, lang ?? 'en');
+    return this.presenter.toResponse(memory, lang ?? 'en');
   }
 
   @Patch(':id/restore')
@@ -115,6 +116,6 @@ export class MemoryAdminController {
     const memory = (await this.commandBus.execute(
       new RestoreMemoryCommand(MemoryId.create(id)),
     )) as Memory;
-    return MemoryPresenter.toResponse(memory, lang ?? 'en');
+    return this.presenter.toResponse(memory, lang ?? 'en');
   }
 }

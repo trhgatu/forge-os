@@ -16,6 +16,7 @@ export class TasksController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
+    private readonly presenter: TaskPresenter,
   ) {}
 
   @Post()
@@ -23,34 +24,34 @@ export class TasksController {
   @ApiResponse({ status: 201, description: 'Task successfully created' })
   async create(@Body() dto: CreateTaskDto, @User('id') userId: string) {
     const task = await this.commandBus.execute(new CreateTaskCommand(userId, dto));
-    return TaskPresenter.toResponse(task);
+    return this.presenter.toResponse(task);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all active tasks for current user' })
   async findAll(@User('id') userId: string) {
     const tasks = await this.queryBus.execute(new GetTasksQuery(userId));
-    return TaskPresenter.toResponseArray(tasks);
+    return this.presenter.toResponseArray(tasks);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a specific task by ID' })
   async findOne(@Param('id') id: string, @User('id') userId: string) {
     const task = await this.queryBus.execute(new GetTaskByIdQuery(userId, id));
-    return TaskPresenter.toResponse(task);
+    return this.presenter.toResponse(task);
   }
 
   @Put(':id')
   @ApiOperation({ summary: 'Update a specific task details or status' })
   async update(@Param('id') id: string, @Body() dto: UpdateTaskDto, @User('id') userId: string) {
     const task = await this.commandBus.execute(new UpdateTaskCommand(userId, id, dto));
-    return TaskPresenter.toResponse(task);
+    return this.presenter.toResponse(task);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Soft delete a task' })
   async remove(@Param('id') id: string, @User('id') userId: string) {
     const task = await this.commandBus.execute(new DeleteTaskCommand(userId, id));
-    return TaskPresenter.toResponse(task);
+    return this.presenter.toResponse(task);
   }
 }

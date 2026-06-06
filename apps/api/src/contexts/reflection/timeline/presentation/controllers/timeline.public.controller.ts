@@ -8,7 +8,10 @@ import { TimelineResponse } from '../dto/timeline.response';
 
 @Controller('timeline')
 export class TimelinePublicController {
-  constructor(private readonly queryBus: QueryBus) {}
+  constructor(
+    private readonly queryBus: QueryBus,
+    private readonly presenter: TimelinePresenter,
+  ) {}
 
   @Get()
   async getTimeline(@Query() query: QueryTimelineDto) {
@@ -16,6 +19,6 @@ export class TimelinePublicController {
       GetTimelineQuery,
       PaginatedResponse<TimelineResponse>
     >(new GetTimelineQuery(query));
-    return TimelinePresenter.toResponse(result);
+    return this.presenter.toResponse(result);
   }
 }

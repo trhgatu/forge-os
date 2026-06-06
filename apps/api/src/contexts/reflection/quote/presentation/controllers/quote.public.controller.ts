@@ -14,14 +14,17 @@ import { PaginatedResult } from '@shared/types/paginated-result';
 
 @Controller('quotes')
 export class QuotePublicController {
-  constructor(private readonly queryBus: QueryBus) {}
+  constructor(
+    private readonly queryBus: QueryBus,
+    private readonly presenter: QuotePresenter,
+  ) {}
 
   @Get('daily')
   async getDaily(@Query('lang') lang?: string) {
     const quote = (await this.queryBus.execute(
       new GetDailyQuoteQuery(lang ?? 'en'),
     )) as Quote | null;
-    return quote ? QuotePresenter.toResponse(quote, lang ?? 'en') : null;
+    return quote ? this.presenter.toResponse(quote, lang ?? 'en') : null;
   }
 
   @Get('random')
@@ -29,7 +32,7 @@ export class QuotePublicController {
     const quote = (await this.queryBus.execute(
       new GetRandomQuoteQuery(lang ?? 'en'),
     )) as Quote | null;
-    return quote ? QuotePresenter.toResponse(quote, lang ?? 'en') : null;
+    return quote ? this.presenter.toResponse(quote, lang ?? 'en') : null;
   }
 
   @Get()
@@ -39,7 +42,7 @@ export class QuotePublicController {
     );
     return {
       meta: result.meta,
-      data: result.data.map((q) => QuotePresenter.toResponse(q, lang ?? 'en')),
+      data: result.data.map((q) => this.presenter.toResponse(q, lang ?? 'en')),
     };
   }
 
@@ -48,6 +51,6 @@ export class QuotePublicController {
     const quote = (await this.queryBus.execute(
       new GetQuoteByIdForPublicQuery(QuoteId.create(id), lang ?? 'en'),
     )) as Quote;
-    return QuotePresenter.toResponse(quote, lang ?? 'en');
+    return this.presenter.toResponse(quote, lang ?? 'en');
   }
 }

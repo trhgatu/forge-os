@@ -1,8 +1,10 @@
+import { Injectable } from '@nestjs/common';
 import { PaginatedResponse } from '@shared/types';
 import { TimelineResponse } from '../dto/timeline.response';
 
+@Injectable()
 export class TimelinePresenter {
-  static toResponse(timelineData: PaginatedResponse<TimelineResponse>) {
+  toResponse(timelineData: PaginatedResponse<TimelineResponse>) {
     return {
       data: timelineData.data.map((item) => ({
         id: item.id,

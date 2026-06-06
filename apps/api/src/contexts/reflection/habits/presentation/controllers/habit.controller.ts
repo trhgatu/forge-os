@@ -17,6 +17,7 @@ export class HabitController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
+    private readonly presenter: HabitPresenter,
   ) {}
 
   @Post()
@@ -32,7 +33,7 @@ export class HabitController {
         dto.frequency,
       ),
     );
-    return HabitPresenter.toResponse(habit);
+    return this.presenter.toResponse(habit);
   }
 
   @Get()
@@ -41,7 +42,7 @@ export class HabitController {
     const habits = await this.queryBus.execute<GetAllHabitsQuery, Habit[]>(
       new GetAllHabitsQuery(userId),
     );
-    return HabitPresenter.toResponseArray(habits);
+    return this.presenter.toResponseArray(habits);
   }
 
   @Post(':id/complete')

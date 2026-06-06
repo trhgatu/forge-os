@@ -1,7 +1,9 @@
+import { Injectable } from '@nestjs/common';
 import { QuoteResponse } from '../dto/quote.response';
 
+@Injectable()
 export class QuotePresenter {
-  static toResponse(quote: any, lang: string): QuoteResponse {
+  toResponse(quote: any, lang: string): QuoteResponse {
     let contentStr = '';
     let author = quote.author;
     let source = quote.source;

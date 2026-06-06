@@ -9,6 +9,7 @@ import { MoodCommandHandlers } from './application/commands';
 import { MoodQueryHandlers } from './application/queries';
 import { SharedModule } from '@shared/shared.module';
 import { AuthModule } from '../../iam/auth/auth.module';
+import { MoodPresenter } from './presentation/presenters/mood.presenter';
 
 const CommandHandlers = MoodCommandHandlers;
 const QueryHandlers = MoodQueryHandlers;
@@ -26,9 +27,10 @@ const QueryHandlers = MoodQueryHandlers;
       useClass: PrismaMoodRepository,
     },
     MoodMapper,
+    MoodPresenter,
     ...CommandHandlers,
     ...QueryHandlers,
   ],
-  exports: [MoodRepository],
+  exports: [MoodRepository, 'MoodRepository'],
 })
 export class MoodModule {}

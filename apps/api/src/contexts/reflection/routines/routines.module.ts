@@ -8,6 +8,7 @@ import { RoutinesRepository } from './domain/routines.repository';
 import { PrismaRoutinesRepository } from './infrastructure/prisma-routines.repository';
 import { CommandHandlers } from './application/commands';
 import { QueryHandlers } from './application/queries';
+import { RoutinePresenter } from './presentation/presenters/routine.presenter';
 
 @Module({
   imports: [CqrsModule, PrismaModule, SharedModule, AuthModule],
@@ -17,9 +18,14 @@ import { QueryHandlers } from './application/queries';
       provide: RoutinesRepository,
       useClass: PrismaRoutinesRepository,
     },
+    {
+      provide: 'RoutinesRepository',
+      useClass: PrismaRoutinesRepository,
+    },
+    RoutinePresenter,
     ...CommandHandlers,
     ...QueryHandlers,
   ],
-  exports: [RoutinesRepository],
+  exports: [RoutinesRepository, 'RoutinesRepository'],
 })
 export class RoutinesModule {}

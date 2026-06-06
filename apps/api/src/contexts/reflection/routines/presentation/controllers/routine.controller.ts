@@ -18,6 +18,7 @@ export class RoutineController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
+    private readonly presenter: RoutinePresenter,
   ) {}
 
   @Post()
@@ -26,7 +27,7 @@ export class RoutineController {
     const routine = await this.commandBus.execute<CreateRoutineCommand, Routine>(
       new CreateRoutineCommand(userId, dto.title, dto.comboXp),
     );
-    return RoutinePresenter.toResponse(routine);
+    return this.presenter.toResponse(routine);
   }
 
   @Get()
@@ -35,7 +36,7 @@ export class RoutineController {
     const routines = await this.queryBus.execute<GetAllRoutinesQuery, Routine[]>(
       new GetAllRoutinesQuery(userId),
     );
-    return RoutinePresenter.toResponseArray(routines);
+    return this.presenter.toResponseArray(routines);
   }
 
   @Post(':id/habits')

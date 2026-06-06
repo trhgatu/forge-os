@@ -1,5 +1,8 @@
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
 export class TaskPresenter {
-  static toResponse(task: {
+  toResponse(task: {
     id: string;
     userId: string;
     title: string;
@@ -27,7 +30,7 @@ export class TaskPresenter {
     };
   }
 
-  static toResponseArray(tasks: any[]) {
+  toResponseArray(tasks: any[]) {
     return tasks.map((task) => this.toResponse(task));
   }
 }

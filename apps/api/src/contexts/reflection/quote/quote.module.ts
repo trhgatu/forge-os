@@ -9,6 +9,7 @@ import { QuoteCommandHandlers } from './application/commands';
 import { QuoteQueryHandlers } from './application/queries';
 import { QuoteEventHandlers } from './application/events';
 import { SharedModule } from '@shared/shared.module';
+import { QuotePresenter } from './presentation/presenters/quote.presenter';
 
 @Module({
   imports: [CqrsModule, SharedModule],
@@ -23,10 +24,11 @@ import { SharedModule } from '@shared/shared.module';
       useClass: PrismaQuoteRepository,
     },
     QuoteMapper,
+    QuotePresenter,
     ...QuoteCommandHandlers,
     ...QuoteQueryHandlers,
     ...QuoteEventHandlers,
   ],
-  exports: [QuoteRepository],
+  exports: [QuoteRepository, 'QuoteRepository'],
 })
 export class QuoteModule {}

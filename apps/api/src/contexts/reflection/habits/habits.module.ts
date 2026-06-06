@@ -8,6 +8,7 @@ import { HabitsRepository } from './domain/habits.repository';
 import { PrismaHabitsRepository } from './infrastructure/prisma-habits.repository';
 import { CommandHandlers } from './application/commands';
 import { QueryHandlers } from './application/queries';
+import { HabitPresenter } from './presentation/presenters/habit.presenter';
 
 @Module({
   imports: [CqrsModule, PrismaModule, SharedModule, AuthModule],
@@ -17,9 +18,14 @@ import { QueryHandlers } from './application/queries';
       provide: HabitsRepository,
       useClass: PrismaHabitsRepository,
     },
+    {
+      provide: 'HabitsRepository',
+      useClass: PrismaHabitsRepository,
+    },
+    HabitPresenter,
     ...CommandHandlers,
     ...QueryHandlers,
   ],
-  exports: [HabitsRepository],
+  exports: [HabitsRepository, 'HabitsRepository'],
 })
 export class HabitsModule {}

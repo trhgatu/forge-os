@@ -6,10 +6,11 @@ import { TasksController } from './presentation/tasks.controller';
 import { CommandHandlers } from './application/commands';
 import { QueryHandlers } from './application/queries';
 import { TaskEventHandlers } from './application/events';
+import { TaskPresenter } from './presentation/presenters/task.presenter';
 
 @Module({
   imports: [CqrsModule, PrismaModule, AuthModule],
   controllers: [TasksController],
-  providers: [...CommandHandlers, ...QueryHandlers, ...TaskEventHandlers],
+  providers: [TaskPresenter, ...CommandHandlers, ...QueryHandlers, ...TaskEventHandlers],
 })
 export class TasksModule {}

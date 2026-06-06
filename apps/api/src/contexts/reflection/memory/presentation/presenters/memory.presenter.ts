@@ -1,8 +1,10 @@
+import { Injectable } from '@nestjs/common';
 import { Memory } from '../../domain/memory.entity';
 import { MemoryResponse } from '../dto/memory.response';
 
+@Injectable()
 export class MemoryPresenter {
-  static toResponse(memory: Memory, lang: string): MemoryResponse {
+  toResponse(memory: Memory, lang: string): MemoryResponse {
     const props = memory.toPrimitives(lang);
 
     return {
@@ -17,5 +19,9 @@ export class MemoryPresenter {
       isDeleted: props.isDeleted,
       userId: props.userId,
     };
+  }
+
+  toResponseArray(memories: Memory[], lang: string): MemoryResponse[] {
+    return memories.map((m) => this.toResponse(m, lang));
   }
 }

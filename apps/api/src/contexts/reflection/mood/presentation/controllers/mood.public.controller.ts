@@ -9,7 +9,10 @@ import { PaginatedResult } from '@shared/types/paginated-result';
 
 @Controller('moods')
 export class MoodPublicController {
-  constructor(private readonly queryBus: QueryBus) {}
+  constructor(
+    private readonly queryBus: QueryBus,
+    private readonly presenter: MoodPresenter,
+  ) {}
 
   @Get()
   async findAll(@Query() query: QueryMoodDto) {
@@ -27,13 +30,13 @@ export class MoodPublicController {
 
     return {
       meta: result.meta,
-      data: result.data.map(MoodPresenter.toResponse),
+      data: result.data.map((m) => this.presenter.toResponse(m)),
     };
   }
 
   @Get(':id')
   async findById(@Param('id') id: string) {
     const mood: Mood = await this.queryBus.execute(new GetMoodByIdQuery(MoodId.create(id)));
-    return MoodPresenter.toResponse(mood);
+    return this.presenter.toResponse(mood);
   }
 }

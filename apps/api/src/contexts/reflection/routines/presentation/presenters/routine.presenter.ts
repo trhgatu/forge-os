@@ -1,7 +1,9 @@
+import { Injectable } from '@nestjs/common';
 import { Routine } from '../../domain/routine.entity';
 
+@Injectable()
 export class RoutinePresenter {
-  static toResponse(routine: Routine) {
+  toResponse(routine: Routine) {
     return {
       id: routine.id,
       userId: routine.userId,
@@ -19,7 +21,7 @@ export class RoutinePresenter {
     };
   }
 
-  static toResponseArray(routines: Routine[]) {
+  toResponseArray(routines: Routine[]) {
     return routines.map((routine) => this.toResponse(routine));
   }
 }

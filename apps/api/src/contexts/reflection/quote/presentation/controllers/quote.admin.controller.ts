@@ -34,6 +34,7 @@ export class QuoteAdminController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
+    private readonly presenter: QuotePresenter,
   ) {}
 
   @Post()
@@ -42,7 +43,7 @@ export class QuoteAdminController {
     const quote = (await this.commandBus.execute(
       new CreateQuoteCommand(dto, lang ?? 'en'),
     )) as Quote;
-    return QuotePresenter.toResponse(quote, lang ?? 'en');
+    return this.presenter.toResponse(quote, lang ?? 'en');
   }
 
   @Get()
@@ -53,7 +54,7 @@ export class QuoteAdminController {
     );
     return {
       meta: result.meta,
-      data: result.data.map((q) => QuotePresenter.toResponse(q, lang ?? 'en')),
+      data: result.data.map((q) => this.presenter.toResponse(q, lang ?? 'en')),
     };
   }
 
@@ -63,7 +64,7 @@ export class QuoteAdminController {
     const quote: Quote = await this.queryBus.execute(
       new GetQuoteByIdQuery(QuoteId.create(id), lang ?? 'en'),
     );
-    return QuotePresenter.toResponse(quote, lang ?? 'en');
+    return this.presenter.toResponse(quote, lang ?? 'en');
   }
 
   @Patch(':id')
@@ -72,7 +73,7 @@ export class QuoteAdminController {
     const quote = (await this.commandBus.execute(
       new UpdateQuoteCommand(QuoteId.create(id), dto, lang ?? 'en'),
     )) as Quote;
-    return QuotePresenter.toResponse(quote, lang ?? 'en');
+    return this.presenter.toResponse(quote, lang ?? 'en');
   }
 
   @Delete(':id')
@@ -90,7 +91,7 @@ export class QuoteAdminController {
     const quote = (await this.commandBus.execute(
       new SoftDeleteQuoteCommand(quoteId, lang ?? 'en'),
     )) as Quote;
-    return QuotePresenter.toResponse(quote, lang ?? 'en');
+    return this.presenter.toResponse(quote, lang ?? 'en');
   }
 
   @Patch(':id/restore')
@@ -99,6 +100,6 @@ export class QuoteAdminController {
     const quote = (await this.commandBus.execute(
       new RestoreQuoteCommand(QuoteId.create(id), lang ?? 'en'),
     )) as Quote;
-    return QuotePresenter.toResponse(quote, lang ?? 'en');
+    return this.presenter.toResponse(quote, lang ?? 'en');
   }
 }

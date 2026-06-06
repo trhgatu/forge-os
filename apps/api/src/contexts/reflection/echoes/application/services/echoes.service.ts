@@ -12,7 +12,7 @@ export class EchoesService {
   ) {}
 
   async syncMoment(userId: string, dto: CreateFlowMomentDto) {
-    const COOLDOWN_MS = 45 * 60 * 1000; // 45 minutes
+    const COOLDOWN_MS = 45 * 60 * 1000;
 
     const lastMoment = await this.prisma.flowMoment.findFirst({
       where: { userId },
