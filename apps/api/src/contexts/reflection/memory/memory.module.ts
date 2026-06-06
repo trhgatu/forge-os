@@ -9,6 +9,7 @@ import { MemoryCommandHandlers } from './application/commands';
 import { MemoryQueryHandlers } from './application/queries';
 import { MemoryEventHandlers } from './application/events';
 import { SharedModule } from '@shared/shared.module';
+import { MemoryPresenter } from './presentation/presenters/memory.presenter';
 
 @Module({
   imports: [CqrsModule, SharedModule],
@@ -23,10 +24,11 @@ import { SharedModule } from '@shared/shared.module';
       useClass: PrismaMemoryRepository,
     },
     MemoryMapper,
+    MemoryPresenter,
     ...MemoryCommandHandlers,
     ...MemoryQueryHandlers,
     ...MemoryEventHandlers,
   ],
-  exports: [MemoryRepository],
+  exports: [MemoryRepository, 'MemoryRepository'],
 })
 export class MemoryModule {}

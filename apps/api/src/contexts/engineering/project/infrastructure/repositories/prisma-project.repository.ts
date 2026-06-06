@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { ProjectRepository } from '../../application/ports/project.repository';
+import { ProjectRepository } from '../../domain/project.repository';
 import { Project as ProjectEntity } from '../../domain/entities/project.entity';
 import { ProjectId } from '../../domain/value-objects/project-id.vo';
 import { ProjectFilter } from '../../application/queries/project-filter';

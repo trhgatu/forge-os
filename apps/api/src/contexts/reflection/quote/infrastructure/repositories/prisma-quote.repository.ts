@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { QuoteRepository } from '../../application/ports/quote.repository';
+import { QuoteRepository } from '../../domain/quote.repository';
 import { Quote as QuoteEntity } from '../../domain/quote.entity';
 import { QuoteId } from '../../domain/value-objects/quote-id.vo';
 import { QuoteFilter } from '../../application/queries/quote-filter';

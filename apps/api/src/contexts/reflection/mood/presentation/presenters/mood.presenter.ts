@@ -1,8 +1,11 @@
+import { Injectable } from '@nestjs/common';
 import { MoodResponse } from '../dto/mood.response';
+import { Mood } from '../../domain/mood.entity';
 
+@Injectable()
 export class MoodPresenter {
-  static toResponse(mood: any): MoodResponse {
-    const data = typeof mood.toPrimitives === 'function' ? mood.toPrimitives() : mood;
+  toResponse(mood: Mood): MoodResponse {
+    const data = mood.toPrimitives();
 
     return {
       id: String(data.id),
@@ -16,9 +19,12 @@ export class MoodPresenter {
       updatedAt:
         data.updatedAt instanceof Date ? data.updatedAt.toISOString() : (data.updatedAt ?? ''),
       isDeleted: data.isDeleted,
-      deletedAt:
-        data.deletedAt instanceof Date ? data.deletedAt.toISOString() : (data.deletedAt ?? null),
+      deletedAt: data.deletedAt instanceof Date ? data.deletedAt.toISOString() : undefined,
       userId: data.userId,
     };
+  }
+
+  toResponseArray(moods: Mood[]): MoodResponse[] {
+    return moods.map((m) => this.toResponse(m));
   }
 }

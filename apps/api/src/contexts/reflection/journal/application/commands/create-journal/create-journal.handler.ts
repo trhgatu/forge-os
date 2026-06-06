@@ -42,7 +42,7 @@ export class CreateJournalHandler implements ICommandHandler<CreateJournalComman
 
     await this.cacheService.deleteByPattern('journals:*');
 
-    await this.eventBus.publish(new JournalCreatedEvent(journal.id));
+    await this.eventBus.publish(new JournalCreatedEvent(journal.id, journal.userId));
 
     return journal;
   }

@@ -21,6 +21,7 @@ export class MemoryPublicController {
   constructor(
     private readonly queryBus: QueryBus,
     private readonly commandBus: CommandBus,
+    private readonly presenter: MemoryPresenter,
   ) {}
 
   @Get()
@@ -39,7 +40,7 @@ export class MemoryPublicController {
 
     return {
       meta: result.meta,
-      data: result.data.map((m) => MemoryPresenter.toResponse(m, query.lang ?? 'en')),
+      data: result.data.map((m) => this.presenter.toResponse(m, query.lang ?? 'en')),
     };
   }
 
@@ -48,10 +49,9 @@ export class MemoryPublicController {
     const memory: Memory = await this.queryBus.execute(
       new GetMemoryByIdForPublicQuery(MemoryId.create(id), lang ?? 'en'),
     );
-    return MemoryPresenter.toResponse(memory, lang ?? 'en');
+    return this.presenter.toResponse(memory, lang ?? 'en');
   }
 
-  // Public create to support frontend without auth; can be moved behind guard later
   @Post()
   async create(
     @Body() dto: CreateMemoryDto,
@@ -61,7 +61,7 @@ export class MemoryPublicController {
     const memory = (await this.commandBus.execute(
       new CreateMemoryCommand({ ...dto, userId }, lang ?? 'en'),
     )) as Memory;
-    return MemoryPresenter.toResponse(memory, lang ?? 'en');
+    return this.presenter.toResponse(memory, lang ?? 'en');
   }
 
   @Put(':id')
@@ -74,7 +74,7 @@ export class MemoryPublicController {
     const memory = (await this.commandBus.execute(
       new UpdateMemoryCommand(MemoryId.create(id), { ...dto, userId }, lang ?? 'en'),
     )) as Memory;
-    return MemoryPresenter.toResponse(memory, lang ?? 'en');
+    return this.presenter.toResponse(memory, lang ?? 'en');
   }
 
   @Delete(':id')
@@ -82,6 +82,6 @@ export class MemoryPublicController {
     const memory = (await this.commandBus.execute(
       new SoftDeleteMemoryCommand(MemoryId.create(id)),
     )) as Memory;
-    return MemoryPresenter.toResponse(memory, lang ?? 'en');
+    return this.presenter.toResponse(memory, lang ?? 'en');
   }
 }

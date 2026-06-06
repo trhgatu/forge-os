@@ -24,6 +24,9 @@ import { JwtAuthGuard } from 'src/contexts/iam/auth/application/guards';
 import { PermissionsGuard } from '@shared/guards/permissions.guard';
 import { Permissions } from '@shared/decorators';
 import { PermissionEnum } from '@shared/enums';
+import { QuotePresenter } from '../presenters/quote.presenter';
+import { Quote } from '../../domain/quote.entity';
+import { PaginatedResult } from '@shared/types/paginated-result';
 
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 @Controller('admin/quotes')
@@ -31,44 +34,72 @@ export class QuoteAdminController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
+    private readonly presenter: QuotePresenter,
   ) {}
 
   @Post()
   @Permissions(PermissionEnum.CREATE_QUOTE)
-  create(@Body() dto: CreateQuoteDto) {
-    return this.commandBus.execute(new CreateQuoteCommand(dto));
+  async create(@Body() dto: CreateQuoteDto, @Query('lang') lang?: string) {
+    const quote = (await this.commandBus.execute(
+      new CreateQuoteCommand(dto, lang ?? 'en'),
+    )) as Quote;
+    return this.presenter.toResponse(quote, lang ?? 'en');
   }
 
   @Get()
   @Permissions(PermissionEnum.READ_QUOTE)
-  findAll(@Query() query: QueryQuoteDto, @Query('lang') lang?: string) {
-    return this.queryBus.execute(new GetAllQuotesQuery(query, lang));
+  async findAll(@Query() query: QueryQuoteDto, @Query('lang') lang?: string) {
+    const result: PaginatedResult<Quote> = await this.queryBus.execute(
+      new GetAllQuotesQuery(query, lang ?? 'en'),
+    );
+    return {
+      meta: result.meta,
+      data: result.data.map((q) => this.presenter.toResponse(q, lang ?? 'en')),
+    };
   }
 
   @Get(':id')
   @Permissions(PermissionEnum.READ_QUOTE)
-  findById(@Param('id') id: string, @Query('lang') lang?: string) {
-    return this.queryBus.execute(new GetQuoteByIdQuery(QuoteId.create(id), lang ?? 'en'));
+  async findById(@Param('id') id: string, @Query('lang') lang?: string) {
+    const quote: Quote = await this.queryBus.execute(
+      new GetQuoteByIdQuery(QuoteId.create(id), lang ?? 'en'),
+    );
+    return this.presenter.toResponse(quote, lang ?? 'en');
   }
 
   @Patch(':id')
   @Permissions(PermissionEnum.UPDATE_MEMORY)
-  update(@Param('id') id: string, @Body() dto: UpdateQuoteDto) {
-    return this.commandBus.execute(new UpdateQuoteCommand(QuoteId.create(id), dto));
+  async update(@Param('id') id: string, @Body() dto: UpdateQuoteDto, @Query('lang') lang?: string) {
+    const quote = (await this.commandBus.execute(
+      new UpdateQuoteCommand(QuoteId.create(id), dto, lang ?? 'en'),
+    )) as Quote;
+    return this.presenter.toResponse(quote, lang ?? 'en');
   }
 
   @Delete(':id')
   @Permissions(PermissionEnum.DELETE_MEMORY)
-  delete(@Param('id') id: string, @Query('hard') hard?: 'true') {
+  async delete(
+    @Param('id') id: string,
+    @Query('hard') hard?: 'true',
+    @Query('lang') lang?: string,
+  ) {
     const quoteId = QuoteId.create(id);
-    return hard === 'true'
-      ? this.commandBus.execute(new DeleteQuoteCommand(quoteId))
-      : this.commandBus.execute(new SoftDeleteQuoteCommand(quoteId));
+    if (hard === 'true') {
+      await this.commandBus.execute(new DeleteQuoteCommand(quoteId));
+      return { success: true };
+    }
+    const quote = (await this.commandBus.execute(
+      new SoftDeleteQuoteCommand(quoteId, lang ?? 'en'),
+    )) as Quote;
+    return this.presenter.toResponse(quote, lang ?? 'en');
   }
 
   @Patch(':id/restore')
   @Permissions(PermissionEnum.RESTORE_QUOTE)
-  restore(@Param('id') id: string) {
-    return this.commandBus.execute(new RestoreQuoteCommand(QuoteId.create(id)));
+  async restore(@Param('id') id: string, @Query('lang') lang?: string) {
+    const quote = (await this.commandBus.execute(
+      new RestoreQuoteCommand(QuoteId.create(id), lang ?? 'en'),
+    )) as Quote;
+    return this.presenter.toResponse(quote, lang ?? 'en');
   }
 }

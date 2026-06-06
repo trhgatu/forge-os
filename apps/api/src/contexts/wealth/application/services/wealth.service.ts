@@ -1,16 +1,15 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
 import { AssetType, ExpenseCategoryType } from '@prisma/client';
-import { EventBus, CommandBus } from '@nestjs/cqrs';
+import { EventBus } from '@nestjs/cqrs';
 import { TransactionCreatedEvent } from '../events/transaction-created.event';
-import { IncrementObjectiveProgressCommand } from '../../../gamification/quests/application/commands/increment-objective-progress.command';
+import { TransactionReflectionUpdatedEvent } from '../events/transaction-reflection-updated.event';
 
 @Injectable()
 export class WealthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly eventBus: EventBus,
-    private readonly commandBus: CommandBus,
   ) {}
   async createAccount(
     userId: string,
@@ -114,21 +113,15 @@ export class WealthService {
       return newTx;
     });
 
-    await this.eventBus.publish(new TransactionCreatedEvent(transaction.id));
+    await this.eventBus.publish(
+      new TransactionCreatedEvent(
+        transaction.id,
+        userId,
+        !!(data.reflection && data.reflection.trim().length > 0),
+      ),
+    );
 
-    // Gamification Integration & Quest Tracking
     try {
-      // 1. Trigger Quest Objective Progress on NestJS Command Bus
-      await this.commandBus.execute(
-        new IncrementObjectiveProgressCommand(userId, 'LOG_TRANSACTION', 1, transaction.id),
-      );
-
-      if (data.reflection && data.reflection.trim().length > 0) {
-        await this.commandBus.execute(
-          new IncrementObjectiveProgressCommand(userId, 'CREATE_REFLECTION', 1, transaction.id),
-        );
-      }
-
       // 2. Calibrate Core Character Attributes (Stoic Stat gains)
       let stats = await this.prisma.userStats.findUnique({ where: { userId } });
       if (!stats) {
@@ -350,14 +343,8 @@ export class WealthService {
       data: { reflection },
     });
 
-    // Trigger Quest Objective Progress on NestJS Command Bus
-    try {
-      await this.commandBus.execute(
-        new IncrementObjectiveProgressCommand(userId, 'CREATE_REFLECTION', 1, updatedTx.id),
-      );
-    } catch (objError) {
-      console.error('Failed to trigger quest progress for reflection:', objError);
-    }
+    // Publish TransactionReflectionUpdatedEvent to decouple wealth module from gamification quests
+    this.eventBus.publish(new TransactionReflectionUpdatedEvent(updatedTx.id, userId));
 
     // Calibrate Core Character Attributes (Stoic Stat gains)
     try {

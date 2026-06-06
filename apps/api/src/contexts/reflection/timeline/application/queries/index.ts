@@ -1,2 +1,2 @@
-export * from './get-timeline.handler';
-export * from './get-timeline.query';
+export * from './get-timeline/get-timeline.handler';
+export * from './get-timeline/get-timeline.query';

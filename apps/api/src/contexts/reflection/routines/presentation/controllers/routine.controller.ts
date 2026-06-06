@@ -5,9 +5,10 @@ import { JwtAuthGuard } from '../../../../iam/auth/application/guards/jwt-auth.g
 import { User } from '@shared/decorators';
 import { CreateRoutineDto } from '../dto/create-routine.dto';
 import { AddHabitToRoutineDto } from '../dto/add-habit-to-routine.dto';
-import { CreateRoutineCommand } from '../../application/commands/create-routine.command';
-import { AddHabitToRoutineCommand } from '../../application/commands/add-habit-to-routine.command';
-import { GetAllRoutinesQuery } from '../../application/queries/get-all-routines.query';
+import { CreateRoutineCommand, AddHabitToRoutineCommand } from '../../application/commands';
+import { GetAllRoutinesQuery } from '../../application/queries';
+import { RoutinePresenter } from '../presenters/routine.presenter';
+import { Routine } from '../../domain/routine.entity';
 
 @ApiTags('Reflection / Routines')
 @ApiBearerAuth()
@@ -17,18 +18,25 @@ export class RoutineController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
+    private readonly presenter: RoutinePresenter,
   ) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new routine ritual' })
   async create(@Body() dto: CreateRoutineDto, @User('id') userId: string) {
-    return this.commandBus.execute(new CreateRoutineCommand(userId, dto.title, dto.comboXp));
+    const routine = await this.commandBus.execute<CreateRoutineCommand, Routine>(
+      new CreateRoutineCommand(userId, dto.title, dto.comboXp),
+    );
+    return this.presenter.toResponse(routine);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all active routines for the user' })
   async findAll(@User('id') userId: string) {
-    return this.queryBus.execute(new GetAllRoutinesQuery(userId));
+    const routines = await this.queryBus.execute<GetAllRoutinesQuery, Routine[]>(
+      new GetAllRoutinesQuery(userId),
+    );
+    return this.presenter.toResponseArray(routines);
   }
 
   @Post(':id/habits')
