@@ -122,35 +122,6 @@ export function Quote() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex h-full flex-col bg-transparent text-white p-8 gap-6 animate-pulse">
-        {/* Header Skeleton */}
-        <div className="flex items-start justify-between mb-6">
-          <div className="flex-1 space-y-3">
-            <Skeleton variant="glowing" className="h-4 w-32 rounded-md" />
-            <Skeleton variant="glowing" className="h-12 w-48 rounded-md" />
-            <Skeleton variant="default" className="h-4 w-3/4 rounded-md" />
-          </div>
-          <div className="flex gap-2 mt-6">
-            <Skeleton variant="default" className="h-10 w-36 rounded-xl" />
-            <Skeleton variant="glowing" className="h-10 w-36 rounded-xl" />
-          </div>
-        </div>
-
-        {/* Hero Card Skeleton */}
-        <Skeleton variant="default" className="h-64 w-full rounded-[22px]" />
-
-        {/* Content Grid Skeleton */}
-        <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
-          <Skeleton variant="default" className="h-56 w-full rounded-xl" />
-          <Skeleton variant="default" className="h-72 w-full rounded-xl" />
-          <Skeleton variant="default" className="h-64 w-full rounded-xl" />
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="h-full w-full flex flex-col bg-transparent relative overflow-hidden animate-in fade-in duration-1000">
       {/* Background Ambience */}
@@ -301,23 +272,32 @@ export function Quote() {
 
           {/* Masonry Layout - Organic Waterfall */}
           <div className="px-6 py-8">
-            <div className="max-w-[1600px] mx-auto columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
-              {filteredQuotes.map((quote) => {
-                return (
-                  <div key={quote.id} className="break-inside-avoid">
-                    <QuoteCard
-                      quote={quote}
-                      onClick={() => setSelectedId(quote.id)}
-                      onToggleFav={(e) => handleToggleFav(e, quote.id)}
-                      onEdit={() => setEditingQuote(quote)}
-                      onDelete={() => handleDelete(quote.id)}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-
-            {filteredQuotes.length === 0 && (
+            {isLoading ? (
+              <div className="max-w-[1600px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <Skeleton variant="default" className="h-56 w-full rounded-xl" />
+                <Skeleton variant="default" className="h-72 w-full rounded-xl" />
+                <Skeleton variant="default" className="h-64 w-full rounded-xl" />
+                <Skeleton variant="default" className="h-64 w-full rounded-xl" />
+                <Skeleton variant="default" className="h-56 w-full rounded-xl" />
+                <Skeleton variant="default" className="h-72 w-full rounded-xl" />
+              </div>
+            ) : filteredQuotes.length > 0 ? (
+              <div className="max-w-[1600px] mx-auto columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
+                {filteredQuotes.map((quote) => {
+                  return (
+                    <div key={quote.id} className="break-inside-avoid">
+                      <QuoteCard
+                        quote={quote}
+                        onClick={() => setSelectedId(quote.id)}
+                        onToggleFav={(e) => handleToggleFav(e, quote.id)}
+                        onEdit={() => setEditingQuote(quote)}
+                        onDelete={() => handleDelete(quote.id)}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
               <div className="flex items-center justify-center py-20">
                 <div className="text-center">
                   <div className="w-16 h-16 mx-auto mb-4 rounded-full border-2 border-dashed border-white/10 flex items-center justify-center">

@@ -33,11 +33,11 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
             if (auditModels.has(model.toLowerCase())) {
               const userId = requestContext.get('userId');
               if (userId) {
-                args.data = {
+                (args as any).data = {
                   ...args.data,
                   createdBy: (args.data as any).createdBy || userId,
                   updatedBy: (args.data as any).updatedBy || userId,
-                } as any;
+                };
               }
             }
             return query(args);
@@ -46,11 +46,11 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
             if (auditModels.has(model.toLowerCase())) {
               const userId = requestContext.get('userId');
               if (userId && Array.isArray(args.data)) {
-                args.data = args.data.map((item: any) => ({
+                (args as any).data = args.data.map((item: any) => ({
                   ...item,
                   createdBy: item.createdBy || userId,
                   updatedBy: item.updatedBy || userId,
-                })) as any;
+                }));
               }
             }
             return query(args);
@@ -59,10 +59,10 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
             if (auditModels.has(model.toLowerCase())) {
               const userId = requestContext.get('userId');
               if (userId) {
-                args.data = {
+                (args as any).data = {
                   ...args.data,
                   updatedBy: (args.data as any).updatedBy || userId,
-                } as any;
+                };
               }
             }
             return query(args);
@@ -71,10 +71,10 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
             if (auditModels.has(model.toLowerCase())) {
               const userId = requestContext.get('userId');
               if (userId) {
-                args.data = {
+                (args as any).data = {
                   ...args.data,
                   updatedBy: (args.data as any).updatedBy || userId,
-                } as any;
+                };
               }
             }
             return query(args);

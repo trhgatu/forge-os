@@ -16,15 +16,7 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguageState] = useState<Language>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('forge-language');
-      if (saved === 'en' || saved === 'vi') {
-        return saved as Language;
-      }
-    }
-    return 'en';
-  });
+  const [language, setLanguageState] = useState<Language>('en');
 
   useEffect(() => {
     if (typeof window !== 'undefined') {

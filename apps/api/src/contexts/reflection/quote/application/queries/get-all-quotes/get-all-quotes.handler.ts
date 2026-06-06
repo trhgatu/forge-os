@@ -6,6 +6,7 @@ import { CacheService } from '@shared/services';
 import { PaginatedResult } from '@shared/types/paginated-result';
 import { Quote } from '../../../domain/quote.entity';
 import { QuoteCacheKeys } from '../../../infrastructure/cache/quote-cache.keys';
+import { QuoteMapper } from '../../../infrastructure/repositories/quote.mapper';
 
 @QueryHandler(GetAllQuotesQuery)
 export class GetAllQuotesHandler implements IQueryHandler<
@@ -24,12 +25,24 @@ export class GetAllQuotesHandler implements IQueryHandler<
 
     const cacheKey = QuoteCacheKeys.GET_ALL_ADMIN(page, limit, payload);
 
-    const cached = await this.cacheService.get<PaginatedResult<Quote>>(cacheKey);
-    if (cached) return cached;
+    const cached = await this.cacheService.get<PaginatedResult<any>>(cacheKey);
+    if (cached) {
+      return {
+        meta: cached.meta,
+        data: cached.data
+          .map((doc) => QuoteMapper.toDomain(doc))
+          .filter((q): q is Quote => q !== null),
+      };
+    }
 
     const quotes = await this.quoteRepo.findAll(payload);
 
-    await this.cacheService.set(cacheKey, quotes, 60);
+    const cacheData = {
+      meta: quotes.meta,
+      data: quotes.data.map((q) => QuoteMapper.toPersistence(q)),
+    };
+
+    await this.cacheService.set(cacheKey, cacheData, 60);
     return quotes;
   }
 }

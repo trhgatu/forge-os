@@ -12,7 +12,6 @@ export class QuoteSeeder {
     this.logger.log('Seeding quotes...');
 
     for (const quoteData of quotes) {
-      // Check if a quote with the same English content already exists
       const exists = await this.prisma.quote.findFirst({
         where: {
           content: {

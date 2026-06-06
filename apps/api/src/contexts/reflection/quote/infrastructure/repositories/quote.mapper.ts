@@ -34,6 +34,8 @@ export class QuoteMapper {
       status: props.status,
       isDeleted: props.isDeleted,
       deletedAt: props.deletedAt,
+      createdAt: props.createdAt,
+      updatedAt: props.updatedAt,
     };
   }
 }
