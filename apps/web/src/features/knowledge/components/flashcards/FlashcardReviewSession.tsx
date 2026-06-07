@@ -8,6 +8,7 @@ import { GlassCard } from '@/shared/components/ui/GlassCard';
 import { cn } from '@/shared/lib/utils';
 import { useFlashcardStore } from '@/shared/store/flashcardStore';
 import { Button } from '@/shared/components/ui';
+import { useDueFlashcards, useReviewFlashcard } from '../../hooks/useKnowledge';
 
 interface FlashcardReviewSessionProps {
   onClose: () => void;
@@ -15,8 +16,9 @@ interface FlashcardReviewSessionProps {
 
 export const FlashcardReviewSession: React.FC<FlashcardReviewSessionProps> = ({ onClose }) => {
   const { language, t } = useLanguage();
-  const dueCards = useFlashcardStore((state) => state.dueCards);
-  const submitReview = useFlashcardStore((state) => state.submitReview);
+  const activeDeckId = useFlashcardStore((state) => state.activeDeckId);
+  const { data: dueCards = [] } = useDueFlashcards(activeDeckId || undefined);
+  const reviewMutation = useReviewFlashcard();
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -115,7 +117,7 @@ export const FlashcardReviewSession: React.FC<FlashcardReviewSessionProps> = ({ 
     const latency = Math.round(performance.now() - cardStartTime);
 
     // 1. Submit review to backend (recalculates SM-2 parameters)
-    await submitReview(currentCard.id, rating, latency);
+    await reviewMutation.mutateAsync({ cardId: currentCard.id, rating, responseTimeMs: latency });
 
     // 2. Advance queue
     if (currentIndex < totalCards - 1) {

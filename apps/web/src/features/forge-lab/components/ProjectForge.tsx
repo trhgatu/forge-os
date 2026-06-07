@@ -2,7 +2,7 @@ import { Plus, Search, Filter, MoreHorizontal, Folder, Clock } from 'lucide-reac
 import React from 'react';
 
 import { GlassCard } from '@/shared/components/ui/GlassCard';
-import { Button, Input, Label, Tag } from '@/shared/components/ui';
+import { Button, Input, Label, Tag, Skeleton } from '@/shared/components/ui';
 
 import type { Project } from '../types';
 
@@ -16,6 +16,7 @@ interface ProjectForgeProps {
   onUpdateProject?: (id: string, data: Partial<Project>) => Promise<void>;
   onDeleteProject?: (id: string) => Promise<void>;
   onRequestCreate?: () => void;
+  isLoading?: boolean;
 }
 
 export const ProjectForge: React.FC<ProjectForgeProps> = ({
@@ -26,6 +27,7 @@ export const ProjectForge: React.FC<ProjectForgeProps> = ({
   onUpdateProject,
   onDeleteProject,
   onRequestCreate,
+  isLoading,
 }) => {
   if (activeProjectId) {
     return (
@@ -81,72 +83,98 @@ export const ProjectForge: React.FC<ProjectForgeProps> = ({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {projects.map((project) => (
-          <GlassCard
-            key={project.id}
-            className="group hover:border-white/20 flex flex-col h-full cursor-pointer"
-            onClick={() => setActiveProjectId(project.id)}
-          >
-            <div className="flex justify-between items-start mb-4">
-              <div className="p-3 rounded-xl bg-white/5 border border-white/5 text-gray-300 group-hover:text-white group-hover:bg-white/10 transition-colors">
-                <Folder size={20} />
+        {isLoading ? (
+          Array.from({ length: 5 }).map((_, i) => (
+            <GlassCard key={i} className="flex flex-col h-full space-y-4">
+              <div className="flex justify-between items-start">
+                <Skeleton className="w-12 h-12 rounded-xl" />
+                <Skeleton className="w-8 h-8 rounded-lg" />
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-gray-600 hover:text-white transition-colors h-8 w-8"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <MoreHorizontal size={16} />
-              </Button>
-            </div>
-
-            <Label
-              variant="default"
-              className="text-lg font-bold text-white mb-2 group-hover:text-forge-cyan transition-colors block"
+              <Skeleton className="w-40 h-6 animate-pulse" />
+              <div className="space-y-2 flex-1">
+                <Skeleton className="w-full h-4" />
+                <Skeleton className="w-5/6 h-4" />
+              </div>
+              <div className="flex gap-2">
+                <Skeleton className="w-16 h-5 rounded-full" />
+                <Skeleton className="w-12 h-5 rounded-full" />
+              </div>
+              <div className="pt-4 border-t border-white/5 flex items-center justify-between">
+                <Skeleton className="w-20 h-4" />
+                <Skeleton className="w-16 h-4" />
+              </div>
+            </GlassCard>
+          ))
+        ) : (
+          projects.map((project) => (
+            <GlassCard
+              key={project.id}
+              className="group hover:border-white/20 flex flex-col h-full cursor-pointer"
+              onClick={() => setActiveProjectId(project.id)}
             >
-              {project.title}
-            </Label>
-            <p className="text-sm text-gray-400 mb-6 line-clamp-2 flex-1 font-light leading-relaxed">{project.description}</p>
-
-            <div className="flex flex-wrap gap-2 mb-4">
-              {project.tags?.map((tag) => (
-                <Tag
-                  key={tag}
-                  variant="default"
-                  className="px-2.5 py-1 text-[10px] font-mono text-gray-400 border border-white/5 bg-white/5"
+              <div className="flex justify-between items-start mb-4">
+                <div className="p-3 rounded-xl bg-white/5 border border-white/5 text-gray-300 group-hover:text-white group-hover:bg-white/10 transition-colors">
+                  <Folder size={20} />
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-gray-600 hover:text-white transition-colors h-8 w-8"
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  {tag}
-                </Tag>
-              ))}
-            </div>
-
-            <div className="pt-4 border-t border-white/5 flex items-center justify-between text-xs text-gray-500">
-              <div className="flex items-center gap-1.5">
-                <div
-                  className={`w-1.5 h-1.5 rounded-full ${project.status === 'active' ? 'bg-forge-cyan shadow-[0_0_10px_rgba(6,182,212,0.3)] animate-pulse' : 'bg-gray-600'}`}
-                />
-                <span className="capitalize">{project.status}</span>
+                  <MoreHorizontal size={16} />
+                </Button>
               </div>
-              <div className="flex items-center gap-1.5">
-                <Clock size={12} />
-                <span>{project.updatedAt.toLocaleDateString()}</span>
-              </div>
-            </div>
-          </GlassCard>
-        ))}
 
-        <button
-          onClick={onRequestCreate}
-          className="group border border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center p-6 min-h-[250px] hover:bg-white/5 hover:border-white/20 transition-all cursor-pointer"
-        >
-          <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-            <Plus size={24} className="text-gray-500 group-hover:text-white" />
-          </div>
-          <span className="text-sm font-medium text-gray-500 group-hover:text-white">
-            Create New Project
-          </span>
-        </button>
+              <Label
+                variant="default"
+                className="text-lg font-bold text-white mb-2 group-hover:text-forge-cyan transition-colors block"
+              >
+                {project.title}
+              </Label>
+              <p className="text-sm text-gray-400 mb-6 line-clamp-2 flex-1 font-light leading-relaxed">{project.description}</p>
+
+              <div className="flex flex-wrap gap-2 mb-4">
+                {project.tags?.map((tag) => (
+                  <Tag
+                    key={tag}
+                    variant="default"
+                    className="px-2.5 py-1 text-[10px] font-mono text-gray-400 border border-white/5 bg-white/5"
+                  >
+                    {tag}
+                  </Tag>
+                ))}
+              </div>
+
+              <div className="pt-4 border-t border-white/5 flex items-center justify-between text-xs text-gray-500">
+                <div className="flex items-center gap-1.5">
+                  <div
+                    className={`w-1.5 h-1.5 rounded-full ${project.status === 'active' ? 'bg-forge-cyan shadow-[0_0_10px_rgba(6,182,212,0.3)] animate-pulse' : 'bg-gray-600'}`}
+                  />
+                  <span className="capitalize">{project.status}</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Clock size={12} />
+                  <span>{project.updatedAt.toLocaleDateString()}</span>
+                </div>
+              </div>
+            </GlassCard>
+          ))
+        )}
+
+        {!isLoading && (
+          <button
+            onClick={onRequestCreate}
+            className="group border border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center p-6 min-h-[250px] hover:bg-white/5 hover:border-white/20 transition-all cursor-pointer"
+          >
+            <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <Plus size={24} className="text-gray-500 group-hover:text-white" />
+            </div>
+            <span className="text-sm font-medium text-gray-500 group-hover:text-white">
+              Create New Project
+            </span>
+          </button>
+        )}
       </div>
     </div>
   );

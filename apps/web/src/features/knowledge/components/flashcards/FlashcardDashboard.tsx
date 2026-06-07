@@ -7,20 +7,25 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { WidgetShell, GlassCard, Button } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 import { useFlashcardStore } from '@/shared/store/flashcardStore';
+import {
+  useFlashcardDecks,
+  useDueFlashcards,
+  useCreateFlashcardDeck,
+  useDeleteFlashcardDeck
+} from '../../hooks/useKnowledge';
 
 import { FlashcardReviewSession } from './FlashcardReviewSession';
 
 export const FlashcardDashboard: React.FC = () => {
   const { language, t } = useLanguage();
-  const decks = useFlashcardStore((state) => state.decks);
-  const loadDecks = useFlashcardStore((state) => state.loadDecks);
-  const createDeck = useFlashcardStore((state) => state.createDeck);
-  const deleteDeck = useFlashcardStore((state) => state.deleteDeck);
-  const dueCards = useFlashcardStore((state) => state.dueCards);
-  const loadDueCards = useFlashcardStore((state) => state.loadDueCards);
+  const { data: decks = [], refetch: refetchDecks, isLoading: isLoadingDecks } = useFlashcardDecks();
+  const { data: dueCards = [], refetch: refetchDue } = useDueFlashcards();
+  const createDeckMutation = useCreateFlashcardDeck();
+  const deleteDeckMutation = useDeleteFlashcardDeck();
+
   const activeDeckId = useFlashcardStore((state) => state.activeDeckId);
   const setActiveDeck = useFlashcardStore((state) => state.setActiveDeck);
-  const isLoading = useFlashcardStore((state) => state.isLoading);
+  const isLoading = isLoadingDecks || createDeckMutation.isPending || deleteDeckMutation.isPending;
 
   const [isReviewing, setIsReviewing] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -29,20 +34,23 @@ export const FlashcardDashboard: React.FC = () => {
   const [newTheme, setNewTheme] = useState('from-indigo-600 to-cyan-500');
 
   useEffect(() => {
-    loadDecks();
-    loadDueCards(); // Loads globally due cards
+    refetchDecks();
+    refetchDue();
   }, []);
 
   const handleStartReview = async (deckId?: string) => {
     setActiveDeck(deckId || null);
-    await loadDueCards(deckId);
     setIsReviewing(true);
   };
 
   const handleCreateDeckSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTitle.trim()) return;
-    await createDeck(newTitle.trim(), newDesc.trim(), newTheme);
+    await createDeckMutation.mutateAsync({
+      title: newTitle.trim(),
+      description: newDesc.trim(),
+      colorTheme: newTheme
+    });
     setNewTitle('');
     setNewDesc('');
     setShowCreateModal(false);
@@ -60,8 +68,8 @@ export const FlashcardDashboard: React.FC = () => {
       <div className="w-full max-w-4xl mx-auto py-8">
         <FlashcardReviewSession onClose={() => {
           setIsReviewing(false);
-          loadDecks(); // reload decks to refresh counts
-          loadDueCards();
+          refetchDecks();
+          refetchDue();
         }} />
       </div>
     );
@@ -207,15 +215,13 @@ export const FlashcardDashboard: React.FC = () => {
                       </span>
 
                       <Button
-                        onClick={() => deleteDeck(deck.id)}
+                        onClick={() => deleteDeckMutation.mutate(deck.id)}
                         className="p-2.5 rounded-xl bg-white/5 hover:bg-red-500/20 text-white/50 hover:text-red-400 border border-white/5 hover:border-red-500/20 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 active:scale-90 cursor-pointer"
                         title={t('knowledge.delete_deck')}
                       >
                         <Trash2 size={14} />
                       </Button>
                     </div>
-
-                    {/* Body */}
                     <div className="space-y-1 mb-8 relative z-10">
                       <h3 className="text-xl font-bold text-white tracking-wide truncate">
                         {deck.title}

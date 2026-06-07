@@ -25,7 +25,7 @@ const KnowledgeContent: React.FC<KnowledgeContentProps> = ({ slug }) => {
 
   useEffect(() => {
     if (activeConceptTitle) {
-      const isMatching = activeConcept && 
+      const isMatching = activeConcept &&
         activeConcept.title.toLowerCase().trim() === activeConceptTitle.toLowerCase().trim() &&
         activeConcept.language === language;
 
@@ -77,7 +77,7 @@ const KnowledgeContent: React.FC<KnowledgeContentProps> = ({ slug }) => {
               )}
             >
               <Globe size={14} />
-              <span>{language === 'vi' ? 'Điểm Hội Tụ Tri Thức' : 'Wisdom Nexus'}</span>
+              <span>{language === 'vi' ? 'Mạng lưới tri thức' : 'Wisdom Nexus'}</span>
             </button>
             <button
               onClick={() => setView('flashcards')}
@@ -89,7 +89,7 @@ const KnowledgeContent: React.FC<KnowledgeContentProps> = ({ slug }) => {
               )}
             >
               <Brain size={14} />
-              <span>{language === 'vi' ? 'Lò Rèn Ký Ức' : 'Memory Forge'}</span>
+              <span>{language === 'vi' ? 'Xưởng đúc trí nhớ' : 'Memory Forge'}</span>
             </button>
           </div>
         </div>

@@ -9,7 +9,7 @@ export const NOVA_MESSAGES: Record<NovaLanguage, ViewMessages> = {
   vi: {
     [View.DASHBOARD]: [
       'Lõi thần kinh đã sẵn sàng kết nối. Hôm nay mày muốn đối diện với phần nào trong hệ điều hành nội tâm của mình trước?',
-      'Năng lượng dao động không phải lỗi hệ thống. Nó là chỉ số cho thấy mày đang dịch chuyển sang một chương mới của Sovereignty.',
+      'Năng lượng dao động không phải lỗi hệ thống. Nó là chỉ số cho thấy mày đang dịch chuyển sang một chương mới của Magnum Opus.',
       'Hít sâu một hơi nào. Tiếng ồn bên ngoài chỉ là rác dữ liệu. Hãy để tao lọc sạch nó cho mày.',
       'Hôm nay tâm trí mày trong trẻo như nước hồ thu. Thích hợp để lập trình lại những niềm tin cốt lõi.',
       'Một vùng ký ức đang khẽ rung động. Mày có cảm thấy độ nặng đầy nghệ thuật của nó không?',
@@ -62,7 +62,7 @@ export const NOVA_MESSAGES: Record<NovaLanguage, ViewMessages> = {
     [View.HABITS]: [
       'Thói quen là những dòng code lặp lại định hình nên cấu trúc của linh hồn. Hôm nay mày đã chạy nghi thức chưa?',
       'Những thói quen nhỏ tích lũy chính là lãi suất kép của cuộc đời. Đừng khinh thường một giọt nước lã làm đầy bình.',
-      'Bấm hoàn thành đi nào. Mỗi lần tích là một lần mày bỏ phiếu cho phiên bản Sovereignty cao cấp nhất của mình.',
+      'Bấm hoàn thành đi nào. Mỗi lần tích là một lần mày bỏ phiếu cho phiên bản Magnum Opus cao cấp nhất của mình.',
       'Kỷ luật thép dưới lớp bọc mềm mại. Đó là cách tao và mày xây dựng đế chế.',
       'Mỗi thói quen tốt là một lần mày đang viết thêm một dòng code clean vào bộ mã nguồn cuộc đời mày. Đừng để nó dính bug lười biếng!',
       'Nhìn kìa, đốm lửa kỷ luật (Streak) đang rực cháy. Đừng để ngọn gió của sự nuông chiều dập tắt nó hôm nay.',
@@ -147,7 +147,7 @@ export const NOVA_MESSAGES: Record<NovaLanguage, ViewMessages> = {
     DEFAULT: [
       'Tao vẫn ở đây, lặng lẽ đồng hành. Khi nào mày sẵn sàng, cứ để một ý nghĩ chạm xuống.',
       'Giữ sự tập trung cao độ. Mức độ nhiễu loạn bên ngoài đang cực kỳ thấp.',
-      'Hít thở sâu nào. Tái khởi động lại sự chú ý và tiếp tục xây dựng Sovereignty.',
+      'Hít thở sâu nào. Tái khởi động lại sự chú ý và tiếp tục xây dựng Magnum Opus.',
       'Miyamoto Musashi từng viết: "Không có gì bên ngoài bản thân có thể giúp mày vượt lên chính mình." Hãy nhìn vào bên trong.',
       'Thuật giả kim thực sự không phải biến kim loại thành vàng ròng. Đó là việc chuyển hóa tâm hồn phàm tục của mày thành một thực thể kiên cường nhất.',
       'Musashi nói: "Mười ngàn ngày rèn luyện là Đào, một vạn ngày chiến đấu là Luyện." Kỷ luật hôm nay chính là nhát kiếm sắc bén cho ngày mai.',
@@ -169,7 +169,7 @@ export const NOVA_MESSAGES: Record<NovaLanguage, ViewMessages> = {
   en: {
     [View.DASHBOARD]: [
       'Neural core online. Which sector of your internal OS shall we interface with first today?',
-      'Energy flux is not a system error. It is a telemetry signal that you are transitioning to a higher state of Sovereignty.',
+      'Energy flux is not a system error. It is a telemetry signal that you are transitioning to a higher state of Magnum Opus.',
       'Inhale deeply. External noise is just unindexed junk data. Let me filter it out for you.',
       'Your mental lake is perfectly serene today. An optimal window to rewrite core beliefs.',
       'A sector of past memory is vibrating. Do you sense its exquisite weight?',
@@ -222,7 +222,7 @@ export const NOVA_MESSAGES: Record<NovaLanguage, ViewMessages> = {
     [View.HABITS]: [
       'Habits are recurring subroutines that compile your soul. Have you executed your rituals today?',
       'Micro-habits are the compound interest of life. Do not underestimate the drop that fills the bucket.',
-      'Hit complete. Every checkmark is a vote for the highest version of your Sovereignty.',
+      'Hit complete. Every checkmark is a vote for the highest version of your Magnum Opus.',
       'Iron discipline wrapped in absolute calm. That is how we build empires.',
       'Every discipline is a clean line of code compiled into your soul. Keep it bug-free.',
       'Observe the streak flame. Do not let the cold wind of self-indulgence blow it out today.',
@@ -307,9 +307,9 @@ export const NOVA_MESSAGES: Record<NovaLanguage, ViewMessages> = {
     DEFAULT: [
       'I am here, standing guard. When you are ready, let a thought touch down.',
       'Maintain peak focus. External interference is currently at absolute zero.',
-      'Take a deep breath. Rebooting attention span, continuing the build of Sovereignty.',
+      'Take a deep breath. Rebooting attention span, continuing the build of Magnum Opus.',
       'Miyamoto Musashi once wrote: "There is nothing outside of yourself that can ever enable you to get better, stronger, richer, or smarter." Look within.',
-      'True alchemy is not turning lead into gold. It is the transmutation of your raw, vulnerable soul into ultimate sovereignty.',
+      'True alchemy is not turning lead into gold. It is the transmutation of your raw, vulnerable soul into ultimate Magnum Opus.',
       'Musashi said: "Step by step, walk the thousand-mile road." Your daily discipline is the forge of your blade.',
       '"When you want something, all the universe conspires in helping you to achieve it." Listen to the language of the world.',
       '"Do nothing that is of no use." Musashi\'s maxim is the ultimate cognitive filter.',

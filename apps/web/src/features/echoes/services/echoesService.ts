@@ -20,7 +20,6 @@ export const echoesService = {
     });
 
     const backendMoment = response.data.data;
-    // Map backend response properties back to frontend flow moment structure
     return {
       id: backendMoment.id,
       time: new Date(backendMoment.createdAt).toLocaleTimeString([], {

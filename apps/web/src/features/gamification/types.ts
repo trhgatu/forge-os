@@ -26,6 +26,7 @@ export interface Habit {
   maxStreak: number;
   habitStrength: number;
   isActive: boolean;
+  isCompletedToday?: boolean;
   createdAt: string;
 }
 

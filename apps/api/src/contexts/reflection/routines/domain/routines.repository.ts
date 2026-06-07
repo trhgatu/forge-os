@@ -6,4 +6,5 @@ export abstract class RoutinesRepository {
   abstract findAll(userId: string): Promise<Routine[]>;
   abstract addHabitToRoutine(routineId: string, habitId: string, order: number): Promise<void>;
   abstract removeHabitFromRoutine(routineId: string, habitId: string): Promise<void>;
+  abstract delete(id: string, userId: string): Promise<void>;
 }

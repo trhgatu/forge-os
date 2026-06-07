@@ -7,7 +7,7 @@ import { Button, Label, Input, EmptyState } from '@/shared/components/ui';
 import { GlassCard } from '@/shared/components/ui/GlassCard';
 import { cn } from '@/shared/lib/utils';
 
-import { useKnowledge } from '@/contexts';
+import { useSaveConcept } from '../../../hooks/useKnowledge';
 import { forgeToast } from '@/shared/lib/toast';
 
 interface AnvilTabProps {
@@ -20,8 +20,8 @@ export const AnvilTab: React.FC<AnvilTabProps> = ({ extracts = [], onRemoveExtra
   const [content, setContent] = useState('');
   const [title, setTitle] = useState('');
   const [isSaving, setIsSaving] = useState(false);
-  
-  const { saveConcept } = useKnowledge();
+
+  const saveConceptMutation = useSaveConcept();
 
   useEffect(() => {
     setTitle(t('knowledge.new_artifact'));
@@ -35,13 +35,11 @@ export const AnvilTab: React.FC<AnvilTabProps> = ({ extracts = [], onRemoveExtra
     
     setIsSaving(true);
     try {
-      await saveConcept({
-        id: `custom-${Date.now()}`,
+      await saveConceptMutation.mutateAsync({
         title,
+        sourceType: 'PERSONAL_NOTE',
         content,
         summary: content.length > 200 ? content.substring(0, 200) + '...' : content,
-        language: 'en',
-        createdAt: new Date().toISOString(),
       });
       
       forgeToast.system(

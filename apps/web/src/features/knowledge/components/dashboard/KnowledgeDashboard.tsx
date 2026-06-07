@@ -9,6 +9,7 @@ import { useKnowledge } from '@/contexts/KnowledgeContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { WidgetShell, Tag, Label } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
+import { useConcepts } from '../../hooks/useKnowledge';
 
 import { DiscoveredWidget } from './DiscoveredWidget';
 import { DiscoveryCarousel } from './DiscoveryCarousel';
@@ -17,14 +18,14 @@ import { StatsWidget } from './StatsWidget';
 
 export const KnowledgeDashboard: React.FC = () => {
   const router = useRouter();
-  const { history, savedConcepts, loadSavedConcepts } = useKnowledge();
+  const { history } = useKnowledge();
+  const { data: savedConcepts = [] } = useConcepts();
   const { t, language } = useLanguage();
   const [activeSector, setActiveSector] = useState<string | null>(null);
 
   useEffect(() => {
     setActiveSector(null);
-    loadSavedConcepts();
-  }, [loadSavedConcepts]);
+  }, []);
 
   const sectorList = language === 'vi'
     ? ['Công nghệ', 'Khoa học', 'Lịch sử', 'Triết học', 'Nghệ thuật', 'Vũ trụ']

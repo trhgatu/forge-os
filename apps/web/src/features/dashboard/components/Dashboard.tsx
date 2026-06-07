@@ -379,7 +379,7 @@ export const Dashboard: React.FC = () => {
       <div className="w-80 shrink-0 border-l border-white/5 bg-black/20 backdrop-blur-xl h-full flex-col overflow-hidden flex xl:flex">
         <div className="p-6 border-b border-white/5">
           <Label variant="default" className="text-sm font-display font-bold text-white uppercase tracking-wider flex items-center gap-2 block">
-            <Sparkles size={14} className="text-forge-accent" /> Daily Synthesis
+            Daily Synthesis
           </Label>
         </div>
 

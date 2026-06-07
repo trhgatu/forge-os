@@ -10,4 +10,5 @@ export abstract class HabitsRepository {
     habitId: string,
     dateStr: string,
   ): Promise<boolean>;
+  abstract deleteHabit(id: string, userId: string): Promise<void>;
 }
