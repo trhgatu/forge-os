@@ -1,7 +1,7 @@
 // features/nova/components/NovaGuide.tsx
 'use client';
 
-import { Bot, X } from 'lucide-react';
+import { Bot, X, Trophy } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useState, useEffect } from 'react';
 

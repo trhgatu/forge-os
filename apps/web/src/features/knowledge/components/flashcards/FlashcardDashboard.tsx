@@ -4,7 +4,7 @@ import { Layers, Plus, BookOpen, Trash2, Play, Brain, CheckCircle, Sparkles } fr
 import React, { useState, useEffect } from 'react';
 
 import { useLanguage } from '@/contexts/LanguageContext';
-import { WidgetShell, GlassCard } from '@/shared/components/ui';
+import { WidgetShell, GlassCard, Button } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 import { useFlashcardStore } from '@/shared/store/flashcardStore';
 
@@ -73,7 +73,7 @@ export const FlashcardDashboard: React.FC = () => {
       {/* 1. Header Section */}
       <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-xs font-mono text-forge-accent mb-2 backdrop-blur-md">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-xs font-mono text-forge-cyan mb-2 backdrop-blur-md">
             <Brain size={12} className="animate-pulse" /> {t('knowledge.protocol')}
           </div>
           <h1 className="text-3xl md:text-5xl font-display font-bold text-white tracking-tight">
@@ -86,13 +86,15 @@ export const FlashcardDashboard: React.FC = () => {
 
         {/* Global Study Button */}
         {dueCards.length > 0 ? (
-          <button
+          <Button
             onClick={() => handleStartReview()}
-            className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-forge-accent to-pink-600 text-white font-bold hover:shadow-[0_0_25px_rgba(236,72,153,0.3)] transition-all cursor-pointer hover:scale-105 active:scale-95 shrink-0"
+            variant="default"
+            size="lg"
+            className="flex items-center gap-2 shrink-0"
           >
             <Play size={18} fill="currentColor" />
             <span>{t('knowledge.review_all')} ({dueCards.length} {t('knowledge.cards').toLowerCase()})</span>
-          </button>
+          </Button>
         ) : (
           <div className="px-5 py-3 rounded-xl bg-white/5 border border-white/5 text-xs font-mono text-gray-500 flex items-center gap-2">
             <CheckCircle size={16} className="text-emerald-400" />
@@ -158,12 +160,12 @@ export const FlashcardDashboard: React.FC = () => {
               <p className="text-sm text-gray-500 max-w-sm mb-6">
                 {t('knowledge.no_decks_desc')}
               </p>
-              <button
+              <Button
                 onClick={() => setShowCreateModal(true)}
-                className="px-5 py-2.5 rounded-xl bg-white text-black font-bold hover:bg-gray-200 transition-all cursor-pointer shadow-md active:scale-95"
+                variant="default"
               >
                 {t('knowledge.create_deck')}
-              </button>
+              </Button>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -204,13 +206,13 @@ export const FlashcardDashboard: React.FC = () => {
                         <BookOpen size={16} />
                       </span>
 
-                      <button
+                      <Button
                         onClick={() => deleteDeck(deck.id)}
                         className="p-2.5 rounded-xl bg-white/5 hover:bg-red-500/20 text-white/50 hover:text-red-400 border border-white/5 hover:border-red-500/20 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 active:scale-90 cursor-pointer"
                         title={t('knowledge.delete_deck')}
                       >
                         <Trash2 size={14} />
-                      </button>
+                      </Button>
                     </div>
 
                     {/* Body */}
@@ -250,7 +252,7 @@ export const FlashcardDashboard: React.FC = () => {
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
           <GlassCard className="w-full max-w-md p-8 relative animate-in zoom-in-95 duration-200 bg-[#0e0e13]/90">
             <h3 className="text-xl font-display font-bold text-white mb-6 flex items-center gap-2">
-              <Sparkles size={18} className="text-forge-accent" /> {t('knowledge.create_deck_title')}
+              <Sparkles size={18} className="text-forge-cyan" /> {t('knowledge.create_deck_title')}
             </h3>
 
             <form onSubmit={handleCreateDeckSubmit} className="space-y-5">
@@ -305,19 +307,21 @@ export const FlashcardDashboard: React.FC = () => {
               </div>
 
               <div className="flex gap-3 pt-4">
-                <button
+                <Button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="flex-1 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all text-xs font-bold uppercase tracking-wider"
+                  variant="outline"
+                  className="flex-1"
                 >
                   {t('knowledge.cancel')}
-                </button>
-                <button
+                </Button>
+                <Button
                   type="submit"
-                  className="flex-1 py-3 rounded-xl bg-white text-black hover:bg-gray-200 transition-all text-xs font-bold uppercase tracking-wider"
+                  variant="default"
+                  className="flex-1"
                 >
                   {t('knowledge.create')}
-                </button>
+                </Button>
               </div>
             </form>
           </GlassCard>

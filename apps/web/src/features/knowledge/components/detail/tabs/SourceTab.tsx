@@ -225,8 +225,8 @@ export const SourceTab: React.FC<SourceTabProps> = ({
               className={cn(
                 'relative overflow-hidden flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-all active:scale-95 text-xs h-auto',
                 isForged
-                  ? 'bg-forge-accent text-white shadow-[0_0_15px_rgba(236,72,153,0.3)]'
-                  : 'bg-gradient-to-r from-pink-950/40 to-purple-950/40 hover:from-pink-950/60 hover:to-purple-950/60 text-pink-300 hover:text-white border border-pink-500/30'
+                  ? 'bg-forge-cyan text-black shadow-[0_0_15px_rgba(34,211,238,0.3)]'
+                  : 'bg-forge-cyan/10 hover:bg-forge-cyan/20 text-forge-cyan border border-forge-cyan/20'
               )}
             >
               {isForging ? (

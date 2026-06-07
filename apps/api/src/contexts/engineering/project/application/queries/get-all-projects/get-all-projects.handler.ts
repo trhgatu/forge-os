@@ -7,6 +7,8 @@ import { PaginatedResult } from '@shared/types/paginated-result';
 import { Project } from '../../../domain/entities/project.entity';
 import { ProjectCacheKeys } from '../../../infrastructure/cache/project-cache.keys';
 
+import { ProjectMapper } from '../../../infrastructure/repositories/project.mapper';
+
 @QueryHandler(GetAllProjectsQuery)
 export class GetAllProjectsHandler implements IQueryHandler<
   GetAllProjectsQuery,
@@ -25,12 +27,22 @@ export class GetAllProjectsHandler implements IQueryHandler<
     const version = await this.cacheService.getVersion('projects');
     const cacheKey = ProjectCacheKeys.GET_ALL_ADMIN(version, page, limit, payload);
 
-    return this.cacheService.wrap(
-      cacheKey,
-      async () => {
-        return this.projectRepository.findAll(payload);
-      },
-      60,
-    );
+    const cached = await this.cacheService.get<PaginatedResult<any>>(cacheKey);
+    if (cached) {
+      return {
+        meta: cached.meta,
+        data: cached.data.map((doc) => ProjectMapper.toDomain(doc)),
+      };
+    }
+
+    const result = await this.projectRepository.findAll(payload);
+
+    const cacheData = {
+      meta: result.meta,
+      data: result.data.map((p) => ProjectMapper.toPersistence(p)),
+    };
+
+    await this.cacheService.set(cacheKey, cacheData, 60);
+    return result;
   }
 }

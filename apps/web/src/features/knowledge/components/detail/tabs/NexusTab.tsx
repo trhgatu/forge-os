@@ -45,7 +45,7 @@ export const NexusTab: React.FC<NexusTabProps> = ({ concept }) => {
   ];
 
   const nodes: Node[] = [
-    { id: 'center', label: concept.title, x: centerX, y: centerY, color: '#a855f7', type: 'core' },
+    { id: 'center', label: concept.title, x: centerX, y: centerY, color: '#22d3ee', type: 'core' },
     { id: 'node1', label: relatedLabels[0], x: centerX - 220, y: centerY - 100, color: '#06b6d4', type: 'category' },
     { id: 'node2', label: relatedLabels[1], x: centerX + 220, y: centerY - 110, color: '#f43f5e', type: 'category' },
     { id: 'node3', label: relatedLabels[2], x: centerX - 180, y: centerY + 130, color: '#10b981', type: 'system' },
@@ -74,31 +74,32 @@ export const NexusTab: React.FC<NexusTabProps> = ({ concept }) => {
     return (
       <div className="min-h-[600px] flex items-center justify-center animate-in fade-in slide-in-from-bottom-4 duration-500 relative overflow-hidden">
         {/* Abstract cyber background lines */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(168,85,247,0.03),transparent_60%)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(34,211,238,0.03),transparent_60%)] pointer-events-none" />
         
         {isGenerating ? (
           <div className="flex flex-col items-center gap-4 text-center">
             <div className="relative">
-              <div className="absolute inset-0 rounded-full bg-purple-500/20 blur-xl animate-pulse" />
-              <Loader2 size={48} className="text-purple-400 animate-spin relative z-10" />
+              <div className="absolute inset-0 rounded-full bg-forge-cyan/20 blur-xl animate-pulse" />
+              <Loader2 size={48} className="text-forge-cyan animate-spin relative z-10" />
             </div>
-            <p className="text-xs font-mono tracking-widest text-purple-300 uppercase animate-pulse">
+            <p className="text-xs font-mono tracking-widest text-forge-cyan uppercase animate-pulse">
               {language === 'vi' ? 'Đang liên kết các sợi synapse tri thức...' : 'Aligning cognitive lore synapses...'}
             </p>
           </div>
         ) : (
           <EmptyState
-            icon={<Network size={32} className="text-purple-400 animate-pulse" />}
+            icon={<Network size={32} className="text-forge-cyan animate-pulse" />}
             title={t('knowledge.nexus_title')}
             description={t('knowledge.nexus_desc')}
-            glowColor="accent"
+            glowColor="cyan"
             size="lg"
             className="max-w-lg mx-auto bg-transparent border border-white/5 backdrop-blur-sm p-8 rounded-[32px]"
           >
             <Button 
               onClick={handleGenerate}
-              variant="glass" 
-              className="flex items-center gap-2 px-8 py-4 rounded-xl border border-purple-500/30 bg-purple-500/10 hover:bg-purple-500/20 text-white font-bold cursor-pointer transition-all shadow-[0_0_20px_rgba(168,85,247,0.15)] hover:shadow-[0_0_30px_rgba(168,85,247,0.3)] hover:scale-105 active:scale-95"
+              variant="default"
+              size="lg"
+              className="flex items-center gap-2"
             >
               <Share2 size={16} />
               <span>{t('knowledge.generate_graph')}</span>
@@ -111,13 +112,13 @@ export const NexusTab: React.FC<NexusTabProps> = ({ concept }) => {
 
   return (
     <div className="animate-in fade-in zoom-in-95 duration-500 min-h-[600px] flex flex-col gap-6">
-      <GlassCard className="flex-1 bg-[#050508]/80 border-purple-500/10 p-0 relative overflow-hidden flex flex-col items-center">
+      <GlassCard className="flex-1 bg-[#050508]/80 border-forge-cyan/10 p-0 relative overflow-hidden flex flex-col items-center">
         {/* Subtle grid pattern background */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none" />
         
         {/* Title Overlay */}
         <div className="absolute top-4 left-6 z-10 flex items-center gap-2">
-          <Brain size={16} className="text-purple-400 animate-pulse" />
+          <Brain size={16} className="text-forge-cyan animate-pulse" />
           <span className="text-xs font-mono tracking-widest text-gray-400 uppercase">
             {language === 'vi' ? 'MẠNG LƯỚI THẦN KINH KỶ NGUYÊN' : 'COGNITIVE LORE NETWORK SYNAPSE'}
           </span>
@@ -131,8 +132,8 @@ export const NexusTab: React.FC<NexusTabProps> = ({ concept }) => {
           {/* Defs for gradients & filters */}
           <defs>
             <radialGradient id="glow-grad" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#a855f7" stopOpacity="0.15" />
-              <stop offset="100%" stopColor="#a855f7" stopOpacity="0" />
+              <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.15" />
+              <stop offset="100%" stopColor="#22d3ee" stopOpacity="0" />
             </radialGradient>
             
             {/* Soft filter for nodes */}
@@ -230,7 +231,7 @@ export const NexusTab: React.FC<NexusTabProps> = ({ concept }) => {
                 {/* Inner Icon or Dot */}
                 {isCenter ? (
                   <g transform="translate(-10, -10)">
-                    <Brain size={20} className="text-purple-400 animate-pulse" />
+                    <Brain size={20} className="text-forge-cyan animate-pulse" />
                   </g>
                 ) : (
                   <circle
@@ -253,7 +254,7 @@ export const NexusTab: React.FC<NexusTabProps> = ({ concept }) => {
                       className={cn(
                         "text-xs px-2.5 py-1 rounded-lg backdrop-blur-md transition-all duration-300 font-medium",
                         isCenter 
-                          ? "bg-purple-950/40 text-purple-200 border border-purple-500/20 text-sm font-bold tracking-wide" 
+                          ? "bg-cyan-950/40 text-cyan-200 border border-forge-cyan/20 text-sm font-bold tracking-wide" 
                           : "bg-black/60 text-gray-300 border border-white/5",
                         isHovered && "scale-105 border-forge-cyan/30 text-white font-semibold"
                       )}

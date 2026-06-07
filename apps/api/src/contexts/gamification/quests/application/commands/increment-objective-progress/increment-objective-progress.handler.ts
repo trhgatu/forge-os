@@ -89,6 +89,7 @@ export class IncrementObjectiveProgressHandler implements ICommandHandler<Increm
                 case 'COMPLETE_TASK':
                 case 'COMPLETE_ROUTINE':
                 case 'LOG_TRANSACTION':
+                case 'SYNC_PROJECT':
                   statsToUpgrade.discipline = (statsToUpgrade.discipline || 0) + 2;
                   break;
                 case 'COMPLETE_HABIT':

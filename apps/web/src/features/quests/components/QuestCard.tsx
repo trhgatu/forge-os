@@ -9,6 +9,11 @@ import {
   BookOpen,
   Repeat,
   Award,
+  GitBranch,
+  Coins,
+  Layers,
+  Brain,
+  Sparkles,
 } from 'lucide-react';
 
 import { useSound } from '@/contexts';
@@ -119,6 +124,18 @@ export function QuestCard({ quest, onEdit, onDelete }: QuestCardProps) {
                     <BookOpen className="w-3.5 h-3.5 text-forge-cyan" />
                   ) : obj.type === 'CHECK_HABIT' ? (
                     <Repeat className="w-3.5 h-3.5 text-amber-400" />
+                  ) : obj.type === 'SYNC_PROJECT' ? (
+                    <GitBranch className="w-3.5 h-3.5 text-cyan-400" />
+                  ) : obj.type === 'COMPLETE_ROUTINE' ? (
+                    <Clock className="w-3.5 h-3.5 text-purple-400" />
+                  ) : obj.type === 'STUDY_CONCEPT' ? (
+                    <Brain className="w-3.5 h-3.5 text-forge-cyan" />
+                  ) : obj.type === 'REVIEW_FLASHCARD' ? (
+                    <Layers className="w-3.5 h-3.5 text-orange-400" />
+                  ) : obj.type === 'LOG_TRANSACTION' ? (
+                    <Coins className="w-3.5 h-3.5 text-yellow-400" />
+                  ) : obj.type === 'CREATE_REFLECTION' ? (
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
                   ) : (
                     <Award className="w-3.5 h-3.5 text-emerald-400" />
                   )}
@@ -127,7 +144,19 @@ export function QuestCard({ quest, onEdit, onDelete }: QuestCardProps) {
                       ? 'Write Journal Page'
                       : obj.type === 'CHECK_HABIT'
                         ? 'Complete Habit target'
-                        : 'Log Memory Node'}
+                        : obj.type === 'SYNC_PROJECT'
+                          ? 'Sync GitHub Project'
+                          : obj.type === 'COMPLETE_ROUTINE'
+                            ? 'Complete Routine Session'
+                            : obj.type === 'STUDY_CONCEPT'
+                              ? 'Study Knowledge Concept'
+                              : obj.type === 'REVIEW_FLASHCARD'
+                                ? 'Review Spaced Flashcards'
+                                : obj.type === 'LOG_TRANSACTION'
+                                  ? 'Log Wealth Transaction'
+                                  : obj.type === 'CREATE_REFLECTION'
+                                    ? 'Create Wealth Reflection'
+                                    : 'Create Memory Node'}
                   </span>
                 </div>
                 <span className="font-mono text-gray-500 text-[10px]">
