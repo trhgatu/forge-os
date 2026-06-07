@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import { useSound, useNovaView } from '@/contexts';
 import { gamificationApi } from '@/features/gamification/services/gamificationApi';
 import type { Habit } from '@/features/gamification/types';
-import { Button, Label, EmptyState, Skeleton } from '@/shared/components/ui';
+import { Button, Label, EmptyState, Skeleton, Pagination } from '@/shared/components/ui';
 import { View } from '@/shared/types/os';
 
 import {
@@ -35,6 +35,8 @@ export function QuestsManagement() {
   const [habits, setHabits] = useState<Habit[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<CategoryType>('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
 
   // Mutation Hooks
   const createQuestMutation = useCreateQuest();
@@ -125,6 +127,19 @@ export function QuestsManagement() {
     });
   }, [quests, searchQuery, activeCategory]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeCategory, searchQuery]);
+
+  const totalPages = useMemo(() => {
+    return Math.ceil(filteredQuests.length / itemsPerPage);
+  }, [filteredQuests, itemsPerPage]);
+
+  const paginatedQuests = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredQuests.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredQuests, currentPage, itemsPerPage]);
+
   return (
     <div className="h-full flex flex-col bg-transparent text-white relative overflow-hidden animate-in fade-in duration-1000 font-sans">
       <div className="flex-1 overflow-y-auto scrollbar-hide relative z-10 p-6 md:p-10 pb-32">
@@ -159,36 +174,46 @@ export function QuestsManagement() {
             </Button>
           </header>
 
-          {/* Sidebar & Content Layout Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            {/* Sidebar / Categories Filter */}
-            <QuestSidebar
-              quests={quests}
-              activeCategory={activeCategory}
-              onCategoryChange={setActiveCategory}
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-            />
+          {/* Top Categories Filter & Search */}
+          <QuestSidebar
+            quests={quests}
+            activeCategory={activeCategory}
+            onCategoryChange={setActiveCategory}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+          />
 
-            {/* Content Cards Grid */}
-            <div className="lg:col-span-3">
-              {isLoading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-pulse">
-                  {[1, 2, 4].map((i) => (
-                    <Skeleton key={i} variant="glowing" className="h-64 rounded-3xl" />
-                  ))}
-                </div>
-              ) : filteredQuests.length === 0 ? (
-                <EmptyState
-                  title="Chưa Có Nhiệm Vụ Nào"
-                  description="Không tìm thấy nhiệm vụ nào phù hợp với yêu cầu. Hãy thiết lập các sứ mệnh stoic mới từ thanh danh mục bên cạnh để rèn luyện thói quen kỷ luật."
-                  glowColor="cyan"
-                  size="lg"
-                  className="bg-transparent border border-dashed border-white/5 py-20 rounded-3xl"
-                />
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {filteredQuests.map((quest) => (
+
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => {
+              playSound('click');
+              setCurrentPage(page);
+            }}
+            className="pt-0 border-t-0 pb-4 border-b border-white/5"
+          />
+
+          {/* Content Cards Grid */}
+          <div className="w-full mt-6">
+            {isLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
+                {[1, 2, 4].map((i) => (
+                  <Skeleton key={i} variant="glowing" className="h-64 rounded-3xl" />
+                ))}
+              </div>
+            ) : filteredQuests.length === 0 ? (
+              <EmptyState
+                title="Chưa Có Nhiệm Vụ Nào"
+                description="Không tìm thấy nhiệm vụ nào phù hợp với yêu cầu. Hãy thiết lập các sứ mệnh stoic mới từ thanh danh mục bên cạnh để rèn luyện thói quen kỷ luật."
+                glowColor="cyan"
+                size="lg"
+                className="bg-transparent border border-dashed border-white/5 py-20 rounded-3xl"
+              />
+            ) : (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {paginatedQuests.map((quest) => (
                     <QuestCard
                       key={quest.id}
                       quest={quest}
@@ -197,13 +222,11 @@ export function QuestsManagement() {
                     />
                   ))}
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
-
-      {/* 🚀 Create / Edit Quest Modal */}
       <QuestModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

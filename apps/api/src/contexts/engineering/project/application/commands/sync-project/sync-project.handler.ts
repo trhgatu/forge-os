@@ -1,4 +1,4 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 import { Inject, NotFoundException } from '@nestjs/common';
 import { SyncProjectCommand } from './sync-project.command';
 import { ProjectRepository } from '../../../domain/project.repository';
@@ -7,6 +7,7 @@ import { Project } from '../../../domain/entities/project.entity';
 import { LoggerService } from '@shared/logging/logger.service';
 import { ACTIVITY_STREAM_PORT, IActivityStreamPort } from '@shared/ports/activity-stream.port';
 import { CacheService } from '@shared/services';
+import { ProjectSyncedEvent } from '../../events/project-synced.event';
 
 @CommandHandler(SyncProjectCommand)
 export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand, Project> {
@@ -19,6 +20,7 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand, P
     private readonly activityStream: IActivityStreamPort,
     private readonly logger: LoggerService,
     private readonly cacheService: CacheService,
+    private readonly eventBus: EventBus,
   ) {}
 
   async execute(command: SyncProjectCommand): Promise<Project> {
@@ -74,6 +76,8 @@ export class SyncProjectHandler implements ICommandHandler<SyncProjectCommand, P
       });
       await this.projectRepository.save(project);
       await this.cacheService.deleteByPattern('projects:*');
+
+      await this.eventBus.publish(new ProjectSyncedEvent(project.id, userId));
 
       await this.activityStream.emit('engineering.project.synced', userId, {
         id: payload.id.toString(),

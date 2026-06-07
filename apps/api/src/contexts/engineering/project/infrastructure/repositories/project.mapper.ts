@@ -43,6 +43,8 @@ export class ProjectMapper {
       userId: props.userId || null,
       isDeleted: props.isDeleted,
       deletedAt: props.deletedAt,
+      createdAt: props.createdAt,
+      updatedAt: props.updatedAt,
     };
   }
 }

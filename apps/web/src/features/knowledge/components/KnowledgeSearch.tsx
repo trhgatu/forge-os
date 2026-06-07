@@ -62,7 +62,7 @@ export const KnowledgeSearch: React.FC = () => {
         {/* Glow */}
         <div
           className={cn(
-            'absolute -inset-0.5 bg-linear-to-r from-forge-cyan via-purple-500 to-forge-accent rounded-2xl opacity-20 blur-md transition-all',
+            'absolute -inset-0.5 bg-linear-to-r from-forge-cyan via-cyan-400 to-forge-accent rounded-2xl opacity-20 blur-md transition-all',
             isFocused ? 'opacity-60 blur-xl' : '',
           )}
         />

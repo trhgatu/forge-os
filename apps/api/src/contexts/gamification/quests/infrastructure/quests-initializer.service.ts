@@ -18,6 +18,7 @@ export class QuestsInitializer implements OnApplicationBootstrap {
       const q6Id = 'quest-daily-spaced-review';
       const q7Id = 'quest-daily-wealth-ledger';
       const q8Id = 'quest-daily-wealth-reflection';
+      const q9Id = 'quest-daily-git-sync';
       const metaQId = 'quest-daily-meta-alignment';
 
       // Helper function to seed or update a quest with its objective(s)
@@ -250,6 +251,23 @@ export class QuestsInitializer implements OnApplicationBootstrap {
             type: 'CREATE_REFLECTION',
             targetCount: 1,
             referenceType: 'FinancialTransaction',
+          },
+        ],
+      });
+
+      // 10. Daily Git Sync Quest
+      await upsertQuest({
+        id: q9Id,
+        title: 'Dòng chảy mã nguồn',
+        description: 'Đồng bộ hóa dự án với GitHub ít nhất một lần để duy trì kỷ luật làm việc',
+        type: 'daily',
+        xpReward: 20,
+        objectives: [
+          {
+            id: 'obj-daily-git-sync',
+            type: 'SYNC_PROJECT',
+            targetCount: 1,
+            referenceType: 'Project',
           },
         ],
       });

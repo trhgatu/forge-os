@@ -4,9 +4,9 @@ import { GithubSyncPayload } from '../contracts/xp-payloads';
 
 @XpStrategy('engineering.project.synced')
 export class GithubSyncXpStrategy implements IXpStrategy<GithubSyncPayload> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   calculate(payload: GithubSyncPayload) {
-    const commits = payload?.commitCount ?? 0;
-    return commits * 5;
+    return 0; // Disabled direct XP to prevent inflation; Git Sync is now a Quest.
   }
 
   getDescription(payload: GithubSyncPayload) {

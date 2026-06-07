@@ -412,27 +412,25 @@ export const SensoryEchoes: React.FC = () => {
               onComplete: () => {
                 setLineToDraw(null);
                 setIsFlowActive(false);
-
-                // Start 45-minute flow cooldown focus period
                 const cdDurationMs = 45 * 60 * 1000;
                 const end = Date.now() + cdDurationMs;
                 if (typeof window !== 'undefined') {
                   localStorage.setItem('forge_flow_cooldown_end', end.toString());
                 }
                 setCooldownEnd(end);
-                setCooldownSecondsLeft(45 * 60);
+                setCooldownSecondsLeft(5);
               },
             }
           );
         } else {
           setIsFlowActive(false);
-          const cdDurationMs = 45 * 60 * 1000;
+          const cdDurationMs = 5 * 1000;
           const end = Date.now() + cdDurationMs;
           if (typeof window !== 'undefined') {
             localStorage.setItem('forge_flow_cooldown_end', end.toString());
           }
           setCooldownEnd(end);
-          setCooldownSecondsLeft(45 * 60);
+          setCooldownSecondsLeft(5);
         }
       }, 50);
     });
