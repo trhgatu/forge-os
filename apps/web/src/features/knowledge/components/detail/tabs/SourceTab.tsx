@@ -21,7 +21,7 @@ import { Label } from '@/shared/components/ui/Label';
 import { Link } from '@/shared/components/ui/Link';
 import { Tag } from '@/shared/components/ui/Tag';
 import { cn } from '@/shared/lib/utils';
-import { useFlashcardStore } from '@/shared/store/flashcardStore';
+import { useFlashcardDecks, useCreateFlashcardDeck, useForgeFlashcard } from '../../../hooks/useKnowledge';
 import type { KnowledgeConcept } from '@/shared/types';
 
 interface SourceTabProps {
@@ -75,17 +75,16 @@ export const SourceTab: React.FC<SourceTabProps> = ({
   );
   const [isCaptured, setIsCaptured] = useState(false);
 
-  const decks = useFlashcardStore((state) => state.decks);
-  const loadDecks = useFlashcardStore((state) => state.loadDecks);
-  const createDeck = useFlashcardStore((state) => state.createDeck);
-  const forgeCard = useFlashcardStore((state) => state.forgeCard);
+  const { data: decks = [], refetch: refetchDecks } = useFlashcardDecks();
+  const createDeckMutation = useCreateFlashcardDeck();
+  const forgeCardMutation = useForgeFlashcard();
 
   const [isForging, setIsForging] = useState(false);
   const [isForged, setIsForged] = useState(false);
 
   useEffect(() => {
-    loadDecks();
-  }, [loadDecks]);
+    refetchDecks();
+  }, []);
 
   useEffect(() => {
     const handleMouseUp = () => {
@@ -159,17 +158,16 @@ export const SourceTab: React.FC<SourceTabProps> = ({
       let targetDeckId = decks[0]?.id;
 
       if (!targetDeckId) {
-        await createDeck(
-          t('knowledge.mined_vocabulary_title'),
-          t('knowledge.mined_vocabulary_desc'),
-          'from-indigo-600 to-cyan-500',
-        );
-        const freshDecks = useFlashcardStore.getState().decks;
-        targetDeckId = freshDecks[0]?.id;
+        const newDeck = await createDeckMutation.mutateAsync({
+          title: t('knowledge.mined_vocabulary_title'),
+          description: t('knowledge.mined_vocabulary_desc'),
+          colorTheme: 'from-indigo-600 to-cyan-500',
+        });
+        targetDeckId = newDeck.id;
       }
 
       if (targetDeckId) {
-        await forgeCard({
+        await forgeCardMutation.mutateAsync({
           deckId: targetDeckId,
           word: selection.text,
           conceptId: concept.id,

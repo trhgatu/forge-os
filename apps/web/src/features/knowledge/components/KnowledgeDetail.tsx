@@ -18,7 +18,7 @@ interface KnowledgeDetailProps {
 
 type Tab = 'source' | 'anvil' | 'nexus';
 
-import { useKnowledge } from '@/contexts';
+import { useConcepts, useSaveConcept, useDeleteConcept } from '../hooks/useKnowledge';
 
 export const KnowledgeDetail: React.FC<KnowledgeDetailProps> = ({ concept, onClose }) => {
   const router = useRouter();
@@ -31,7 +31,9 @@ export const KnowledgeDetail: React.FC<KnowledgeDetailProps> = ({ concept, onClo
     router.replace(`?${params.toString()}`, { scroll: false });
   };
 
-  const { savedConcepts, saveConcept, deleteConcept } = useKnowledge();
+  const { data: savedConcepts = [] } = useConcepts();
+  const saveConceptMutation = useSaveConcept();
+  const deleteConceptMutation = useDeleteConcept();
 
   const dbConcept = savedConcepts.find(
     (c) => c.title.toLowerCase().trim() === concept.title.toLowerCase().trim()
@@ -40,9 +42,21 @@ export const KnowledgeDetail: React.FC<KnowledgeDetailProps> = ({ concept, onClo
 
   const handleToggleSave = async () => {
     if (isSaved && dbConcept) {
-      await deleteConcept(dbConcept.id);
+      await deleteConceptMutation.mutateAsync(dbConcept.id);
     } else {
-      await saveConcept(concept);
+      let sourceEnum: 'WIKIPEDIA' | 'WEB_ARTICLE' | 'CODEX_BOOK' | 'PERSONAL_NOTE' = 'WIKIPEDIA';
+      if (concept.id && concept.id.startsWith('custom-')) {
+        sourceEnum = 'PERSONAL_NOTE';
+      } else if (concept.url && !concept.url.includes('wikipedia.org')) {
+        sourceEnum = 'WEB_ARTICLE';
+      }
+      await saveConceptMutation.mutateAsync({
+        title: concept.title,
+        sourceType: sourceEnum,
+        sourceUrl: concept.url,
+        content: concept.content || concept.extract || '',
+        summary: concept.summary,
+      });
     }
   };
 

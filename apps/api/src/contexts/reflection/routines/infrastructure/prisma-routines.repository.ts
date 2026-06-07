@@ -124,4 +124,11 @@ export class PrismaRoutinesRepository implements RoutinesRepository {
       },
     });
   }
+
+  async delete(id: string, userId: string): Promise<void> {
+    await this.prisma.routine.updateMany({
+      where: { id, userId },
+      data: { isActive: false },
+    });
+  }
 }

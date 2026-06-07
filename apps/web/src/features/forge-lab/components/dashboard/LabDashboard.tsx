@@ -26,6 +26,7 @@ interface LabDashboardProps {
   trails: ResearchTrail[];
   setActiveTab: (tab: ForgeTab) => void;
   setActiveProjectId: (projectId: string | null) => void;
+  isLoading?: boolean;
 }
 
 export const LabDashboard: React.FC<LabDashboardProps> = ({
@@ -34,6 +35,7 @@ export const LabDashboard: React.FC<LabDashboardProps> = ({
   trails,
   setActiveTab,
   setActiveProjectId,
+  isLoading,
 }) => {
   const [contributionStats, setContributionStats] = React.useState<ContributionStats | null>(null);
   const [loadingStats, setLoadingStats] = React.useState(true);
@@ -126,6 +128,7 @@ export const LabDashboard: React.FC<LabDashboardProps> = ({
             foundations={foundations}
             setActiveTab={setActiveTab}
             setActiveProjectId={setActiveProjectId}
+            isLoading={isLoading}
           />
         </div>
 
@@ -140,7 +143,7 @@ export const LabDashboard: React.FC<LabDashboardProps> = ({
           />
 
           {/* Activity Stream */}
-          <SystemLogsWidget projects={projects} />
+          <SystemLogsWidget projects={projects} isLoading={isLoading} />
         </div>
       </div>
     </div>

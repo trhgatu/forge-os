@@ -32,11 +32,15 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
           async create({ model, args, query }) {
             if (auditModels.has(model.toLowerCase())) {
               const userId = requestContext.get('userId');
-              if (userId) {
+              const userIdVal =
+                typeof userId === 'object' && userId && 'value' in userId
+                  ? (userId as any).value
+                  : userId;
+              if (userIdVal) {
                 (args as any).data = {
                   ...args.data,
-                  createdBy: (args.data as any).createdBy || userId,
-                  updatedBy: (args.data as any).updatedBy || userId,
+                  createdBy: (args.data as any).createdBy || userIdVal,
+                  updatedBy: (args.data as any).updatedBy || userIdVal,
                 };
               }
             }
@@ -45,11 +49,15 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
           async createMany({ model, args, query }) {
             if (auditModels.has(model.toLowerCase())) {
               const userId = requestContext.get('userId');
-              if (userId && Array.isArray(args.data)) {
+              const userIdVal =
+                typeof userId === 'object' && userId && 'value' in userId
+                  ? (userId as any).value
+                  : userId;
+              if (userIdVal && Array.isArray(args.data)) {
                 (args as any).data = args.data.map((item: any) => ({
                   ...item,
-                  createdBy: item.createdBy || userId,
-                  updatedBy: item.updatedBy || userId,
+                  createdBy: item.createdBy || userIdVal,
+                  updatedBy: item.updatedBy || userIdVal,
                 }));
               }
             }
@@ -58,10 +66,14 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
           async update({ model, args, query }) {
             if (auditModels.has(model.toLowerCase())) {
               const userId = requestContext.get('userId');
-              if (userId) {
+              const userIdVal =
+                typeof userId === 'object' && userId && 'value' in userId
+                  ? (userId as any).value
+                  : userId;
+              if (userIdVal) {
                 (args as any).data = {
                   ...args.data,
-                  updatedBy: (args.data as any).updatedBy || userId,
+                  updatedBy: (args.data as any).updatedBy || userIdVal,
                 };
               }
             }
@@ -70,10 +82,14 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
           async updateMany({ model, args, query }) {
             if (auditModels.has(model.toLowerCase())) {
               const userId = requestContext.get('userId');
-              if (userId) {
+              const userIdVal =
+                typeof userId === 'object' && userId && 'value' in userId
+                  ? (userId as any).value
+                  : userId;
+              if (userIdVal) {
                 (args as any).data = {
                   ...args.data,
-                  updatedBy: (args.data as any).updatedBy || userId,
+                  updatedBy: (args.data as any).updatedBy || userIdVal,
                 };
               }
             }

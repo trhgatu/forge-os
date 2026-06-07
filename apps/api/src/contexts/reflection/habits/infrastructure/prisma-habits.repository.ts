@@ -113,4 +113,11 @@ export class PrismaHabitsRepository implements HabitsRepository {
 
     return count > 0;
   }
+
+  async deleteHabit(id: string, userId: string): Promise<void> {
+    await this.prisma.habit.updateMany({
+      where: { id, userId },
+      data: { isActive: false },
+    });
+  }
 }

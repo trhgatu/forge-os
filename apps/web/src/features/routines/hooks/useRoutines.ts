@@ -52,3 +52,58 @@ export const useAddHabitToRoutine = () => {
     },
   });
 };
+
+export const useUpdateRoutine = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: { title: string } }) =>
+      gamificationApi.updateRoutine(id, data),
+    onSuccess: () => {
+      toast.success('Routine chain updated successfully');
+      queryClient.invalidateQueries({ queryKey: ['routines'] });
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error('Failed to update routine chain');
+    },
+  });
+};
+
+export const useReorderRoutineHabits = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      routineId,
+      orders,
+    }: {
+      routineId: string;
+      orders: { habitId: string; order: number }[];
+    }) => gamificationApi.reorderRoutineHabits(routineId, orders),
+    onSuccess: () => {
+      toast.success('Routine steps reordered successfully');
+      queryClient.invalidateQueries({ queryKey: ['routines'] });
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error('Failed to reorder routine steps');
+    },
+  });
+};
+
+export const useDeleteRoutine = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => gamificationApi.deleteRoutine(id),
+    onSuccess: () => {
+      toast.success('Routine chain deleted successfully');
+      queryClient.invalidateQueries({ queryKey: ['routines'] });
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error('Failed to delete routine chain');
+    },
+  });
+};

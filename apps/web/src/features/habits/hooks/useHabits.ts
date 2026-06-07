@@ -55,3 +55,41 @@ export const useCompleteHabit = () => {
     },
   });
 };
+
+export const useUpdateHabit = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: { title: string; description?: string; difficulty?: string; xpReward?: number };
+    }) => gamificationApi.updateHabit(id, data),
+    onSuccess: () => {
+      toast.success('Habit ritual updated successfully');
+      queryClient.invalidateQueries({ queryKey: ['habits'] });
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error('Failed to update habit ritual');
+    },
+  });
+};
+
+export const useDeleteHabit = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => gamificationApi.deleteHabit(id),
+    onSuccess: () => {
+      toast.success('Habit ritual deleted successfully');
+      queryClient.invalidateQueries({ queryKey: ['habits'] });
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error('Failed to delete habit ritual');
+    },
+  });
+};
