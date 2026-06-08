@@ -1,14 +1,16 @@
-import { CommandHandler, ICommandHandler, CommandBus } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler, CommandBus, EventBus } from '@nestjs/cqrs';
 import { CompleteRoutineCommand } from './complete-routine.command';
 import { RoutinesRepository } from '../../../domain/routines.repository';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { AwardXpCommand } from '../../../../../gamification/application/commands/award-xp.command';
+import { RoutineCompletedEvent } from '../../../domain/events/routine-completed.event';
 
 @CommandHandler(CompleteRoutineCommand)
 export class CompleteRoutineHandler implements ICommandHandler<CompleteRoutineCommand> {
   constructor(
     private readonly repository: RoutinesRepository,
     private readonly commandBus: CommandBus,
+    private readonly eventBus: EventBus,
   ) {}
 
   async execute(command: CompleteRoutineCommand): Promise<void> {
@@ -46,5 +48,10 @@ export class CompleteRoutineHandler implements ICommandHandler<CompleteRoutineCo
         new AwardXpCommand(userId, routine.comboXp, `Routine Combo: ${routine.title}`),
       );
     }
+
+    // Publish event for Gamification Quest tracking
+    this.eventBus.publish(
+      new RoutineCompletedEvent(userId, routineId, routine.comboXp, completedAt),
+    );
   }
 }
