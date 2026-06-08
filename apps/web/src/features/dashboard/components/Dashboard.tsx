@@ -10,7 +10,7 @@ import {
   Activity,
   ChevronRight,
   CheckCircle2,
-  Sparkles
+  Sparkles,
 } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import { AreaChart, Area, Tooltip, ResponsiveContainer } from 'recharts';
@@ -20,6 +20,7 @@ import { WidgetShell, Label, Tag, Skeleton } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 
 import { QuoteOfTheDayWidget } from './QuoteOfTheDayWidget';
+import { DisciplineResonanceWidget } from './DisciplineResonanceWidget';
 
 const MOOD_DATA = [
   { day: 'Mon', value: 6, mood: 'Neutral' },
@@ -30,6 +31,7 @@ const MOOD_DATA = [
   { day: 'Sat', value: 9, mood: 'Inspired' },
   { day: 'Sun', value: 8, mood: 'Inspired' },
 ];
+
 
 const RECENT_ARTIFACTS = [
   {
@@ -328,50 +330,9 @@ export const Dashboard: React.FC = () => {
             )}
           </WidgetShell>
 
-          {/* MEMORY DIGEST */}
-          <WidgetShell
-            className="col-span-1 md:col-span-2 row-span-1 min-h-[180px]"
-            delay={500}
-            title={
-              <>
-                <Target size={12} /> Artifacts
-              </>
-            }
-          >
-            {loading ? (
-              <div className="grid grid-cols-3 gap-3 h-full">
-                <Skeleton variant="default" className="h-full w-full rounded-xl" />
-                <Skeleton variant="default" className="h-full w-full rounded-xl" />
-                <Skeleton variant="default" className="h-full w-full rounded-xl" />
-              </div>
-            ) : (
-              <div className="grid grid-cols-3 gap-3 h-full">
-                {RECENT_ARTIFACTS.map((item) => (
-                  <div
-                    key={item.id}
-                    className="group/card relative bg-white/5 rounded-xl p-3 hover:bg-white/10 transition-colors cursor-pointer border border-white/5"
-                  >
-                    <div className="flex justify-between items-start mb-2">
-                      <div className={cn('w-1.5 h-1.5 rounded-full', item.color)} />
-                      <ArrowUpRight
-                        size={10}
-                        className="text-gray-600 group-hover/card:text-white opacity-0 group-hover/card:opacity-100 transition-all"
-                      />
-                    </div>
 
-                    <div className="text-xs font-medium text-gray-300 group-hover/card:text-white line-clamp-2 mb-2">
-                      {item.title}
-                    </div>
-
-                    <div className="mt-auto flex justify-between items-center text-[10px] text-gray-500">
-                      <Tag variant="default" className="text-[8px] py-0 px-1 border-white/5 bg-white/5 text-zinc-400">{item.type}</Tag>
-                      <Label variant="dim" className="text-[9px] font-mono">{item.date}</Label>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </WidgetShell>
+          {/* DISCIPLINE HEATMAP */}
+          <DisciplineResonanceWidget />
         </div>
       </div>
 

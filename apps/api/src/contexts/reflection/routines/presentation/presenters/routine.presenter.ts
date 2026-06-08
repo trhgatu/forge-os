@@ -10,12 +10,15 @@ export class RoutinePresenter {
       title: routine.title,
       comboXp: routine.comboXp,
       isActive: routine.isActive,
+      targetTime: routine.targetTime,
+      frequency: routine.frequency,
       steps: routine.steps.map((step) => ({
         habitId: step.habitId,
         title: step.title,
         xpReward: step.xpReward,
         order: step.order,
       })),
+      completions: routine.completions.map((c) => c.toISOString()),
       createdAt: routine.createdAt.toISOString(),
       updatedAt: routine.updatedAt.toISOString(),
     };

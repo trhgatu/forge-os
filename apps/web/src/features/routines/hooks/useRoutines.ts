@@ -16,8 +16,12 @@ export const useCreateRoutine = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: { title: string; comboXp: number }) =>
-      gamificationApi.createRoutine(data),
+    mutationFn: (data: {
+      title: string;
+      comboXp: number;
+      targetTime?: string;
+      frequency?: any;
+    }) => gamificationApi.createRoutine(data),
     onSuccess: () => {
       toast.success('Routine chain initialized successfully');
       queryClient.invalidateQueries({ queryKey: ['routines'] });
@@ -57,8 +61,17 @@ export const useUpdateRoutine = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: { title: string } }) =>
-      gamificationApi.updateRoutine(id, data),
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: {
+        title: string;
+        targetTime?: string | null;
+        frequency?: any | null;
+      };
+    }) => gamificationApi.updateRoutine(id, data),
     onSuccess: () => {
       toast.success('Routine chain updated successfully');
       queryClient.invalidateQueries({ queryKey: ['routines'] });
@@ -104,6 +117,21 @@ export const useDeleteRoutine = () => {
     onError: (error) => {
       console.error(error);
       toast.error('Failed to delete routine chain');
+    },
+  });
+};
+
+export const useCompleteRoutine = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => gamificationApi.completeRoutine(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['routines'] });
+      queryClient.invalidateQueries({ queryKey: ['stats'] });
+    },
+    onError: (error) => {
+      console.error(error);
     },
   });
 };

@@ -12,6 +12,7 @@ import {
   Edit3,
   ArrowRight,
   GripVertical,
+  Calendar as CalendarIcon,
 } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react';
@@ -38,10 +39,10 @@ import { CSS } from '@dnd-kit/utilities';
 
 import { useLanguage, useSound } from '@/contexts';
 import { useHabits, useCompleteHabit } from '@/features/habits/hooks/useHabits';
-import { Button, Label, EmptyState, Skeleton, Input, Pagination } from '@/shared/components/ui';
+import { Button, Label, EmptyState, Skeleton, Input, Pagination, Calendar } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 
-import { useRoutines, useDeleteRoutine, useReorderRoutineHabits } from '../hooks/useRoutines';
+import { useRoutines, useDeleteRoutine, useReorderRoutineHabits, useCompleteRoutine } from '../hooks/useRoutines';
 
 import { RoutineModal } from './RoutineModal';
 import { AddStepModal } from './AddStepModal';
@@ -53,6 +54,7 @@ export const Routines: React.FC = () => {
   const completeHabitMutation = useCompleteHabit();
   const deleteRoutineMutation = useDeleteRoutine();
   const reorderHabitsMutation = useReorderRoutineHabits();
+  const completeRoutineMutation = useCompleteRoutine();
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -64,6 +66,35 @@ export const Routines: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
+
+  const [isCalendarMode, setIsCalendarMode] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+
+  const formatDateString = (date: Date) => {
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  };
+
+  const highlightedDates = React.useMemo(() => {
+    const dates = new Set<string>();
+    routines.forEach((r) => {
+      r.completions?.forEach((cStr: string) => {
+        dates.add(cStr.split('T')[0]);
+      });
+    });
+    return Array.from(dates);
+  }, [routines]);
+
+  const isTodaySelected = React.useMemo(() => {
+    const today = new Date();
+    return (
+      selectedDate.getDate() === today.getDate() &&
+      selectedDate.getMonth() === today.getMonth() &&
+      selectedDate.getFullYear() === today.getFullYear()
+    );
+  }, [selectedDate]);
 
   const completedHabitIds = React.useMemo(() => {
     return new Set(habits.filter((h) => h.isCompletedToday).map((h) => h.id));
@@ -98,9 +129,20 @@ export const Routines: React.FC = () => {
       const matchesSearch =
         r.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         r.steps.some((step: any) => step.title.toLowerCase().includes(searchQuery.toLowerCase()));
-      return matchesSearch;
+      if (!matchesSearch) return false;
+
+      if (isCalendarMode) {
+        const dateStr = formatDateString(selectedDate);
+        const isCompleted = r.completions?.some((c: string) => c.startsWith(dateStr));
+        if (isCompleted) return true;
+
+        const dayOfWeek = selectedDate.getDay() === 0 ? 7 : selectedDate.getDay();
+        return !r.frequency?.days || r.frequency.days.includes(dayOfWeek);
+      }
+
+      return true;
     });
-  }, [localRoutines, searchQuery]);
+  }, [localRoutines, searchQuery, isCalendarMode, selectedDate]);
 
   const totalPages = Math.ceil(filteredRoutines.length / itemsPerPage);
   const paginatedRoutines = React.useMemo(() => {
@@ -188,6 +230,7 @@ export const Routines: React.FC = () => {
         toast.success(`Ritual Combo Completed!`, {
           icon: <Sparkles className="text-yellow-400" />,
         });
+        await completeRoutineMutation.mutateAsync(routineId);
       }
     } catch (err) {
       console.error(err);
@@ -231,6 +274,20 @@ export const Routines: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
+            <Button
+              onClick={() => {
+                playSound('click');
+                setIsCalendarMode(!isCalendarMode);
+              }}
+              className={cn(
+                "border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 text-xs uppercase tracking-wider font-mono p-4 rounded-xl cursor-pointer transition-all duration-300",
+                isCalendarMode ? "text-slate-950 bg-forge-cyan border-forge-cyan hover:bg-forge-cyan/90 font-bold" : "text-gray-300 hover:text-white"
+              )}
+            >
+              <CalendarIcon size={14} className="inline mr-2" />
+              Calendar
+            </Button>
+
             <Link href="/forge/habits">
               <Button
                 variant="ghost"
@@ -320,141 +377,195 @@ export const Routines: React.FC = () => {
             </div>
           ) : paginatedRoutines.length > 0 ? (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {paginatedRoutines.map((routine) => {
-                  const isComboComplete = getRoutineComboStatus(routine.id, routine.steps);
+              <div className={cn(
+                isCalendarMode
+                  ? "grid grid-cols-1 lg:grid-cols-12 gap-8"
+                  : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              )}>
+                {isCalendarMode && (
+                  <div className="lg:col-span-5 h-fit lg:sticky lg:top-8 z-10">
+                    <Calendar
+                      selectedDate={selectedDate}
+                      onDateChange={setSelectedDate}
+                      highlightedDates={highlightedDates}
+                    />
+                  </div>
+                )}
 
-                  return (
-                    <div
-                      key={routine.id}
-                      className={cn(
-                        'group relative rounded-3xl border bg-white/[0.01] backdrop-blur-md p-6 transition-all duration-700 flex flex-col justify-between overflow-hidden shadow-lg min-h-[250px]',
-                        isComboComplete
-                          ? 'border-forge-cyan/30 bg-forge-cyan/[0.01] shadow-[0_0_30px_rgba(34,211,238,0.05)]'
-                          : 'border-white/5 hover:border-white/10 hover:bg-white/[0.02]'
-                      )}
-                    >
-                      {/* Glow backlight inside completed combos */}
-                      {isComboComplete && (
-                        <div className="absolute inset-0 bg-radial from-forge-cyan/5 to-transparent pointer-events-none opacity-40 animate-pulse" />
-                      )}
+                <div className={cn(
+                  isCalendarMode ? "lg:col-span-7 flex flex-col gap-6" : "contents"
+                )}>
+                  {paginatedRoutines.map((routine) => {
+                    const isComboComplete = isCalendarMode
+                      ? routine.completions?.some((c: string) => c.startsWith(formatDateString(selectedDate)))
+                      : getRoutineComboStatus(routine.id, routine.steps);
 
-                      <div className="space-y-4 relative z-10">
-                        {/* Bottom status */}
-                        <div className="flex items-center justify-between">
-                          <span className="text-[10px] font-mono uppercase tracking-widest text-gray-500">
-                            Ritual Chain
-                          </span>
-                          <div className="flex items-center gap-1.5 text-[10px] font-mono text-forge-cyan">
-                            <Zap size={11} /> Active
+                    return (
+                      <div
+                        key={routine.id}
+                        className={cn(
+                          'group relative rounded-3xl border bg-white/[0.01] backdrop-blur-md p-6 transition-all duration-700 flex flex-col justify-between overflow-hidden shadow-lg min-h-[250px]',
+                          isComboComplete
+                            ? 'border-forge-cyan/30 bg-forge-cyan/[0.01] shadow-[0_0_30px_rgba(34,211,238,0.05)]'
+                            : 'border-white/5 hover:border-white/10 hover:bg-white/[0.02]'
+                        )}
+                      >
+                        {/* Glow backlight inside completed combos */}
+                        {isComboComplete && (
+                          <div className="absolute inset-0 bg-radial from-forge-cyan/5 to-transparent pointer-events-none opacity-40 animate-pulse" />
+                        )}
+
+                        <div className="space-y-4 relative z-10">
+                          {/* Bottom status */}
+                          <div className="flex items-center justify-between">
+                            <span className="text-[10px] font-mono uppercase tracking-widest text-gray-500">
+                              Ritual Chain
+                            </span>
+                            <div className="flex items-center gap-1.5 text-[10px] font-mono text-forge-cyan">
+                              {isComboComplete ? (
+                                <span className="text-forge-cyan font-bold flex items-center gap-0.5">
+                                  <Check size={11} className="inline mr-0.5" /> Completed
+                                </span>
+                              ) : (
+                                <>
+                                  <Zap size={11} /> Active
+                                </>
+                              )}
+                            </div>
                           </div>
-                        </div>
 
-                        {/* Header info */}
-                        <div className="flex justify-between items-start gap-4">
-                          <Label
-                            variant="default"
-                            className="text-lg font-medium text-gray-200 group-hover:text-white transition-colors duration-500 block"
-                          >
-                            {routine.title}
-                          </Label>
-                          <div className="flex items-center gap-1.5 shrink-0">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => {
-                                playSound('click');
-                                setActiveRoutineForEdit(routine);
-                                setShowEditModal(true);
-                              }}
-                              className="p-1.5 rounded-lg border border-white/5 hover:border-white/20 text-gray-500 hover:text-white hover:bg-white/5 transition-all cursor-pointer h-7 w-7"
-                              title="Edit routine title"
-                            >
-                              <Edit3 size={12} />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => {
-                                playSound('click');
-                                setActiveRoutineForStep(routine.id);
-                                setActiveStepCount(routine.steps.length);
-                              }}
-                              className="p-1.5 rounded-lg border border-white/5 hover:border-white/20 text-gray-500 hover:text-white hover:bg-white/5 transition-all cursor-pointer h-7 w-7"
-                              title="Add step habit"
-                            >
-                              <Settings size={12} />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => {
-                                playSound('click');
-                                toast('Delete this routine chain?', {
-                                  action: {
-                                    label: 'Confirm',
-                                    onClick: () => {
-                                      deleteRoutineMutation.mutate(routine.id);
-                                    },
-                                  },
-                                });
-                              }}
-                              className="p-1.5 rounded-lg border border-white/5 hover:border-red-500/20 text-gray-500 hover:text-red-400 hover:bg-red-500/5 transition-all cursor-pointer h-7 w-7"
-                              title="Delete routine chain"
-                            >
-                              <Trash2 size={12} />
-                            </Button>
-                          </div>
-                        </div>
-
-
-                        {/* Steps listing */}
-                        <div className="pt-3 border-t border-white/5">
-                          {routine.steps.length > 0 ? (
-                            <DndContext
-                              sensors={sensors}
-                              collisionDetection={closestCenter}
-                              onDragEnd={(event) => handleDragEnd(routine.id, event)}
-                            >
-                              <SortableContext
-                                items={routine.steps.map((s: any) => s.habitId)}
-                                strategy={verticalListSortingStrategy}
+                          {/* Header info */}
+                          <div className="flex justify-between items-start gap-4">
+                            <div className="space-y-1">
+                              <Label
+                                variant="default"
+                                className="text-lg font-medium text-gray-200 group-hover:text-white transition-colors duration-500 block"
                               >
-                                <div className="space-y-3">
-                                  {routine.steps.map((step: any, idx: number) => {
-                                    const stepKey = `${routine.id}_${step.habitId}`;
-                                    const isChecked = completedHabitIds.has(step.habitId) || !!completedSteps[stepKey];
-
-                                    return (
-                                      <SortableStepItem
-                                        key={step.habitId}
-                                        step={step}
-                                        idx={idx}
-                                        routineId={routine.id}
-                                        isChecked={isChecked}
-                                        onCheck={() =>
-                                          handleStepCheck(
-                                            routine.id,
-                                            step.habitId,
-                                            routine.steps
-                                          )
-                                        }
-                                      />
-                                    );
-                                  })}
+                                {routine.title}
+                              </Label>
+                              {(routine.targetTime || routine.frequency?.days) && (
+                                <div className="flex flex-wrap gap-1.5 items-center text-[10px] text-gray-500 font-mono">
+                                  {routine.targetTime && (
+                                    <span className="bg-white/5 px-2 py-0.5 rounded border border-white/5 text-forge-cyan">
+                                      ⏰ {routine.targetTime}
+                                    </span>
+                                  )}
+                                  {routine.frequency?.days && routine.frequency.days.length < 7 && (
+                                    <span className="bg-white/5 px-2 py-0.5 rounded border border-white/5">
+                                      📅 {routine.frequency.days.map((d: number) => ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][d - 1]).join(', ')}
+                                    </span>
+                                  )}
+                                  {routine.frequency?.days && routine.frequency.days.length === 7 && (
+                                    <span className="bg-white/5 px-2 py-0.5 rounded border border-white/5">
+                                      📅 Everyday
+                                    </span>
+                                  )}
                                 </div>
-                              </SortableContext>
-                            </DndContext>
-                          ) : (
-                            <p className="text-[10px] text-gray-600 italic py-2 text-center">
-                              No integrated steps yet. Click the cog above to configure rituals.
-                            </p>
-                          )}
+                              )}
+                            </div>
+                            {isTodaySelected && (
+                              <div className="flex items-center gap-1.5 shrink-0">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => {
+                                    playSound('click');
+                                    setActiveRoutineForEdit(routine);
+                                    setShowEditModal(true);
+                                  }}
+                                  className="p-1.5 rounded-lg border border-white/5 hover:border-white/20 text-gray-500 hover:text-white hover:bg-white/5 transition-all cursor-pointer h-7 w-7"
+                                  title="Edit routine title"
+                                >
+                                  <Edit3 size={12} />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => {
+                                    playSound('click');
+                                    setActiveRoutineForStep(routine.id);
+                                    setActiveStepCount(routine.steps.length);
+                                  }}
+                                  className="p-1.5 rounded-lg border border-white/5 hover:border-white/20 text-gray-500 hover:text-white hover:bg-white/5 transition-all cursor-pointer h-7 w-7"
+                                  title="Add step habit"
+                                >
+                                  <Settings size={12} />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => {
+                                    playSound('click');
+                                    toast('Delete this routine chain?', {
+                                      action: {
+                                        label: 'Confirm',
+                                        onClick: () => {
+                                          deleteRoutineMutation.mutate(routine.id);
+                                        },
+                                      },
+                                    });
+                                  }}
+                                  className="p-1.5 rounded-lg border border-white/5 hover:border-red-500/20 text-gray-500 hover:text-red-400 hover:bg-red-500/5 transition-all cursor-pointer h-7 w-7"
+                                  title="Delete routine chain"
+                                >
+                                  <Trash2 size={12} />
+                                </Button>
+                              </div>
+                            )}
+                          </div>
+
+
+                          {/* Steps listing */}
+                          <div className="pt-3 border-t border-white/5">
+                            {routine.steps.length > 0 ? (
+                              <DndContext
+                                sensors={sensors}
+                                collisionDetection={closestCenter}
+                                onDragEnd={(event) => handleDragEnd(routine.id, event)}
+                              >
+                                <SortableContext
+                                  items={routine.steps.map((s: any) => s.habitId)}
+                                  strategy={verticalListSortingStrategy}
+                                >
+                                  <div className="space-y-3">
+                                    {routine.steps.map((step: any, idx: number) => {
+                                      const stepKey = `${routine.id}_${step.habitId}`;
+                                      const isChecked = isTodaySelected
+                                        ? (completedHabitIds.has(step.habitId) || !!completedSteps[stepKey])
+                                        : isComboComplete;
+
+                                      return (
+                                        <SortableStepItem
+                                          key={step.habitId}
+                                          step={step}
+                                          idx={idx}
+                                          routineId={routine.id}
+                                          isChecked={isChecked}
+                                          disabled={!isTodaySelected}
+                                          onCheck={() =>
+                                            handleStepCheck(
+                                              routine.id,
+                                              step.habitId,
+                                              routine.steps
+                                            )
+                                          }
+                                        />
+                                      );
+                                    })}
+                                  </div>
+                                </SortableContext>
+                              </DndContext>
+                            ) : (
+                              <p className="text-[10px] text-gray-600 italic py-2 text-center">
+                                No integrated steps yet. Click the cog above to configure rituals.
+                              </p>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
 
               <div className="flex justify-center pt-4">
@@ -515,6 +626,7 @@ interface SortableStepItemProps {
   idx: number;
   routineId: string;
   isChecked: boolean;
+  disabled?: boolean;
   onCheck: () => void;
 }
 
@@ -523,6 +635,7 @@ const SortableStepItem: React.FC<SortableStepItemProps> = ({
   idx,
   routineId,
   isChecked,
+  disabled = false,
   onCheck,
 }) => {
   const {
@@ -534,7 +647,7 @@ const SortableStepItem: React.FC<SortableStepItemProps> = ({
     isDragging,
   } = useSortable({
     id: step.habitId,
-    disabled: isChecked,
+    disabled: isChecked || disabled,
   });
 
   const style = {
@@ -557,7 +670,7 @@ const SortableStepItem: React.FC<SortableStepItemProps> = ({
       )}
     >
       <div className="flex items-center gap-3 w-full">
-        {!isChecked ? (
+        {!isChecked && !disabled ? (
           <div
             {...attributes}
             {...listeners}
@@ -569,21 +682,27 @@ const SortableStepItem: React.FC<SortableStepItemProps> = ({
           <div className="w-5 shrink-0" />
         )}
         <div
-          onClick={onCheck}
+          onClick={() => !disabled && onCheck()}
           className={cn(
-            'w-5 h-5 rounded-full border flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0',
+            'w-5 h-5 rounded-full border flex items-center justify-center transition-all duration-300 shrink-0',
             isChecked
               ? 'bg-forge-cyan border-forge-cyan shadow-[0_0_10px_rgba(34,211,238,0.3)]'
-              : 'border-gray-700 hover:border-forge-cyan/50'
+              : disabled
+              ? 'border-gray-800 cursor-not-allowed'
+              : 'border-gray-700 hover:border-forge-cyan/50 cursor-pointer'
           )}
         >
           {isChecked && <Check size={11} className="text-slate-950 font-bold" />}
         </div>
         <span
-          onClick={() => !isChecked && onCheck()}
+          onClick={() => !isChecked && !disabled && onCheck()}
           className={cn(
-            'text-xs transition-all duration-300 font-light cursor-pointer flex-1 select-none',
-            isChecked ? 'line-through opacity-70' : 'text-gray-300 hover:text-white'
+            'text-xs transition-all duration-300 font-light flex-1 select-none',
+            isChecked
+              ? 'line-through opacity-70 cursor-default'
+              : disabled
+              ? 'text-gray-500 cursor-not-allowed'
+              : 'text-gray-300 hover:text-white cursor-pointer'
           )}
         >
           {step.title}
