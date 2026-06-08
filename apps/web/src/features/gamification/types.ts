@@ -43,6 +43,9 @@ export interface Routine {
   comboXp: number;
   isActive: boolean;
   steps: RoutineStep[];
+  targetTime?: string | null;
+  frequency?: any | null;
+  completions: string[];
   createdAt: string;
 }
 

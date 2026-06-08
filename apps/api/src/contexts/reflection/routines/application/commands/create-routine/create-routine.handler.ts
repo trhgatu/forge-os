@@ -9,13 +9,15 @@ export class CreateRoutineHandler implements ICommandHandler<CreateRoutineComman
   constructor(private readonly repository: RoutinesRepository) {}
 
   async execute(command: CreateRoutineCommand): Promise<Routine> {
-    const { userId, title, comboXp } = command;
+    const { userId, title, comboXp, targetTime, frequency } = command;
 
     const routine = Routine.create({
       id: uuidv4(),
       userId,
       title,
       comboXp,
+      targetTime,
+      frequency,
     });
 
     await this.repository.save(routine);

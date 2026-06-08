@@ -14,6 +14,10 @@ export class PrismaRoutinesRepository implements RoutinesRepository {
         title: routine.title,
         comboXp: routine.comboXp,
         isActive: routine.isActive,
+        targetTime: routine.targetTime,
+        frequency: routine.frequency ?? undefined,
+        streak: routine.streak,
+        maxStreak: routine.maxStreak,
       },
       create: {
         id: routine.id,
@@ -21,6 +25,10 @@ export class PrismaRoutinesRepository implements RoutinesRepository {
         title: routine.title,
         comboXp: routine.comboXp,
         isActive: routine.isActive,
+        targetTime: routine.targetTime,
+        frequency: routine.frequency ?? undefined,
+        streak: routine.streak,
+        maxStreak: routine.maxStreak,
       },
     });
   }
@@ -40,6 +48,7 @@ export class PrismaRoutinesRepository implements RoutinesRepository {
             order: 'asc',
           },
         },
+        completions: true,
       },
     });
 
@@ -55,9 +64,14 @@ export class PrismaRoutinesRepository implements RoutinesRepository {
       title: doc.title,
       comboXp: doc.comboXp,
       isActive: doc.isActive,
+      targetTime: doc.targetTime,
+      frequency: doc.frequency,
       steps,
+      streak: doc.streak,
+      maxStreak: doc.maxStreak,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
+      completions: doc.completions.map((c) => c.completedAt),
     });
   }
 
@@ -73,6 +87,7 @@ export class PrismaRoutinesRepository implements RoutinesRepository {
             order: 'asc',
           },
         },
+        completions: true,
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -88,9 +103,14 @@ export class PrismaRoutinesRepository implements RoutinesRepository {
         title: doc.title,
         comboXp: doc.comboXp,
         isActive: doc.isActive,
+        targetTime: doc.targetTime,
+        frequency: doc.frequency,
         steps,
+        streak: doc.streak,
+        maxStreak: doc.maxStreak,
         createdAt: doc.createdAt,
         updatedAt: doc.updatedAt,
+        completions: doc.completions.map((c) => c.completedAt),
       });
     });
   }
@@ -130,5 +150,37 @@ export class PrismaRoutinesRepository implements RoutinesRepository {
       where: { id, userId },
       data: { isActive: false },
     });
+  }
+
+  async saveRoutineCompletion(userId: string, routineId: string, completedAt: Date): Promise<void> {
+    await this.prisma.routineCompletion.create({
+      data: {
+        userId,
+        routineId,
+        completedAt,
+      },
+    });
+  }
+
+  async hasCompletedRoutineToday(
+    userId: string,
+    routineId: string,
+    dateStr: string,
+  ): Promise<boolean> {
+    const start = new Date(`${dateStr}T00:00:00.000Z`);
+    const end = new Date(`${dateStr}T23:59:59.999Z`);
+
+    const count = await this.prisma.routineCompletion.count({
+      where: {
+        userId,
+        routineId,
+        completedAt: {
+          gte: start,
+          lte: end,
+        },
+      },
+    });
+
+    return count > 0;
   }
 }
