@@ -7,4 +7,14 @@ export abstract class RoutinesRepository {
   abstract addHabitToRoutine(routineId: string, habitId: string, order: number): Promise<void>;
   abstract removeHabitFromRoutine(routineId: string, habitId: string): Promise<void>;
   abstract delete(id: string, userId: string): Promise<void>;
+  abstract saveRoutineCompletion(
+    userId: string,
+    routineId: string,
+    completedAt: Date,
+  ): Promise<void>;
+  abstract hasCompletedRoutineToday(
+    userId: string,
+    routineId: string,
+    dateStr: string,
+  ): Promise<boolean>;
 }

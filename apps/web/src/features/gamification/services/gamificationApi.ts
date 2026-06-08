@@ -67,6 +67,8 @@ export const gamificationApi = {
   async createRoutine(dto: {
     title: string;
     comboXp?: number;
+    targetTime?: string;
+    frequency?: any;
   }): Promise<Routine> {
     const res = await apiClient.post<BackendResponse<Routine>>('/routines', dto);
     return res.data.data;
@@ -79,13 +81,21 @@ export const gamificationApi = {
     await apiClient.post(`/routines/${routineId}/habits`, dto);
   },
 
-  async updateRoutine(id: string, dto: { title: string }): Promise<Routine> {
+  async updateRoutine(id: string, dto: {
+    title: string;
+    targetTime?: string | null;
+    frequency?: any | null;
+  }): Promise<Routine> {
     const res = await apiClient.patch<BackendResponse<Routine>>(`/routines/${id}`, dto);
     return res.data.data;
   },
 
   async reorderRoutineHabits(routineId: string, orders: { habitId: string; order: number }[]): Promise<void> {
     await apiClient.put(`/routines/${routineId}/habits/reorder`, { orders });
+  },
+
+  async completeRoutine(id: string): Promise<void> {
+    await apiClient.post(`/routines/${id}/complete`);
   },
 
   async deleteRoutine(id: string): Promise<void> {

@@ -12,6 +12,7 @@ import {
   DeleteRoutineCommand,
   UpdateRoutineCommand,
   ReorderHabitsCommand,
+  CompleteRoutineCommand,
 } from '../../application/commands';
 import { GetAllRoutinesQuery } from '../../application/queries';
 import { RoutinePresenter } from '../presenters/routine.presenter';
@@ -32,7 +33,7 @@ export class RoutineController {
   @ApiOperation({ summary: 'Create a new routine ritual' })
   async create(@Body() dto: CreateRoutineDto, @User('id') userId: string) {
     const routine = await this.commandBus.execute<CreateRoutineCommand, Routine>(
-      new CreateRoutineCommand(userId, dto.title, dto.comboXp),
+      new CreateRoutineCommand(userId, dto.title, dto.comboXp, dto.targetTime, dto.frequency),
     );
     return this.presenter.toResponse(routine);
   }
@@ -70,12 +71,19 @@ export class RoutineController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update routine chain title' })
+  @ApiOperation({ summary: 'Update routine chain' })
   async update(@Param('id') id: string, @Body() dto: CreateRoutineDto, @User('id') userId: string) {
     const routine = await this.commandBus.execute<UpdateRoutineCommand, Routine>(
-      new UpdateRoutineCommand(userId, id, dto.title),
+      new UpdateRoutineCommand(userId, id, dto.title, dto.comboXp, dto.targetTime, dto.frequency),
     );
     return this.presenter.toResponse(routine);
+  }
+
+  @Post(':id/complete')
+  @ApiOperation({ summary: 'Mark routine combo completed today' })
+  async complete(@Param('id') id: string, @User('id') userId: string) {
+    await this.commandBus.execute(new CompleteRoutineCommand(userId, id));
+    return { success: true };
   }
 
   @Delete(':id')

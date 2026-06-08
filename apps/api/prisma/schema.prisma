@@ -37,11 +37,13 @@ model User {
   projects              Project[]
   memories              Memory[]
   moods                 Mood[]
+  routineCompletions    RoutineCompletion[]
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
 
   @@map("users")
 }
+
 
 model UserConnection {
   id          String   @id @default(uuid())
@@ -273,19 +275,33 @@ model HabitCompletion {
 // ROUTINES CONTEXT (Bối cảnh Chuỗi Nghi Thức)
 // ==========================================
 model Routine {
-  id        String         @id @default(uuid())
-  userId    String
-  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  title     String // Ví dụ: "Morning Routine"
-  comboXp   Int            @default(20)
-  isActive  Boolean        @default(true)
-  streak    Int            @default(0)
-  maxStreak Int            @default(0)
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
-  habits    RoutineHabit[]
+  id          String              @id @default(uuid())
+  userId      String
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  comboXp     Int                 @default(20)
+  targetTime  String?             // Giờ thực hiện (ví dụ: "07:00")
+  frequency   Json?               // Lịch thực hiện (ví dụ: {"days": [1,2,3,4,5]})
+  isActive    Boolean             @default(true)
+  streak      Int                 @default(0)
+  maxStreak   Int                 @default(0)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  habits      RoutineHabit[]
+  completions RoutineCompletion[]
 
   @@map("routines")
+}
+
+model RoutineCompletion {
+  id          String   @id @default(uuid())
+  routineId   String
+  routine     Routine  @relation(fields: [routineId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  completedAt DateTime @default(now())
+
+  @@map("routine_completions")
 }
 
 model RoutineHabit {
