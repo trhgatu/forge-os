@@ -1,10 +1,15 @@
 'use client';
 
-import { Globe, Layers, Zap } from 'lucide-react';
-import React from 'react';
+import { Layers } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+
 
 import { useKnowledge } from '@/contexts/KnowledgeContext';
-import { GlassCard } from '@/shared/components/ui/GlassCard';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { WidgetShell, Tag, Label } from '@/shared/components/ui';
+import { cn } from '@/shared/lib/utils';
+import { useConcepts } from '../../hooks/useKnowledge';
 
 import { DiscoveredWidget } from './DiscoveredWidget';
 import { DiscoveryCarousel } from './DiscoveryCarousel';
@@ -12,70 +17,106 @@ import { SearchWidget } from './SearchWidget';
 import { StatsWidget } from './StatsWidget';
 
 export const KnowledgeDashboard: React.FC = () => {
-  const { history, selectConcept } = useKnowledge();
+  const router = useRouter();
+  const { history } = useKnowledge();
+  const { data: savedConcepts = [] } = useConcepts();
+  const { t, language } = useLanguage();
+  const [activeSector, setActiveSector] = useState<string | null>(null);
+
+  useEffect(() => {
+    setActiveSector(null);
+  }, []);
+
+  const sectorList = language === 'vi'
+    ? ['Công nghệ', 'Khoa học', 'Lịch sử', 'Triết học', 'Nghệ thuật', 'Vũ trụ']
+    : ['Technology', 'Science', 'History', 'Philosophy', 'Art', 'Cosmos'];
+
+  const handleSectorClick = (cat: string) => {
+    if (activeSector) return;
+    setActiveSector(cat);
+    router.push(`/forge/knowledge/nexus/${encodeURIComponent(cat)}?tab=source`);
+  };
 
   return (
-    <div className="h-full flex flex-col p-6 md:p-8 max-w-[1600px] mx-auto w-full space-y-6 overflow-y-auto scrollbar-hide">
-      {/* 1. Header Section */}
-      <div className="flex flex-col md:flex-row items-end justify-between gap-4">
-        <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-xs font-mono text-forge-cyan mb-2 backdrop-blur-md">
-            <Globe size={12} className="animate-pulse-slow" /> Global Knowledge Grid
+    <div className="flex-1 w-full flex flex-col lg:flex-row gap-6 p-6 md:p-8 max-w-[1600px] mx-auto overflow-hidden min-h-0">
+      {/* LEFT COLUMN: Main Workspace (2/3 width) */}
+      <div className="flex-1 lg:flex-[2] flex flex-col gap-6 overflow-y-auto pr-2 scrollbar-hide min-h-0">
+        {/* 1. Header Section */}
+        <div className="flex flex-col gap-2 shrink-0">
+          {/* Ethereal label */}
+          <div className="mb-3 flex items-center gap-2 opacity-85">
+            <div className="h-px w-8 bg-gradient-to-r from-forge-cyan/40 to-transparent" />
+            <Label variant="cyan" className="text-[10px] font-mono tracking-[0.4em] uppercase flex items-center gap-1.5">
+              {t('knowledge.global_grid')}
+            </Label>
           </div>
-          <h1 className="text-3xl md:text-5xl font-display font-bold text-white tracking-tight">
-            Knowledge Nexus
-          </h1>
-          <p className="text-gray-400 mt-1 font-light">
-            Access, crystalline, and connect information from the external chaos.
+
+          {/* Poetic Title */}
+          <Label variant="default" className="text-4xl md:text-5xl font-bold text-white tracking-tight leading-tight mb-3 block capitalize">
+            {t('knowledge.dashboard_title')}
+          </Label>
+
+          {/* Flowing Subtitle */}
+          <p className="text-sm text-gray-400 font-light leading-relaxed max-w-xl">
+            {t('knowledge.dashboard_desc')}
           </p>
         </div>
 
-        {/* Quick Actions (Fake for now) */}
-        <div className="flex gap-2">
-          <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-forge-accent text-white font-medium hover:bg-forge-accent/80 transition-colors shadow-lg shadow-forge-accent/20">
-            <Zap size={16} fill="currentColor" />
-            <span>Quick Insight</span>
-          </button>
-        </div>
-      </div>
-
-      {/* 2. Search & Stats Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Search Area */}
-        <div className="lg:col-span-2 flex flex-col gap-6">
+        {/* 2. Search & Featured Row */}
+        <div className="flex flex-col gap-6 shrink-0">
           <SearchWidget />
-
-          {/* Featured / Random / Suggestion Area */}
           <DiscoveryCarousel />
         </div>
 
-        {/* Right Column: Stats & Quick Categories */}
-        <div className="flex flex-col gap-6">
+        {/* 3. Stats Section */}
+        <div className="shrink-0">
           <StatsWidget totalCount={history.length} />
-
-          {/* Categories Mini Widget */}
-          <GlassCard className="flex-1 p-5">
-            <div className="flex items-center gap-2 text-xs font-mono text-gray-500 uppercase tracking-widest mb-4">
-              <Layers size={14} className="text-forge-cyan" />
-              Sectors
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {['Technology', 'Science', 'History', 'Philosophy', 'Art', 'Cosmos'].map((cat) => (
-                <span
-                  key={cat}
-                  className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/5 text-xs text-gray-400 hover:text-white hover:border-white/20 cursor-pointer transition-all"
-                >
-                  {cat}
-                </span>
-              ))}
-            </div>
-          </GlassCard>
         </div>
       </div>
 
-      {/* 3. Discovered Area */}
-      <div className="flex-1 min-h-[300px]">
-        <DiscoveredWidget history={history} onSelect={(c) => selectConcept(c)} />
+      {/* RIGHT COLUMN: Sidebar (1/3 width) */}
+      <div className="w-full lg:w-[380px] shrink-0 flex flex-col gap-6 h-full min-h-0 overflow-hidden">
+        {/* Sectors Widget */}
+        <WidgetShell
+          className="shrink-0"
+          title={
+            <Label icon={<Layers size={14} />} variant="cyan">
+              {t('knowledge.sectors')}
+            </Label>
+          }
+          glowColor="forge-cyan"
+          topGlowColor="via-forge-cyan/30"
+        >
+          <div className="flex flex-wrap gap-2">
+            {sectorList.map((cat) => {
+              const isPending = activeSector === cat;
+              const isDisabled = activeSector !== null && activeSector !== cat;
+              return (
+                <Tag
+                  key={cat}
+                  variant="cyan"
+                  interactive={true}
+                  active={isPending}
+                  disabled={isDisabled}
+                  onClick={() => handleSectorClick(cat)}
+                  className={cn(
+                    isPending && 'animate-pulse shadow-[0_0_15px_rgba(6,182,212,0.15)] cursor-wait'
+                  )}
+                >
+                  {cat}
+                </Tag>
+              );
+            })}
+          </div>
+        </WidgetShell>
+
+        {/* Recently Discovered Feed Widget */}
+        <div className="flex-1 min-h-0 overflow-hidden relative">
+          <DiscoveredWidget
+            history={savedConcepts.length > 0 ? savedConcepts : history}
+            onSelect={(c) => router.push(`/forge/knowledge/nexus/${encodeURIComponent(c.title)}?tab=source`)}
+          />
+        </div>
       </div>
     </div>
   );

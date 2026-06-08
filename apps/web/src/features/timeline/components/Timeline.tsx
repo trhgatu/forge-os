@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { cn } from '@/shared/lib/utils';
+import { Label, Tag } from '@/shared/components/ui';
 import type { TimelineType } from '@/shared/types/timeline';
 
 import { TYPE_CONFIG } from '../config';
@@ -60,54 +61,66 @@ export const Timeline = () => {
   return (
     <div className="h-full w-full flex bg-forge-bg relative overflow-hidden animate-in fade-in duration-700">
       <div className="lg:flex w-64 flex-col border-r border-white/5 bg-black/20 backdrop-blur-xl h-full p-6 z-20">
-        <h2 className="text-xs font-mono text-gray-500 uppercase tracking-widest mb-6">
+        <Label variant="dim" className="text-xs font-mono uppercase tracking-widest mb-6 block">
           Timeline Stream
-        </h2>
+        </Label>
         <div className="space-y-2">
-          <button
+          <Tag
+            interactive
+            active={filterType === 'all'}
+            variant={filterType === 'all' ? 'cyan' : 'default'}
             onClick={() => setFilterType('all')}
-            className={cn(
-              'w-full text-left px-3 py-2 rounded-lg text-sm transition-all',
-              filterType === 'all'
-                ? 'bg-white/10 text-white'
-                : 'text-gray-400 hover:text-white hover:bg-white/5',
-            )}
+            className="w-full justify-start px-3 py-2 text-xs font-mono tracking-wide cursor-pointer"
           >
             All Streams
-          </button>
-          {Object.entries(TYPE_CONFIG).map(([type, config]) => (
-            <button
-              key={type}
-              onClick={() => setFilterType(type as TimelineType)}
-              className={cn(
-                'w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all',
-                filterType === type
-                  ? 'bg-white/10 text-white'
-                  : 'text-gray-400 hover:text-white hover:bg-white/5',
-              )}
-            >
-              <config.icon
-                size={14}
-                className={filterType === type ? 'text-white' : config.color}
-              />
-              {config.label}
-            </button>
-          ))}
+          </Tag>
+          {Object.entries(TYPE_CONFIG).map(([type, config]) => {
+            const isActive = filterType === type;
+            return (
+              <Tag
+                key={type}
+                interactive
+                active={isActive}
+                variant={isActive ? 'cyan' : 'default'}
+                onClick={() => setFilterType(type as TimelineType)}
+                className="w-full justify-start px-3 py-2 text-xs font-mono tracking-wide cursor-pointer flex items-center gap-2"
+              >
+                <config.icon
+                  size={12}
+                  className={cn(isActive ? 'text-white' : config.color)}
+                />
+                <span>{config.label}</span>
+              </Tag>
+            );
+          })}
         </div>
       </div>
       <div
         className="flex-1 h-full overflow-y-auto relative scrollbar-hide"
         id="timeline-scroll-container"
       >
-        <div className="sticky top-0 z-40 w-full p-6 bg-linear-to-b from-forge-bg via-forge-bg/90 to-transparent pointer-events-none flex justify-between items-start">
+        <div className="sticky top-0 z-40 w-full p-8 backdrop-blur-xl bg-transparent border-b border-white/5 pointer-events-none flex justify-between items-start">
           <div className="pointer-events-auto">
-            <h1 className="text-3xl font-display font-bold text-white">Chronicle</h1>
-            <p className="text-xs text-gray-500 mt-1 font-mono">{sortedItems.length} Artifacts</p>
+            {/* Ethereal label */}
+            <div className="mb-3 flex items-center gap-2 opacity-80 animate-in fade-in slide-in-from-left-4 duration-500">
+              <div className="h-px w-8 bg-gradient-to-r from-forge-cyan/40 to-transparent" />
+              <Label variant="cyan" className="text-[10px] font-mono tracking-[0.4em] uppercase">
+                Chronicle Matrix
+              </Label>
+            </div>
+
+            {/* Poetic Title */}
+            <Label variant="default" className="text-4xl md:text-5xl font-bold text-white tracking-tight block leading-tight mb-2 capitalize animate-in fade-in slide-in-from-left-4 duration-500 delay-75">
+              Chronicle
+            </Label>
+
+            {/* Subtitle */}
+            <p className="text-xs text-gray-500 mt-1 font-mono uppercase tracking-widest">{sortedItems.length} Artifacts Recorded</p>
           </div>
 
           <button
             onClick={() => toast.info('New timeline entry coming soon')}
-            className="pointer-events-auto p-3 rounded-full bg-forge-accent text-white shadow-lg hover:scale-110 transition-transform"
+            className="pointer-events-auto p-3 rounded-full bg-forge-accent text-white shadow-lg hover:scale-110 transition-transform mt-6"
           >
             <Plus size={20} />
           </button>

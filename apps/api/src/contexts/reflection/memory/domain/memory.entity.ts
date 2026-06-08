@@ -7,6 +7,7 @@ interface MemoryProps {
   mood?: MoodType;
   tags?: string[];
   status: MemoryStatus;
+  userId?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -109,6 +110,9 @@ export class Memory {
   get status() {
     return this.props.status;
   }
+  get userId() {
+    return this.props.userId;
+  }
   get createdAt() {
     return this.props.createdAt;
   }
@@ -133,6 +137,7 @@ export class Memory {
       mood: this.mood,
       tags: this.tags,
       status: this.status,
+      userId: this.userId,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       isDeleted: this.isDeleted,

@@ -8,6 +8,7 @@
   --color-forge-cyan: #22d3ee;
 
   --font-sans: "Inter", sans-serif;
+  --font-roboto: var(--font-roboto), sans-serif;
   --font-display: "Space Grotesk", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
   --font-quote: var(--font-playfair), serif;
@@ -18,9 +19,6 @@
   --ease-spring-in: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* -----------------------------
-   KEYFRAMES (Tailwind v4)
------------------------------ */
 @keyframes float {
 
   0%,
@@ -54,9 +52,6 @@
   animation: ripple 2s linear infinite;
 }
 
-/* -----------------------------
-   BASE STYLES
------------------------------ */
 @layer base {
 
   html,
@@ -189,5 +184,129 @@
 @layer utilities {
   .font-lato {
     font-family: var(--font-lato);
+  }
+
+  /* Wikipedia High-Fidelity Styling (Biota Infoboxes, Wikitables, Taxonomic Layouts) */
+  .prose .infobox {
+    float: right;
+    clear: right;
+    margin: 0 0 1.5rem 1.5rem;
+    width: 100%;
+    max-width: 320px;
+    background: rgba(255, 255, 255, 0.02) !important;
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 1rem;
+    padding: 1rem;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: #d4d4d8 !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.5);
+  }
+
+  .prose .infobox table {
+    margin: 0 !important;
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  .prose .infobox caption {
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+    padding-bottom: 0.75rem !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    margin-bottom: 0.75rem !important;
+    caption-side: top !important;
+  }
+
+  .prose .infobox td, 
+  .prose .infobox th {
+    padding: 0.35rem 0.5rem !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
+  }
+
+  .prose .infobox th {
+    font-weight: 600 !important;
+    color: #a1a1aa !important;
+    text-align: left !important;
+    width: 35% !important;
+  }
+
+  .prose .infobox td {
+    color: #e4e4e7 !important;
+  }
+
+  .prose .infobox a {
+    color: #22d3ee !important;
+  }
+
+  /* Biota box taxonomic headers */
+  .prose .infobox .biota-header {
+    background: rgba(34, 211, 238, 0.1) !important;
+    color: #22d3ee !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    border-radius: 0.375rem !important;
+  }
+
+  /* Wikipedia content tables */
+  .prose table.wikitable {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin: 1.5rem 0 !important;
+    background: rgba(255, 255, 255, 0.01) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 0.75rem !important;
+    overflow: hidden !important;
+  }
+
+  .prose table.wikitable th {
+    background: rgba(255, 255, 255, 0.04) !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    padding: 0.75rem 1rem !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  }
+
+  .prose table.wikitable td {
+    padding: 0.75rem 1rem !important;
+    border: 1px solid rgba(255, 255, 255, 0.04) !important;
+    color: #d4d4d8 !important;
+  }
+
+  .prose table.wikitable tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.02) !important;
+  }
+
+  /* Thumb images */
+  .prose .thumb {
+    margin: 1.5rem 0 1.5rem 1.5rem !important;
+    float: right;
+    clear: right;
+    background: rgba(255, 255, 255, 0.02) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 1rem !important;
+    padding: 0.5rem !important;
+    max-width: 300px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+  }
+
+  .prose .thumbinner {
+    width: 100% !important;
+  }
+
+  .prose .thumbimage {
+    border-radius: 0.5rem !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  .prose .thumbcaption {
+    font-size: 0.75rem !important;
+    color: #a1a1aa !important;
+    padding: 0.5rem 0.25rem 0.25rem !important;
+    line-height: 1.4 !important;
   }
 }

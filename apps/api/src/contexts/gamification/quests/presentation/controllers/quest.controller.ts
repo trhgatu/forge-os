@@ -4,9 +4,11 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../../../iam/auth/application/guards/jwt-auth.guard';
 import { User } from '@shared/decorators';
 import { CreateQuestDto } from '../dto/create-quest.dto';
-import { CreateQuestCommand } from '../../application/commands/create-quest.command';
-import { GetDailyQuestsQuery } from '../../application/queries/get-daily-quests.query';
+import { CreateQuestCommand } from '../../application/commands';
+import { GetDailyQuestsQuery } from '../../application/queries';
 import { GoalsService } from '../../../goals/application/goals.service';
+import { QuestPresenter } from '../presenters/quest.presenter';
+import { Quest } from '../../domain/quest.entity';
 
 @ApiTags('Evolution / Quests')
 @ApiBearerAuth()
@@ -22,7 +24,7 @@ export class QuestController {
   @Post()
   @ApiOperation({ summary: 'Create a custom personal quest' })
   async create(@Body() dto: CreateQuestDto, @User('id') userId: string) {
-    return this.commandBus.execute(
+    const quest = await this.commandBus.execute<CreateQuestCommand, Quest>(
       new CreateQuestCommand(
         userId,
         dto.title,
@@ -32,6 +34,7 @@ export class QuestController {
         dto.objectives,
       ),
     );
+    return QuestPresenter.toResponse(quest);
   }
 
   @Get('daily')

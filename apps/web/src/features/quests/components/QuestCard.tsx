@@ -9,10 +9,15 @@ import {
   BookOpen,
   Repeat,
   Award,
+  GitBranch,
+  Coins,
+  Layers,
+  Brain,
+  Sparkles,
 } from 'lucide-react';
-import React from 'react';
 
 import { useSound } from '@/contexts';
+import { Label, Button, Tag } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 
 import type { Quest } from '../types';
@@ -44,48 +49,64 @@ export function QuestCard({ quest, onEdit, onDelete }: QuestCardProps) {
         {/* Header Badges & Actions */}
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-2">
-            <span
+            <Tag
+              variant={
+                quest.type === 'main'
+                  ? 'cyan'
+                  : quest.type === 'weekly'
+                    ? 'accent'
+                    : quest.type === 'daily'
+                      ? 'accent'
+                      : 'default'
+              }
               className={cn(
-                'text-[9px] uppercase font-mono tracking-wider px-2.5 py-1 rounded-lg border font-bold',
-                quest.type === 'daily' && 'bg-amber-500/10 text-amber-500 border-amber-500/20',
-                quest.type === 'weekly' && 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-                quest.type === 'main' && 'bg-forge-cyan/10 text-forge-cyan border-forge-cyan/20',
-                quest.type === 'side' && 'bg-gray-500/10 text-gray-400 border-gray-500/20',
+                'text-[9px] uppercase font-mono tracking-wider font-bold border-none py-1 px-2.5',
+                quest.type === 'daily' && 'bg-amber-500/15 text-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.05)]',
+                quest.type === 'weekly' && 'bg-purple-500/15 text-purple-400 shadow-[0_0_10px_rgba(168,85,247,0.05)]',
+                quest.type === 'main' && 'bg-forge-cyan/15 text-forge-cyan shadow-[0_0_10px_rgba(6,182,212,0.05)]',
+                quest.type === 'side' && 'bg-gray-500/15 text-gray-400'
               )}
             >
               {quest.type}
-            </span>
+            </Tag>
           </div>
 
           <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={() => {
                 playSound('click');
                 onEdit(quest);
               }}
-              className="p-1.5 rounded-lg bg-white/5 border border-white/5 hover:border-white/20 text-gray-500 hover:text-white transition-all cursor-pointer"
+              className="p-1.5 rounded-lg bg-white/5 border border-white/5 hover:border-white/20 text-gray-500 hover:text-white transition-all cursor-pointer h-7 w-7"
               title="Edit Quest"
             >
               <Edit3 size={11} />
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={() => {
                 playSound('click');
                 onDelete(quest.id);
               }}
-              className="p-1.5 rounded-lg bg-red-500/5 border border-red-500/10 hover:border-red-500/20 text-red-400/70 hover:text-red-400 transition-all cursor-pointer"
+              className="p-1.5 rounded-lg bg-red-500/5 border border-red-500/10 hover:border-red-500/20 text-red-400/70 hover:text-red-400 transition-all cursor-pointer h-7 w-7"
               title="Archive Quest"
             >
               <Trash2 size={11} />
-            </button>
+            </Button>
           </div>
         </div>
 
         {/* Title & Description */}
         <div>
-          <h3 className="font-display font-medium text-lg text-gray-200 group-hover:text-white transition-colors duration-500">
+          <Label
+            variant="default"
+            className="text-lg font-medium text-gray-200 group-hover:text-white transition-colors duration-500 block"
+          >
             {quest.title}
-          </h3>
+          </Label>
           {quest.description && (
             <p className="text-xs text-gray-500 font-light mt-1.5 leading-relaxed">
               {quest.description}
@@ -103,6 +124,18 @@ export function QuestCard({ quest, onEdit, onDelete }: QuestCardProps) {
                     <BookOpen className="w-3.5 h-3.5 text-forge-cyan" />
                   ) : obj.type === 'CHECK_HABIT' ? (
                     <Repeat className="w-3.5 h-3.5 text-amber-400" />
+                  ) : obj.type === 'SYNC_PROJECT' ? (
+                    <GitBranch className="w-3.5 h-3.5 text-cyan-400" />
+                  ) : obj.type === 'COMPLETE_ROUTINE' ? (
+                    <Clock className="w-3.5 h-3.5 text-purple-400" />
+                  ) : obj.type === 'STUDY_CONCEPT' ? (
+                    <Brain className="w-3.5 h-3.5 text-forge-cyan" />
+                  ) : obj.type === 'REVIEW_FLASHCARD' ? (
+                    <Layers className="w-3.5 h-3.5 text-orange-400" />
+                  ) : obj.type === 'LOG_TRANSACTION' ? (
+                    <Coins className="w-3.5 h-3.5 text-yellow-400" />
+                  ) : obj.type === 'CREATE_REFLECTION' ? (
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
                   ) : (
                     <Award className="w-3.5 h-3.5 text-emerald-400" />
                   )}
@@ -110,8 +143,20 @@ export function QuestCard({ quest, onEdit, onDelete }: QuestCardProps) {
                     {obj.type === 'CREATE_JOURNAL'
                       ? 'Write Journal Page'
                       : obj.type === 'CHECK_HABIT'
-                      ? 'Complete Habit target'
-                      : 'Log Memory Node'}
+                        ? 'Complete Habit target'
+                        : obj.type === 'SYNC_PROJECT'
+                          ? 'Sync GitHub Project'
+                          : obj.type === 'COMPLETE_ROUTINE'
+                            ? 'Complete Routine Session'
+                            : obj.type === 'STUDY_CONCEPT'
+                              ? 'Study Knowledge Concept'
+                              : obj.type === 'REVIEW_FLASHCARD'
+                                ? 'Review Spaced Flashcards'
+                                : obj.type === 'LOG_TRANSACTION'
+                                  ? 'Log Wealth Transaction'
+                                  : obj.type === 'CREATE_REFLECTION'
+                                    ? 'Create Wealth Reflection'
+                                    : 'Create Memory Node'}
                   </span>
                 </div>
                 <span className="font-mono text-gray-500 text-[10px]">

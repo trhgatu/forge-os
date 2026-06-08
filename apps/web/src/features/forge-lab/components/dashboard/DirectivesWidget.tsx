@@ -2,6 +2,7 @@ import { Layers, Book, Network, Terminal, Star, GitBranch } from 'lucide-react';
 import React from 'react';
 
 import { GlassCard } from '@/shared/components/ui/GlassCard';
+import { Label, Tag, Skeleton } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 
 import type { ForgeTab, Project, Foundation } from '../../types';
@@ -11,6 +12,7 @@ interface DirectivesWidgetProps {
   foundations: Foundation[];
   setActiveTab: (tab: ForgeTab) => void;
   setActiveProjectId: (projectId: string | null) => void;
+  isLoading?: boolean;
 }
 
 export const DirectivesWidget: React.FC<DirectivesWidgetProps> = ({
@@ -18,6 +20,7 @@ export const DirectivesWidget: React.FC<DirectivesWidgetProps> = ({
   foundations,
   setActiveTab,
   setActiveProjectId,
+  isLoading,
 }) => {
   const pinnedItems = [...projects, ...foundations].filter((item) => item.isPinned);
 
@@ -75,13 +78,35 @@ export const DirectivesWidget: React.FC<DirectivesWidgetProps> = ({
       {/* Pinned Projects "Active Directives" */}
       <div className="space-y-4">
         <div className="flex items-center justify-between px-1">
-          <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+          <Label variant="dim" className="text-xs font-bold uppercase tracking-widest block">
             Active Directives
-          </h3>
+          </Label>
           <button className="text-xs text-forge-cyan hover:underline">Customize</button>
         </div>
 
-        {pinnedItems.map((item) => (
+        {isLoading ? (
+          Array.from({ length: 2 }).map((_, i) => (
+            <GlassCard key={i} className="border-white/5" noPadding>
+              <div className="p-5 space-y-4">
+                <div className="flex justify-between items-start">
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="w-4 h-4 rounded" />
+                    <Skeleton className="w-32 h-4" />
+                  </div>
+                  <Skeleton className="w-12 h-4 rounded-md" />
+                </div>
+                <div className="space-y-2">
+                  <Skeleton className="w-full h-3" />
+                  <Skeleton className="w-3/4 h-3" />
+                </div>
+                <div className="flex gap-4">
+                  <Skeleton className="w-16 h-3" />
+                  <Skeleton className="w-12 h-3" />
+                </div>
+              </div>
+            </GlassCard>
+          ))
+        ) : pinnedItems.map((item) => (
           <GlassCard
             key={item.id}
             className={cn(
@@ -105,20 +130,21 @@ export const DirectivesWidget: React.FC<DirectivesWidgetProps> = ({
                   ) : (
                     <Layers size={16} className="text-forge-cyan" />
                   )}
-                  <span
+                  <Label
+                    variant="default"
                     className={cn(
-                      'font-bold text-white text-sm transition-colors',
+                      'font-bold text-white text-sm transition-colors block',
                       'type' in item
                         ? 'group-hover:text-fuchsia-400'
                         : 'group-hover:text-forge-cyan',
                     )}
                   >
                     {item.title}
-                  </span>
+                  </Label>
                 </div>
-                <span className="px-2 py-0.5 rounded text-[10px] bg-white/5 text-gray-400 border border-white/10">
+                <Tag variant="default" className="px-2 py-0.5 text-[10px] bg-white/5 text-gray-400 border border-white/10">
                   {item.githubStats ? 'Public' : 'Internal'}
-                </span>
+                </Tag>
               </div>
               <p className="text-xs text-gray-400 mb-4 line-clamp-2">{item.description}</p>
               <div className="flex items-center gap-4 text-xs text-gray-500">
@@ -150,7 +176,7 @@ export const DirectivesWidget: React.FC<DirectivesWidgetProps> = ({
           </GlassCard>
         ))}
 
-        {pinnedItems.length === 0 && (
+        {!isLoading && pinnedItems.length === 0 && (
           <div className="text-center py-6 text-xs text-gray-600 italic">No directives pinned.</div>
         )}
       </div>

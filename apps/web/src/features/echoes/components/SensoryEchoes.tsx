@@ -9,8 +9,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useLanguage, useNovaView } from '@/contexts';
 import { forgeToast } from '@/shared/lib/toast';
 import { View } from '@/shared/types/os';
-
-import { echoesService } from '../services/echoesService';
+import { useEchoesHistory, useSyncEchoMoment, useClearEchoesHistory } from '../hooks/useEchoes';
 
 import { AnchorControl } from './AnchorControl';
 import { ConstellationSvg } from './ConstellationSvg';
@@ -111,7 +110,10 @@ export const SensoryEchoes: React.FC = () => {
     const secs = (totalSecs % 60).toString().padStart(2, '0');
     return `${hrs}:${mins}:${secs}`;
   };
-  const [flowHistory, setFlowHistory] = useState<FlowMoment[]>([]);
+  const { data: flowHistory = [] } = useEchoesHistory();
+  const syncMomentMutation = useSyncEchoMoment();
+  const clearHistoryMutation = useClearEchoesHistory();
+
   const [lastLoggedMoment, setLastLoggedMoment] = useState<FlowMoment | null>(null);
 
   const [lineToDraw, setLineToDraw] = useState<{
@@ -121,19 +123,6 @@ export const SensoryEchoes: React.FC = () => {
     y2: number;
     visible: boolean;
   } | null>(null);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('forge_flow_moments');
-      if (saved) {
-        try {
-          setFlowHistory(JSON.parse(saved));
-        } catch (_) {
-          // Silent recovery if localStorage content is corrupt
-        }
-      }
-    }
-  }, []);
 
   const initAudio = () => {
     if (!audioCtxRef.current && typeof window !== 'undefined') {
@@ -347,7 +336,7 @@ export const SensoryEchoes: React.FC = () => {
     });
 
     // Trigger API call to backend asynchronously
-    const syncedMomentPromise = echoesService.syncMoment({
+    const syncedMomentPromise = syncMomentMutation.mutateAsync({
       fileName: newMoment.fileName,
       gitBranch: newMoment.gitBranch,
       cpuLoad: newMoment.cpuLoad,
@@ -359,13 +348,6 @@ export const SensoryEchoes: React.FC = () => {
 
     mainTimeline.add(async () => {
       const syncedMoment = await syncedMomentPromise;
-      setFlowHistory((prev) => {
-        const next = [syncedMoment, ...prev].slice(0, 8);
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('forge_flow_moments', JSON.stringify(next));
-        }
-        return next;
-      });
       setLastLoggedMoment(syncedMoment);
 
       // Trigger a premium alchemical toast notification
@@ -412,15 +394,13 @@ export const SensoryEchoes: React.FC = () => {
               onComplete: () => {
                 setLineToDraw(null);
                 setIsFlowActive(false);
-
-                // Start 45-minute flow cooldown focus period
                 const cdDurationMs = 45 * 60 * 1000;
                 const end = Date.now() + cdDurationMs;
                 if (typeof window !== 'undefined') {
                   localStorage.setItem('forge_flow_cooldown_end', end.toString());
                 }
                 setCooldownEnd(end);
-                setCooldownSecondsLeft(45 * 60);
+                setCooldownSecondsLeft(Math.ceil(cdDurationMs / 1000));
               },
             }
           );
@@ -432,7 +412,7 @@ export const SensoryEchoes: React.FC = () => {
             localStorage.setItem('forge_flow_cooldown_end', end.toString());
           }
           setCooldownEnd(end);
-          setCooldownSecondsLeft(45 * 60);
+          setCooldownSecondsLeft(Math.ceil(cdDurationMs / 1000));
         }
       }, 50);
     });
@@ -440,14 +420,10 @@ export const SensoryEchoes: React.FC = () => {
 
   const clearFlowData = async () => {
     playSynthesizerTone(90, 'sine', 0.8, 0.04);
-    setFlowHistory([]);
     setLastLoggedMoment(null);
     setLineToDraw(null);
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('forge_flow_moments');
-    }
     try {
-      await echoesService.clearHistory();
+      await clearHistoryMutation.mutateAsync();
     } catch (err) {
       console.warn('Failed to clear echoes history on backend', err);
     }

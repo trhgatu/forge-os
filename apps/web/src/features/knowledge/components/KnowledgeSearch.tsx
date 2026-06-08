@@ -1,6 +1,7 @@
 'use client';
 
 import { Search, Loader2, CornerDownLeft, Globe, Sparkles } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import React, { useState, useEffect, useRef } from 'react';
 
 import { useKnowledge } from '@/contexts';
@@ -9,6 +10,7 @@ import { cn } from '@/shared/lib/utils';
 import type { KnowledgeConcept } from '@/shared/types';
 
 export const KnowledgeSearch: React.FC = () => {
+  const router = useRouter();
   const { search, searchResults, selectConcept, isLoading, clearResults } = useKnowledge();
   const { language } = useLanguage();
 
@@ -45,7 +47,7 @@ export const KnowledgeSearch: React.FC = () => {
   }, []);
 
   const handleSelect = (concept: KnowledgeConcept) => {
-    selectConcept(concept);
+    router.push(`/forge/knowledge/nexus/${encodeURIComponent(concept.title)}?tab=source`);
     setQuery('');
     setDebouncedQuery('');
     setIsFocused(false);
@@ -60,7 +62,7 @@ export const KnowledgeSearch: React.FC = () => {
         {/* Glow */}
         <div
           className={cn(
-            'absolute -inset-0.5 bg-linear-to-r from-forge-cyan via-purple-500 to-forge-accent rounded-2xl opacity-20 blur-md transition-all',
+            'absolute -inset-0.5 bg-linear-to-r from-forge-cyan via-cyan-400 to-forge-accent rounded-2xl opacity-20 blur-md transition-all',
             isFocused ? 'opacity-60 blur-xl' : '',
           )}
         />

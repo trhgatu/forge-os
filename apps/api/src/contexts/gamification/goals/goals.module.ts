@@ -8,15 +8,8 @@ import { GamificationModule } from '../gamification.module';
 import { GoalController } from './presentation/controllers/goal.controller';
 import { GoalsService } from './application/goals.service';
 
-import { CreateGoalHandler } from './application/commands/create-goal.command';
-import { UpdateGoalHandler } from './application/commands/update-goal.command';
-import { DeleteGoalHandler } from './application/commands/delete-goal.command';
-
-import { GetGoalsHandler } from './application/queries/get-goals.query';
-import { GetGoalByIdHandler } from './application/queries/get-goal-by-id.query';
-
-const CommandHandlers = [CreateGoalHandler, UpdateGoalHandler, DeleteGoalHandler];
-const QueryHandlers = [GetGoalsHandler, GetGoalByIdHandler];
+import { CommandHandlers } from './application/commands';
+import { QueryHandlers } from './application/queries';
 
 @Module({
   imports: [CqrsModule, PrismaModule, SharedModule, AuthModule, GamificationModule],

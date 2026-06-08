@@ -12,7 +12,7 @@ import {
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { JwtAuthGuard } from 'src/contexts/iam/auth/application/guards';
 import { PermissionsGuard } from '@shared/guards/permissions.guard';
-import { Permissions } from '@shared/decorators';
+import { Permissions, User } from '@shared/decorators';
 import { PermissionEnum } from '@shared/enums';
 import { CreateMoodDto } from '../dto/create-mood.dto';
 import { UpdateMoodDto } from '../dto/update-mood.dto';
@@ -26,7 +26,7 @@ import {
 } from '../../application/commands';
 import { GetAllMoodsQuery, GetMoodByIdQuery } from '../../application/queries';
 import { MoodId } from '../../domain/value-objects/mood-id.vo';
-import { MoodPresenter } from '../mood.presenter';
+import { MoodPresenter } from '../presenters/mood.presenter';
 import { Mood } from '../../domain/mood.entity';
 import { PaginatedResult } from '@shared/types/paginated-result';
 
@@ -36,13 +36,14 @@ export class MoodAdminController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
+    private readonly presenter: MoodPresenter,
   ) {}
 
   @Post()
   @Permissions(PermissionEnum.CREATE_MOOD)
-  async create(@Body() dto: CreateMoodDto) {
-    const mood: Mood = await this.commandBus.execute(new CreateMoodCommand(dto));
-    return MoodPresenter.toResponse(mood);
+  async create(@Body() dto: CreateMoodDto, @User('id') userId: string) {
+    const mood = (await this.commandBus.execute(new CreateMoodCommand({ ...dto, userId }))) as Mood;
+    return this.presenter.toResponse(mood);
   }
 
   @Get()
@@ -62,7 +63,7 @@ export class MoodAdminController {
 
     return {
       meta: result.meta,
-      data: result.data.map(MoodPresenter.toResponse),
+      data: result.data.map((m) => this.presenter.toResponse(m)),
     };
   }
 
@@ -70,14 +71,16 @@ export class MoodAdminController {
   @Permissions(PermissionEnum.READ_MOOD)
   async findById(@Param('id') id: string) {
     const mood: Mood = await this.queryBus.execute(new GetMoodByIdQuery(MoodId.create(id)));
-    return MoodPresenter.toResponse(mood);
+    return this.presenter.toResponse(mood);
   }
 
   @Patch(':id')
   @Permissions(PermissionEnum.UPDATE_MOOD)
-  async update(@Param('id') id: string, @Body() dto: UpdateMoodDto) {
-    const mood: Mood = await this.commandBus.execute(new UpdateMoodCommand(MoodId.create(id), dto));
-    return MoodPresenter.toResponse(mood);
+  async update(@Param('id') id: string, @Body() dto: UpdateMoodDto, @User('id') userId: string) {
+    const mood = (await this.commandBus.execute(
+      new UpdateMoodCommand(MoodId.create(id), { ...dto, userId }),
+    )) as Mood;
+    return this.presenter.toResponse(mood);
   }
 
   @Delete(':id')

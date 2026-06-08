@@ -3,43 +3,19 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { PrismaModule } from '@shared/infrastructure/prisma/prisma.module';
 import { SharedModule } from '@shared/shared.module';
 import { AuthModule } from '../../iam/auth/auth.module';
-import { JournalModule } from '../../reflection/journal/journal.module';
 import { QuestController } from './presentation/controllers/quest.controller';
 import { QuestAdminController } from './presentation/controllers/quest.admin.controller';
 import { QuestsRepository } from './domain/quests.repository';
 import { PrismaQuestsRepository } from './infrastructure/prisma-quests.repository';
-import { CreateQuestHandler } from './application/commands/create-quest.command';
-import { UpdateQuestHandler } from './application/commands/update-quest.command';
-import { DeleteQuestHandler } from './application/commands/delete-quest.command';
-import { IncrementObjectiveProgressHandler } from './application/commands/increment-objective-progress.command';
-import { GetDailyQuestsHandler } from './application/queries/get-daily-quests.query';
-import { GetAllQuestsHandler } from './application/queries/get-all-quests.query';
-import { GetQuestByIdHandler } from './application/queries/get-quest-by-id.query';
-import { HabitCompletedQuestHandler } from './application/events/handlers/habit-completed.handler';
-import { JournalCreatedQuestHandler } from './application/events/handlers/journal-created.handler';
+import { CommandHandlers } from './application/commands';
+import { QueryHandlers } from './application/queries';
+import { GamificationEventDispatcher } from './application/events/gamification-event.dispatcher';
 import { QuestsInitializer } from './infrastructure/quests-initializer.service';
 import { GamificationModule } from '../gamification.module';
 import { GoalsModule } from '../goals/goals.module';
 
-const CommandHandlers = [
-  CreateQuestHandler,
-  UpdateQuestHandler,
-  DeleteQuestHandler,
-  IncrementObjectiveProgressHandler,
-];
-const QueryHandlers = [GetDailyQuestsHandler, GetAllQuestsHandler, GetQuestByIdHandler];
-const EventHandlers = [HabitCompletedQuestHandler, JournalCreatedQuestHandler];
-
 @Module({
-  imports: [
-    CqrsModule,
-    PrismaModule,
-    SharedModule,
-    AuthModule,
-    JournalModule,
-    GamificationModule,
-    GoalsModule,
-  ],
+  imports: [CqrsModule, PrismaModule, SharedModule, AuthModule, GamificationModule, GoalsModule],
   controllers: [QuestController, QuestAdminController],
   providers: [
     {
@@ -47,9 +23,9 @@ const EventHandlers = [HabitCompletedQuestHandler, JournalCreatedQuestHandler];
       useClass: PrismaQuestsRepository,
     },
     QuestsInitializer,
+    GamificationEventDispatcher,
     ...CommandHandlers,
     ...QueryHandlers,
-    ...EventHandlers,
   ],
   exports: [QuestsRepository],
 })

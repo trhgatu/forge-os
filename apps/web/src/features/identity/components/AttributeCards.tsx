@@ -4,6 +4,7 @@ import { Shield, Flame, Zap, Brain, Target } from 'lucide-react';
 import React from 'react';
 
 import { useLanguage } from '@/contexts';
+import { Label, Tag } from '@/shared/components/ui';
 
 import type { UserStats } from '../../gamification/types';
 
@@ -22,9 +23,9 @@ export const AttributeCards: React.FC<AttributeCardsProps> = ({ stats }) => {
 
   return (
     <div className="lg:col-span-3 space-y-4">
-      <span className="text-[10px] font-mono tracking-widest text-zinc-400 uppercase block mb-1">
+      <Label variant="dim" className="text-[10px] font-mono tracking-widest text-zinc-400 uppercase block mb-1">
         {t('identity.indicators')}
-      </span>
+      </Label>
 
       {/* 1. DISCIPLINE CARD */}
       <div className="p-4 rounded-sm bg-[#050507]/60 border border-white/5 shadow-md flex justify-between items-center group hover:border-forge-cyan/20 transition-all duration-300 relative">
@@ -33,13 +34,13 @@ export const AttributeCards: React.FC<AttributeCardsProps> = ({ stats }) => {
             <Shield size={16} />
           </div>
           <div>
-            <h4 className="text-sm font-bold text-white tracking-wide">{t('identity.discipline')}</h4>
+            <Label variant="default" className="text-sm font-bold text-white tracking-wide block">{t('identity.discipline')}</Label>
             <p className="text-[10px] text-zinc-500 font-sans">{t('identity.discipline_desc')}</p>
           </div>
         </div>
         <div className="text-right">
           <span className="text-xl font-mono font-bold text-forge-cyan tracking-wider">{attrDiscipline}</span>
-          <span className="text-[9px] text-zinc-600 block uppercase font-mono">{t('identity.points')}</span>
+          <Label variant="dim" className="text-[9px] text-zinc-600 block uppercase font-mono">{t('identity.points')}</Label>
         </div>
       </div>
 
@@ -50,13 +51,13 @@ export const AttributeCards: React.FC<AttributeCardsProps> = ({ stats }) => {
             <Flame size={16} />
           </div>
           <div>
-            <h4 className="text-sm font-bold text-white tracking-wide">{t('identity.consistency')}</h4>
+            <Label variant="default" className="text-sm font-bold text-white tracking-wide block">{t('identity.consistency')}</Label>
             <p className="text-[10px] text-zinc-500 font-sans">{t('identity.consistency_desc')}</p>
           </div>
         </div>
         <div className="text-right">
           <span className="text-xl font-mono font-bold text-forge-cyan tracking-wider">{attrConsistency}</span>
-          <span className="text-[9px] text-zinc-600 block uppercase font-mono">{t('identity.points')}</span>
+          <Label variant="dim" className="text-[9px] text-zinc-600 block uppercase font-mono">{t('identity.points')}</Label>
         </div>
       </div>
 
@@ -67,13 +68,13 @@ export const AttributeCards: React.FC<AttributeCardsProps> = ({ stats }) => {
             <Zap size={16} />
           </div>
           <div>
-            <h4 className="text-sm font-bold text-white tracking-wide">{t('identity.willpower')}</h4>
+            <Label variant="default" className="text-sm font-bold text-white tracking-wide block">{t('identity.willpower')}</Label>
             <p className="text-[10px] text-zinc-500 font-sans">{t('identity.willpower_desc')}</p>
           </div>
         </div>
         <div className="text-right">
           <span className="text-xl font-mono font-bold text-forge-cyan tracking-wider">{attrWillpower}</span>
-          <span className="text-[9px] text-zinc-600 block uppercase font-mono">{t('identity.points')}</span>
+          <Label variant="dim" className="text-[9px] text-zinc-600 block uppercase font-mono">{t('identity.points')}</Label>
         </div>
       </div>
 
@@ -84,13 +85,13 @@ export const AttributeCards: React.FC<AttributeCardsProps> = ({ stats }) => {
             <Brain size={16} />
           </div>
           <div>
-            <h4 className="text-sm font-bold text-white tracking-wide">{t('identity.awareness')}</h4>
+            <Label variant="default" className="text-sm font-bold text-white tracking-wide block">{t('identity.awareness')}</Label>
             <p className="text-[10px] text-zinc-500 font-sans">{t('identity.awareness_desc')}</p>
           </div>
         </div>
         <div className="text-right">
           <span className="text-xl font-mono font-bold text-forge-cyan tracking-wider">{attrAwareness}</span>
-          <span className="text-[9px] text-zinc-600 block uppercase font-mono">{t('identity.points')}</span>
+          <Label variant="dim" className="text-[9px] text-zinc-600 block uppercase font-mono">{t('identity.points')}</Label>
         </div>
       </div>
 
@@ -101,13 +102,13 @@ export const AttributeCards: React.FC<AttributeCardsProps> = ({ stats }) => {
             <Target size={16} />
           </div>
           <div>
-            <h4 className="text-sm font-bold text-white tracking-wide">{t('identity.presence')}</h4>
+            <Label variant="default" className="text-sm font-bold text-white tracking-wide block">{t('identity.presence')}</Label>
             <p className="text-[10px] text-zinc-500 font-sans">{t('identity.presence_desc')}</p>
           </div>
         </div>
         <div className="text-right">
           <span className="text-xl font-mono font-bold text-forge-cyan tracking-wider">{attrPresence}</span>
-          <span className="text-[9px] text-zinc-600 block uppercase font-mono">{t('identity.points')}</span>
+          <Label variant="dim" className="text-[9px] text-zinc-600 block uppercase font-mono">{t('identity.points')}</Label>
         </div>
       </div>
     </div>

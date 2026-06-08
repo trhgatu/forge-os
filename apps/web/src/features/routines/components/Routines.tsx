@@ -1,286 +1,174 @@
 'use client';
 
 import {
-  Clock,
   Plus,
   Zap,
   Check,
-  X,
   Target,
-  Flame,
-  ChevronRight,
   TrendingUp,
   Settings,
   Sparkles,
+  Trash2,
+  Edit3,
+  ArrowRight,
+  GripVertical,
 } from 'lucide-react';
+import Link from 'next/link';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 
+import { motion } from 'framer-motion';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+
 import { useLanguage, useSound } from '@/contexts';
 import { useHabits, useCompleteHabit } from '@/features/habits/hooks/useHabits';
-import { Button, Dropdown, Input } from '@/shared/components/ui';
+import { Button, Label, EmptyState, Skeleton, Input, Pagination } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 
-import { useRoutines, useCreateRoutine, useAddHabitToRoutine } from '../hooks/useRoutines';
+import { useRoutines, useDeleteRoutine, useReorderRoutineHabits } from '../hooks/useRoutines';
 
-interface CreateRoutineModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-const CreateRoutineModal: React.FC<CreateRoutineModalProps> = ({ isOpen, onClose }) => {
-  const { playSound } = useSound();
-  const createRoutineMutation = useCreateRoutine();
-
-  const [title, setTitle] = useState('');
-  const [comboXp, setComboXp] = useState('50');
-
-  if (!isOpen) return null;
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title.trim()) {
-      toast.error('Title is required to initialize a routine chain');
-      return;
-    }
-
-    try {
-      await createRoutineMutation.mutateAsync({
-        title,
-        comboXp: parseInt(comboXp) || 50,
-      });
-      playSound('success');
-      onClose();
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div
-        className="absolute inset-0 bg-black/80 backdrop-blur-md transition-opacity duration-500"
-        onClick={onClose}
-      />
-
-      <div className="relative w-full max-w-md overflow-visible rounded-3xl border border-white/10 bg-[#09090b] p-8 shadow-[0_20px_50px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-300">
-        <button
-          onClick={onClose}
-          className="absolute top-6 right-6 p-2 rounded-xl text-gray-500 hover:text-white hover:bg-white/5 transition-all"
-        >
-          <X size={18} />
-        </button>
-
-        <div className="mb-6">
-          <div className="flex items-center gap-2 text-xs font-bold text-forge-cyan uppercase tracking-widest mb-2">
-            <Clock size={14} /> Initialize Routine Chain
-          </div>
-          <h2 className="text-2xl font-display font-bold text-white tracking-tight">
-            Establish Combo Routine
-          </h2>
-          <p className="text-xs text-gray-500 mt-1 italic">
-            "Order is the foundation upon which focus thrives."
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <label className="text-[10px] font-mono text-gray-500 uppercase tracking-widest block">
-              Routine Title
-            </label>
-            <Input
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g. Morning Focus, Evening Wind-Down..."
-              className="bg-white/5 border-white/10 text-white rounded-xl placeholder-gray-600 focus:border-white/20"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-[10px] font-mono text-gray-500 uppercase tracking-widest block">
-              Combo Completion XP
-            </label>
-            <Input
-              type="number"
-              value={comboXp}
-              onChange={(e) => setComboXp(e.target.value)}
-              placeholder="e.g. 50, 100, 150..."
-              className="bg-white/5 border-white/10 text-white rounded-xl placeholder-gray-600 focus:border-white/20"
-            />
-          </div>
-
-          <div className="flex items-center justify-end gap-3 pt-2">
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={onClose}
-              className="rounded-xl border border-white/5 text-gray-400 hover:text-white"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              disabled={createRoutineMutation.isPending}
-              className="rounded-xl bg-white text-black hover:bg-white/90 disabled:opacity-50"
-            >
-              {createRoutineMutation.isPending ? 'Establishing...' : 'Establish Chain'}
-            </Button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-};
-
-interface AddStepModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  routineId: string;
-  existingStepCount: number;
-}
-
-const AddStepModal: React.FC<AddStepModalProps> = ({
-  isOpen,
-  onClose,
-  routineId,
-  existingStepCount,
-}) => {
-  const { playSound } = useSound();
-  const { data: habits = [] } = useHabits();
-  const addStepMutation = useAddHabitToRoutine();
-
-  const [selectedHabitId, setSelectedHabitId] = useState('');
-  const [order, setOrder] = useState(String(existingStepCount + 1));
-
-  if (!isOpen) return null;
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedHabitId) {
-      toast.error('Please choose a habit to append as a ritual step');
-      return;
-    }
-
-    try {
-      await addStepMutation.mutateAsync({
-        routineId,
-        habitId: selectedHabitId,
-        order: parseInt(order) || 1,
-      });
-      playSound('success');
-      onClose();
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const habitOptions = habits.map((h) => ({
-    value: h.id,
-    label: h.title,
-    description: `${h.difficulty} Difficulty // Quest Linked`,
-  }));
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div
-        className="absolute inset-0 bg-black/80 backdrop-blur-md transition-opacity duration-500"
-        onClick={onClose}
-      />
-
-      <div className="relative w-full max-w-md overflow-visible rounded-3xl border border-white/10 bg-[#09090b] p-8 shadow-[0_20px_50px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-300">
-        <button
-          onClick={onClose}
-          className="absolute top-6 right-6 p-2 rounded-xl text-gray-500 hover:text-white hover:bg-white/5 transition-all"
-        >
-          <X size={18} />
-        </button>
-
-        <div className="mb-6">
-          <div className="flex items-center gap-2 text-xs font-bold text-forge-cyan uppercase tracking-widest mb-2">
-            <Plus size={14} /> Append Ritual Step
-          </div>
-          <h2 className="text-2xl font-display font-bold text-white tracking-tight">
-            Integrate Habit Step
-          </h2>
-          <p className="text-xs text-gray-500 mt-1 italic">
-            Associate active disciplines to construct this routine chain.
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2 relative">
-            <label className="text-[10px] font-mono text-gray-500 uppercase tracking-widest block">
-              Select Target Habit
-            </label>
-            {habitOptions.length > 0 ? (
-              <Dropdown
-                value={selectedHabitId}
-                onChange={(val) => {
-                  playSound('click');
-                  setSelectedHabitId(val);
-                }}
-                options={habitOptions}
-                placeholder="Choose established habit..."
-                className="w-full bg-white/5 border border-white/10 text-white rounded-xl"
-              />
-            ) : (
-              <p className="text-xs text-red-400 italic">
-                No active habits established yet. Go to Habits page to establish one first.
-              </p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-[10px] font-mono text-gray-500 uppercase tracking-widest block">
-              Step Execution Order
-            </label>
-            <Input
-              type="number"
-              value={order}
-              onChange={(e) => setOrder(e.target.value)}
-              placeholder="e.g. 1, 2, 3..."
-              className="bg-white/5 border-white/10 text-white rounded-xl placeholder-gray-600 focus:border-white/20"
-            />
-          </div>
-
-          <div className="flex items-center justify-end gap-3 pt-2">
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={onClose}
-              className="rounded-xl border border-white/5 text-gray-400 hover:text-white"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              disabled={addStepMutation.isPending || !selectedHabitId}
-              className="rounded-xl bg-white text-black hover:bg-white/90 disabled:opacity-50"
-            >
-              {addStepMutation.isPending ? 'Integrating...' : 'Integrate Step'}
-            </Button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-};
+import { RoutineModal } from './RoutineModal';
+import { AddStepModal } from './AddStepModal';
 
 export const Routines: React.FC = () => {
   const { playSound } = useSound();
   const { data: routines = [], isLoading } = useRoutines();
+  const { data: habits = [] } = useHabits();
   const completeHabitMutation = useCompleteHabit();
+  const deleteRoutineMutation = useDeleteRoutine();
+  const reorderHabitsMutation = useReorderRoutineHabits();
 
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [activeRoutineForEdit, setActiveRoutineForEdit] = useState<any | null>(null);
   const [activeRoutineForStep, setActiveRoutineForStep] = useState<string | null>(null);
   const [activeStepCount, setActiveStepCount] = useState(0);
 
-  // Track completed steps locally per session to display beautiful glowing checkmarks
   const [completedSteps, setCompletedSteps] = useState<Record<string, boolean>>({});
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
 
-  const handleStepCheck = async (routineId: string, habitId: string, comboXp: number, stepsLength: number) => {
+  const completedHabitIds = React.useMemo(() => {
+    return new Set(habits.filter((h) => h.isCompletedToday).map((h) => h.id));
+  }, [habits]);
+
+  // Keep a local copy of routines to render during drag & drop operations to prevent lag
+  const [localRoutines, setLocalRoutines] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    if (routines.length > 0) {
+      // Sort steps for each routine to match their correct order initially
+      const sortedRoutines = routines.map((r) => ({
+        ...r,
+        steps: [...r.steps].sort((a, b) => a.order - b.order),
+      }));
+      setLocalRoutines(sortedRoutines);
+    } else {
+      setLocalRoutines([]);
+    }
+  }, [routines]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // Avoid accidental drags when clicking checkboxes
+      },
+    })
+  );
+
+  const filteredRoutines = React.useMemo(() => {
+    return localRoutines.filter((r) => {
+      const matchesSearch =
+        r.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        r.steps.some((step: any) => step.title.toLowerCase().includes(searchQuery.toLowerCase()));
+      return matchesSearch;
+    });
+  }, [localRoutines, searchQuery]);
+
+  const totalPages = Math.ceil(filteredRoutines.length / itemsPerPage);
+  const paginatedRoutines = React.useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredRoutines.slice(start, start + itemsPerPage);
+  }, [filteredRoutines, currentPage, itemsPerPage]);
+
+  const handleDragEnd = async (routineId: string, event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const routineIndex = localRoutines.findIndex((r) => r.id === routineId);
+    if (routineIndex === -1) return;
+
+    const steps = [...localRoutines[routineIndex].steps];
+    const oldIndex = steps.findIndex((s) => s.habitId === active.id);
+    const newIndex = steps.findIndex((s) => s.habitId === over.id);
+
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    const reorderedSteps = arrayMove(steps, oldIndex, newIndex);
+
+    // Update orders sequentially
+    const updatedSteps = reorderedSteps.map((step, idx) => ({
+      ...step,
+      order: idx + 1,
+    }));
+
+    // Update local state immediately for snappy responsive feel
+    const updatedRoutines = [...localRoutines];
+    updatedRoutines[routineIndex] = {
+      ...updatedRoutines[routineIndex],
+      steps: updatedSteps,
+    };
+    setLocalRoutines(updatedRoutines);
+
+    // Sync with DB
+    const ordersPayload = updatedSteps.map((step) => ({
+      habitId: step.habitId,
+      order: step.order,
+    }));
+
+    try {
+      playSound('click');
+      await reorderHabitsMutation.mutateAsync({
+        routineId,
+        orders: ordersPayload,
+      });
+    } catch (err) {
+      console.error(err);
+      // Rollback to database-synchronized value in case of API failure
+      const sortedRoutines = routines.map((r) => ({
+        ...r,
+        steps: [...r.steps].sort((a, b) => a.order - b.order),
+      }));
+      setLocalRoutines(sortedRoutines);
+      toast.error('Failed to update habit order.');
+    }
+  };
+
+
+  const handleStepCheck = async (
+    routineId: string,
+    habitId: string,
+    steps: { habitId: string }[]
+  ) => {
     const key = `${routineId}_${habitId}`;
-    if (completedSteps[key]) return; // Already checked this session
+    if (completedHabitIds.has(habitId) || completedSteps[key]) return; // Already completed today
 
     playSound('success');
     setCompletedSteps((prev) => ({ ...prev, [key]: true }));
@@ -289,13 +177,15 @@ export const Routines: React.FC = () => {
       await completeHabitMutation.mutateAsync(habitId);
 
       // Check if this was the last remaining step of the routine
-      const routineStepsKeys = Object.keys(completedSteps).filter((k) => k.startsWith(`${routineId}_`));
-      const newlyCompletedCount = routineStepsKeys.length + 1;
+      const newlyCompletedCount = steps.filter((step) => {
+        const stepKey = `${routineId}_${step.habitId}`;
+        return completedHabitIds.has(step.habitId) || !!completedSteps[stepKey] || step.habitId === habitId;
+      }).length;
 
-      if (newlyCompletedCount === stepsLength) {
+      if (newlyCompletedCount === steps.length) {
         // Combo success!
         playSound('success');
-        toast.success(`Ritual Combo Completed! +${comboXp} XP combo bonus unlocked!`, {
+        toast.success(`Ritual Combo Completed!`, {
           icon: <Sparkles className="text-yellow-400" />,
         });
       }
@@ -306,44 +196,63 @@ export const Routines: React.FC = () => {
     }
   };
 
-  const getRoutineComboStatus = (routineId: string, stepsLength: number) => {
-    if (stepsLength === 0) return false;
-    const completedCount = Object.keys(completedSteps).filter(
-      (k) => k.startsWith(`${routineId}_`) && completedSteps[k]
-    ).length;
-    return completedCount === stepsLength;
+  const getRoutineComboStatus = (routineId: string, steps: { habitId: string }[]) => {
+    if (!steps || steps.length === 0) return false;
+    const completedCount = steps.filter((step) => {
+      const stepKey = `${routineId}_${step.habitId}`;
+      return completedHabitIds.has(step.habitId) || !!completedSteps[stepKey];
+    }).length;
+    return completedCount === steps.length;
   };
 
   return (
     <div className="h-full flex bg-transparent overflow-hidden text-white font-sans">
       <div className="flex-1 h-full overflow-y-auto scrollbar-hide p-8 pb-32">
-        {/* Serene Header */}
+        {/* Serene Header - Synchronized Alchemical Style */}
         <header className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
           <div>
-            <div className="flex items-center gap-2 opacity-80 mb-3">
+            {/* Ethereal label */}
+            <div className="mb-3 flex items-center gap-2 opacity-85">
               <div className="h-px w-8 bg-gradient-to-r from-forge-cyan/40 to-transparent" />
-              <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-forge-cyan/80">
+              <Label variant="cyan" className="text-[10px] font-mono tracking-[0.4em] uppercase">
                 Evolution Engine
-              </span>
+              </Label>
             </div>
-            <h1 className="text-4xl md:text-5xl font-display font-bold text-white tracking-tight">
+
+            {/* Poetic Title */}
+            <Label variant="default" className="text-4xl md:text-5xl font-bold text-white tracking-tight leading-tight mb-3 block capitalize">
               Routine Chains
-            </h1>
-            <p className="text-xs text-gray-500 mt-2 font-light max-w-xl leading-relaxed italic">
+            </Label>
+
+            {/* Flowing Subtitle */}
+            <p className="text-sm text-gray-400 font-light leading-relaxed max-w-xl italic">
               "First we shape our routines, then our routines shape us." Organize habits into sequential daily paths.
             </p>
           </div>
 
-          <button
-            onClick={() => {
-              playSound('click');
-              setShowCreateModal(true);
-            }}
-            className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white text-black font-semibold hover:bg-white/90 transition-all duration-300 shadow-[0_4px_20px_rgba(255,255,255,0.1)] group text-xs uppercase tracking-wider font-mono shrink-0 cursor-pointer"
-          >
-            <Plus size={14} className="group-hover:rotate-90 transition-transform duration-300" />
-            Establish Chain
-          </button>
+          <div className="flex items-center gap-3 shrink-0">
+            <Link href="/forge/habits">
+              <Button
+                variant="ghost"
+                onClick={() => playSound('click')}
+                className="border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-xs uppercase tracking-wider font-mono p-4 rounded-xl cursor-pointer"
+              >
+                Habit Rituals
+                <ArrowRight size={14} className="inline ml-2" />
+              </Button>
+            </Link>
+
+            <Button
+              onClick={() => {
+                playSound('click');
+                setShowCreateModal(true);
+              }}
+              className="bg-white hover:bg-gray-200 text-black font-semibold shadow-[0_4px_20px_rgba(255,255,255,0.1)] text-xs uppercase tracking-wider font-mono p-4 rounded-xl cursor-pointer"
+            >
+              <Plus size={14} className="inline mr-2" />
+              Establish Chain
+            </Button>
+          </div>
         </header>
 
         {/* Quiet Overview stats */}
@@ -352,15 +261,15 @@ export const Routines: React.FC = () => {
             { label: 'Routine Chains', value: routines.length, icon: Target, desc: 'Structured daily pathways' },
             {
               label: 'Combo Completions',
-              value: routines.filter((r) => getRoutineComboStatus(r.id, r.steps.length)).length,
+              value: routines.filter((r) => getRoutineComboStatus(r.id, r.steps)).length,
               icon: Sparkles,
               desc: 'Completed ritual paths today',
             },
             {
-              label: 'Accrued Bonus Potential',
-              value: `${routines.reduce((acc, r) => acc + r.comboXp, 0)} XP`,
+              label: 'Total Steps Integrated',
+              value: routines.reduce((acc, r) => acc + r.steps.length, 0),
               icon: TrendingUp,
-              desc: 'Combo completion bonuses',
+              desc: 'Total active habit connections',
             },
           ].map((stat, i) => (
             <div
@@ -368,9 +277,9 @@ export const Routines: React.FC = () => {
               className="p-6 rounded-2xl border border-white/5 bg-white/[0.01] backdrop-blur-md flex items-center justify-between"
             >
               <div className="space-y-1">
-                <span className="text-[10px] font-mono uppercase tracking-wider text-gray-500 block">
+                <Label variant="dim" className="text-[10px] font-mono uppercase tracking-wider block">
                   {stat.label}
-                </span>
+                </Label>
                 <span className="text-2xl font-bold text-white block">
                   {isLoading ? '...' : stat.value}
                 </span>
@@ -385,160 +294,209 @@ export const Routines: React.FC = () => {
           ))}
         </div>
 
+        {/* Search Input */}
+        <div className="mb-6 flex justify-end relative z-10">
+          <div className="w-full sm:w-80">
+            <Input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
+              placeholder="Search routines or steps..."
+              className="bg-white/5 border border-white/10 text-white rounded-xl placeholder-gray-600 focus:border-white/20 w-full"
+            />
+          </div>
+        </div>
+
         {/* Grid Content */}
-        <div className="relative z-10">
+        <div className="relative z-10 flex flex-col gap-8">
           {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[...Array(3)].map((_, i) => (
-                <div key={i} className="h-64 bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse" />
+                <Skeleton key={i} variant="glowing" className="h-64 rounded-2xl" />
               ))}
             </div>
-          ) : routines.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {routines.map((routine) => {
-                const isComboComplete = getRoutineComboStatus(routine.id, routine.steps.length);
+          ) : paginatedRoutines.length > 0 ? (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {paginatedRoutines.map((routine) => {
+                  const isComboComplete = getRoutineComboStatus(routine.id, routine.steps);
 
-                return (
-                  <div
-                    key={routine.id}
-                    className={cn(
-                      'group relative rounded-3xl border bg-white/[0.01] backdrop-blur-md p-6 transition-all duration-700 flex flex-col justify-between overflow-hidden shadow-lg min-h-[250px]',
-                      isComboComplete
-                        ? 'border-forge-cyan/30 bg-forge-cyan/[0.01] shadow-[0_0_30px_rgba(34,211,238,0.05)]'
-                        : 'border-white/5 hover:border-white/10 hover:bg-white/[0.02]'
-                    )}
-                  >
-                    {/* Glow backlight inside completed combos */}
-                    {isComboComplete && (
-                      <div className="absolute inset-0 bg-radial from-forge-cyan/5 to-transparent pointer-events-none opacity-40 animate-pulse" />
-                    )}
+                  return (
+                    <div
+                      key={routine.id}
+                      className={cn(
+                        'group relative rounded-3xl border bg-white/[0.01] backdrop-blur-md p-6 transition-all duration-700 flex flex-col justify-between overflow-hidden shadow-lg min-h-[250px]',
+                        isComboComplete
+                          ? 'border-forge-cyan/30 bg-forge-cyan/[0.01] shadow-[0_0_30px_rgba(34,211,238,0.05)]'
+                          : 'border-white/5 hover:border-white/10 hover:bg-white/[0.02]'
+                      )}
+                    >
+                      {/* Glow backlight inside completed combos */}
+                      {isComboComplete && (
+                        <div className="absolute inset-0 bg-radial from-forge-cyan/5 to-transparent pointer-events-none opacity-40 animate-pulse" />
+                      )}
 
-                    <div className="space-y-4 relative z-10">
-                      {/* Top status */}
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-mono uppercase tracking-widest text-gray-500">
-                          Ritual Chain
-                        </span>
-                        <div className="flex items-center gap-1.5 text-[10px] font-mono text-forge-cyan">
-                          <Zap size={11} /> +{routine.comboXp} XP Combo
+                      <div className="space-y-4 relative z-10">
+                        {/* Bottom status */}
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-mono uppercase tracking-widest text-gray-500">
+                            Ritual Chain
+                          </span>
+                          <div className="flex items-center gap-1.5 text-[10px] font-mono text-forge-cyan">
+                            <Zap size={11} /> Active
+                          </div>
+                        </div>
+
+                        {/* Header info */}
+                        <div className="flex justify-between items-start gap-4">
+                          <Label
+                            variant="default"
+                            className="text-lg font-medium text-gray-200 group-hover:text-white transition-colors duration-500 block"
+                          >
+                            {routine.title}
+                          </Label>
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => {
+                                playSound('click');
+                                setActiveRoutineForEdit(routine);
+                                setShowEditModal(true);
+                              }}
+                              className="p-1.5 rounded-lg border border-white/5 hover:border-white/20 text-gray-500 hover:text-white hover:bg-white/5 transition-all cursor-pointer h-7 w-7"
+                              title="Edit routine title"
+                            >
+                              <Edit3 size={12} />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => {
+                                playSound('click');
+                                setActiveRoutineForStep(routine.id);
+                                setActiveStepCount(routine.steps.length);
+                              }}
+                              className="p-1.5 rounded-lg border border-white/5 hover:border-white/20 text-gray-500 hover:text-white hover:bg-white/5 transition-all cursor-pointer h-7 w-7"
+                              title="Add step habit"
+                            >
+                              <Settings size={12} />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => {
+                                playSound('click');
+                                toast('Delete this routine chain?', {
+                                  action: {
+                                    label: 'Confirm',
+                                    onClick: () => {
+                                      deleteRoutineMutation.mutate(routine.id);
+                                    },
+                                  },
+                                });
+                              }}
+                              className="p-1.5 rounded-lg border border-white/5 hover:border-red-500/20 text-gray-500 hover:text-red-400 hover:bg-red-500/5 transition-all cursor-pointer h-7 w-7"
+                              title="Delete routine chain"
+                            >
+                              <Trash2 size={12} />
+                            </Button>
+                          </div>
+                        </div>
+
+
+                        {/* Steps listing */}
+                        <div className="pt-3 border-t border-white/5">
+                          {routine.steps.length > 0 ? (
+                            <DndContext
+                              sensors={sensors}
+                              collisionDetection={closestCenter}
+                              onDragEnd={(event) => handleDragEnd(routine.id, event)}
+                            >
+                              <SortableContext
+                                items={routine.steps.map((s: any) => s.habitId)}
+                                strategy={verticalListSortingStrategy}
+                              >
+                                <div className="space-y-3">
+                                  {routine.steps.map((step: any, idx: number) => {
+                                    const stepKey = `${routine.id}_${step.habitId}`;
+                                    const isChecked = completedHabitIds.has(step.habitId) || !!completedSteps[stepKey];
+
+                                    return (
+                                      <SortableStepItem
+                                        key={step.habitId}
+                                        step={step}
+                                        idx={idx}
+                                        routineId={routine.id}
+                                        isChecked={isChecked}
+                                        onCheck={() =>
+                                          handleStepCheck(
+                                            routine.id,
+                                            step.habitId,
+                                            routine.steps
+                                          )
+                                        }
+                                      />
+                                    );
+                                  })}
+                                </div>
+                              </SortableContext>
+                            </DndContext>
+                          ) : (
+                            <p className="text-[10px] text-gray-600 italic py-2 text-center">
+                              No integrated steps yet. Click the cog above to configure rituals.
+                            </p>
+                          )}
                         </div>
                       </div>
-
-                      {/* Header info */}
-                      <div className="flex justify-between items-start gap-4">
-                        <h3 className="text-lg font-display font-medium text-gray-200 group-hover:text-white transition-colors duration-500">
-                          {routine.title}
-                        </h3>
-                        <button
-                          onClick={() => {
-                            playSound('click');
-                            setActiveRoutineForStep(routine.id);
-                            setActiveStepCount(routine.steps.length);
-                          }}
-                          className="p-1.5 rounded-lg border border-white/5 hover:border-white/20 text-gray-500 hover:text-white hover:bg-white/5 transition-all cursor-pointer"
-                          title="Add step habit"
-                        >
-                          <Settings size={12} />
-                        </button>
-                      </div>
-
-                      {/* Steps listing */}
-                      <div className="space-y-3 pt-3 border-t border-white/5">
-                        {routine.steps.length > 0 ? (
-                          routine.steps
-                            .sort((a, b) => a.order - b.order)
-                            .map((step, idx) => {
-                              const stepKey = `${routine.id}_${step.habitId}`;
-                              const isChecked = !!completedSteps[stepKey];
-
-                              return (
-                                <div
-                                  key={step.habitId}
-                                  onClick={() =>
-                                    handleStepCheck(
-                                      routine.id,
-                                      step.habitId,
-                                      routine.comboXp,
-                                      routine.steps.length
-                                    )
-                                  }
-                                  className={cn(
-                                    'flex items-center justify-between p-2.5 rounded-xl border border-transparent transition-all duration-300 cursor-pointer select-none group/step',
-                                    isChecked
-                                      ? 'bg-forge-cyan/5 border-forge-cyan/10 text-forge-cyan'
-                                      : 'hover:bg-white/5'
-                                  )}
-                                >
-                                  <div className="flex items-center gap-3">
-                                    <div
-                                      className={cn(
-                                        'w-5 h-5 rounded-full border flex items-center justify-center transition-all duration-300',
-                                        isChecked
-                                          ? 'bg-forge-cyan border-forge-cyan shadow-[0_0_10px_rgba(34,211,238,0.3)]'
-                                          : 'border-gray-700 group-hover/step:border-forge-cyan/50'
-                                      )}
-                                    >
-                                      {isChecked && <Check size={11} className="text-slate-950 font-bold" />}
-                                    </div>
-                                    <span
-                                      className={cn(
-                                        'text-xs transition-all duration-300 font-light',
-                                        isChecked
-                                          ? 'line-through opacity-70'
-                                          : 'text-gray-300 group-hover/step:text-white'
-                                      )}
-                                    >
-                                      {step.title}
-                                    </span>
-                                  </div>
-                                  <span className="text-[9px] font-mono text-gray-500">
-                                    Step {step.order || idx + 1}
-                                  </span>
-                                </div>
-                              );
-                            })
-                        ) : (
-                          <p className="text-[10px] text-gray-600 italic py-2 text-center">
-                            No integrated steps yet. Click the cog above to configure rituals.
-                          </p>
-                        )}
-                      </div>
                     </div>
+                  );
+                })}
+              </div>
 
-                    {/* Bottom combo complete check banner */}
-                    {isComboComplete && (
-                      <div className="mt-4 pt-3 border-t border-forge-cyan/20 flex items-center gap-1.5 text-xs text-forge-cyan font-mono font-bold animate-in slide-in-from-bottom-2 duration-500 relative z-10">
-                        <Sparkles size={13} className="text-yellow-400 animate-spin" style={{ animationDuration: '3s' }} />
-                        <span>Combo Ritual Complete!</span>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+              <div className="flex justify-center pt-4">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={setCurrentPage}
+                />
+              </div>
+            </>
           ) : (
             // Serene Empty state
-            <div className="flex flex-col items-center justify-center py-28 border border-dashed border-white/5 rounded-3xl bg-white/[0.01] backdrop-blur-md">
-              <Clock size={48} className="text-white/20 mb-4 animate-pulse" />
-              <h3 className="text-lg font-display font-semibold text-white mb-2">No Routine Chains Established</h3>
-              <p className="text-xs text-gray-500 max-w-sm text-center leading-relaxed mb-6 font-light">
-                Routine chains allow you to execute multiple related thói quen sequentially to gain large Combo XP bonuses.
-              </p>
-              <button
+            <EmptyState
+              title={searchQuery ? "Không Tìm Thấy Chuỗi Nào" : "Chưa Có Chuỗi Hằng Ngày Nào"}
+              description={searchQuery ? "Hãy thử thay đổi từ khóa tìm kiếm." : "Chuỗi quy trình cho phép bạn thực hiện nhiều thói quen liên quan một cách tuần tự để nhận được phần thưởng Combo XP cực lớn."}
+              glowColor="cyan"
+              size="lg"
+              className="bg-transparent border border-dashed border-white/5 py-20 rounded-3xl"
+            >
+              <Button
                 onClick={() => {
                   playSound('click');
                   setShowCreateModal(true);
                 }}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-forge-cyan/20 bg-forge-cyan/5 text-forge-cyan hover:bg-forge-cyan/10 transition-all text-xs font-mono font-semibold tracking-wider uppercase"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-forge-cyan/20 bg-forge-cyan/5 text-forge-cyan hover:bg-forge-cyan/10 transition-all text-xs font-mono font-semibold tracking-wider uppercase cursor-pointer"
               >
                 Establish Routine
-              </button>
-            </div>
+              </Button>
+            </EmptyState>
           )}
         </div>
       </div>
 
-      <CreateRoutineModal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} />
+      <RoutineModal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} />
+      <RoutineModal
+        isOpen={showEditModal}
+        onClose={() => {
+          setShowEditModal(false);
+          setActiveRoutineForEdit(null);
+        }}
+        routine={activeRoutineForEdit}
+      />
 
       {activeRoutineForStep && (
         <AddStepModal
@@ -551,3 +509,90 @@ export const Routines: React.FC = () => {
     </div>
   );
 };
+
+interface SortableStepItemProps {
+  step: any;
+  idx: number;
+  routineId: string;
+  isChecked: boolean;
+  onCheck: () => void;
+}
+
+const SortableStepItem: React.FC<SortableStepItemProps> = ({
+  step,
+  idx,
+  routineId,
+  isChecked,
+  onCheck,
+}) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: step.habitId,
+    disabled: isChecked,
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 50 : undefined,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={cn(
+        'flex items-center justify-between p-2.5 rounded-xl border border-transparent select-none group/step transition-all duration-200',
+        isChecked
+          ? 'bg-forge-cyan/5 border-forge-cyan/10 text-forge-cyan opacity-60'
+          : isDragging
+          ? 'bg-white/10 border-white/20 shadow-[0_5px_15px_rgba(0,0,0,0.3)] scale-[1.02]'
+          : 'bg-white/[0.01] hover:bg-white/5'
+      )}
+    >
+      <div className="flex items-center gap-3 w-full">
+        {!isChecked ? (
+          <div
+            {...attributes}
+            {...listeners}
+            className="p-1 -ml-1 rounded hover:bg-white/10 cursor-grab active:cursor-grabbing text-gray-600 hover:text-gray-300 shrink-0 transition-colors"
+          >
+            <GripVertical size={12} />
+          </div>
+        ) : (
+          <div className="w-5 shrink-0" />
+        )}
+        <div
+          onClick={onCheck}
+          className={cn(
+            'w-5 h-5 rounded-full border flex items-center justify-center transition-all duration-300 cursor-pointer shrink-0',
+            isChecked
+              ? 'bg-forge-cyan border-forge-cyan shadow-[0_0_10px_rgba(34,211,238,0.3)]'
+              : 'border-gray-700 hover:border-forge-cyan/50'
+          )}
+        >
+          {isChecked && <Check size={11} className="text-slate-950 font-bold" />}
+        </div>
+        <span
+          onClick={() => !isChecked && onCheck()}
+          className={cn(
+            'text-xs transition-all duration-300 font-light cursor-pointer flex-1 select-none',
+            isChecked ? 'line-through opacity-70' : 'text-gray-300 hover:text-white'
+          )}
+        >
+          {step.title}
+        </span>
+      </div>
+      <span className="text-[9px] font-mono text-gray-500 shrink-0 select-none">
+        Step {step.order || idx + 1}
+      </span>
+    </div>
+  );
+};
+

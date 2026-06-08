@@ -4,6 +4,7 @@ import { Shield, Flame, Sparkles } from 'lucide-react';
 import React from 'react';
 
 import { useLanguage } from '@/contexts';
+import { Label, Tag } from '@/shared/components/ui';
 
 import type { UserStats } from '../../gamification/types';
 
@@ -35,9 +36,9 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ stats, user }) => {
           
           {/* Avatar Silhouette */}
           <div className="relative z-10 flex flex-col items-center">
-            <span className="text-[10px] font-mono tracking-widest text-zinc-500 mb-1">UNIT</span>
-            <span className="text-lg font-bold text-white tracking-widest">{stats.title.substring(0, 3).toUpperCase()}</span>
-            <span className="text-[8px] font-mono text-forge-cyan mt-1">VER_1.8</span>
+            <Label variant="dim" className="text-[10px] font-mono tracking-widest text-zinc-500 mb-1 block">UNIT</Label>
+            <Label variant="default" className="text-lg font-bold text-white tracking-widest block">{stats.title.substring(0, 3).toUpperCase()}</Label>
+            <Label variant="cyan" className="text-[8px] font-mono text-forge-cyan mt-1 block">VER_1.8</Label>
           </div>
         </div>
 
@@ -45,12 +46,12 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ stats, user }) => {
         <div className="flex-1 space-y-4 text-center md:text-left w-full">
           <div className="space-y-1">
             <div className="flex items-center justify-center md:justify-start gap-3">
-              <span className="text-2xl md:text-3xl font-bold tracking-wider text-white">
+              <Label variant="default" className="text-2xl md:text-3xl font-bold tracking-wider text-white block">
                 {user?.name || 'Operator'}
-              </span>
-              <span className="text-[10px] font-mono tracking-widest uppercase px-2.5 py-0.5 bg-forge-cyan/10 border border-forge-cyan/30 text-forge-cyan rounded-sm">
+              </Label>
+              <Tag variant="cyan" className="text-[10px] font-mono tracking-widest uppercase px-2.5 py-0.5 border border-forge-cyan/30 bg-forge-cyan/5 text-forge-cyan">
                 {stats.title}
-              </span>
+              </Tag>
             </div>
             <p className="text-xs text-zinc-500 font-mono tracking-wide">
               Account Core: <span className="text-zinc-300">{user?.email}</span>
@@ -60,33 +61,33 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ stats, user }) => {
           {/* Progress Level Telemetry */}
           <div className="grid grid-cols-2 gap-4 border-t border-b border-white/5 py-4 my-2">
             <div className="space-y-1">
-              <span className="text-[9px] text-zinc-500 uppercase tracking-widest block">
+              <Label variant="dim" className="text-[9px] uppercase tracking-widest block">
                 {t('identity.level_designation')}
-              </span>
+              </Label>
               <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-bold text-white">{stats.level}</span>
+                <Label variant="default" className="text-2xl font-bold text-white block">{stats.level}</Label>
                 <span className="text-[9px] text-forge-cyan/60 font-mono">/ LV_100</span>
               </div>
             </div>
 
             <div className="space-y-1">
-              <span className="text-[9px] text-zinc-500 uppercase tracking-widest block">
+              <Label variant="dim" className="text-[9px] uppercase tracking-widest block">
                 {t('identity.discipline_streak')}
-              </span>
+              </Label>
               <div className="flex items-center justify-center md:justify-start gap-2">
                 <Flame size={18} fill="#f59e0b" className="text-amber-500" />
-                <span className="text-2xl font-bold text-amber-500">
+                <Label variant="default" className="text-2xl font-bold text-amber-500 block">
                   {stats.streak} {t('identity.days')}
-                </span>
+                </Label>
               </div>
             </div>
           </div>
 
           {/* Active Subsystems listing */}
           <div className="flex flex-wrap gap-2 justify-center md:justify-start text-[9px] font-mono">
-            <span className="px-2 py-1 bg-white/5 border border-white/5 text-zinc-400 rounded-sm">COGNITIVE_ACTIVE</span>
-            <span className="px-2 py-1 bg-white/5 border border-white/5 text-zinc-400 rounded-sm">GAMIFICATION_SYNCED</span>
-            <span className="px-2 py-1 bg-white/5 border border-white/5 text-zinc-400 rounded-sm">CALIBRATION_READY</span>
+            <Tag variant="default" className="px-2 py-1 text-zinc-400 bg-white/5 border border-white/5">COGNITIVE_ACTIVE</Tag>
+            <Tag variant="default" className="px-2 py-1 text-zinc-400 bg-white/5 border border-white/5">GAMIFICATION_SYNCED</Tag>
+            <Tag variant="default" className="px-2 py-1 text-zinc-400 bg-white/5 border border-white/5">CALIBRATION_READY</Tag>
           </div>
         </div>
       </div>
@@ -98,9 +99,9 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ stats, user }) => {
 
         <div className="space-y-3 relative z-10">
           <div className="flex justify-between items-center">
-            <span className="text-[10px] tracking-widest text-forge-cyan uppercase">
+            <Label variant="cyan" className="text-[10px] tracking-widest uppercase block">
               {t('identity.energy_pool')}
-            </span>
+            </Label>
             <Sparkles size={14} className="text-forge-cyan animate-pulse" />
           </div>
           <p className="text-xs text-zinc-400 leading-relaxed font-sans">
@@ -111,9 +112,9 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ stats, user }) => {
         {/* Level up XP Bar */}
         <div className="space-y-2 pt-4 relative z-10">
           <div className="flex justify-between items-baseline text-[10px]">
-            <span className="text-zinc-500 uppercase tracking-widest">
+            <Label variant="dim" className="text-zinc-500 uppercase tracking-widest block">
               {t('identity.global_xp')}
-            </span>
+            </Label>
             <span className="text-white font-bold">{stats.xp} <span className="text-zinc-600">/</span> {Math.pow(stats.level, 2) * 100} XP</span>
           </div>
           <div className="h-2 w-full bg-black rounded-sm border border-zinc-800 p-[1px] relative overflow-hidden">

@@ -1,11 +1,14 @@
 'use client';
 
 import { Check, Maximize2, Trash2, Zap } from 'lucide-react';
-import React, { useState } from 'react';
+import React from 'react';
 
 import { cn } from '@/shared/lib/utils';
 
 import type { Task } from '../types';
+
+import { useDraggable } from '@dnd-kit/core';
+import { CSS } from '@dnd-kit/utilities';
 
 interface TaskCardProps {
   task: Task;
@@ -22,24 +25,23 @@ export const TaskCard: React.FC<TaskCardProps> = ({
   onStatusChange,
   onDelete,
 }) => {
-  const [isDragging, setIsDragging] = useState(false);
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: task.id,
+    disabled: task.status === 'done',
+  });
 
-  const handleDragStart = (e: React.DragEvent) => {
-    e.dataTransfer.setData('text/plain', task.id);
-    e.dataTransfer.effectAllowed = 'move';
-    // Smooth delay to allow browser to generate standard drag image before changing host opacity
-    setTimeout(() => setIsDragging(true), 0);
-  };
-
-  const handleDragEnd = () => {
-    setIsDragging(false);
+  const style = {
+    transform: transform ? CSS.Translate.toString(transform) : undefined,
+    zIndex: isDragging ? 50 : undefined,
   };
 
   return (
     <div
-      draggable={task.status !== 'done'}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
+      ref={setNodeRef}
+      style={style}
+      {...listeners}
+      {...attributes}
+
       className={cn(
         'group relative rounded-2xl border transition-all duration-300 p-5 flex flex-col justify-between min-h-[140px] overflow-hidden shadow-lg select-none',
         isDragging

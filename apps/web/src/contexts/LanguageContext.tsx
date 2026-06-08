@@ -1,7 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 
 import { TRANSLATIONS } from '@/shared/constants/translation';
 
@@ -16,7 +16,23 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguage] = useState<Language>('en');
+  const [language, setLanguageState] = useState<Language>('en');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('forge-language');
+      if (saved === 'en' || saved === 'vi') {
+        setLanguageState(saved as Language);
+      }
+    }
+  }, []);
+
+  const setLanguage = (lang: Language) => {
+    setLanguageState(lang);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('forge-language', lang);
+    }
+  };
 
   const t = (key: string): string => {
     const segments = key.split('.');

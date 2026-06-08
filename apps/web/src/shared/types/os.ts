@@ -32,6 +32,7 @@ export enum View {
   THEMES = 'THEMES',
   ACHIEVEMENTS = 'ACHIEVEMENTS',
   ENERGY = 'ENERGY',
+  WEALTH = 'WEALTH',
 
   // Deep Work / Inner Mechanics
   FORGE_CHAMBER = 'FORGE_CHAMBER',

@@ -4,6 +4,7 @@ import { Activity } from 'lucide-react';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis } from 'recharts';
 
 import { GlassCard } from '@/shared/components/ui/GlassCard';
+import { Label } from '@/shared/components/ui/Label';
 import type { MoodEntry } from '@/shared/types/mood';
 
 import { MOOD_CHART_COLOR, MOOD_CHART_GRADIENT_ID } from '../config';
@@ -24,10 +25,10 @@ export function MoodChart({ history }: MoodChartProps) {
     <div className="mb-12 h-64 w-full">
       <GlassCard className="relative h-full overflow-hidden" noPadding>
         <div className="absolute left-6 top-4 z-10">
-          <h3 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white">
+          <Label variant="cyan" className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest block">
             <Activity size={14} className="text-forge-cyan" />
             Resonance Frequency
-          </h3>
+          </Label>
         </div>
 
         <div className="h-full w-full pt-12">

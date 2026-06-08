@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { ProjectController } from './presentation/project.controller';
-import { CommandHandlers } from './application/commands/handlers';
-import { QueryHandlers } from './application/queries/handlers';
+import { ProjectCommandHandlers } from './application/commands';
+import { ProjectQueryHandlers } from './application/queries';
 import { EventHandlers } from './application/events/handlers';
 import { PrismaProjectRepository } from './infrastructure/repositories/prisma-project.repository';
 import { HttpGithubRepository } from './infrastructure/repositories/http-github.repository';
 import { SharedModule } from '@shared/shared.module';
-import { ProjectRepository } from './application/ports/project.repository';
+import { ProjectRepository } from './domain/project.repository';
 
 @Module({
   imports: [CqrsModule, SharedModule],
@@ -25,8 +25,8 @@ import { ProjectRepository } from './application/ports/project.repository';
       provide: 'GithubRepository',
       useClass: HttpGithubRepository,
     },
-    ...CommandHandlers,
-    ...QueryHandlers,
+    ...ProjectCommandHandlers,
+    ...ProjectQueryHandlers,
     ...EventHandlers,
   ],
   exports: [ProjectRepository],

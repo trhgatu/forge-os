@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import { Search, Plus, Trash2 } from 'lucide-react';
 
 import type { JournalEntry } from '@/features/journal/types';
-import { Button, Input, GlassCard } from '@/shared/components/ui';
+import { Button, Input, GlassCard, Tag, Label, EmptyState } from '@/shared/components/ui';
 import { MOOD_COLORS } from '@/shared/constants';
 import { cn } from '@/shared/lib/utils';
 
@@ -31,14 +31,17 @@ export function JournalSidebar({
     <div className="w-80 flex flex-col border-r border-white/5 bg-black/20 backdrop-blur-xl h-full font-lato">
       <div className="p-4 border-b border-white/5 space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="font-display font-bold text-white tracking-widest text-sm">JOURNAL</h2>
+          <div className="flex items-center gap-2 opacity-80">
+            <div className="h-px w-6 bg-gradient-to-r from-forge-cyan/40 to-transparent" />
+            <Label variant="cyan" className="text-[10px] font-mono tracking-[0.25em] uppercase">JOURNAL</Label>
+          </div>
           <Button
             variant="outline"
             size="icon"
             onClick={onNew}
-            className="hover:border-forge-cyan/50 hover:text-forge-cyan"
+            className="hover:border-forge-cyan/50 hover:text-forge-cyan h-8 w-8 rounded-lg"
           >
-            <Plus size={18} />
+            <Plus size={14} />
           </Button>
         </div>
         <Input
@@ -51,9 +54,9 @@ export function JournalSidebar({
       </div>
 
       <div className="flex-1 overflow-y-auto p-3 space-y-2">
-        <h3 className="px-2 text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-4">
+        <Label variant="dim" className="px-2 mb-4 block">
           Timeline
-        </h3>
+        </Label>
 
         {entries.length > 0 ? (
           entries.map((entry) => (
@@ -86,9 +89,9 @@ export function JournalSidebar({
                 {entry.tags.length > 0 && (
                   <div className="flex flex-wrap gap-1 mt-1">
                     {entry.tags.slice(0, 2).map((tag: string) => (
-                      <span key={tag} className="text-[9px] px-1.5 py-0.5 rounded-sm bg-white/5 text-zinc-500 border border-white/5">
+                      <Tag key={tag} size="sm" variant="default" className="text-[9px] py-0 px-1.5 border-white/5 bg-white/5 text-zinc-500">
                         #{tag}
-                      </span>
+                      </Tag>
                     ))}
                   </div>
                 )}
@@ -120,11 +123,13 @@ export function JournalSidebar({
             </div>
           ))
         ) : (
-          <GlassCard interactive={false} className="py-12 text-center bg-white/[0.02] border-dashed">
-            <p className="text-xs text-zinc-500 font-mono italic">
-              No thoughts recorded yet.
-            </p>
-          </GlassCard>
+          <EmptyState
+            title="Lưới Trống"
+            description="Chưa ghi nhận suy ngẫm nào."
+            glowColor="cyan"
+            size="sm"
+            className="py-10 border-dashed border-white/5 bg-white/[0.01]"
+          />
         )}
       </div>
     </div>

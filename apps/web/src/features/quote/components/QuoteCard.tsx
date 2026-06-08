@@ -20,12 +20,6 @@ export function QuoteCard({ quote, onClick, onToggleFav, onEdit, onDelete }: Quo
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
 
-  // Randomized Floating Animation
-  const [{ floatDuration, floatDelay }] = useState(() => ({
-    floatDuration: `${5 + Math.random() * 3}s`,
-    floatDelay: `${Math.random() * 2}s`,
-  }));
-
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
     setMenuPosition({ x: e.clientX, y: e.clientY });
@@ -60,7 +54,7 @@ export function QuoteCard({ quote, onClick, onToggleFav, onEdit, onDelete }: Quo
     }
   }, [showContextMenu]);
 
-  // Wabi-Sabi "No-Card" Floating Design
+  // Wabi-Sabi "No-Card" Design
   return (
     <div
       onClick={onClick}
@@ -69,11 +63,7 @@ export function QuoteCard({ quote, onClick, onToggleFav, onEdit, onDelete }: Quo
       onMouseUp={handleMouseUp}
       onTouchStart={handleMouseDown}
       onTouchEnd={handleMouseUp}
-      className="relative group cursor-pointer h-full animate-float"
-      style={{
-        animationDuration: floatDuration,
-        animationDelay: floatDelay,
-      }}
+      className="relative group cursor-pointer h-full transition-transform duration-300 hover:-translate-y-1"
     >
       {/*
          Main Container - Purely structure, no visual background/border

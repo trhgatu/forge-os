@@ -10,10 +10,25 @@ import {
   UserSeeder,
 } from '@shared/seeder';
 import { ProjectSeeder } from './project/project.seeder';
+import { QuoteSeeder } from './quote/quote.seeder';
 
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true }), SharedModule, PrismaModule],
-  providers: [PermissionSeeder, RoleSeeder, AssignRolePermissionsSeeder, UserSeeder, ProjectSeeder],
-  exports: [PermissionSeeder, RoleSeeder, AssignRolePermissionsSeeder, UserSeeder, ProjectSeeder],
+  providers: [
+    PermissionSeeder,
+    RoleSeeder,
+    AssignRolePermissionsSeeder,
+    UserSeeder,
+    ProjectSeeder,
+    QuoteSeeder,
+  ],
+  exports: [
+    PermissionSeeder,
+    RoleSeeder,
+    AssignRolePermissionsSeeder,
+    UserSeeder,
+    ProjectSeeder,
+    QuoteSeeder,
+  ],
 })
 export class SeederModule {}

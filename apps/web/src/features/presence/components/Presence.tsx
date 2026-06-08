@@ -4,6 +4,7 @@ import { Radar, Eye } from 'lucide-react';
 import React, { useEffect } from 'react';
 
 import { useNovaView } from '@/contexts';
+import { Label } from '@/shared/components/ui';
 import { View } from '@/shared/types/os';
 
 import { usePresence } from '../hooks/usePresence';
@@ -23,16 +24,26 @@ export const Presence: React.FC = () => {
       {/* Deep Space Background */}
       <div className="absolute inset-0 pointer-events-none z-0">
         <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-950/15 via-transparent to-transparent" />
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-8 mix-blend-overlay" />
+        <div className="absolute inset-0 bg-[url('/images/noise.svg')] opacity-8 mix-blend-overlay" />
       </div>
 
       {/* Header Overlay */}
       <div className="absolute top-0 left-0 p-8 z-30 pointer-events-none">
-        <div className="flex items-center gap-2 text-xs font-mono text-cyan-500 uppercase tracking-widest mb-2">
-          <Radar size={14} className="animate-spin-slow" /> Presence Sensor Active
+        {/* Ethereal label */}
+        <div className="mb-3 flex items-center gap-2 opacity-85">
+          <div className="h-px w-8 bg-gradient-to-r from-forge-cyan/40 to-transparent" />
+          <Label variant="cyan" className="text-[10px] font-mono tracking-[0.4em] uppercase flex items-center gap-1.5">
+            Presence Sensor Active
+          </Label>
         </div>
-        <h1 className="text-4xl font-display font-bold text-white tracking-tight">Visitor Echo</h1>
-        <p className="text-sm text-gray-500 mt-2 max-w-md">
+
+        {/* Poetic Title */}
+        <Label variant="default" className="text-4xl md:text-5xl font-bold text-white tracking-tight leading-tight mb-3 block capitalize">
+          Visitor Echo
+        </Label>
+
+        {/* Flowing Subtitle */}
+        <p className="text-sm text-gray-400 font-light leading-relaxed max-w-md">
           Sensing the subtle ripples of those who brush against your digital existence.
         </p>
       </div>

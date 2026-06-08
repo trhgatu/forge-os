@@ -19,8 +19,7 @@ export const echoesService = {
       coordY: data.coordinates.y,
     });
 
-    const backendMoment = response.data;
-    // Map backend response properties back to frontend flow moment structure
+    const backendMoment = response.data.data;
     return {
       id: backendMoment.id,
       time: new Date(backendMoment.createdAt).toLocaleTimeString([], {
@@ -40,7 +39,7 @@ export const echoesService = {
 
   async getHistory(): Promise<FlowMoment[]> {
     const response = await apiClient.get('/echoes/history');
-    const list = response.data;
+    const list = response.data.data || [];
     return list.map((item: any) => ({
       id: item.id,
       time: new Date(item.createdAt).toLocaleTimeString([], {

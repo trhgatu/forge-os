@@ -1,13 +1,13 @@
 'use client';
 
-import { Shield, Plus } from 'lucide-react';
-import React, { useState, useEffect, useMemo } from 'react';
+import { Plus } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
 import { toast } from 'sonner';
 
 import { useSound, useNovaView } from '@/contexts';
 import { gamificationApi } from '@/features/gamification/services/gamificationApi';
 import type { Habit } from '@/features/gamification/types';
-import { Button } from '@/shared/components/ui';
+import { Button, Label, EmptyState, Skeleton, Pagination } from '@/shared/components/ui';
 import { View } from '@/shared/types/os';
 
 import {
@@ -35,6 +35,8 @@ export function QuestsManagement() {
   const [habits, setHabits] = useState<Habit[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<CategoryType>('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
 
   // Mutation Hooks
   const createQuestMutation = useCreateQuest();
@@ -125,68 +127,93 @@ export function QuestsManagement() {
     });
   }, [quests, searchQuery, activeCategory]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeCategory, searchQuery]);
+
+  const totalPages = useMemo(() => {
+    return Math.ceil(filteredQuests.length / itemsPerPage);
+  }, [filteredQuests, itemsPerPage]);
+
+  const paginatedQuests = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredQuests.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredQuests, currentPage, itemsPerPage]);
+
   return (
     <div className="h-full flex flex-col bg-transparent text-white relative overflow-hidden animate-in fade-in duration-1000 font-sans">
       <div className="flex-1 overflow-y-auto scrollbar-hide relative z-10 p-6 md:p-10 pb-32">
         <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in zoom-in-95 duration-500">
-          {/* Serene Header */}
+          {/* Serene Header - Synchronized Alchemical Style */}
           <header className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
             <div>
-              <div className="flex items-center gap-2 opacity-80 mb-3">
+              {/* Ethereal label */}
+              <div className="mb-3 flex items-center gap-2 opacity-85">
                 <div className="h-px w-8 bg-gradient-to-r from-forge-cyan/40 to-transparent" />
-                <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-forge-cyan/80">
+                <Label variant="cyan" className="text-[10px] font-mono tracking-[0.4em] uppercase">
                   Evolution Engine
-                </span>
+                </Label>
               </div>
-              <h1 className="text-4xl md:text-5xl font-display font-bold text-white tracking-tight">
+
+              {/* Poetic Title */}
+              <Label variant="default" className="text-4xl md:text-5xl font-bold text-white tracking-tight leading-tight mb-3 block capitalize">
                 Quest Log
-              </h1>
-              <p className="text-xs text-gray-500 mt-2 font-light max-w-xl leading-relaxed italic">
+              </Label>
+
+              <p className="text-sm text-gray-400 font-light leading-relaxed max-w-xl italic">
                 "We do not rise to the level of our goals. We fall to the level of our systems." Align your daily disciplines to complete active missions.
               </p>
             </div>
 
-            <button
+            <Button
               onClick={handleOpenCreateModal}
-              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white text-black font-semibold hover:bg-white/90 transition-all duration-300 shadow-[0_4px_20px_rgba(255,255,255,0.1)] group text-xs uppercase tracking-wider font-mono shrink-0 cursor-pointer"
+              className="bg-white hover:bg-gray-200 text-black font-semibold shadow-[0_4px_20px_rgba(255,255,255,0.1)] text-xs uppercase tracking-wider font-mono shrink-0 cursor-pointer p-4 rounded-xl"
             >
-              <Plus size={14} className="group-hover:rotate-90 transition-transform duration-300" />
+              <Plus size={14} className="inline mr-2" />
               New Quest
-            </button>
+            </Button>
           </header>
 
-          {/* Sidebar & Content Layout Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            {/* Sidebar / Categories Filter */}
-            <QuestSidebar
-              quests={quests}
-              activeCategory={activeCategory}
-              onCategoryChange={setActiveCategory}
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-            />
+          {/* Top Categories Filter & Search */}
+          <QuestSidebar
+            quests={quests}
+            activeCategory={activeCategory}
+            onCategoryChange={setActiveCategory}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+          />
 
-            {/* Content Cards Grid */}
-            <div className="lg:col-span-3">
-              {isLoading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-pulse">
-                  {[1, 2, 4].map((i) => (
-                    <div key={i} className="h-64 rounded-3xl bg-white/[0.01] border border-white/5" />
-                  ))}
-                </div>
-              ) : filteredQuests.length === 0 ? (
-                <div className="text-center py-28 text-gray-500 border border-dashed border-white/5 rounded-3xl bg-white/[0.01] backdrop-blur-md">
-                  <Shield className="w-12 h-12 text-white/20 mx-auto mb-4" />
-                  <span className="text-sm font-medium text-gray-400">
-                    No quests found matching query
-                  </span>
-                  <p className="text-xs text-gray-600 mt-1 font-light italic">
-                    Configure active stoic goals from category sidebar
-                  </p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {filteredQuests.map((quest) => (
+
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => {
+              playSound('click');
+              setCurrentPage(page);
+            }}
+            className="pt-0 border-t-0 pb-4 border-b border-white/5"
+          />
+
+          {/* Content Cards Grid */}
+          <div className="w-full mt-6">
+            {isLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
+                {[1, 2, 4].map((i) => (
+                  <Skeleton key={i} variant="glowing" className="h-64 rounded-3xl" />
+                ))}
+              </div>
+            ) : filteredQuests.length === 0 ? (
+              <EmptyState
+                title="Chưa Có Nhiệm Vụ Nào"
+                description="Không tìm thấy nhiệm vụ nào phù hợp với yêu cầu. Hãy thiết lập các sứ mệnh stoic mới từ thanh danh mục bên cạnh để rèn luyện thói quen kỷ luật."
+                glowColor="cyan"
+                size="lg"
+                className="bg-transparent border border-dashed border-white/5 py-20 rounded-3xl"
+              />
+            ) : (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {paginatedQuests.map((quest) => (
                     <QuestCard
                       key={quest.id}
                       quest={quest}
@@ -195,13 +222,11 @@ export function QuestsManagement() {
                     />
                   ))}
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
-
-      {/* 🚀 Create / Edit Quest Modal */}
       <QuestModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

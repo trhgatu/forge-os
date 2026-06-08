@@ -59,13 +59,19 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
     Math.max(0, ((stats.xp - currentLevelXp) / (nextLevelXp - currentLevelXp)) * 100),
   );
 
+  const handleXPBarClick = () => {
+    window.dispatchEvent(new CustomEvent('toggle-evolution-hub'));
+  };
+
   return (
     <div
+      onClick={handleXPBarClick}
+      title="Open Evolution Hub"
       className={cn(
-        'flex items-center gap-4 select-none transition-all duration-300 font-lato',
+        'flex items-center gap-4 select-none transition-all duration-300 font-lato cursor-pointer',
         compact
-          ? 'justify-center gap-0'
-          : 'p-3 bg-white/5 rounded-sm border border-white/5 hover:border-forge-cyan/30 shadow-lg group-hover:shadow-[0_0_15px_rgba(34,211,238,0.1)]',
+          ? 'justify-center gap-0 hover:scale-110 active:scale-95'
+          : 'p-3 bg-white/5 rounded-sm border border-white/5 hover:border-forge-cyan/30 hover:bg-white/[0.08] active:scale-[0.98] shadow-lg group-hover:shadow-[0_0_15px_rgba(34,211,238,0.1)]',
       )}
     >
       {/* Level Badge - Industrial Hex/Square Look */}

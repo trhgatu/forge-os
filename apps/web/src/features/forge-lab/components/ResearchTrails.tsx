@@ -20,6 +20,7 @@ import {
 import React, { useState } from 'react';
 
 import { useLanguage } from '@/contexts';
+import { Button, Input, Label, Tag } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 
 // --- Types & Interfaces ---
@@ -176,13 +177,23 @@ export const ResearchTrails: React.FC = () => {
 
   return (
     <div className="max-w-[1600px] mx-auto p-6 md:p-10 pb-32 space-y-8 animate-in fade-in duration-500">
-      {/* Title Block */}
+      {/* Title Block - Synchronized Alchemical Style */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-4xl font-display font-bold text-white tracking-tight mb-2 flex items-center gap-3">
-            <Network className="text-forge-cyan" size={32} />
-            <span>{language === 'vi' ? 'Sơ Đồ Nghiên Cứu' : 'Research Trails'}</span>
-          </h1>
+          {/* Ethereal label */}
+          <div className="mb-3 flex items-center gap-2 opacity-85">
+            <div className="h-px w-8 bg-gradient-to-r from-forge-cyan/40 to-transparent" />
+            <Label variant="cyan" className="text-[10px] font-mono tracking-[0.4em] uppercase flex items-center gap-1.5">
+              <Network size={10} className="text-forge-cyan" /> System Operations
+            </Label>
+          </div>
+
+          {/* Poetic Title */}
+          <Label variant="default" className="text-4xl font-bold text-white tracking-tight block capitalize mb-2">
+            {language === 'vi' ? 'Sơ Đồ Nghiên Cứu' : 'Research Trails'}
+          </Label>
+
+          {/* Flowing Subtitle */}
           <p className="text-sm text-gray-400 font-light max-w-xl">
             {language === 'vi'
               ? 'Kiến thiết bản đồ nghiên cứu công nghệ, cấu trúc thuật toán và kiến trúc hệ thống cốt lõi của Forge OS.'
@@ -191,33 +202,28 @@ export const ResearchTrails: React.FC = () => {
         </div>
 
         {/* Search */}
-        <div className="relative w-full md:w-80">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={16} />
-          <input
-            type="text"
-            placeholder={language === 'vi' ? 'Tìm kiếm luồng nghiên cứu...' : 'Search research trails...'}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-white/5 bg-[#ffffff]/[0.01] backdrop-blur-xl text-sm text-white placeholder-gray-500 focus:outline-none focus:border-forge-cyan/45 focus:bg-white/[0.02] transition-all"
-          />
-        </div>
+        <Input
+          placeholder={language === 'vi' ? 'Tìm kiếm luồng nghiên cứu...' : 'Search research trails...'}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          icon={<Search size={14} />}
+          className="bg-black/40 text-xs h-10 border-white/10 w-full md:w-80"
+        />
       </div>
 
       {/* Category Tabs */}
       <div className="flex flex-wrap gap-2.5 border-b border-white/5 pb-5">
         {(Object.keys(CATEGORIES) as Array<keyof typeof CATEGORIES>).map((key) => (
-          <button
+          <Tag
+            interactive
+            active={activeCategory === key}
+            variant={activeCategory === key ? 'cyan' : 'default'}
             key={key}
             onClick={() => setActiveCategory(key)}
-            className={cn(
-              'px-5 py-2.5 rounded-full text-xs font-semibold tracking-wide border transition-all cursor-pointer',
-              activeCategory === key
-                ? 'bg-forge-cyan border-forge-cyan text-black font-bold shadow-[0_0_15px_rgba(34,211,238,0.3)]'
-                : 'border-white/5 bg-[#ffffff]/[0.01] text-gray-400 hover:text-white hover:border-white/10'
-            )}
+            className="px-5 py-2.5 text-xs font-semibold tracking-wide border cursor-pointer border-none"
           >
             {language === 'vi' ? CATEGORIES[key].vi : CATEGORIES[key].en}
-          </button>
+          </Tag>
         ))}
       </div>
 
@@ -245,26 +251,26 @@ export const ResearchTrails: React.FC = () => {
                   </div>
 
                   <div className="text-right">
-                    <span
+                    <Tag
+                      variant={isCompleted ? 'accent' : isDraft ? 'default' : 'cyan'}
                       className={cn(
-                        'inline-block px-2.5 py-0.5 rounded-full text-[9px] font-mono font-bold uppercase tracking-wider',
-                        isCompleted
-                          ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                          : isDraft
-                          ? 'bg-zinc-500/10 text-zinc-400 border border-zinc-500/20'
-                          : 'bg-forge-cyan/10 text-forge-cyan border border-forge-cyan/20 animate-pulse'
+                        'inline-block px-2.5 py-0.5 text-[9px] font-mono font-bold uppercase tracking-wider',
+                        !isCompleted && !isDraft && 'animate-pulse'
                       )}
                     >
                       {trail.status}
-                    </span>
+                    </Tag>
                   </div>
                 </div>
 
                 {/* Title */}
                 <div>
-                  <h3 className="text-lg font-bold text-white tracking-tight group-hover:text-forge-cyan transition-colors">
+                  <Label
+                    variant="default"
+                    className="text-lg font-bold text-white tracking-tight group-hover:text-forge-cyan transition-colors block"
+                  >
                     {trail.title}
-                  </h3>
+                  </Label>
                   <span className="text-[10px] font-mono text-gray-500 block mt-0.5">
                     {trail.nodesCount} research nodes mapped
                   </span>
@@ -330,28 +336,30 @@ export const ResearchTrails: React.FC = () => {
               <div className="flex justify-between items-center border-b border-white/5 pb-5 mb-6">
                 <div className="flex items-center gap-2">
                   <GitBranch className="text-forge-cyan" size={18} />
-                  <span className="text-xs font-mono text-gray-500 uppercase tracking-widest font-bold">
+                  <Label variant="dim" className="text-xs font-mono uppercase tracking-widest font-bold block">
                     Research Node Details
-                  </span>
+                  </Label>
                 </div>
 
-                <button
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => setSelectedTrail(null)}
-                  className="p-2 text-gray-500 hover:text-white rounded-lg hover:bg-white/5 transition-all cursor-pointer"
+                  className="p-2 text-gray-500 hover:text-white rounded-lg hover:bg-white/5 transition-all cursor-pointer h-8 w-8"
                 >
                   <X size={16} />
-                </button>
+                </Button>
               </div>
 
               {/* Title & Meta */}
               <div className="space-y-4">
                 <div>
-                  <h2 className="text-2xl font-extrabold text-white tracking-tight">
+                  <Label variant="default" className="text-2xl font-extrabold text-white tracking-tight block">
                     {selectedTrail.title}
-                  </h2>
-                  <span className="inline-block px-3 py-1 rounded-full text-[9px] font-mono font-bold uppercase tracking-wider bg-forge-cyan/15 text-forge-cyan border border-forge-cyan/20 mt-2">
+                  </Label>
+                  <Tag variant="cyan" className="inline-block px-3 py-1 text-[9px] font-mono font-bold uppercase tracking-wider bg-forge-cyan/15 text-forge-cyan border border-forge-cyan/20 mt-2">
                     {selectedTrail.category} Module
-                  </span>
+                  </Tag>
                 </div>
 
                 <p className="text-xs text-gray-400 leading-relaxed font-light">
@@ -373,9 +381,9 @@ export const ResearchTrails: React.FC = () => {
 
               {/* Technical Node Map (Vertical Timeline style) */}
               <div className="mt-8 space-y-6">
-                <h4 className="text-xs font-mono text-gray-500 uppercase tracking-widest font-bold">
+                <Label variant="dim" className="text-xs font-mono uppercase tracking-widest font-bold block">
                   Algorithmic Nodes ({selectedTrail.nodes.length})
-                </h4>
+                </Label>
 
                 <div className="relative border-l border-white/5 pl-6 ml-3 space-y-6">
                   {selectedTrail.nodes.map((node, idx) => {
@@ -397,21 +405,25 @@ export const ResearchTrails: React.FC = () => {
                         />
 
                         <div className="space-y-1">
-                          <h5
+                          <Label
+                            variant="default"
                             className={cn(
-                              'text-sm font-bold tracking-tight',
+                              'text-sm font-bold tracking-tight block',
                               isDone ? 'text-gray-300' : isActive ? 'text-forge-cyan' : 'text-gray-600'
                             )}
                           >
                             {node.title}
-                          </h5>
+                          </Label>
                           <p className="text-xs text-gray-500 font-light leading-relaxed">
                             {node.desc}
                           </p>
 
-                          <span className="inline-block text-[8px] font-mono text-gray-500 uppercase tracking-wider bg-white/5 border border-white/5 px-2 py-0.5 rounded mt-1.5">
+                          <Tag
+                            variant={isDone ? 'accent' : isActive ? 'cyan' : 'default'}
+                            className="inline-block text-[8px] font-mono text-gray-500 uppercase tracking-wider bg-white/5 border border-white/5 px-2 py-0.5 mt-1.5"
+                          >
                             {node.status}
-                          </span>
+                          </Tag>
                         </div>
                       </div>
                     );

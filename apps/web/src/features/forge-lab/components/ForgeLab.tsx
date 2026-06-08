@@ -7,6 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { useNovaView } from '@/contexts';
 import { cn } from '@/shared/lib/utils';
 import { useAuthStore } from '@/shared/store/authStore';
+import { Skeleton, Label } from '@/shared/components/ui';
 import { View } from '@/shared/types/os';
 
 import { forgeApi } from '../api';
@@ -19,7 +20,6 @@ import {
 } from '../hooks/useProjects';
 import type { ForgeTab, Project, Foundation, ResearchTrail, GithubRepo } from '../types';
 
-// Components
 import { LabDashboard } from './dashboard/LabDashboard';
 import { FoundationLibrary } from './FoundationLibrary';
 import { CreateProjectModal } from './project-detail/ProjectModals';
@@ -100,7 +100,6 @@ export const ForgeLab: React.FC<{ slug?: string[] }> = ({ slug }) => {
     setCurrentView(View.FORGE_LAB);
   }, [setCurrentView]);
 
-  // --- Derive Active Tab and Project from Router Slug (Enterprise Routing) ---
   const activeTab = (slug?.[0] as ForgeTab) || 'dashboard';
   const activeProjectId = slug?.[0] === 'projects' && slug?.[1] ? slug[1] : null;
 
@@ -119,12 +118,11 @@ export const ForgeLab: React.FC<{ slug?: string[] }> = ({ slug }) => {
     }
   };
 
-  // --- Identity State ---
   const authUser = useAuthStore((state) => state.user);
   const [githubUsername, setGithubUsername] = useState<string | undefined>(undefined);
 
   // --- React Query Integration ---
-  const { data: projectsData } = useProjects();
+  const { data: projectsData, isLoading } = useProjects();
   const createProjectMutation = useCreateProject();
   const updateProjectMutation = useUpdateProject();
   const deleteProjectMutation = useDeleteProject();
@@ -138,7 +136,6 @@ export const ForgeLab: React.FC<{ slug?: string[] }> = ({ slug }) => {
     return (projectsData as any).data || [];
   }, [projectsData]);
 
-  // Parse dates for UI compatibility (Data Transformation Layer)
   const parsedProjects = React.useMemo(() => {
     return projects.map((p: Project) => ({
       ...p,
@@ -163,7 +160,6 @@ export const ForgeLab: React.FC<{ slug?: string[] }> = ({ slug }) => {
         })
         .catch((err) => console.error('Failed to load user profile', err));
     } else {
-      // Defer state update to avoid synchronous effect warning
       setTimeout(() => {
         if (isMounted) setGithubUsername(undefined);
       }, 0);
@@ -174,7 +170,13 @@ export const ForgeLab: React.FC<{ slug?: string[] }> = ({ slug }) => {
     };
   }, [authUser?.id]);
 
-  // --- CRUD Operations ---
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [activeTab, activeProjectId]);
+
   const handleCreateProject = async (data: {
     title: string;
     description: string;
@@ -244,17 +246,8 @@ export const ForgeLab: React.FC<{ slug?: string[] }> = ({ slug }) => {
     { id: 'research', label: 'Research', icon: Network },
   ];
 
-  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
-
-  // Scroll to top when changing views
-  useEffect(() => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }, [activeTab, activeProjectId]);
   return (
     <div className="h-full flex flex-col bg-[#030304] text-white relative overflow-hidden animate-in fade-in duration-1000">
-      {/* Main Content Area - Full Width & Height */}
       <div className="flex-1 h-full relative z-10 flex flex-col min-w-0 overflow-hidden">
         <div
           ref={scrollContainerRef}
@@ -267,6 +260,7 @@ export const ForgeLab: React.FC<{ slug?: string[] }> = ({ slug }) => {
               trails={MOCK_TRAILS}
               setActiveTab={setActiveTab}
               setActiveProjectId={setActiveProjectId}
+              isLoading={isLoading}
             />
           </div>
 
@@ -279,6 +273,7 @@ export const ForgeLab: React.FC<{ slug?: string[] }> = ({ slug }) => {
               onUpdateProject={handleUpdateProject}
               onDeleteProject={handleDeleteProject}
               onRequestCreate={() => setShowCreateModal(true)}
+              isLoading={isLoading}
             />
           </div>
 
@@ -296,7 +291,6 @@ export const ForgeLab: React.FC<{ slug?: string[] }> = ({ slug }) => {
         </div>
       </div>
 
-      {/* Floating Dock Navigation */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-50">
         <div className="flex items-center gap-2 p-2 bg-[#09090b]/80 backdrop-blur-2xl border border-white/10 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition-all hover:border-white/20">
           {NAV_ITEMS.map((item) => (
@@ -317,8 +311,6 @@ export const ForgeLab: React.FC<{ slug?: string[] }> = ({ slug }) => {
                   activeTab === item.id ? 'text-forge-cyan' : 'group-hover:text-white',
                 )}
               />
-
-              {/* Expanding Label */}
               <span
                 className={cn(
                   'text-sm font-medium transition-all duration-500 ease-spring-out overflow-hidden whitespace-nowrap z-10',

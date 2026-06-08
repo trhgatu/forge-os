@@ -3,32 +3,42 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider = "postgresql"
 }
 
-model User { 
-  id              String           @id @default(uuid())
-  email           String           @unique
-  name            String
-  password        String
-  refreshToken    String?
-  roleId          String?
-  role            Role?            @relation(fields: [roleId], references: [id])
-  stats           UserStats?
-  connections     UserConnection[]
-  isDeleted       Boolean          @default(false)
-  deletedAt       DateTime?
-  journals        Journal[]
-  habits          Habit[]
-  routines        Routine[]
-  quests          Quest[]
-  questStatuses   UserQuestStatus[]
-  tasks           Task[]
-  goals           Goal[]
-  goalStatuses    UserGoalStatus[]
-  flowMoments     FlowMoment[]
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+model User {
+  id                    String                 @id @default(uuid())
+  email                 String                 @unique
+  name                  String
+  password              String
+  refreshToken          String?
+  roleId                String?
+  role                  Role?                  @relation(fields: [roleId], references: [id])
+  stats                 UserStats?
+  connections           UserConnection[]
+  isDeleted             Boolean                @default(false)
+  deletedAt             DateTime?
+  journals              Journal[]
+  habits                Habit[]
+  routines              Routine[]
+  quests                Quest[]
+  questStatuses         UserQuestStatus[]
+  tasks                 Task[]
+  goals                 Goal[]
+  goalStatuses          UserGoalStatus[]
+  flowMoments           FlowMoment[]
+  knowledgeConcepts     KnowledgeConcept[]
+  flashcardDecks        FlashcardDeck[]
+  flashcards            UserFlashcard[]
+  reviewLogs            FlashcardReviewLog[]
+  financialAccounts     FinancialAccount[]
+  financialTransactions FinancialTransaction[]
+  financialBudgets      FinancialBudget[]
+  projects              Project[]
+  memories              Memory[]
+  moods                 Mood[]
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
 
   @@map("users")
 }
@@ -37,8 +47,8 @@ model UserConnection {
   id          String   @id @default(uuid())
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  provider    String   // e.g., 'github', 'google'
-  identifier  String   // e.g., 'thuyencode', '10238129'
+  provider    String // e.g., 'github', 'google'
+  identifier  String // e.g., 'thuyencode', '10238129'
   metadata    Json?
   connectedAt DateTime @default(now())
 
@@ -127,6 +137,8 @@ model Project {
   metadata    Json?     @default("{}")
   isDeleted   Boolean   @default(false)
   deletedAt   DateTime?
+  userId      String?
+  user        User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -148,6 +160,8 @@ model Journal {
   user      User?     @relation(fields: [userId], references: [id])
   isDeleted Boolean   @default(false)
   deletedAt DateTime?
+  createdBy String?
+  updatedBy String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
@@ -164,6 +178,10 @@ model Memory {
   status    String    @default("internal")
   isDeleted Boolean   @default(false)
   deletedAt DateTime?
+  userId    String?
+  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdBy String?
+  updatedBy String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
@@ -179,6 +197,10 @@ model Mood {
   loggedAt  DateTime  @default(now())
   isDeleted Boolean   @default(false)
   deletedAt DateTime?
+  userId    String?
+  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdBy String?
+  updatedBy String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
@@ -217,22 +239,22 @@ model DailyQuote {
 // HABITS CONTEXT (Bối cảnh Thói Quen Dài Hạn)
 // ==========================================
 model Habit {
-  id             String            @id @default(uuid())
-  userId         String
-  user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  title          String
-  description    String?
-  xpReward       Int               @default(10)
-  difficulty     String            @default("easy")   // 'easy', 'medium', 'hard'
-  frequency      Json              // Lịch biểu: {"days": [1,3,5]} (Thứ 2-4-6) hoặc {"every": 1} (mỗi ngày)
-  streak         Int               @default(0)
-  maxStreak      Int               @default(0)
-  habitStrength  Int               @default(0)        // Chỉ số độ bền thói quen (0 - 100)
-  isActive       Boolean           @default(true)
-  createdAt      DateTime          @default(now())
-  updatedAt      DateTime          @updatedAt
-  routines       RoutineHabit[]
-  completions    HabitCompletion[]
+  id            String            @id @default(uuid())
+  userId        String
+  user          User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title         String
+  description   String?
+  xpReward      Int               @default(10)
+  difficulty    String            @default("easy") // 'easy', 'medium', 'hard'
+  frequency     Json // Lịch biểu: {"days": [1,3,5]} (Thứ 2-4-6) hoặc {"every": 1} (mỗi ngày)
+  streak        Int               @default(0)
+  maxStreak     Int               @default(0)
+  habitStrength Int               @default(0) // Chỉ số độ bền thói quen (0 - 100)
+  isActive      Boolean           @default(true)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  routines      RoutineHabit[]
+  completions   HabitCompletion[]
 
   @@map("habits")
 }
@@ -251,15 +273,17 @@ model HabitCompletion {
 // ROUTINES CONTEXT (Bối cảnh Chuỗi Nghi Thức)
 // ==========================================
 model Routine {
-  id          String         @id @default(uuid())
-  userId      String
-  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  title       String         // Ví dụ: "Morning Routine"
-  comboXp     Int            @default(20)
-  isActive    Boolean        @default(true)
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
-  habits      RoutineHabit[]
+  id        String         @id @default(uuid())
+  userId    String
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String // Ví dụ: "Morning Routine"
+  comboXp   Int            @default(20)
+  isActive  Boolean        @default(true)
+  streak    Int            @default(0)
+  maxStreak Int            @default(0)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  habits    RoutineHabit[]
 
   @@map("routines")
 }
@@ -270,7 +294,7 @@ model RoutineHabit {
   routine   Routine @relation(fields: [routineId], references: [id], onDelete: Cascade)
   habitId   String
   habit     Habit   @relation(fields: [habitId], references: [id], onDelete: Cascade)
-  order     Int     // Thứ tự thực hiện: 1, 2, 3...
+  order     Int // Thứ tự thực hiện: 1, 2, 3...
 
   @@unique([routineId, habitId])
   @@map("routine_habits")
@@ -280,17 +304,17 @@ model RoutineHabit {
 // QUESTS CONTEXT (Hệ thống Nhiệm vụ Đa hình)
 // ==========================================
 model Quest {
-  id           String              @id @default(uuid())
-  userId       String?             // Nullable: null đại diện cho Global System Quest; String = Custom User Quest
-  user         User?               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  title        String              // ví dụ: "Trang sử hoàng hôn"
-  description  String?             // ví dụ: "Viết 1 trang nhật ký để phản tỉnh ngày hôm nay"
-  type         String              @default("daily")      // 'daily', 'weekly', 'main', 'side'
-  xpReward     Int                 @default(15)
-  isActive     Boolean             @default(true)
-  createdAt    DateTime            @default(now())
-  updatedAt    DateTime            @updatedAt
-  
+  id          String   @id @default(uuid())
+  userId      String? // Nullable: null đại diện cho Global System Quest; String = Custom User Quest
+  user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String // ví dụ: "Trang sử hoàng hôn"
+  description String? // ví dụ: "Viết 1 trang nhật ký để phản tỉnh ngày hôm nay"
+  type        String   @default("daily") // 'daily', 'weekly', 'main', 'side'
+  xpReward    Int      @default(15)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
   objectives   QuestObjective[]
   userStatuses UserQuestStatus[]
 
@@ -301,10 +325,10 @@ model QuestObjective {
   id            String                  @id @default(uuid())
   questId       String
   quest         Quest                   @relation(fields: [questId], references: [id], onDelete: Cascade)
-  type          String                  // Loại hành động: 'CREATE_JOURNAL', 'COMPLETE_PROJECT', 'CHECK_HABIT', 'CREATE_MEMORY'
+  type          String // Loại hành động: 'CREATE_JOURNAL', 'COMPLETE_PROJECT', 'CHECK_HABIT', 'CREATE_MEMORY'
   targetCount   Int                     @default(1)
-  referenceType String                  // Tên thực thể đích: 'Journal', 'Project', 'Memory', 'Habit'
-  referenceId   String?                 // UUID cụ thể của thực thể đích (nếu trỏ đích danh)
+  referenceType String // Tên thực thể đích: 'Journal', 'Project', 'Memory', 'Habit'
+  referenceId   String? // UUID cụ thể của thực thể đích (nếu trỏ đích danh)
   createdAt     DateTime                @default(now())
   updatedAt     DateTime                @updatedAt
   userProgress  UserObjectiveProgress[]
@@ -313,13 +337,13 @@ model QuestObjective {
 }
 
 model UserQuestStatus {
-  id          String      @id @default(uuid())
+  id          String    @id @default(uuid())
   userId      String
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   questId     String
-  quest       Quest       @relation(fields: [questId], references: [id], onDelete: Cascade)
-  status      String      @default("active")     // 'locked', 'active', 'completed'
-  startedAt   DateTime    @default(now())
+  quest       Quest     @relation(fields: [questId], references: [id], onDelete: Cascade)
+  status      String    @default("active") // 'locked', 'active', 'completed'
+  startedAt   DateTime  @default(now())
   completedAt DateTime?
 
   @@unique([userId, questId])
@@ -333,7 +357,7 @@ model UserObjectiveProgress {
   objective    QuestObjective @relation(fields: [objectiveId], references: [id], onDelete: Cascade)
   currentCount Int            @default(0)
   isCompleted  Boolean        @default(false)
-  date         String?        // YYYY-MM-DD (Chỉ dùng cho Daily Quests để reset tiến trình mỗi ngày)
+  date         String? // YYYY-MM-DD (Chỉ dùng cho Daily Quests để reset tiến trình mỗi ngày)
   updatedAt    DateTime       @updatedAt
 
   @@unique([userId, objectiveId, date])
@@ -346,13 +370,15 @@ model Task {
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   title       String
   description String?
-  status      String    @default("todo")        // 'todo', 'in_progress', 'done'
-  priority    String    @default("medium")      // 'low', 'medium', 'high'
+  status      String    @default("todo") // 'todo', 'in_progress', 'done'
+  priority    String    @default("medium") // 'low', 'medium', 'high'
   xpReward    Int       @default(15)
   dueDate     DateTime?
   completedAt DateTime?
   isDeleted   Boolean   @default(false)
   deletedAt   DateTime?
+  createdBy   String?
+  updatedBy   String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -360,16 +386,16 @@ model Task {
 }
 
 model Goal {
-  id           String            @id @default(uuid())
-  userId       String?           // Nullable: null đại diện cho Global System Goals; String = Custom User Goal
-  user         User?             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  title        String            // ví dụ: "Master of Reality" (Bậc Thầy Thực Tại)
-  description  String?           // ví dụ: "Chinh phục thế giới thực tại Stoic bằng cách hoàn tất 10 Meta-Quests"
-  xpReward     Int               @default(1000)
-  badgeIcon    String?           // Mã Achievement (ví dụ: 'achievement_master_of_reality')
-  isActive     Boolean           @default(true)
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @updatedAt
+  id          String   @id @default(uuid())
+  userId      String? // Nullable: null đại diện cho Global System Goals; String = Custom User Goal
+  user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String // ví dụ: "Master of Reality" (Bậc Thầy Thực Tại)
+  description String? // ví dụ: "Chinh phục thế giới thực tại Stoic bằng cách hoàn tất 10 Meta-Quests"
+  xpReward    Int      @default(1000)
+  badgeIcon   String? // Mã Achievement (ví dụ: 'achievement_master_of_reality')
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   objectives   GoalObjective[]
   userStatuses UserGoalStatus[]
@@ -378,27 +404,27 @@ model Goal {
 }
 
 model GoalObjective {
-  id            String                @id @default(uuid())
-  goalId        String
-  goal          Goal                  @relation(fields: [goalId], references: [id], onDelete: Cascade)
-  type          String                // Loại hành động: 'COMPLETE_META_QUEST', 'COMPLETE_DAILY_QUEST'
-  targetCount   Int                   @default(10)
-  referenceId   String?               // UUID cụ thể của Quest Lớn/Nhỏ (nếu trỏ đích danh)
-  createdAt     DateTime              @default(now())
-  updatedAt     DateTime              @updatedAt
-  userProgress  UserGoalProgress[]
+  id           String             @id @default(uuid())
+  goalId       String
+  goal         Goal               @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  type         String // Loại hành động: 'COMPLETE_META_QUEST', 'COMPLETE_DAILY_QUEST'
+  targetCount  Int                @default(10)
+  referenceId  String? // UUID cụ thể của Quest Lớn/Nhỏ (nếu trỏ đích danh)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  userProgress UserGoalProgress[]
 
   @@map("quest_goal_objectives")
 }
 
 model UserGoalStatus {
-  id          String      @id @default(uuid())
+  id          String    @id @default(uuid())
   userId      String
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   goalId      String
-  goal        Goal        @relation(fields: [goalId], references: [id], onDelete: Cascade)
-  status      String      @default("active")     // 'locked', 'active', 'completed'
-  startedAt   DateTime    @default(now())
+  goal        Goal      @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  status      String    @default("active") // 'locked', 'active', 'completed'
+  startedAt   DateTime  @default(now())
   completedAt DateTime?
 
   @@unique([userId, goalId])
@@ -406,13 +432,13 @@ model UserGoalStatus {
 }
 
 model UserGoalProgress {
-  id           String         @id @default(uuid())
+  id           String        @id @default(uuid())
   userId       String
   objectiveId  String
-  objective    GoalObjective  @relation(fields: [objectiveId], references: [id], onDelete: Cascade)
-  currentCount Int            @default(0)
-  isCompleted  Boolean        @default(false)
-  updatedAt    DateTime       @updatedAt
+  objective    GoalObjective @relation(fields: [objectiveId], references: [id], onDelete: Cascade)
+  currentCount Int           @default(0)
+  isCompleted  Boolean       @default(false)
+  updatedAt    DateTime      @updatedAt
 
   @@unique([userId, objectiveId])
   @@map("user_goal_progress")
@@ -422,13 +448,186 @@ model FlowMoment {
   id        String   @id @default(uuid())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  fileName  String   // e.g. "ShadowWork.tsx"
-  gitBranch String   // e.g. "feature/alchemical-reflection"
-  cpuLoad   Int      // e.g. 35
-  coordX    Float    // Coordinate X on cosmic web map
-  coordY    Float    // Coordinate Y on cosmic web map
+  fileName  String // e.g. "ShadowWork.tsx"
+  gitBranch String // e.g. "feature/alchemical-reflection"
+  cpuLoad   Int // e.g. 35
+  coordX    Float // Coordinate X on cosmic web map
+  coordY    Float // Coordinate Y on cosmic web map
   createdAt DateTime @default(now())
 
   @@map("flow_moments")
 }
 
+// ==========================================
+// KNOWLEDGE CONTEXT (Bộ xử lý Tri thức Đa nguồn)
+// ==========================================
+enum KnowledgeSourceType {
+  WIKIPEDIA
+  WEB_ARTICLE
+  CODEX_BOOK
+  PERSONAL_NOTE
+}
+
+model KnowledgeConcept {
+  id         String              @id @default(uuid())
+  userId     String
+  user       User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title      String              @db.VarChar(255)
+  sourceType KnowledgeSourceType @default(WIKIPEDIA)
+  sourceUrl  String?             @db.VarChar(512)
+  content    String              @db.Text
+  summary    String?             @db.Text
+  insights   Json?
+  reflection String?             @db.Text
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+  flashcards UserFlashcard[]
+
+  @@index([userId, sourceType])
+  @@map("knowledge_concepts")
+}
+
+// ==========================================
+// VOCABULARY & FLASHCARDS (Trí nhớ & Học ngoại ngữ)
+// ==========================================
+model Vocabulary {
+  id           String          @id @default(uuid())
+  word         String          @unique @db.VarChar(100)
+  ipa          String?         @db.VarChar(100)
+  audioUrl     String?         @db.VarChar(512)
+  partOfSpeech String          @db.VarChar(50)
+  meanings     Json
+  examples     Json
+  difficulty   String?         @db.VarChar(10)
+  language     String          @default("en")
+  createdAt    DateTime        @default(now())
+  flashcards   UserFlashcard[]
+
+  @@map("vocabularies")
+}
+
+model FlashcardDeck {
+  id          String          @id @default(uuid())
+  userId      String
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String          @db.VarChar(100)
+  description String?         @db.VarChar(255)
+  colorTheme  String?         @db.VarChar(50)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  cards       UserFlashcard[]
+
+  @@map("flashcard_decks")
+}
+
+model UserFlashcard {
+  id             String               @id @default(uuid())
+  userId         String
+  user           User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deckId         String
+  deck           FlashcardDeck        @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  vocabularyId   String?
+  vocabulary     Vocabulary?          @relation(fields: [vocabularyId], references: [id], onDelete: SetNull)
+  conceptId      String?
+  concept        KnowledgeConcept?    @relation(fields: [conceptId], references: [id], onDelete: SetNull)
+  customFront    String?              @db.VarChar(255)
+  customBack     String?              @db.Text
+  personalNote   String?              @db.Text
+  highlightText  String?              @db.Text
+  state          String               @default("new")
+  interval       Int                  @default(0)
+  easiness       Float                @default(2.5)
+  repetitions    Int                  @default(0)
+  nextReviewDate DateTime             @default(now())
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+  logs           FlashcardReviewLog[]
+
+  @@index([userId, nextReviewDate])
+  @@map("user_flashcards")
+}
+
+model FlashcardReviewLog {
+  id               String        @id @default(uuid())
+  cardId           String
+  card             UserFlashcard @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  userId           String
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rating           Int
+  previousInterval Int
+  newInterval      Int
+  previousEasiness Float
+  newEasiness      Float
+  responseTimeMs   Int
+  reviewedAt       DateTime      @default(now())
+
+  @@index([userId, reviewedAt])
+  @@map("flashcard_review_logs")
+}
+
+// ==========================================
+// WEALTH ALCHEMY CONTEXT (Tài chính Khắc kỷ)
+// ==========================================
+
+enum AssetType {
+  CASH
+  BANK_ACCOUNT
+  INVESTMENT
+  EMERGENCY_FUND
+}
+
+enum ExpenseCategoryType {
+  ESSENTIAL
+  COMFORT
+  INDULGENCE
+}
+
+model FinancialAccount {
+  id           String                 @id @default(uuid())
+  userId       String
+  user         User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name         String                 @db.VarChar(100)
+  type         AssetType              @default(CASH)
+  balance      Decimal                @default(0.00) @db.Decimal(15, 2)
+  currency     String                 @default("VND")
+  createdAt    DateTime               @default(now())
+  updatedAt    DateTime               @updatedAt
+  transactions FinancialTransaction[]
+
+  @@map("financial_accounts")
+}
+
+model FinancialTransaction {
+  id               String              @id @default(uuid())
+  accountId        String
+  account          FinancialAccount    @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  userId           String
+  user             User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type             String // 'INCOME', 'EXPENSE', 'TRANSFER'
+  amount           Decimal             @db.Decimal(15, 2)
+  category         String // Food, Rent, Salary, Tech
+  categoryType     ExpenseCategoryType @default(ESSENTIAL)
+  description      String?             @db.VarChar(255)
+  reflection       String?             @db.Text
+  isApprovedByWill Boolean             @default(true)
+  loggedAt         DateTime            @default(now())
+  createdAt        DateTime            @default(now())
+
+  @@map("financial_transactions")
+}
+
+model FinancialBudget {
+  id           String              @id @default(uuid())
+  userId       String
+  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categoryType ExpenseCategoryType
+  limitAmount  Decimal             @db.Decimal(15, 2)
+  spentAmount  Decimal             @default(0.00) @db.Decimal(15, 2)
+  period       String              @default("monthly")
+  startDate    DateTime
+  endDate      DateTime
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+
+  @@map("financial_budgets")
+}

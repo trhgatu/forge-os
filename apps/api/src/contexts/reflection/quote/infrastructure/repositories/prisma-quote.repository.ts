@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { QuoteRepository } from '../../application/ports/quote.repository';
+import { QuoteRepository } from '../../domain/quote.repository';
 import { Quote as QuoteEntity } from '../../domain/quote.entity';
 import { QuoteId } from '../../domain/value-objects/quote-id.vo';
 import { QuoteFilter } from '../../application/queries/quote-filter';
@@ -113,7 +113,11 @@ export class PrismaQuoteRepository implements QuoteRepository {
       return QuoteMapper.toDomain(daily.quote);
     }
 
-    const randomQuote = await this.findRandom('public');
+    let randomQuote = await this.findRandom('public');
+    if (!randomQuote) {
+      randomQuote = await this.findRandom();
+    }
+
     if (randomQuote) {
       await this.prisma.dailyQuote.create({
         data: {

@@ -28,7 +28,7 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { PresenceModule } from '@root/contexts/nova/presence/presence.module';
 import { EngineeringModule } from '@root/contexts/engineering/engineering.module';
 import { GamificationModule } from '@root/contexts/gamification/gamification.module';
-import { RedisModule } from '@shared/insfrastructure/redis/redis.module';
+import { RedisModule } from '@shared/infrastructure/redis/redis.module';
 import { PrismaModule } from './shared/infrastructure/prisma/prisma.module';
 import { HabitsModule } from '@root/contexts/reflection/habits/habits.module';
 import { RoutinesModule } from '@root/contexts/reflection/routines/routines.module';
@@ -36,6 +36,11 @@ import { QuestsModule } from '@root/contexts/gamification/quests/quests.module';
 import { GoalsModule } from '@root/contexts/gamification/goals/goals.module';
 import { TasksModule } from '@root/contexts/reflection/tasks/tasks.module';
 import { EchoesModule } from '@root/contexts/reflection/echoes/echoes.module';
+import { KnowledgeModule } from '@root/contexts/knowledge/knowledge.module';
+import { WealthModule } from '@root/contexts/wealth/wealth.module';
+import { RequestContextModule } from './shared/infrastructure/request-context/request-context.module';
+import { RequestContextMiddleware } from './shared/infrastructure/request-context/request-context.middleware';
+import { AuditInterceptor } from './shared/infrastructure/request-context/audit.interceptor';
 
 @Module({
   imports: [
@@ -86,19 +91,27 @@ import { EchoesModule } from '@root/contexts/reflection/echoes/echoes.module';
     GoalsModule,
     TasksModule,
     EchoesModule,
+    KnowledgeModule,
+    WealthModule,
 
     CacheModule,
+    RequestContextModule,
   ],
   providers: [
     {
       provide: APP_INTERCEPTOR,
       useClass: CacheInvalidationInterceptor,
     },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: AuditInterceptor,
+    },
   ],
   controllers: [AppController],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
+    consumer.apply(RequestContextMiddleware).forRoutes('*');
     consumer.apply(CreateAuditLogMiddleware).exclude('auth/(.*)', 'audit-logs').forRoutes('*');
   }
 }

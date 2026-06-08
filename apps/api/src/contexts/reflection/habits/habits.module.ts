@@ -6,12 +6,9 @@ import { AuthModule } from '../../iam/auth/auth.module';
 import { HabitController } from './presentation/controllers/habit.controller';
 import { HabitsRepository } from './domain/habits.repository';
 import { PrismaHabitsRepository } from './infrastructure/prisma-habits.repository';
-import { CreateHabitHandler } from './application/commands/create-habit.command';
-import { CompleteHabitHandler } from './application/commands/complete-habit.command';
-import { GetAllHabitsHandler } from './application/queries/get-all-habits.query';
-
-const CommandHandlers = [CreateHabitHandler, CompleteHabitHandler];
-const QueryHandlers = [GetAllHabitsHandler];
+import { CommandHandlers } from './application/commands';
+import { QueryHandlers } from './application/queries';
+import { HabitPresenter } from './presentation/presenters/habit.presenter';
 
 @Module({
   imports: [CqrsModule, PrismaModule, SharedModule, AuthModule],
@@ -21,9 +18,14 @@ const QueryHandlers = [GetAllHabitsHandler];
       provide: HabitsRepository,
       useClass: PrismaHabitsRepository,
     },
+    {
+      provide: 'HabitsRepository',
+      useClass: PrismaHabitsRepository,
+    },
+    HabitPresenter,
     ...CommandHandlers,
     ...QueryHandlers,
   ],
-  exports: [HabitsRepository],
+  exports: [HabitsRepository, 'HabitsRepository'],
 })
 export class HabitsModule {}

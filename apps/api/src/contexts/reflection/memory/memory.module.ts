@@ -2,30 +2,14 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { PrismaMemoryRepository } from './infrastructure/repositories/prisma-memory.repository';
 import { MemoryMapper } from './infrastructure/repositories/memory.mapper';
-import { MemoryRepository } from './application/ports/memory.repository';
+import { MemoryRepository } from './domain/memory.repository';
 import { MemoryAdminController } from './presentation/controllers/memory.admin.controller';
 import { MemoryPublicController } from './presentation/controllers/memory.public.controller';
-import {
-  CreateMemoryHandler,
-  UpdateMemoryHandler,
-  DeleteMemoryHandler,
-  GetAllMemoriesHandler,
-  GetAllMemoriesForPublicHandler,
-  GetMemoryByIdHandler,
-  SoftDeleteMemoryHandler,
-  RestoreMemoryHandler,
-} from './application/handlers';
+import { MemoryCommandHandlers } from './application/commands';
+import { MemoryQueryHandlers } from './application/queries';
+import { MemoryEventHandlers } from './application/events';
 import { SharedModule } from '@shared/shared.module';
-
-const CommandHandlers = [
-  CreateMemoryHandler,
-  UpdateMemoryHandler,
-  DeleteMemoryHandler,
-  SoftDeleteMemoryHandler,
-  RestoreMemoryHandler,
-];
-
-const QueryHandlers = [GetAllMemoriesHandler, GetAllMemoriesForPublicHandler, GetMemoryByIdHandler];
+import { MemoryPresenter } from './presentation/presenters/memory.presenter';
 
 @Module({
   imports: [CqrsModule, SharedModule],
@@ -40,9 +24,11 @@ const QueryHandlers = [GetAllMemoriesHandler, GetAllMemoriesForPublicHandler, Ge
       useClass: PrismaMemoryRepository,
     },
     MemoryMapper,
-    ...CommandHandlers,
-    ...QueryHandlers,
+    MemoryPresenter,
+    ...MemoryCommandHandlers,
+    ...MemoryQueryHandlers,
+    ...MemoryEventHandlers,
   ],
-  exports: [MemoryRepository],
+  exports: [MemoryRepository, 'MemoryRepository'],
 })
 export class MemoryModule {}

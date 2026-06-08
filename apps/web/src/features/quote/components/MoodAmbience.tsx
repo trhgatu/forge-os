@@ -65,7 +65,7 @@ export const MoodAmbience: React.FC<MoodAmbienceProps> = ({ mood }) => {
       />
 
       {/* 8. Paper Texture (Library feel) */}
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.06] mix-blend-overlay" />
+      <div className="absolute inset-0 bg-[url('/images/noise.svg')] opacity-[0.06] mix-blend-overlay" />
     </div>
   );
 };

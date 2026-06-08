@@ -6,12 +6,9 @@ import { AuthModule } from '../../iam/auth/auth.module';
 import { RoutineController } from './presentation/controllers/routine.controller';
 import { RoutinesRepository } from './domain/routines.repository';
 import { PrismaRoutinesRepository } from './infrastructure/prisma-routines.repository';
-import { CreateRoutineHandler } from './application/commands/create-routine.command';
-import { AddHabitToRoutineHandler } from './application/commands/add-habit-to-routine.command';
-import { GetAllRoutinesHandler } from './application/queries/get-all-routines.query';
-
-const CommandHandlers = [CreateRoutineHandler, AddHabitToRoutineHandler];
-const QueryHandlers = [GetAllRoutinesHandler];
+import { CommandHandlers } from './application/commands';
+import { QueryHandlers } from './application/queries';
+import { RoutinePresenter } from './presentation/presenters/routine.presenter';
 
 @Module({
   imports: [CqrsModule, PrismaModule, SharedModule, AuthModule],
@@ -21,9 +18,14 @@ const QueryHandlers = [GetAllRoutinesHandler];
       provide: RoutinesRepository,
       useClass: PrismaRoutinesRepository,
     },
+    {
+      provide: 'RoutinesRepository',
+      useClass: PrismaRoutinesRepository,
+    },
+    RoutinePresenter,
     ...CommandHandlers,
     ...QueryHandlers,
   ],
-  exports: [RoutinesRepository],
+  exports: [RoutinesRepository, 'RoutinesRepository'],
 })
 export class RoutinesModule {}

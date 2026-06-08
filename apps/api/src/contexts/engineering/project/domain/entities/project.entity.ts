@@ -19,6 +19,7 @@ interface ProjectProps {
   taskBoard: ProjectTaskBoard;
   links: ProjectLink[];
   logs: ProjectLog[];
+  userId?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -51,6 +52,7 @@ export class Project {
       status?: string;
       tags?: string[];
       isPinned?: boolean;
+      userId?: string;
     },
     id: ProjectId,
   ): Project {
@@ -188,6 +190,9 @@ export class Project {
   get logs() {
     return this.props.logs;
   }
+  get userId() {
+    return this.props.userId;
+  }
   get createdAt() {
     return this.props.createdAt;
   }
@@ -216,6 +221,7 @@ export class Project {
       taskBoard: this.props.taskBoard,
       links: this.props.links,
       logs: this.props.logs,
+      userId: this.props.userId,
       createdAt: new Date(this.props.createdAt),
       updatedAt: new Date(this.props.updatedAt),
       isDeleted: this.isDeleted,
@@ -237,6 +243,7 @@ export class Project {
       taskBoard: this.props.taskBoard,
       links: this.props.links,
       logs: this.props.logs,
+      userId: this.props.userId,
       createdAt: this.props.createdAt,
       updatedAt: this.props.updatedAt,
       isDeleted: this.isDeleted,

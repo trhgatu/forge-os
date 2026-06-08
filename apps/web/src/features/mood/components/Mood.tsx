@@ -6,6 +6,8 @@ import { toast } from 'sonner';
 
 import { useAuthStore } from '@/shared/store/authStore';
 import type { MoodAnalysis, MoodEntry } from '@/shared/types/mood';
+import { Label, Button, Link, Skeleton } from '@/shared/components/ui';
+import { cn } from '@/shared/lib/utils';
 
 import { useMoods, useCreateMood, useUpdateMood, useDeleteMood } from '../hooks/useMood';
 import type { CreateMoodDto } from '../services/moodService';
@@ -17,7 +19,7 @@ import { MoodModal } from './MoodModal';
 
 export function Mood() {
   // Real Data Hook
-  const { data: moodData } = useMoods({ limit: 100 }); // Fetch last 100 for charts
+  const { data: moodData, isLoading } = useMoods({ limit: 100 }); // Fetch last 100 for charts
   const history = moodData?.data || [];
 
   const createMood = useCreateMood();
@@ -31,6 +33,30 @@ export function Mood() {
 
   const [analysis, setAnalysis] = useState<MoodAnalysis | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+  if (isLoading) {
+    return (
+      <div className="flex-1 h-full flex flex-col items-center justify-center p-6 md:p-10 bg-transparent text-white font-sans animate-pulse">
+        <div className="relative flex flex-col items-center gap-4 w-full max-w-[1600px] mx-auto">
+          {/* Header Skeleton */}
+          <Skeleton variant="glowing" className="w-full h-[100px] rounded-xl" />
+          
+          {/* Content Layout Skeleton */}
+          <div className="grid grid-cols-1 xl:grid-cols-4 gap-6 w-full mt-4">
+            <Skeleton variant="glowing" className="h-[280px] rounded-xl col-span-1 xl:col-span-3" />
+            <Skeleton variant="glowing" className="h-[280px] rounded-xl col-span-1" />
+          </div>
+          
+          <Skeleton variant="default" className="w-full h-[150px] rounded-xl mt-4" />
+          
+          {/* Status message */}
+          <span className="text-xs uppercase tracking-[0.25em] text-forge-cyan/60 animate-pulse mt-6 font-mono">
+            Calibrating Emotional Resonance Telemetry...
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   // Handle Save (Create or Update)
   const handleSave = async (data: CreateMoodDto) => {
@@ -61,23 +87,25 @@ export function Mood() {
         <p className="font-bold">Dissolve this emotion?</p>
         <p className="text-gray-400">It will fade into the void.</p>
         <div className="mt-2 flex gap-2">
-          <button
+          <Button
             onClick={() => {
               toast.dismiss(t);
               deleteMood.mutate(id, {
                 onSuccess: () => toast.success('Emotion dissolved.'),
               });
             }}
-            className="rounded-md bg-red-500/20 px-3 py-1.5 text-red-200 transition-colors hover:bg-red-500/30"
+            variant="danger"
+            size="sm"
           >
             Confirm
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => toast.dismiss(t)}
-            className="rounded-md bg-white/10 px-3 py-1.5 text-gray-300 transition-colors hover:bg-white/20"
+            variant="outline"
+            size="sm"
           >
             Cancel
-          </button>
+          </Button>
         </div>
       </div>
     ));
@@ -115,50 +143,65 @@ export function Mood() {
   };
 
   return (
-    <div className="relative flex h-full overflow-hidden bg-forge-bg text-white animate-in fade-in duration-700">
+    <div className="relative flex h-full overflow-hidden bg-transparent text-white animate-in fade-in duration-700">
       {/* Left / Main */}
       <div className="relative z-10 flex h-full flex-1 flex-col overflow-hidden">
-        {/* Header */}
-        <div className="flex items-center justify-between px-8 py-6">
-          <div>
-            <h1 className="font-display text-2xl font-bold text-white">Emotional Resonance</h1>
-            <p className="mt-1 font-mono text-xs text-gray-500">
-              Tracking internal weather patterns.
-            </p>
-          </div>
+        {/* Header - Flowing Layout */}
+        <div className="sticky top-0 z-20 border-b border-white/5 px-8 py-8 backdrop-blur-xl bg-transparent">
+          {/* Top row - Title and Actions */}
+          <div className="flex items-start justify-between mb-6">
+            <div className="flex-1">
+              {/* Ethereal label */}
+              <div className="mb-3 flex items-center gap-2 opacity-80">
+                <div className="h-px w-8 bg-gradient-to-r from-forge-cyan/40 to-transparent" />
+                <Label variant="cyan" className="text-[10px] font-mono tracking-[0.4em] uppercase">
+                  Mood Resonance
+                </Label>
+              </div>
 
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={handleAnalyze}
-              disabled={isAnalyzing}
-              className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-gray-300 transition-all hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <Sparkles size={16} className={isAnalyzing ? 'animate-spin' : 'text-forge-accent'} />
-              Analyze Cycles
-            </button>
+              {/* Poetic Title */}
+              <Label variant="default" className="text-4xl md:text-5xl font-bold text-white tracking-tight leading-tight mb-3 block capitalize">
+                Emotional Resonance
+              </Label>
 
-            {/* Only show Log Mood if authenticated */}
-            {isAuthenticated ? (
-              <button
-                type="button"
-                onClick={() => {
-                  setEditingMood(undefined);
-                  setIsModalOpen(true);
-                }}
-                className="flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-sm font-medium text-black shadow-lg shadow-white/10 transition-colors hover:bg-gray-200"
+              {/* Flowing Subtitle */}
+              <p className="text-sm text-gray-400 font-light leading-relaxed max-w-xl">
+                Chart your inner weather patterns, cycles, and triggers. Harness alchemical emotional insights to align your psychological state.
+              </p>
+            </div>
+
+            <div className="flex gap-3">
+              <Button
+                onClick={handleAnalyze}
+                disabled={isAnalyzing}
+                variant="outline"
+                className="border-white/10 bg-white/5 px-4 py-2 text-sm text-gray-300 transition-all hover:bg-white/10 disabled:opacity-50"
               >
-                <Plus size={16} />
-                Log Mood
-              </button>
-            ) : (
-              <a
-                href="/login"
-                className="flex items-center gap-2 rounded-xl border border-white/20 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
-              >
-                Login to Log
-              </a>
-            )}
+                <Sparkles size={16} className={cn(isAnalyzing ? 'animate-spin mr-2' : 'text-forge-accent mr-2', 'inline')} />
+                Analyze Cycles
+              </Button>
+
+              {/* Only show Log Mood if authenticated */}
+              {isAuthenticated ? (
+                <Button
+                  onClick={() => {
+                    setEditingMood(undefined);
+                    setIsModalOpen(true);
+                  }}
+                  className="bg-white hover:bg-gray-200 text-black font-semibold"
+                >
+                  <Plus size={16} className="inline mr-2" />
+                  Log Mood
+                </Button>
+              ) : (
+                <Link
+                  href="/login"
+                  className="flex items-center gap-2 rounded-xl border border-white/20 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
+                >
+                  Login to Log
+                </Link>
+              )}
+            </div>
           </div>
         </div>
 
@@ -172,9 +215,9 @@ export function Mood() {
       {/* Right Panel – desktop */}
       <div className="hidden h-full w-80 border-l border-white/5 bg-black/20 backdrop-blur-xl xl:block">
         <div className="border-b border-white/5 p-6">
-          <h3 className="text-sm font-bold uppercase tracking-widest text-white">
+          <Label variant="default" className="text-sm font-semibold tracking-widest uppercase block">
             Pattern Recognition
-          </h3>
+          </Label>
         </div>
         <InsightPanel analysis={analysis} isAnalyzing={isAnalyzing} />
       </div>
