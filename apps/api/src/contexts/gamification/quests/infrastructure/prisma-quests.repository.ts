@@ -261,7 +261,39 @@ export class PrismaQuestsRepository implements QuestsRepository {
           questId,
         },
       },
+      include: {
+        quest: true,
+      },
     });
-    return doc?.status === 'completed';
+
+    if (!doc || doc.status !== 'completed') {
+      return false;
+    }
+
+    if (!doc.completedAt) {
+      return true;
+    }
+
+    if (doc.quest.type === 'daily') {
+      const todayStr = new Date().toISOString().split('T')[0];
+      const completedStr = doc.completedAt.toISOString().split('T')[0];
+      return todayStr === completedStr;
+    }
+
+    if (doc.quest.type === 'weekly') {
+      const getWeekNumber = (date: Date) => {
+        const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+        const dayNum = d.getUTCDay() || 7;
+        d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+        const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+        return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+      };
+      const today = new Date();
+      const currentWeek = `${today.getFullYear()}-W${getWeekNumber(today)}`;
+      const completedWeek = `${doc.completedAt.getFullYear()}-W${getWeekNumber(doc.completedAt)}`;
+      return currentWeek === completedWeek;
+    }
+
+    return true;
   }
 }
