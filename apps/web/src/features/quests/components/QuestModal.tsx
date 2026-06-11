@@ -17,6 +17,12 @@ interface ObjectiveFormInput {
   referenceId: string;
 }
 
+interface Routine {
+  id: string;
+  title: string;
+  comboXp: number;
+}
+
 interface QuestModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -35,6 +41,7 @@ interface QuestModalProps {
   }) => Promise<void>;
   quest: Quest | null;
   habits: Habit[];
+  routines: Routine[];
   isPending: boolean;
 }
 
@@ -44,6 +51,7 @@ export function QuestModal({
   onSubmit,
   quest,
   habits,
+  routines,
   isPending,
 }: QuestModalProps) {
   const { playSound } = useSound();
@@ -67,16 +75,28 @@ export function QuestModal({
 
   const objectiveTypeOptions = [
     { value: 'CHECK_HABIT', label: 'Check Habit', sublabel: 'Complete a daily habit' },
+    { value: 'COMPLETE_ROUTINE', label: 'Complete Routine', sublabel: 'Execute a routine chain' },
     { value: 'CREATE_JOURNAL', label: 'Write Journal', sublabel: 'Reflect on your day' },
     { value: 'CREATE_MEMORY', label: 'Log Memory', sublabel: 'Log an important memory node' },
+    { value: 'LOG_TRANSACTION', label: 'Log Wealth Transaction', sublabel: 'Track your wealth flow' },
+    { value: 'CREATE_REFLECTION', label: 'Create Wealth Reflection', sublabel: 'Review financial alignment' },
   ];
 
   const habitOptions = [
-    { value: '', label: 'Select Habit...' },
+    { value: '', label: 'Select Habit (Global)...' },
     ...habits.map((h) => ({
       value: h.id,
       label: h.title,
       sublabel: `Difficulty: ${h.difficulty} | Quest Linked`,
+    })),
+  ];
+
+  const routineOptions = [
+    { value: '', label: 'Select Routine (Global)...' },
+    ...routines.map((r) => ({
+      value: r.id,
+      label: r.title,
+      sublabel: `Combo XP: ${r.comboXp} | Quest Linked`,
     })),
   ];
 
@@ -141,6 +161,15 @@ export function QuestModal({
         updated[index].referenceId = '';
       } else if (value === 'CREATE_MEMORY') {
         updated[index].referenceType = 'Memory';
+        updated[index].referenceId = '';
+      } else if (value === 'COMPLETE_ROUTINE') {
+        updated[index].referenceType = 'Routine';
+        updated[index].referenceId = '';
+      } else if (value === 'LOG_TRANSACTION') {
+        updated[index].referenceType = 'Wealth';
+        updated[index].referenceId = '';
+      } else if (value === 'CREATE_REFLECTION') {
+        updated[index].referenceType = 'WealthReflection';
         updated[index].referenceId = '';
       }
     } else {
@@ -273,6 +302,16 @@ export function QuestModal({
                     <div className="flex-1 min-w-[150px]">
                       <Dropdown
                         options={habitOptions}
+                        value={obj.referenceId}
+                        onChange={(val) => handleObjectiveChange(index, 'referenceId', val)}
+                      />
+                    </div>
+                  )}
+
+                  {obj.type === 'COMPLETE_ROUTINE' && routines.length > 0 && (
+                    <div className="flex-1 min-w-[150px]">
+                      <Dropdown
+                        options={routineOptions}
                         value={obj.referenceId}
                         onChange={(val) => handleObjectiveChange(index, 'referenceId', val)}
                       />
