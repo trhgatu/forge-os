@@ -133,8 +133,6 @@ export function Journal() {
               toast.dismiss(t);
               try {
                 await deleteMutation.mutateAsync(id);
-
-                // Clear selection only after successful deletion
                 if (selectedId === id) {
                   setSelectedId(null);
                   setLocalEntry(null);
@@ -143,7 +141,6 @@ export function Journal() {
                 toast.success('Entry deleted');
               } catch (error) {
                 console.error('Failed to delete entry', error);
-                toast.error('Failed to delete entry');
               }
             }}
           >
@@ -185,7 +182,7 @@ export function Journal() {
               <Skeleton variant="default" className="flex-1 w-full rounded-lg h-[200px]" />
             </div>
           </div>
-          
+
           {/* Status message */}
           <span className="text-xs uppercase tracking-[0.25em] text-forge-cyan/60 animate-pulse mt-6 font-mono">
             Calibrating Neural Thought Logs...
@@ -232,7 +229,7 @@ export function Journal() {
               variant="outline"
               className="mt-4 hover:border-forge-cyan/50 hover:text-forge-cyan border-white/10 text-white font-mono tracking-wider text-xs"
             >
-              Khởi Tạo Bản Ghi Mới
+              Khởi tạo bản ghi mới
             </Button>
           </EmptyState>
         </div>

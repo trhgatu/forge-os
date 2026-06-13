@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
+import React, { useState } from 'react';
+
 import { cn } from '@/shared/lib/utils';
 
 interface CalendarProps {

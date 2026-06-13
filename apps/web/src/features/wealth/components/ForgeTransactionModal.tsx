@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Button, Input, Dropdown, Modal, Label } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { FinancialAccountDto } from '../services/wealthService';
+
+import type { FinancialAccountDto } from '../services/wealthService';
 
 interface ForgeTransactionModalProps {
   isOpen: boolean;

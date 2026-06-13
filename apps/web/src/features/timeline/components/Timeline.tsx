@@ -4,8 +4,8 @@ import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-import { cn } from '@/shared/lib/utils';
 import { Label, Tag } from '@/shared/components/ui';
+import { cn } from '@/shared/lib/utils';
 import type { TimelineType } from '@/shared/types/timeline';
 
 import { TYPE_CONFIG } from '../config';

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import { flashcardsService, type DeckDto, type FlashcardDto } from '@/features/knowledge/services/flashcardsService';
+import { flashcardsService, type DeckDto, type FlashcardDto } from '@/features/flashcards/services/flashcardsService';
 
 interface FlashcardState {
   decks: DeckDto[];

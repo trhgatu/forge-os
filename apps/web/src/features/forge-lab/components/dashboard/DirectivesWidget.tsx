@@ -1,8 +1,8 @@
 import { Layers, Book, Network, Terminal, Star, GitBranch } from 'lucide-react';
 import React from 'react';
 
-import { GlassCard } from '@/shared/components/ui/GlassCard';
 import { Label, Tag, Skeleton } from '@/shared/components/ui';
+import { GlassCard } from '@/shared/components/ui/GlassCard';
 import { cn } from '@/shared/lib/utils';
 
 import type { ForgeTab, Project, Foundation } from '../../types';

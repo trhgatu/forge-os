@@ -1,5 +1,7 @@
 'use client';
 
+import { useDraggable } from '@dnd-kit/core';
+import { CSS } from '@dnd-kit/utilities';
 import { Check, Maximize2, Trash2, Zap } from 'lucide-react';
 import React from 'react';
 
@@ -7,8 +9,6 @@ import { cn } from '@/shared/lib/utils';
 
 import type { Task } from '../types';
 
-import { useDraggable } from '@dnd-kit/core';
-import { CSS } from '@dnd-kit/utilities';
 
 interface TaskCardProps {
   task: Task;

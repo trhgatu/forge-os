@@ -1,7 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+
 import { useLanguage } from '@/contexts/LanguageContext';
 import { forgeToast } from '@/shared/lib/toast';
+
 import { wealthService } from '../services/wealthService';
 
 export const useWealthAccounts = () => {
@@ -77,27 +79,6 @@ export const useCreateWealthTransaction = () => {
       queryClient.invalidateQueries({ queryKey: ['wealth-transactions'] });
       queryClient.invalidateQueries({ queryKey: ['wealth-accounts'] });
       queryClient.invalidateQueries({ queryKey: ['wealth-budgets'] });
-
-      // Sensory feedback delay
-      setTimeout(() => {
-        if (variables.type === 'INCOME') {
-          forgeToast.calibration('Discipline', 1, 'Inflow logged safely');
-        } else if (variables.type === 'EXPENSE') {
-          if (variables.categoryType === 'ESSENTIAL') {
-            forgeToast.calibration('Discipline', 2, 'Core life needs managed');
-          } else if (variables.categoryType === 'COMFORT') {
-            forgeToast.calibration('Discipline', 1, 'Balanced comfort recorded');
-          } else if (variables.categoryType === 'INDULGENCE') {
-            if (variables.isApprovedByWill) {
-              forgeToast.calibration('Willpower', 2, 'Pre-approved Stoic indulgence');
-            }
-            if (variables.reflection && variables.reflection.trim().length > 0) {
-              forgeToast.calibration('Awareness', 4, 'Impulse examined under reason');
-              forgeToast.calibration('Willpower', 2, 'Temperance exercised');
-            }
-          }
-        }
-      }, 800);
     },
     onError: (error) => {
       console.error(error);
@@ -135,11 +116,6 @@ export const useUpdateWealthTransactionReflection = () => {
     onSuccess: () => {
       toast.success(t('wealth.toast_reflect_success'));
       queryClient.invalidateQueries({ queryKey: ['wealth-transactions'] });
-
-      setTimeout(() => {
-        forgeToast.calibration('Awareness', 5, 'Stoic self-examination logged');
-        forgeToast.calibration('Willpower', 2, 'Impulse calibrated to Reason');
-      }, 800);
     },
     onError: (error) => {
       console.error(error);

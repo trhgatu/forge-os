@@ -1,6 +1,5 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
 import {
   Zap,
   Award,
@@ -17,8 +16,11 @@ import {
   Shield,
   HelpCircle,
 } from 'lucide-react';
-import { cn } from '@/shared/lib/utils';
+import React, { useState, useEffect } from 'react';
+
 import { Pagination } from '@/shared/components/ui';
+import { cn } from '@/shared/lib/utils';
+
 import type { Quest } from '../../quests/types';
 
 interface MissionsTabProps {

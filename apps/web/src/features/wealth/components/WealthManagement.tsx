@@ -1,17 +1,19 @@
 'use client';
 
-import React, { useState } from 'react';
 import {
   Trash2,
   TrendingDown,
   TrendingUp,
   Calendar,
 } from 'lucide-react';
+import React, { useState } from 'react';
 import { AreaChart, Area, Tooltip, ResponsiveContainer } from 'recharts';
+import { toast } from 'sonner';
+
+import { useLanguage } from '@/contexts/LanguageContext';
 import { WidgetShell, Label, Tag, Button, Skeleton } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
-import { toast } from 'sonner';
-import { useLanguage } from '@/contexts/LanguageContext';
+
 import {
   useWealthAccounts,
   useWealthTransactions,
@@ -21,11 +23,11 @@ import {
   useDeleteWealthTransaction,
   useUpdateWealthTransactionReflection,
 } from '../hooks/useWealth';
-import { FinancialTransactionDto } from '../services/wealthService';
+import type { FinancialTransactionDto } from '../services/wealthService';
 
 // Subcomponents
-import { OpenReservoirModal } from './OpenReservoirModal';
 import { ForgeTransactionModal } from './ForgeTransactionModal';
+import { OpenReservoirModal } from './OpenReservoirModal';
 import { ReflectionModal } from './ReflectionModal';
 
 export const WealthManagement: React.FC = () => {

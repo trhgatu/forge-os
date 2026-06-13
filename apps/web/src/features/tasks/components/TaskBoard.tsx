@@ -1,5 +1,14 @@
 'use client';
 
+import type {
+  DragEndEvent} from '@dnd-kit/core';
+import {
+  DndContext,
+  useDroppable,
+  PointerSensor,
+  useSensor,
+  useSensors
+} from '@dnd-kit/core';
 import { Plus } from 'lucide-react';
 import React, { useState } from 'react';
 
@@ -9,14 +18,6 @@ import type { Task } from '../types';
 
 import { TaskCard } from './TaskCard';
 
-import {
-  DndContext,
-  useDroppable,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-} from '@dnd-kit/core';
 
 interface TaskBoardProps {
   tasks: Task[];

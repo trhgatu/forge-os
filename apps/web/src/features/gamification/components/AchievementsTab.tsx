@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
 import { Trophy, Lock } from 'lucide-react';
+import React from 'react';
+
 import { cn } from '@/shared/lib/utils';
 
 interface AchievementsTabProps {

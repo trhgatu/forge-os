@@ -203,11 +203,13 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
         </div>
       )}
 
-      <LevelUpModal
-        isOpen={showLevelUp}
-        newLevel={stats.level}
-        onClose={() => setShowLevelUp(false)}
-      />
+      <div onClick={(e) => e.stopPropagation()}>
+        <LevelUpModal
+          isOpen={showLevelUp}
+          newLevel={stats.level}
+          onClose={() => setShowLevelUp(false)}
+        />
+      </div>
     </div>
   );
 };

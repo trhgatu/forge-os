@@ -45,6 +45,8 @@ export class UpdateJournalHandler implements ICommandHandler<UpdateJournalComman
       journal.updateAnalysis(payload.analysis);
     }
 
+    journal.setUpdatedBy(payload.userId);
+
     await this.journalRepo.save(journal);
 
     await this.cacheService.deleteByPattern('journals:*');

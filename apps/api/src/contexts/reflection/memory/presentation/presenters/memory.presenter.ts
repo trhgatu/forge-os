@@ -18,6 +18,8 @@ export class MemoryPresenter {
       updatedAt: props.updatedAt?.toISOString() ?? '',
       isDeleted: props.isDeleted,
       userId: props.userId,
+      imageUrl: props.imageUrl,
+      type: props.type,
     };
   }
 

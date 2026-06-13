@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { useSound, useNovaView } from '@/contexts';
 import { gamificationApi } from '@/features/gamification/services/gamificationApi';
 import type { Habit } from '@/features/gamification/types';
+import { useRoutines } from '@/features/routines/hooks/useRoutines';
 import { Button, Label, EmptyState, Skeleton, Pagination } from '@/shared/components/ui';
 import { View } from '@/shared/types/os';
 
@@ -18,7 +19,6 @@ import {
 } from '../hooks/useQuests';
 import type { Quest } from '../types';
 
-import { useRoutines } from '@/features/routines/hooks/useRoutines';
 
 import { QuestCard } from './QuestCard';
 import { QuestModal } from './QuestModal';

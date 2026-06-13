@@ -5,6 +5,7 @@ import { MemoryRepository } from '../../../domain/memory.repository';
 import { Memory } from '../../../domain/memory.entity';
 import { MemoryId } from '../../../domain/value-objects/memory-id.vo';
 import { MemoryModifiedEvent } from '../../events/memory-modified.event';
+import { MemoryCreatedEvent } from '../../events/memory-created.event';
 import { MemoryStatus, MoodType } from '@shared/enums';
 
 @CommandHandler(CreateMemoryCommand)
@@ -37,6 +38,9 @@ export class CreateMemoryHandler implements ICommandHandler<CreateMemoryCommand,
 
     await this.memoryRepo.save(memory);
     this.eventBus.publish(new MemoryModifiedEvent(id, 'create'));
+    if (payload.userId) {
+      this.eventBus.publish(new MemoryCreatedEvent(id, payload.userId));
+    }
 
     return memory;
   }

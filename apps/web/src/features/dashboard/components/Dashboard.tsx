@@ -19,8 +19,8 @@ import { AGENTS } from '@/features/chamber/components/AgentDock';
 import { WidgetShell, Label, Tag, Skeleton } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 
-import { QuoteOfTheDayWidget } from './QuoteOfTheDayWidget';
 import { DisciplineResonanceWidget } from './DisciplineResonanceWidget';
+import { QuoteOfTheDayWidget } from './QuoteOfTheDayWidget';
 
 const MOOD_DATA = [
   { day: 'Mon', value: 6, mood: 'Neutral' },

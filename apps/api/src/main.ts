@@ -6,8 +6,15 @@ import { AllExceptionsFilter } from './shared/filters/all-exceptions.filter';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { TransformInterceptor } from './shared/interceptors/transform.interceptor';
 
+import { NestExpressApplication } from '@nestjs/platform-express';
+import * as path from 'path';
+
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { bufferLogs: true });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, { bufferLogs: true });
+
+  app.useStaticAssets(path.join(process.cwd(), 'public', 'uploads'), {
+    prefix: '/uploads',
+  });
   const logger = app.get(LoggerService);
   app.useLogger(logger);
 

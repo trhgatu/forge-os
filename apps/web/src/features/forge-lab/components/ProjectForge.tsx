@@ -1,8 +1,8 @@
 import { Plus, Search, Filter, MoreHorizontal, Folder, Clock } from 'lucide-react';
 import React from 'react';
 
-import { GlassCard } from '@/shared/components/ui/GlassCard';
 import { Button, Input, Label, Tag, Skeleton } from '@/shared/components/ui';
+import { GlassCard } from '@/shared/components/ui/GlassCard';
 
 import type { Project } from '../types';
 

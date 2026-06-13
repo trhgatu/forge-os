@@ -100,6 +100,7 @@ export class IncrementObjectiveProgressHandler implements ICommandHandler<Increm
                 case 'COMPLETE_JOURNAL':
                 case 'CREATE_MEMORY':
                 case 'COMPLETE_MEMORY':
+                case 'LOG_MOOD':
                   statsToUpgrade.awareness = (statsToUpgrade.awareness || 0) + 2;
                   break;
                 case 'CREATE_REFLECTION':

@@ -1,6 +1,8 @@
-import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import React from 'react';
+
 import { cn } from '@/shared/lib/utils';
+
 import { Button } from './Button';
 
 interface PaginationProps {
