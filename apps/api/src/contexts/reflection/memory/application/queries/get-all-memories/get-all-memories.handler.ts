@@ -5,6 +5,7 @@ import { MemoryRepository } from '../../../domain/memory.repository';
 import { CacheService } from '@shared/services';
 import { PaginatedResult } from '@shared/types/paginated-result';
 import { Memory } from '../../../domain/memory.entity';
+import { MemoryMapper } from '../../../infrastructure/repositories/memory.mapper';
 
 @QueryHandler(GetAllMemoriesQuery)
 export class GetAllMemoriesHandler implements IQueryHandler<
@@ -22,11 +23,24 @@ export class GetAllMemoriesHandler implements IQueryHandler<
     const { page = 1, limit = 10 } = payload;
 
     const cacheKey = `memories:admin:p${page}:l${limit}:${JSON.stringify(payload)}`;
-    const cached = await this.cacheService.get<PaginatedResult<Memory>>(cacheKey);
-    if (cached) return cached;
+    const cached = await this.cacheService.get<PaginatedResult<any>>(cacheKey);
+    if (cached) {
+      return {
+        meta: cached.meta,
+        data: cached.data
+          .map((doc) => MemoryMapper.toDomain(doc))
+          .filter((m): m is Memory => m !== null),
+      };
+    }
 
     const memories = await this.memoryRepo.findAll(payload);
-    await this.cacheService.set(cacheKey, memories, 60);
+
+    const cacheData = {
+      meta: memories.meta,
+      data: memories.data.map((m) => MemoryMapper.toPersistence(m)),
+    };
+
+    await this.cacheService.set(cacheKey, cacheData, 60);
 
     return memories;
   }

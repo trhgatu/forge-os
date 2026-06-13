@@ -18,9 +18,10 @@ import { cn } from '@/shared/lib/utils';
 
 import { gamificationApi } from '../services/gamificationApi';
 import type { Quest } from '../types';
-import { MissionsTab } from './MissionsTab';
-import { GoalsTab } from './GoalsTab';
+
 import { AchievementsTab } from './AchievementsTab';
+import { GoalsTab } from './GoalsTab';
+import { MissionsTab } from './MissionsTab';
 
 interface GoalObjectiveDto {
   id: string;

@@ -5,9 +5,9 @@ import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 
 import { useNovaView } from '@/contexts';
+import { Skeleton, Label } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 import { useAuthStore } from '@/shared/store/authStore';
-import { Skeleton, Label } from '@/shared/components/ui';
 import { View } from '@/shared/types/os';
 
 import { forgeApi } from '../api';

@@ -18,6 +18,8 @@ export class JournalMapper {
         relations: (doc.relations as any) || [],
         analysis: doc.analysis || null,
         userId: doc.userId || '',
+        createdBy: doc.createdBy || undefined,
+        updatedBy: doc.updatedBy || undefined,
         createdAt: doc.createdAt,
         updatedAt: doc.updatedAt,
       },
@@ -41,6 +43,8 @@ export class JournalMapper {
       relations: props.relations,
       analysis: props.analysis,
       userId: props.userId.toString(),
+      createdBy: props.createdBy || null,
+      updatedBy: props.updatedBy || null,
       isDeleted: props.isDeleted,
       deletedAt: props.deletedAt,
     };

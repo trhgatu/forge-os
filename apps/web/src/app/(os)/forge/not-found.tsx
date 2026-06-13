@@ -1,8 +1,9 @@
 'use client';
 
-import React from 'react';
-import Link from 'next/link';
 import { Compass, ArrowLeft, Terminal } from 'lucide-react';
+import Link from 'next/link';
+import React from 'react';
+
 import { Button } from '@/shared/components/ui';
 
 export default function NotFound() {

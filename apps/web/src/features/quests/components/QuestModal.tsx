@@ -276,13 +276,13 @@ export function QuestModal({
               <Label variant="dim" className="block text-xs font-mono uppercase tracking-wider">
                 Linked Objectives
               </Label>
-              <button
-                type="button"
+              <Button
                 onClick={handleAddObjectiveField}
-                className="text-xs font-semibold text-forge-cyan hover:underline flex items-center gap-1 cursor-pointer"
+                variant="ghost"
+                size="sm"
               >
                 <Plus size={12} /> Add Objective
-              </button>
+              </Button>
             </div>
             <div className="space-y-2">
               {objectives.map((obj, index) => (
@@ -329,13 +329,14 @@ export function QuestModal({
                   </div>
 
                   {objectives.length > 1 && (
-                    <button
-                      type="button"
+                    <Button
+                      variant="danger"
+                      size="icon"
                       onClick={() => handleRemoveObjectiveField(index)}
-                      className="p-1 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer shrink-0"
+                      className="shrink-0"
                     >
                       <X size={14} />
-                    </button>
+                    </Button>
                   )}
                 </div>
               ))}
@@ -344,15 +345,14 @@ export function QuestModal({
 
           <div className="flex gap-3 pt-4 border-t border-white/5">
             <Button
-              type="submit"
               variant="default"
               className="flex-1"
               disabled={isPending}
+              onClick={handleFormSubmit}
             >
               {quest ? 'Save Changes' : 'Initialize Quest'}
             </Button>
             <Button
-              type="button"
               variant="outline"
               onClick={onClose}
             >

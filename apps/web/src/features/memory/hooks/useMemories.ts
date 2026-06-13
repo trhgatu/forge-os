@@ -33,20 +33,28 @@ export function useCreateMemory() {
 
   return useMutation({
     mutationFn: async (payload: CreateMemoryPayload) => {
-      // Backend expects { title: { en: "..." }, content: { en: "..." } } for i18n fields
       const formattedPayload = {
         ...payload,
         title: { [language]: payload.title },
         content: { [language]: payload.content },
       };
 
-      const res = await apiClient.post<Memory>('/memories', formattedPayload);
-      return res.data;
+      const res = await apiClient.post<any>('/memories', formattedPayload);
+      const dto = res.data;
+      return {
+        id: dto.id,
+        title: dto.title,
+        content: dto.content,
+        mood: dto.mood,
+        tags: dto.tags ?? [],
+        date: new Date(dto.createdAt),
+        type: dto.type || 'moment',
+        imageUrl: dto.imageUrl,
+        reflectionDepth: 0,
+      } as Memory;
     },
     onSuccess: () => {
-      // Invalidate specific language query
       queryClient.invalidateQueries({ queryKey: [...MEMORY_QUERY_KEY, language] });
-      // Also invalidate general queries if necessary, but specificity is better
       queryClient.invalidateQueries({ queryKey: MEMORY_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: ['activeQuests'] });
     },
@@ -60,9 +68,7 @@ export function useDeleteMemory() {
   return useMutation({
     mutationFn: (id: string) => deleteMemory(id),
     onSuccess: () => {
-      // Invalidate specific language query
       queryClient.invalidateQueries({ queryKey: [...MEMORY_QUERY_KEY, language] });
-      // Invalidate general queries
       queryClient.invalidateQueries({ queryKey: MEMORY_QUERY_KEY });
     },
   });

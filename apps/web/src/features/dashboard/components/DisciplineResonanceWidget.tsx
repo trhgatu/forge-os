@@ -1,8 +1,8 @@
 'use client';
 
-import React from 'react';
-import Link from 'next/link';
 import { Flame } from 'lucide-react';
+import Link from 'next/link';
+import React from 'react';
 
 import { useRoutines } from '@/features/routines/hooks/useRoutines';
 import { WidgetShell, Skeleton } from '@/shared/components/ui';

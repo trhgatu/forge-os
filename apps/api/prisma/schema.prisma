@@ -178,6 +178,8 @@ model Memory {
   mood      String?
   tags      String[]  @default([])
   status    String    @default("internal")
+  imageUrl  String?
+  type      String?   @default("moment")
   isDeleted Boolean   @default(false)
   deletedAt DateTime?
   userId    String?

@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
 import { Clock } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+
 import { cn } from '@/shared/lib/utils';
 
 export interface TimeInputProps {

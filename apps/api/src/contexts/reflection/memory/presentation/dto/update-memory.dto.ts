@@ -23,4 +23,12 @@ export class UpdateMemoryDto {
   @IsOptional()
   @IsEnum(MemoryStatus)
   status?: MemoryStatus;
+
+  @IsOptional()
+  @IsString()
+  imageUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  type?: string;
 }

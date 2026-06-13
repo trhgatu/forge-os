@@ -1,4 +1,4 @@
-import { Globe, Brain } from 'lucide-react';
+import { Globe, Brain, BookOpen, Library } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 
@@ -6,10 +6,14 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/shared/lib/utils';
 
 import { useKnowledge } from '../../../contexts/KnowledgeContext';
+import { FlashcardDashboard } from '../../flashcards';
 
-import { KnowledgeDashboard } from './dashboard/KnowledgeDashboard';
-import { FlashcardDashboard } from './flashcards/FlashcardDashboard';
+import { AcademyDashboard } from './AcademyDashboard';
+import { KnowledgeDashboard } from './KnowledgeDashboard';
 import { KnowledgeDetail } from './KnowledgeDetail';
+import { LibraryDashboard } from './LibraryDashboard';
+
+
 
 interface KnowledgeContentProps {
   slug?: string[];
@@ -20,7 +24,7 @@ const KnowledgeContent: React.FC<KnowledgeContentProps> = ({ slug }) => {
   const { activeConcept, selectConcept, clearActive } = useKnowledge();
   const { language } = useLanguage();
 
-  const view = (slug?.[0] as 'nexus' | 'flashcards') || 'nexus';
+  const view = (slug?.[0] as 'nexus' | 'academy' | 'library' | 'flashcards') || 'nexus';
   const activeConceptTitle = slug?.[0] === 'nexus' && slug?.[1] ? decodeURIComponent(slug[1]) : null;
 
   useEffect(() => {
@@ -45,7 +49,7 @@ const KnowledgeContent: React.FC<KnowledgeContentProps> = ({ slug }) => {
     }
   }, [activeConceptTitle, activeConcept, language, selectConcept, clearActive]);
 
-  const setView = (newView: 'nexus' | 'flashcards') => {
+  const setView = (newView: 'nexus' | 'academy' | 'library' | 'flashcards') => {
     router.push(`/forge/knowledge/${newView}`);
   };
 
@@ -80,6 +84,30 @@ const KnowledgeContent: React.FC<KnowledgeContentProps> = ({ slug }) => {
               <span>{language === 'vi' ? 'Mạng lưới tri thức' : 'Wisdom Nexus'}</span>
             </button>
             <button
+              onClick={() => setView('academy')}
+              className={cn(
+                'flex items-center gap-2 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer',
+                view === 'academy'
+                  ? 'bg-white/10 text-forge-cyan shadow-sm border border-white/5'
+                  : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
+              )}
+            >
+              <BookOpen size={14} />
+              <span>{language === 'vi' ? 'Học viện Giả kim' : 'Alchemical Academy'}</span>
+            </button>
+            <button
+              onClick={() => setView('library')}
+              className={cn(
+                'flex items-center gap-2 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer',
+                view === 'library'
+                  ? 'bg-white/10 text-forge-cyan shadow-sm border border-white/5'
+                  : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
+              )}
+            >
+              <Library size={14} />
+              <span>{language === 'vi' ? 'Thư viện bài viết' : 'Chronicle Library'}</span>
+            </button>
+            <button
               onClick={() => setView('flashcards')}
               className={cn(
                 'flex items-center gap-2 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer',
@@ -94,7 +122,10 @@ const KnowledgeContent: React.FC<KnowledgeContentProps> = ({ slug }) => {
           </div>
         </div>
 
-        {view === 'nexus' ? <KnowledgeDashboard /> : <FlashcardDashboard />}
+        {view === 'nexus' && <KnowledgeDashboard />}
+        {view === 'academy' && <AcademyDashboard />}
+        {view === 'library' && <LibraryDashboard />}
+        {view === 'flashcards' && <FlashcardDashboard />}
       </div>
 
       {activeConcept && (

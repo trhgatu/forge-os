@@ -1,4 +1,17 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  UseInterceptors,
+  UploadedFile,
+  UseGuards,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { QueryMemoryDto, CreateMemoryDto, UpdateMemoryDto } from '../dto';
 import {
   GetAllMemoriesForPublicQuery,
@@ -15,13 +28,17 @@ import { MemoryPresenter } from '../presenters/memory.presenter';
 import { Memory } from '../../domain/memory.entity';
 import { PaginatedResult } from '@shared/types/paginated-result';
 import { User } from '@shared/decorators';
+import { UploadService } from '@shared/services';
+import { JwtAuthGuard } from 'src/contexts/iam/auth/application/guards';
 
+@UseGuards(JwtAuthGuard)
 @Controller('memories')
 export class MemoryPublicController {
   constructor(
     private readonly queryBus: QueryBus,
     private readonly commandBus: CommandBus,
     private readonly presenter: MemoryPresenter,
+    private readonly uploadService: UploadService,
   ) {}
 
   @Get()
@@ -83,5 +100,12 @@ export class MemoryPublicController {
       new SoftDeleteMemoryCommand(MemoryId.create(id)),
     )) as Memory;
     return this.presenter.toResponse(memory, lang ?? 'en');
+  }
+
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadFile(@UploadedFile() file: any) {
+    const url = await this.uploadService.uploadFile(file);
+    return { url };
   }
 }

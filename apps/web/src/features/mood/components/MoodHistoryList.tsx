@@ -2,9 +2,9 @@
 
 import { Edit2, Trash2 } from 'lucide-react';
 
+import { Tag, Label, Button } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 import type { MoodEntry } from '@/shared/types/mood';
-import { Tag, Label, Button } from '@/shared/components/ui';
 
 import { MOOD_CONFIG } from '../config';
 

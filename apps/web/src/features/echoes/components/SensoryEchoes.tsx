@@ -9,6 +9,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useLanguage, useNovaView } from '@/contexts';
 import { forgeToast } from '@/shared/lib/toast';
 import { View } from '@/shared/types/os';
+
 import { useEchoesHistory, useSyncEchoMoment, useClearEchoesHistory } from '../hooks/useEchoes';
 
 import { AnchorControl } from './AnchorControl';

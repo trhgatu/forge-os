@@ -6,12 +6,11 @@ import { toast } from 'sonner';
 
 
 import { useMemories, useCreateMemory } from '@/features/memory/hooks';
+import { Skeleton, Label, Input, EmptyState, Button, Tag } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 import type { Memory as MemoryType } from '@/shared/types/memory';
-import { Skeleton, Label, Input, EmptyState, Button, Tag } from '@/shared/components/ui';
 
 import { SEASON_CONFIG, type InnerSeason, getSeasonFromMood } from '../config';
-import { MOCK_MEMORIES } from '../data/mockMemories';
 import { analyzeMemory } from '../services/analyze';
 
 import { CreateMemoryModal } from './CreateMemoryModal';
@@ -26,13 +25,9 @@ export function Memory() {
 
   const memories = useMemo(() => {
     if (isError) {
-      return MOCK_MEMORIES;
+      return [];
     }
-    const apiMemories = data?.pages.flatMap((page) => page.data) ?? [];
-    if (apiMemories.length === 0) {
-      return MOCK_MEMORIES;
-    }
-    return apiMemories;
+    return data?.pages.flatMap((page) => page.data) ?? [];
   }, [data, isError]);
 
   const [selectedMemoryId, setSelectedMemoryId] = useState<string | null>(null);

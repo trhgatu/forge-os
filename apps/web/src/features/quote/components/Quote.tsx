@@ -5,9 +5,9 @@ import { Plus, Search, Filter, Leaf, Sparkles } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
 
+import { Skeleton, Label, Tag, Button } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 import type { Quote as QuoteType } from '@/shared/types/quote';
-import { Skeleton, Label, Tag, Button } from '@/shared/components/ui';
 
 import { SEASON_CONFIG, getSeasonFromMood } from '../../memory/config/seasons';
 import { useQuotes, useCreateQuote, useDeleteQuote, useUpdateQuote } from '../hooks/useQuote';

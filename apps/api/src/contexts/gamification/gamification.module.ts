@@ -18,6 +18,9 @@ import { ProjectCreatedXpStrategy } from './application/strategies/engineering/p
 import { QuestCompletedXpStrategy } from './application/strategies/gamification/quest-completed.strategy';
 import { HabitCompletedXpStrategy } from './application/strategies/reflection/habit-completed.strategy';
 import { JournalCreatedXpStrategy } from './application/strategies/reflection/journal-created.strategy';
+import { RoutineCompletedXpStrategy } from './application/strategies/reflection/routine-completed.strategy';
+import { MoodLoggedXpStrategy } from './application/strategies/reflection/mood-logged.strategy';
+import { MemoryCreatedXpStrategy } from './application/strategies/reflection/memory-created.strategy';
 
 const Handlers = [GetUserStatsHandler, AwardXpHandler];
 const Strategies = [
@@ -26,6 +29,9 @@ const Strategies = [
   QuestCompletedXpStrategy,
   HabitCompletedXpStrategy,
   JournalCreatedXpStrategy,
+  RoutineCompletedXpStrategy,
+  MoodLoggedXpStrategy,
+  MemoryCreatedXpStrategy,
 ];
 
 @Module({
