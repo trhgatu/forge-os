@@ -1,4 +1,4 @@
-import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { CreateJournalCommand } from './create-journal.command';
 import { JournalRepository } from '../../../domain/journal.repository';
@@ -7,7 +7,6 @@ import { JournalId } from '../../../domain/value-objects/journal-id.vo';
 import { MoodType } from '@shared/enums';
 import { JournalStatus, JournalType, JournalSource } from '../../../domain/enums';
 import { CacheService } from '@shared/services';
-import { JournalCreatedEvent } from '../../events/journal-created.event';
 
 @CommandHandler(CreateJournalCommand)
 export class CreateJournalHandler implements ICommandHandler<CreateJournalCommand, Journal> {
@@ -15,7 +14,6 @@ export class CreateJournalHandler implements ICommandHandler<CreateJournalComman
     @Inject('JournalRepository')
     private readonly journalRepo: JournalRepository,
     private readonly cacheService: CacheService,
-    private readonly eventBus: EventBus,
   ) {}
 
   async execute(command: CreateJournalCommand): Promise<Journal> {
@@ -41,8 +39,6 @@ export class CreateJournalHandler implements ICommandHandler<CreateJournalComman
     await this.journalRepo.save(journal);
 
     await this.cacheService.deleteByPattern('journals:*');
-
-    await this.eventBus.publish(new JournalCreatedEvent(journal.id, journal.userId));
 
     return journal;
   }

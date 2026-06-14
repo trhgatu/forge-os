@@ -41,6 +41,8 @@ export class CompleteHabitHandler implements ICommandHandler<CompleteHabitComman
     await this.repository.saveHabit(habit);
 
     // Publish event for Gamification Quest tracking
-    this.eventBus.publish(new HabitCompletedEvent(userId, habitId, habit.xpReward, completedAt));
+    this.eventBus.publish(
+      new HabitCompletedEvent(userId, habitId, habit.title, habit.xpReward, completedAt),
+    );
   }
 }

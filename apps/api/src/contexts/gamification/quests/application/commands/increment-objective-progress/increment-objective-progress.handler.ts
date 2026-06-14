@@ -5,6 +5,8 @@ import { QuestsRepository } from '../../../domain/quests.repository';
 import { GoalsService } from '../../../../goals/application/goals.service';
 import { UserStatsRepository } from '../../../../domain/ports/user-stats.repository';
 import { ACTIVITY_STREAM_PORT, IActivityStreamPort } from '@shared/ports/activity-stream.port';
+import { GamificationGateway } from '../../../../presentation/gamification.gateway';
+import { QuestCompletedEvent } from '../../../domain/events/quest-completed.event';
 
 @CommandHandler(IncrementObjectiveProgressCommand)
 export class IncrementObjectiveProgressHandler implements ICommandHandler<IncrementObjectiveProgressCommand> {
@@ -17,6 +19,7 @@ export class IncrementObjectiveProgressHandler implements ICommandHandler<Increm
     private readonly userStatsRepository: UserStatsRepository,
     @Inject(ACTIVITY_STREAM_PORT)
     private readonly activityStream: IActivityStreamPort,
+    private readonly gamificationGateway: GamificationGateway,
   ) {}
 
   async execute(command: IncrementObjectiveProgressCommand): Promise<void> {
@@ -116,6 +119,25 @@ export class IncrementObjectiveProgressHandler implements ICommandHandler<Increm
             await this.userStatsRepository.save(statsToUpgrade);
           }
 
+          // Emit real-time Quest completed WS notification
+          this.gamificationGateway.server.to(`user:${userId}`).emit('quest_completed', {
+            userId,
+            questId: quest.id,
+            title: quest.title,
+            xpReward: quest.xpReward,
+            stats: statsToUpgrade
+              ? {
+                  level: statsToUpgrade.level,
+                  xp: statsToUpgrade.xp,
+                  discipline: statsToUpgrade.discipline,
+                  consistency: statsToUpgrade.consistency,
+                  willpower: statsToUpgrade.willpower,
+                  awareness: statsToUpgrade.awareness,
+                  presence: statsToUpgrade.presence,
+                }
+              : null,
+          });
+
           await this.activityStream.emit('gamification.quest.completed', userId, {
             title: quest.title,
             questId: quest.id,
@@ -123,13 +145,9 @@ export class IncrementObjectiveProgressHandler implements ICommandHandler<Increm
             isCustom: quest.userId !== null,
           });
 
-          this.eventBus.publish({
-            type: 'quest.completed',
-            userId,
-            questId: quest.id,
-            title: quest.title,
-            xpReward: quest.xpReward,
-          });
+          this.eventBus.publish(
+            new QuestCompletedEvent(userId, quest.id, quest.title, quest.xpReward),
+          );
 
           await this.commandBus.execute(
             new IncrementObjectiveProgressCommand(userId, 'COMPLETE_QUEST', 1, quest.id),

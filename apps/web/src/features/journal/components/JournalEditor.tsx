@@ -1,12 +1,12 @@
 'use client';
 
 import { MoodType } from '@forge/reflection';
-import { Calendar, Save } from 'lucide-react';
+import { Calendar, Save, Lock, Check } from 'lucide-react';
 
 
 import type { JournalEntry } from '@/features/journal/types';
 import { ForgeEditor } from '@/shared/components/editor/ForgeEditor';
-import { Input } from '@/shared/components/ui';
+import { Input, Button } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 
 import { MoodSelector } from './MoodSelector';
@@ -24,6 +24,13 @@ export function JournalEditor({
   toggleFocusMode: () => void;
   saveStatus?: 'saved' | 'saving' | 'error';
 }) {
+  const isSealed = entry.status === 'published';
+
+  const handleSeal = () => {
+    if (isSealed) return;
+    onChange({ status: 'published' as any });
+  };
+
   return (
     <div
       className={cn('flex-1 flex flex-col transition-all duration-300', isFocusMode && 'bg-black')}
@@ -56,7 +63,22 @@ export function JournalEditor({
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Controls removed for minimalist mode */}
+          {isSealed ? (
+            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-forge-cyan/10 border border-forge-cyan/20 text-forge-cyan text-[10px] font-mono uppercase tracking-widest">
+              <Check size={11} />
+              Reflection Sealed
+            </div>
+          ) : (
+            <Button
+              onClick={handleSeal}
+              variant="outline"
+              size="sm"
+              className="text-[10px] font-mono uppercase tracking-wider h-7 px-3 flex items-center gap-1.5 hover:border-forge-cyan/40 hover:text-forge-cyan border-white/10 text-white/70"
+            >
+              <Lock size={10} />
+              Seal Reflection
+            </Button>
+          )}
         </div>
       </div>
 

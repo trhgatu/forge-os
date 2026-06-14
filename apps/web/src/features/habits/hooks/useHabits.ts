@@ -12,6 +12,14 @@ export const useHabits = () => {
   });
 };
 
+export const useAutomatableActions = () => {
+  return useQuery({
+    queryKey: ['automatable-actions'],
+    queryFn: () => gamificationApi.getAutomatableActions(),
+    staleTime: 5 * 60 * 1000, // cache for 5 minutes
+  });
+};
+
 export const useCreateHabit = () => {
   const queryClient = useQueryClient();
 
@@ -22,6 +30,7 @@ export const useCreateHabit = () => {
       difficulty: string;
       xpReward: number;
       frequency?: any;
+      actionType?: string;
     }) => gamificationApi.createHabit(data),
     onSuccess: () => {
       toast.success('Habit ritual established successfully');
@@ -65,7 +74,7 @@ export const useUpdateHabit = () => {
       data,
     }: {
       id: string;
-      data: { title: string; description?: string; difficulty?: string; xpReward?: number };
+      data: { title: string; description?: string; difficulty?: string; xpReward?: number; actionType?: string };
     }) => gamificationApi.updateHabit(id, data),
     onSuccess: () => {
       toast.success('Habit ritual updated successfully');

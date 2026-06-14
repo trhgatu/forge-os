@@ -27,6 +27,7 @@ export interface Habit {
   habitStrength: number;
   isActive: boolean;
   isCompletedToday?: boolean;
+  actionType?: string | null;
   createdAt: string;
 }
 

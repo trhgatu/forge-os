@@ -16,6 +16,7 @@ export class HabitPresenter {
       maxStreak: habit.maxStreak,
       habitStrength: habit.habitStrength,
       isActive: habit.isActive,
+      actionType: habit.actionType,
       createdAt: habit.createdAt.toISOString(),
       updatedAt: habit.updatedAt.toISOString(),
     };

@@ -29,4 +29,12 @@ export class CreateHabitDto {
   @IsObject()
   @IsOptional()
   frequency?: any;
+
+  @ApiPropertyOptional({
+    description: 'The dynamic event action type associated with this habit',
+    example: 'CREATE_JOURNAL',
+  })
+  @IsString()
+  @IsOptional()
+  actionType?: string;
 }

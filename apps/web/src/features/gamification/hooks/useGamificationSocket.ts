@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import confetti from 'canvas-confetti';
 import { useEffect, useState, useRef } from 'react';
 import { toast } from 'sonner';
@@ -20,10 +21,19 @@ interface AchievementUnlockedData {
   xpReward: number;
 }
 
+interface SystemNotificationData {
+  type: string;
+  title: string;
+  description: string;
+  xp?: number;
+  metadata?: any;
+}
+
 export const useGamificationSocket = (
   userId?: string,
   onXpAwarded?: (data: XpAwardedData) => void,
 ) => {
+  const queryClient = useQueryClient();
   const [socket, setSocket] = useState(socketService.getSocket('/gamification'));
   const onXpAwardedRef = useRef(onXpAwarded);
   const accessToken = useAuthStore((state) => state.accessToken);
@@ -72,14 +82,47 @@ export const useGamificationSocket = (
       }
     };
 
+    const handleSystemNotification = (data: SystemNotificationData) => {
+      // Show system notifications dynamic toast
+      toast.success(data.title, {
+        description: data.description,
+        duration: data.type === 'QUEST_COMPLETED' ? 7000 : 5000,
+      });
+
+      // Confetti effect for completed quests
+      if (data.type === 'QUEST_COMPLETED') {
+        try {
+          confetti({
+            particleCount: 150,
+            spread: 80,
+            origin: { y: 0.6 },
+            colors: ['#22d3ee', '#3b82f6', '#ffffff', '#a855f7'],
+          });
+        } catch (e) {
+          console.error('Failed to trigger confetti', e);
+        }
+      }
+
+      // Invalidate relevant caches immediately
+      queryClient.invalidateQueries({ queryKey: ['habits'] });
+      queryClient.invalidateQueries({ queryKey: ['activeQuests'] });
+      queryClient.invalidateQueries({ queryKey: ['userStats'] });
+      queryClient.invalidateQueries({ queryKey: ['journals'] });
+      
+      // Dispatch XP gained event to update headers/progress bars
+      window.dispatchEvent(new CustomEvent('xp-gained'));
+    };
+
     socketInstance.on('xp_awarded', handleXpAwarded);
     socketInstance.on('achievement_unlocked', handleAchievementUnlocked);
+    socketInstance.on('system_notification', handleSystemNotification);
 
     return () => {
       socketInstance.off('xp_awarded', handleXpAwarded);
       socketInstance.off('achievement_unlocked', handleAchievementUnlocked);
+      socketInstance.off('system_notification', handleSystemNotification);
     };
-  }, [userId, accessToken]);
+  }, [userId, accessToken, queryClient]);
 
   return socket;
 };

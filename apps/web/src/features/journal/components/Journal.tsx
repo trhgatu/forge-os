@@ -74,6 +74,7 @@ export function Journal() {
         content: remote.content,
         mood: remote.mood,
         tags: remote.tags,
+        status: remote.status,
       });
     } else {
       setLocalEntry(null);
@@ -88,6 +89,7 @@ export function Journal() {
       content: debouncedEntry.content || '',
       mood: debouncedEntry.mood,
       tags: debouncedEntry.tags || [],
+      status: debouncedEntry.status,
     };
 
     const currentState = JSON.stringify(currentData);

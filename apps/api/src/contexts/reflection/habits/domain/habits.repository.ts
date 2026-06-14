@@ -10,5 +10,6 @@ export abstract class HabitsRepository {
     habitId: string,
     dateStr: string,
   ): Promise<boolean>;
+  abstract findByActionType(userId: string, actionType: string): Promise<Habit[]>;
   abstract deleteHabit(id: string, userId: string): Promise<void>;
 }
