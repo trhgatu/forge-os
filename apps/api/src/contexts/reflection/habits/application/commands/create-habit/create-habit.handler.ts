@@ -9,7 +9,7 @@ export class CreateHabitHandler implements ICommandHandler<CreateHabitCommand> {
   constructor(private readonly repository: HabitsRepository) {}
 
   async execute(command: CreateHabitCommand): Promise<Habit> {
-    const { userId, title, description, xpReward, difficulty, frequency } = command;
+    const { userId, title, description, xpReward, difficulty, frequency, actionType } = command;
 
     const habit = Habit.create({
       id: uuidv4(),
@@ -19,6 +19,7 @@ export class CreateHabitHandler implements ICommandHandler<CreateHabitCommand> {
       xpReward,
       difficulty,
       frequency,
+      actionType,
     });
 
     await this.repository.saveHabit(habit);

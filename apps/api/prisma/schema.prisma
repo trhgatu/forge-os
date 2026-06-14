@@ -255,6 +255,7 @@ model Habit {
   maxStreak     Int               @default(0)
   habitStrength Int               @default(0) // Chỉ số độ bền thói quen (0 - 100)
   isActive      Boolean           @default(true)
+  actionType    String?           // Dynamic mapping e.g. "CREATE_JOURNAL", "LOG_MOOD", "COMPLETE_TASK"
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
   routines      RoutineHabit[]

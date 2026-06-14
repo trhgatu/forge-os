@@ -11,6 +11,7 @@ export class Habit {
     public maxStreak: number,
     public habitStrength: number, // 0 to 100 percentage indicator
     public isActive: boolean,
+    public actionType: string | null,
     public readonly createdAt: Date,
     public readonly updatedAt: Date,
   ) {}
@@ -27,6 +28,7 @@ export class Habit {
     maxStreak?: number;
     habitStrength?: number;
     isActive?: boolean;
+    actionType?: string | null;
     createdAt?: Date;
     updatedAt?: Date;
   }): Habit {
@@ -42,6 +44,7 @@ export class Habit {
       data.maxStreak ?? 0,
       data.habitStrength ?? 10,
       data.isActive ?? true,
+      data.actionType ?? null,
       data.createdAt ?? new Date(),
       data.updatedAt ?? new Date(),
     );

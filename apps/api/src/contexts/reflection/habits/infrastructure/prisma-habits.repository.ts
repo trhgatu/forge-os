@@ -20,6 +20,7 @@ export class PrismaHabitsRepository implements HabitsRepository {
         maxStreak: habit.maxStreak,
         habitStrength: habit.habitStrength,
         isActive: habit.isActive,
+        actionType: habit.actionType,
       },
       create: {
         id: habit.id,
@@ -33,6 +34,7 @@ export class PrismaHabitsRepository implements HabitsRepository {
         maxStreak: habit.maxStreak,
         habitStrength: habit.habitStrength,
         isActive: habit.isActive,
+        actionType: habit.actionType,
       },
     });
   }
@@ -56,6 +58,7 @@ export class PrismaHabitsRepository implements HabitsRepository {
       maxStreak: doc.maxStreak,
       habitStrength: doc.habitStrength,
       isActive: doc.isActive,
+      actionType: doc.actionType,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     });
@@ -80,6 +83,7 @@ export class PrismaHabitsRepository implements HabitsRepository {
         maxStreak: doc.maxStreak,
         habitStrength: doc.habitStrength,
         isActive: doc.isActive,
+        actionType: doc.actionType,
         createdAt: doc.createdAt,
         updatedAt: doc.updatedAt,
       }),
@@ -112,6 +116,31 @@ export class PrismaHabitsRepository implements HabitsRepository {
     });
 
     return count > 0;
+  }
+
+  async findByActionType(userId: string, actionType: string): Promise<Habit[]> {
+    const docs = await this.prisma.habit.findMany({
+      where: { userId, actionType, isActive: true },
+    });
+
+    return docs.map((doc) =>
+      Habit.create({
+        id: doc.id,
+        userId: doc.userId,
+        title: doc.title,
+        description: doc.description,
+        xpReward: doc.xpReward,
+        difficulty: doc.difficulty,
+        frequency: doc.frequency,
+        streak: doc.streak,
+        maxStreak: doc.maxStreak,
+        habitStrength: doc.habitStrength,
+        isActive: doc.isActive,
+        actionType: doc.actionType,
+        createdAt: doc.createdAt,
+        updatedAt: doc.updatedAt,
+      }),
+    );
   }
 
   async deleteHabit(id: string, userId: string): Promise<void> {

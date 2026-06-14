@@ -6,5 +6,6 @@ export class UpdateHabitCommand {
     public readonly description?: string,
     public readonly difficulty?: string,
     public readonly xpReward?: number,
+    public readonly actionType?: string,
   ) {}
 }

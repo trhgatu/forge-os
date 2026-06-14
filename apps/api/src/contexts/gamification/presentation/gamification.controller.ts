@@ -3,6 +3,7 @@ import { QueryBus } from '@nestjs/cqrs';
 import { GetUserStatsQuery } from '../application/queries/get-user-stats.query';
 import { JwtAuthGuard } from '../../iam/auth/application/guards/jwt-auth.guard'; // Check path
 import { UserStatsDto } from '@forge/auth';
+import { AUTOMATABLE_ACTIONS_REGISTRY } from '../domain/actions.registry';
 
 @Controller('gamification')
 @UseGuards(JwtAuthGuard)
@@ -29,5 +30,13 @@ export class GamificationController {
       } as any;
     }
     return stats;
+  }
+
+  @Get('actions')
+  async getAutomatableActions() {
+    return {
+      success: true,
+      data: AUTOMATABLE_ACTIONS_REGISTRY,
+    };
   }
 }

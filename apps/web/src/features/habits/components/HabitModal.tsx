@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import { useSound } from '@/contexts';
 import { Button, Dropdown, Input, Label, Modal } from '@/shared/components/ui';
 
-import { useCreateHabit, useUpdateHabit } from '../hooks/useHabits';
+import { useCreateHabit, useUpdateHabit, useAutomatableActions } from '../hooks/useHabits';
 
 interface Habit {
   id: string;
@@ -15,6 +15,7 @@ interface Habit {
   description: string | null;
   difficulty: string;
   xpReward: number;
+  actionType?: string | null;
 }
 
 interface HabitModalProps {
@@ -24,6 +25,7 @@ interface HabitModalProps {
 }
 
 export const HabitModal: React.FC<HabitModalProps> = ({ isOpen, onClose, habit }) => {
+  const { data: automatableActions = [] } = useAutomatableActions();
   const { playSound } = useSound();
   const createHabitMutation = useCreateHabit();
   const updateHabitMutation = useUpdateHabit();
@@ -33,6 +35,7 @@ export const HabitModal: React.FC<HabitModalProps> = ({ isOpen, onClose, habit }
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('easy');
+  const [actionType, setActionType] = useState('');
 
   useEffect(() => {
     if (isOpen) {
@@ -40,10 +43,12 @@ export const HabitModal: React.FC<HabitModalProps> = ({ isOpen, onClose, habit }
         setTitle(habit.title);
         setDescription(habit.description || '');
         setDifficulty((habit.difficulty.toLowerCase() as any) || 'easy');
+        setActionType(habit.actionType || '');
       } else {
         setTitle('');
         setDescription('');
         setDifficulty('easy');
+        setActionType('');
       }
     }
   }, [habit, isOpen]);
@@ -80,6 +85,7 @@ export const HabitModal: React.FC<HabitModalProps> = ({ isOpen, onClose, habit }
             description: description || undefined,
             difficulty,
             xpReward: getXpReward(),
+            actionType: actionType || undefined,
           },
         });
       } else {
@@ -89,6 +95,7 @@ export const HabitModal: React.FC<HabitModalProps> = ({ isOpen, onClose, habit }
           difficulty,
           xpReward: getXpReward(),
           frequency: { type: 'daily' },
+          actionType: actionType || undefined,
         });
       }
       playSound('success');
@@ -167,6 +174,27 @@ export const HabitModal: React.FC<HabitModalProps> = ({ isOpen, onClose, habit }
             value={difficulty}
             onChange={handleDifficultyChange}
             options={difficultyOptions}
+            className="w-full bg-white/5 border border-white/10 text-white rounded-xl"
+          />
+        </div>
+        <div className="space-y-2 relative">
+          <Label variant="dim" className="text-[10px] font-mono uppercase tracking-widest block">
+            Auto-Complete Connection (Optional)
+          </Label>
+          <Dropdown
+            value={actionType}
+            onChange={(val) => {
+              playSound('click');
+              setActionType(val);
+            }}
+            options={[
+              { value: '', label: 'Manual Completion Only', sublabel: 'Requires manually checking the checkbox' },
+              ...automatableActions.map((act) => ({
+                value: act.type,
+                label: act.label,
+                sublabel: act.sublabel,
+              })),
+            ]}
             className="w-full bg-white/5 border border-white/10 text-white rounded-xl"
           />
         </div>
