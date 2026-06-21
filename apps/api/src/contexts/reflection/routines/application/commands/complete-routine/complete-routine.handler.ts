@@ -40,7 +40,7 @@ export class CompleteRoutineHandler implements ICommandHandler<CompleteRoutineCo
     await this.repository.save(routine);
 
     this.eventBus.publish(
-      new RoutineCompletedEvent(userId, routineId, routine.comboXp, completedAt),
+      new RoutineCompletedEvent(userId, routineId, routine.title, routine.comboXp, completedAt),
     );
   }
 }

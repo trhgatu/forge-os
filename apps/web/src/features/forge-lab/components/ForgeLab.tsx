@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 
 import { useNovaView } from '@/contexts';
-import { Skeleton, Label } from '@/shared/components/ui';
+import { Skeleton, Label, FloatingDock } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 import { useAuthStore } from '@/shared/store/authStore';
 import { View } from '@/shared/types/os';
@@ -291,57 +291,12 @@ export const ForgeLab: React.FC<{ slug?: string[] }> = ({ slug }) => {
         </div>
       </div>
 
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-50">
-        <div className="flex items-center gap-2 p-2 bg-[#09090b]/80 backdrop-blur-2xl border border-white/10 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition-all hover:border-white/20">
-          {NAV_ITEMS.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id as ForgeTab)}
-              className={cn(
-                'relative flex items-center gap-2 px-4 py-3 rounded-full transition-all duration-500 group overflow-hidden',
-                activeTab === item.id
-                  ? 'bg-white/10 text-white shadow-inner'
-                  : 'text-gray-500 hover:text-white hover:bg-white/5',
-              )}
-            >
-              <item.icon
-                size={20}
-                className={cn(
-                  'shrink-0 transition-colors z-10',
-                  activeTab === item.id ? 'text-forge-cyan' : 'group-hover:text-white',
-                )}
-              />
-              <span
-                className={cn(
-                  'text-sm font-medium transition-all duration-500 ease-spring-out overflow-hidden whitespace-nowrap z-10',
-                  activeTab === item.id
-                    ? 'max-w-[150px] opacity-100 ml-1'
-                    : 'max-w-0 opacity-0 group-hover:max-w-[150px] group-hover:opacity-100 group-hover:ml-1',
-                )}
-              >
-                {item.label}
-              </span>
+      <FloatingDock
+        items={NAV_ITEMS}
+        activeTab={activeTab}
+        onChange={(tab) => setActiveTab(tab as ForgeTab)}
+      />
 
-              {activeTab === item.id && (
-                <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-forge-cyan to-transparent opacity-50" />
-              )}
-            </button>
-          ))}
-
-          <div className="w-px h-6 bg-white/10 mx-1" />
-
-          <button
-            onClick={() => setShowCreateModal(true)}
-            className="p-3 rounded-full bg-white/5 border border-white/5 hover:bg-white/20 hover:border-white/20 text-gray-400 hover:text-white transition-all group relative"
-          >
-            <Plus size={20} />
-            {/* Tooltip */}
-            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-2 py-1 bg-black border border-white/10 text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-              Quick Create
-            </span>
-          </button>
-        </div>
-      </div>
       {/* Modals */}
       <CreateProjectModal
         isOpen={showCreateModal}

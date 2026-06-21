@@ -19,7 +19,7 @@ export class CompleteHabitHandler implements ICommandHandler<CompleteHabitComman
       throw new NotFoundException('Habit not found or inactive');
     }
 
-    const todayStr = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const todayStr = new Date().toISOString().split('T')[0];
     const alreadyCompleted = await this.repository.hasCompletedHabitToday(
       userId,
       habitId,
@@ -32,7 +32,6 @@ export class CompleteHabitHandler implements ICommandHandler<CompleteHabitComman
     const completedAt = new Date();
     await this.repository.saveHabitCompletion(userId, habitId, completedAt);
 
-    // Update Streak logic
     habit.streak += 1;
     if (habit.streak > habit.maxStreak) {
       habit.maxStreak = habit.streak;
@@ -40,7 +39,6 @@ export class CompleteHabitHandler implements ICommandHandler<CompleteHabitComman
     habit.habitStrength = Math.min(100, habit.habitStrength + 5);
     await this.repository.saveHabit(habit);
 
-    // Publish event for Gamification Quest tracking
     this.eventBus.publish(
       new HabitCompletedEvent(userId, habitId, habit.title, habit.xpReward, completedAt),
     );

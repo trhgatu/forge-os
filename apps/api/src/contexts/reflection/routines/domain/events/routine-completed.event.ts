@@ -1,9 +1,10 @@
-import { GamifiedEvent, GamificationProgress } from '@shared/interfaces';
+import { GamifiedEvent, GamificationProgress, NotificationEvent } from '@shared/interfaces';
 
-export class RoutineCompletedEvent implements GamifiedEvent {
+export class RoutineCompletedEvent implements GamifiedEvent, NotificationEvent {
   constructor(
     public readonly userId: string,
     public readonly routineId: string,
+    public readonly routineTitle: string,
     public readonly comboXp: number,
     public readonly completedAt: Date,
   ) {}
@@ -20,5 +21,18 @@ export class RoutineCompletedEvent implements GamifiedEvent {
         referenceId: this.routineId,
       },
     ];
+  }
+
+  getNotificationPayload() {
+    return {
+      type: 'ROUTINE_COMPLETED',
+      title: 'Routine Completed! 🏆',
+      description: `You've completed the routine chain "${this.routineTitle}" and earned ${this.comboXp} XP Combo!`,
+      xp: this.comboXp,
+      metadata: {
+        routineId: this.routineId,
+        completedAt: this.completedAt,
+      },
+    };
   }
 }

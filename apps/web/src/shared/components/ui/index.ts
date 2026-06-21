@@ -14,6 +14,7 @@ export * from './Pagination';
 export * from './Calendar';
 export * from './TimeInput';
 export * from './ActiveDaysSelector';
+export * from './FloatingDock';
 
 
 
