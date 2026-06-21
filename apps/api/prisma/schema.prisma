@@ -34,6 +34,8 @@ model User {
   financialAccounts     FinancialAccount[]
   financialTransactions FinancialTransaction[]
   financialBudgets      FinancialBudget[]
+  recurringTransactions RecurringTransaction[]
+  autoAllocationRules   AutoAllocationRule[]
   projects              Project[]
   memories              Memory[]
   moods                 Mood[]
@@ -611,7 +613,8 @@ model FinancialAccount {
   currency     String                 @default("VND")
   createdAt    DateTime               @default(now())
   updatedAt    DateTime               @updatedAt
-  transactions FinancialTransaction[]
+  transactions          FinancialTransaction[]
+  recurringTransactions RecurringTransaction[]
 
   @@map("financial_accounts")
 }
@@ -650,3 +653,37 @@ model FinancialBudget {
 
   @@map("financial_budgets")
 }
+
+model RecurringTransaction {
+  id           String              @id @default(uuid())
+  userId       String
+  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId    String
+  account      FinancialAccount    @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  type         String              // 'INCOME', 'EXPENSE'
+  amount       Decimal             @db.Decimal(15, 2)
+  category     String
+  categoryType ExpenseCategoryType @default(ESSENTIAL)
+  description  String?             @db.VarChar(255)
+  dayOfMonth   Int                 @default(5)
+  isActive     Boolean             @default(true)
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+
+  @@map("recurring_transactions")
+}
+
+model AutoAllocationRule {
+  id              String           @id @default(uuid())
+  userId          String
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sourceAccountId String
+  targetAccountId String
+  percentage      Decimal          @db.Decimal(5, 2) // Ví dụ: 50.00 cho 50%
+  isActive        Boolean          @default(true)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@map("auto_allocation_rules")
+}
+

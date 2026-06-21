@@ -10,7 +10,7 @@ export interface JournalCreatedPayload {
 @XpStrategy('reflection.journal.created')
 export class JournalCreatedXpStrategy implements IXpStrategy<JournalCreatedPayload> {
   calculate() {
-    return 0; // Journal entries yield 0 raw level-up XP directly to prevent farming. XP is concentrated in Quests!
+    return 0;
   }
 
   getDescription(payload: JournalCreatedPayload) {
@@ -19,8 +19,8 @@ export class JournalCreatedXpStrategy implements IXpStrategy<JournalCreatedPaylo
 
   getRateLimitConfig(): IXpRateLimitConfig {
     return {
-      cooldownMinutes: 5, // Cooldown of 5 minutes to prevent spamming empty thoughts
-      dailyCap: 3, // Max 3 paid journal pages per day
+      cooldownMinutes: 5,
+      dailyCap: 3,
     };
   }
 }

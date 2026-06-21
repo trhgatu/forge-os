@@ -9,9 +9,12 @@ import { PrismaRoutinesRepository } from './infrastructure/prisma-routines.repos
 import { CommandHandlers } from './application/commands';
 import { QueryHandlers } from './application/queries';
 import { RoutinePresenter } from './presentation/presenters/routine.presenter';
+import { HabitsModule } from '../habits/habits.module';
+import { RoutineAutomationListener } from './application/events/routine-automation.listener';
+import { OnModuleInit } from '@nestjs/common';
 
 @Module({
-  imports: [CqrsModule, PrismaModule, SharedModule, AuthModule],
+  imports: [CqrsModule, PrismaModule, SharedModule, AuthModule, HabitsModule],
   controllers: [RoutineController],
   providers: [
     {
@@ -23,9 +26,16 @@ import { RoutinePresenter } from './presentation/presenters/routine.presenter';
       useClass: PrismaRoutinesRepository,
     },
     RoutinePresenter,
+    RoutineAutomationListener,
     ...CommandHandlers,
     ...QueryHandlers,
   ],
   exports: [RoutinesRepository, 'RoutinesRepository'],
 })
-export class RoutinesModule {}
+export class RoutinesModule implements OnModuleInit {
+  constructor(private readonly listener: RoutineAutomationListener) {}
+
+  onModuleInit() {
+    this.listener.onModuleInit();
+  }
+}

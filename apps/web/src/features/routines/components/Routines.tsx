@@ -43,7 +43,7 @@ import { useHabits, useCompleteHabit } from '@/features/habits/hooks/useHabits';
 import { Button, Label, EmptyState, Skeleton, Input, Pagination, Calendar } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 
-import { useRoutines, useDeleteRoutine, useReorderRoutineHabits, useCompleteRoutine } from '../hooks/useRoutines';
+import { useRoutines, useDeleteRoutine, useReorderRoutineHabits } from '../hooks/useRoutines';
 
 import { AddStepModal } from './AddStepModal';
 import { RoutineModal } from './RoutineModal';
@@ -55,7 +55,6 @@ export const Routines: React.FC = () => {
   const completeHabitMutation = useCompleteHabit();
   const deleteRoutineMutation = useDeleteRoutine();
   const reorderHabitsMutation = useReorderRoutineHabits();
-  const completeRoutineMutation = useCompleteRoutine();
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -218,21 +217,6 @@ export const Routines: React.FC = () => {
 
     try {
       await completeHabitMutation.mutateAsync(habitId);
-
-      // Check if this was the last remaining step of the routine
-      const newlyCompletedCount = steps.filter((step) => {
-        const stepKey = `${routineId}_${step.habitId}`;
-        return completedHabitIds.has(step.habitId) || !!completedSteps[stepKey] || step.habitId === habitId;
-      }).length;
-
-      if (newlyCompletedCount === steps.length) {
-        // Combo success!
-        playSound('success');
-        toast.success(`Ritual Combo Completed!`, {
-          icon: <Sparkles className="text-yellow-400" />,
-        });
-        await completeRoutineMutation.mutateAsync(routineId);
-      }
     } catch (err) {
       console.error(err);
       // Rollback checkbox
