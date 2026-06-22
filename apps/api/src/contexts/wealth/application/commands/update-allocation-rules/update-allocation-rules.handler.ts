@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject, NotFoundException, BadRequestException } from '@nestjs/common';
+import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { UpdateAllocationRulesCommand } from './update-allocation-rules.command';
 import { WealthRepository } from '../../../domain/wealth.repository';
 import { AutoAllocationRule } from '../../../domain/entities/auto-allocation-rule.entity';
@@ -12,7 +12,6 @@ export class UpdateAllocationRulesHandler implements ICommandHandler<
   AutoAllocationRule[]
 > {
   constructor(
-    @Inject('WealthRepository')
     private readonly wealthRepo: WealthRepository,
     private readonly prisma: PrismaService,
   ) {}

@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject, NotFoundException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 import { CreateRecurringCommand } from './create-recurring.command';
 import { WealthRepository } from '../../../domain/wealth.repository';
 import { RecurringTransaction } from '../../../domain/entities/recurring-transaction.entity';
@@ -10,10 +10,7 @@ export class CreateRecurringHandler implements ICommandHandler<
   CreateRecurringCommand,
   RecurringTransaction
 > {
-  constructor(
-    @Inject('WealthRepository')
-    private readonly wealthRepo: WealthRepository,
-  ) {}
+  constructor(private readonly wealthRepo: WealthRepository) {}
 
   async execute(command: CreateRecurringCommand): Promise<RecurringTransaction> {
     const { payload } = command;

@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject, NotFoundException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 import { UpdateAccountCommand } from './update-account.command';
 import { WealthRepository } from '../../../domain/wealth.repository';
 import { FinancialAccount } from '../../../domain/entities/financial-account.entity';
@@ -10,10 +10,7 @@ export class UpdateAccountHandler implements ICommandHandler<
   UpdateAccountCommand,
   FinancialAccount
 > {
-  constructor(
-    @Inject('WealthRepository')
-    private readonly wealthRepo: WealthRepository,
-  ) {}
+  constructor(private readonly wealthRepo: WealthRepository) {}
 
   async execute(command: UpdateAccountCommand): Promise<FinancialAccount> {
     const { payload } = command;

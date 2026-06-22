@@ -20,13 +20,9 @@ import { RecurringTransactionScheduler } from './infrastructure/schedulers/recur
       provide: WealthRepository,
       useClass: PrismaWealthRepository,
     },
-    {
-      provide: 'WealthRepository',
-      useClass: PrismaWealthRepository,
-    },
     ...WealthCommandHandlers,
     ...WealthQueryHandlers,
   ],
-  exports: [WealthRepository, 'WealthRepository', RecurringTransactionScheduler],
+  exports: [WealthRepository, RecurringTransactionScheduler],
 })
 export class WealthModule {}

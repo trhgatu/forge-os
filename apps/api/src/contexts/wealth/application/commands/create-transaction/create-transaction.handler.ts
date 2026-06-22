@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
-import { Inject, NotFoundException, BadRequestException } from '@nestjs/common';
+import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { CreateTransactionCommand } from './create-transaction.command';
 import { WealthRepository } from '../../../domain/wealth.repository';
 import { FinancialTransaction } from '../../../domain/entities/financial-transaction.entity';
@@ -13,7 +13,6 @@ export class CreateTransactionHandler implements ICommandHandler<
   FinancialTransaction
 > {
   constructor(
-    @Inject('WealthRepository')
     private readonly wealthRepo: WealthRepository,
     private readonly prisma: PrismaService,
     private readonly eventBus: EventBus,

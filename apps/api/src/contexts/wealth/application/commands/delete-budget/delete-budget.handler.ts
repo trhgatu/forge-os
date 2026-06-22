@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject, NotFoundException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 import { DeleteBudgetCommand } from './delete-budget.command';
 import { WealthRepository } from '../../../domain/wealth.repository';
 import { BudgetId } from '../../../domain/value-objects/budget-id.vo';
@@ -9,10 +9,7 @@ export class DeleteBudgetHandler implements ICommandHandler<
   DeleteBudgetCommand,
   { success: boolean }
 > {
-  constructor(
-    @Inject('WealthRepository')
-    private readonly wealthRepo: WealthRepository,
-  ) {}
+  constructor(private readonly wealthRepo: WealthRepository) {}
 
   async execute(command: DeleteBudgetCommand): Promise<{ success: boolean }> {
     const budgetId = BudgetId.fromString(command.id);

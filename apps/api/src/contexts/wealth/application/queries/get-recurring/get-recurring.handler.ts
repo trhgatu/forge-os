@@ -1,5 +1,4 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
-import { Inject } from '@nestjs/common';
 import { GetRecurringTransactionsQuery } from './get-recurring.query';
 import { WealthRepository } from '../../../domain/wealth.repository';
 import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
@@ -10,7 +9,6 @@ export class GetRecurringTransactionsHandler implements IQueryHandler<
   any[]
 > {
   constructor(
-    @Inject('WealthRepository')
     private readonly wealthRepo: WealthRepository,
     private readonly prisma: PrismaService,
   ) {}
