@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject, NotFoundException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 import { DeleteTransactionCommand } from './delete-transaction.command';
 import { WealthRepository } from '../../../domain/wealth.repository';
 import { TransactionId } from '../../../domain/value-objects/transaction-id.vo';
@@ -11,7 +11,6 @@ export class DeleteTransactionHandler implements ICommandHandler<
   { success: boolean }
 > {
   constructor(
-    @Inject('WealthRepository')
     private readonly wealthRepo: WealthRepository,
     private readonly prisma: PrismaService,
   ) {}

@@ -1,5 +1,4 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject } from '@nestjs/common';
 import { CreateBudgetCommand } from './create-budget.command';
 import { WealthRepository } from '../../../domain/wealth.repository';
 import { Budget } from '../../../domain/entities/budget.entity';
@@ -8,7 +7,6 @@ import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
 @CommandHandler(CreateBudgetCommand)
 export class CreateBudgetHandler implements ICommandHandler<CreateBudgetCommand, Budget> {
   constructor(
-    @Inject('WealthRepository')
     private readonly wealthRepo: WealthRepository,
     private readonly prisma: PrismaService,
   ) {}

@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
-import { Inject, NotFoundException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 import { UpdateReflectionCommand } from './update-reflection.command';
 import { WealthRepository } from '../../../domain/wealth.repository';
 import { TransactionId } from '../../../domain/value-objects/transaction-id.vo';
@@ -13,7 +13,6 @@ export class UpdateReflectionHandler implements ICommandHandler<
   FinancialTransaction
 > {
   constructor(
-    @Inject('WealthRepository')
     private readonly wealthRepo: WealthRepository,
     private readonly prisma: PrismaService,
     private readonly eventBus: EventBus,
