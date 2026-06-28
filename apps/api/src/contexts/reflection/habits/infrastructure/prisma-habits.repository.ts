@@ -2,66 +2,52 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
 import { HabitsRepository } from '../domain/habits.repository';
 import { Habit } from '../domain/habit.entity';
+import { HabitMapper } from './habit.mapper';
+import { HabitId } from '../domain/value-objects/habit-id.vo';
 
 @Injectable()
 export class PrismaHabitsRepository implements HabitsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async saveHabit(habit: Habit): Promise<void> {
+    const persistence = HabitMapper.toPersistence(habit);
     await this.prisma.habit.upsert({
-      where: { id: habit.id },
+      where: { id: persistence.id },
       update: {
-        title: habit.title,
-        description: habit.description,
-        xpReward: habit.xpReward,
-        difficulty: habit.difficulty,
-        frequency: habit.frequency || {},
-        streak: habit.streak,
-        maxStreak: habit.maxStreak,
-        habitStrength: habit.habitStrength,
-        isActive: habit.isActive,
-        actionType: habit.actionType,
+        title: persistence.title,
+        description: persistence.description,
+        xpReward: persistence.xpReward,
+        difficulty: persistence.difficulty,
+        frequency: persistence.frequency,
+        streak: persistence.streak,
+        maxStreak: persistence.maxStreak,
+        habitStrength: persistence.habitStrength,
+        isActive: persistence.isActive,
+        actionType: persistence.actionType,
       },
       create: {
-        id: habit.id,
-        userId: habit.userId,
-        title: habit.title,
-        description: habit.description,
-        xpReward: habit.xpReward,
-        difficulty: habit.difficulty,
-        frequency: habit.frequency || {},
-        streak: habit.streak,
-        maxStreak: habit.maxStreak,
-        habitStrength: habit.habitStrength,
-        isActive: habit.isActive,
-        actionType: habit.actionType,
+        id: persistence.id,
+        userId: persistence.userId,
+        title: persistence.title,
+        description: persistence.description,
+        xpReward: persistence.xpReward,
+        difficulty: persistence.difficulty,
+        frequency: persistence.frequency,
+        streak: persistence.streak,
+        maxStreak: persistence.maxStreak,
+        habitStrength: persistence.habitStrength,
+        isActive: persistence.isActive,
+        actionType: persistence.actionType,
       },
     });
   }
 
-  async findHabitById(id: string, userId?: string): Promise<Habit | null> {
-    const where: any = { id };
+  async findHabitById(id: HabitId, userId?: string): Promise<Habit | null> {
+    const where: any = { id: id.value };
     if (userId) where.userId = userId;
 
     const doc = await this.prisma.habit.findFirst({ where });
-    if (!doc) return null;
-
-    return Habit.create({
-      id: doc.id,
-      userId: doc.userId,
-      title: doc.title,
-      description: doc.description,
-      xpReward: doc.xpReward,
-      difficulty: doc.difficulty,
-      frequency: doc.frequency,
-      streak: doc.streak,
-      maxStreak: doc.maxStreak,
-      habitStrength: doc.habitStrength,
-      isActive: doc.isActive,
-      actionType: doc.actionType,
-      createdAt: doc.createdAt,
-      updatedAt: doc.updatedAt,
-    });
+    return HabitMapper.toDomain(doc);
   }
 
   async findAllHabits(userId: string): Promise<Habit[]> {
@@ -70,24 +56,7 @@ export class PrismaHabitsRepository implements HabitsRepository {
       orderBy: { createdAt: 'desc' },
     });
 
-    return docs.map((doc) =>
-      Habit.create({
-        id: doc.id,
-        userId: doc.userId,
-        title: doc.title,
-        description: doc.description,
-        xpReward: doc.xpReward,
-        difficulty: doc.difficulty,
-        frequency: doc.frequency,
-        streak: doc.streak,
-        maxStreak: doc.maxStreak,
-        habitStrength: doc.habitStrength,
-        isActive: doc.isActive,
-        actionType: doc.actionType,
-        createdAt: doc.createdAt,
-        updatedAt: doc.updatedAt,
-      }),
-    );
+    return docs.map((doc) => HabitMapper.toDomain(doc)).filter((h): h is Habit => h !== null);
   }
 
   async saveHabitCompletion(userId: string, habitId: string, completedAt: Date): Promise<void> {
@@ -123,29 +92,12 @@ export class PrismaHabitsRepository implements HabitsRepository {
       where: { userId, actionType, isActive: true },
     });
 
-    return docs.map((doc) =>
-      Habit.create({
-        id: doc.id,
-        userId: doc.userId,
-        title: doc.title,
-        description: doc.description,
-        xpReward: doc.xpReward,
-        difficulty: doc.difficulty,
-        frequency: doc.frequency,
-        streak: doc.streak,
-        maxStreak: doc.maxStreak,
-        habitStrength: doc.habitStrength,
-        isActive: doc.isActive,
-        actionType: doc.actionType,
-        createdAt: doc.createdAt,
-        updatedAt: doc.updatedAt,
-      }),
-    );
+    return docs.map((doc) => HabitMapper.toDomain(doc)).filter((h): h is Habit => h !== null);
   }
 
-  async deleteHabit(id: string, userId: string): Promise<void> {
+  async deleteHabit(id: HabitId, userId: string): Promise<void> {
     await this.prisma.habit.updateMany({
-      where: { id, userId },
+      where: { id: id.value, userId },
       data: { isActive: false },
     });
   }

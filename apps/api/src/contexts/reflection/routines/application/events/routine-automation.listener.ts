@@ -45,7 +45,7 @@ export class RoutineAutomationListener implements OnModuleInit {
       for (const routine of matchingRoutines) {
         const alreadyCompleted = await this.routinesRepository.hasCompletedRoutineToday(
           userId,
-          routine.id,
+          routine.id.value,
           todayStr,
         );
 
@@ -62,7 +62,7 @@ export class RoutineAutomationListener implements OnModuleInit {
         const isRoutineFullyCompleted = allCompleted.every((completed) => completed === true);
 
         if (isRoutineFullyCompleted) {
-          await this.commandBus.execute(new CompleteRoutineCommand(userId, routine.id));
+          await this.commandBus.execute(new CompleteRoutineCommand(userId, routine.id.value));
           this.logger.log(
             `Automatically completed routine ${routine.id} ("${routine.title}") for user ${userId} because all habits are complete today.`,
           );

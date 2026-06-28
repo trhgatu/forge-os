@@ -3,6 +3,7 @@ import { CompleteRoutineCommand } from './complete-routine.command';
 import { RoutinesRepository } from '../../../domain/routines.repository';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { RoutineCompletedEvent } from '../../../domain/events/routine-completed.event';
+import { RoutineId } from '../../../domain/value-objects/routine-id.vo';
 
 @CommandHandler(CompleteRoutineCommand)
 export class CompleteRoutineHandler implements ICommandHandler<CompleteRoutineCommand> {
@@ -13,8 +14,9 @@ export class CompleteRoutineHandler implements ICommandHandler<CompleteRoutineCo
 
   async execute(command: CompleteRoutineCommand): Promise<void> {
     const { userId, routineId } = command;
+    const rId = RoutineId.fromString(routineId);
 
-    const routine = await this.repository.findById(routineId, userId);
+    const routine = await this.repository.findById(rId, userId);
     if (!routine || !routine.isActive) {
       throw new NotFoundException('Routine chain not found or inactive');
     }
@@ -33,10 +35,7 @@ export class CompleteRoutineHandler implements ICommandHandler<CompleteRoutineCo
     const completedAt = new Date();
     await this.repository.saveRoutineCompletion(userId, routineId, completedAt);
 
-    routine.streak += 1;
-    if (routine.streak > routine.maxStreak) {
-      routine.maxStreak = routine.streak;
-    }
+    routine.complete(completedAt);
     await this.repository.save(routine);
 
     this.eventBus.publish(

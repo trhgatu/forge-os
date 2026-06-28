@@ -62,7 +62,7 @@ export class WealthPresenter {
       isActive: data.isActive,
       createdAt: data.createdAt instanceof Date ? data.createdAt.toISOString() : data.createdAt,
       updatedAt: data.updatedAt instanceof Date ? data.updatedAt.toISOString() : data.updatedAt,
-      account: data.account, // include account relation if present
+      account: data.account,
     };
   }
 

@@ -40,6 +40,8 @@ model User {
   memories              Memory[]
   moods                 Mood[]
   routineCompletions    RoutineCompletion[]
+  vitalityLogs          VitalityLog[]
+  statusEffects         UserStatusEffect[]
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
 
@@ -75,6 +77,10 @@ model UserStats {
   willpower        Int      @default(0)
   awareness        Int      @default(0)
   presence         Int      @default(0)
+  stamina          Int      @default(100)
+  maxStamina       Int      @default(100)
+  strength         Int      @default(10)
+  lastStaminaUpdatedAt DateTime @default(now())
 
   @@map("user_stats")
 }
@@ -685,5 +691,37 @@ model AutoAllocationRule {
   updatedAt       DateTime         @updatedAt
 
   @@map("auto_allocation_rules")
+}
+
+model VitalityLog {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String   // E.g., 'HYDRATION', 'SLEEP', 'WORKOUT', 'CAFFEINE', 'STEPS'
+  value     Float
+  metadata  Json?
+  loggedAt  DateTime @default(now())
+
+  @@map("vitality_logs")
+}
+
+model UserStatusEffect {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String   // E.g., 'FLOW_STATE', 'CAFFEINE_RUSH', 'CAFFEINE_CRASH', 'BURNOUT'
+  value     Json?
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  @@map("user_status_effects")
+}
+
+model SystemConfig {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+
+  @@map("system_configs")
 }
 
