@@ -8,6 +8,8 @@ import { useAuthStore } from '@/shared/store/authStore';
 import { useGamificationSocket } from '../hooks/useGamificationSocket';
 import { gamificationService } from '../services/gamificationService';
 import type { UserStats } from '../types';
+import { useVitalityStats } from '@/features/vitality';
+import { useActiveEffects } from '../hooks/useActiveEffects';
 
 import { LevelUpModal } from './LevelUpModal';
 
@@ -21,6 +23,20 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
   const [loading, setLoading] = useState(true);
 
   const user = useAuthStore((state) => state.user);
+  const { data: vitalityStats } = useVitalityStats();
+  const { data: activeEffects } = useActiveEffects();
+
+  let multiplier = 1.0;
+  if (vitalityStats && vitalityStats.stamina >= 70) {
+    multiplier += 0.2;
+  }
+  (activeEffects || []).forEach(effect => {
+    if (effect.type === 'STOIC_RESOLVE') {
+      multiplier += 0.2;
+    } else if (effect.type === 'CAFFEINE_RUSH') {
+      multiplier += 0.1;
+    }
+  });
 
   const [showLevelUp, setShowLevelUp] = useState(false);
   const previousLevelRef = useRef<number | null>(null);
@@ -155,6 +171,36 @@ export const XPBar: React.FC<XPBarProps> = ({ compact = false }) => {
                 </div>
               </div>
             </div>
+
+            {/* Active Buffs Section */}
+            {((vitalityStats?.stamina !== undefined && vitalityStats.stamina >= 70) || (activeEffects && activeEffects.length > 0)) && (
+              <div className="border-t border-white/5 pt-3 space-y-2 relative">
+                <span className="text-[10px] text-gray-500 uppercase tracking-widest block">
+                  Active Modifiers
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {vitalityStats && vitalityStats.stamina >= 70 && (
+                    <div className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-sm border bg-emerald-500/10 border-emerald-500/20 text-emerald-400">
+                      FLOW STATE (+20% XP)
+                    </div>
+                  )}
+                  {(activeEffects || []).map(effect => (
+                    <div 
+                      key={effect.id} 
+                      className={cn(
+                        "text-[9px] font-mono font-bold px-2 py-0.5 rounded-sm border",
+                        effect.type === 'STOIC_RESOLVE' ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" :
+                        effect.type === 'CAFFEINE_RUSH' ? "bg-amber-500/10 border-amber-500/20 text-amber-400" :
+                        "bg-zinc-500/10 border-zinc-500/20 text-zinc-400"
+                      )}
+                    >
+                      {effect.type === 'STOIC_RESOLVE' ? 'STOIC RESOLVE (+20% XP)' : 
+                       effect.type === 'CAFFEINE_RUSH' ? 'CAFFEINE RUSH (+10% XP)' : effect.type}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Footer / Streak */}
             <div className="pt-2 flex justify-between items-center relative">

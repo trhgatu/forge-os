@@ -1,22 +1,33 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CreateTaskCommand } from './create-task.command';
-import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
+import { TasksRepository } from '../../../domain/tasks.repository';
+import { Task } from '../../../domain/task.entity';
+import { TaskId } from '../../../domain/value-objects/task-id.vo';
+import { Inject } from '@nestjs/common';
 
 @CommandHandler(CreateTaskCommand)
 export class CreateTaskHandler implements ICommandHandler<CreateTaskCommand> {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('TasksRepository')
+    private readonly repository: TasksRepository,
+  ) {}
 
   async execute(command: CreateTaskCommand) {
     const { userId, dto } = command;
-    return this.prisma.task.create({
-      data: {
+
+    const task = Task.create(
+      {
         userId,
         title: dto.title,
-        description: dto.description,
+        description: dto.description ?? null,
         priority: dto.priority || 'medium',
         xpReward: dto.xpReward ?? 15,
         dueDate: dto.dueDate ? new Date(dto.dueDate) : null,
       },
-    });
+      TaskId.create(),
+    );
+
+    await this.repository.save(task);
+    return task;
   }
 }

@@ -48,14 +48,14 @@ export class HabitsAutomationDispatcher implements OnModuleInit {
           const todayStr = new Date().toISOString().split('T')[0];
           const alreadyCompleted = await this.habitsRepository.hasCompletedHabitToday(
             userId,
-            habit.id,
+            habit.id.value,
             todayStr,
           );
 
           if (!alreadyCompleted) {
-            await this.commandBus.execute(new CompleteHabitCommand(userId, habit.id));
+            await this.commandBus.execute(new CompleteHabitCommand(userId, habit.id.value));
             this.logger.log(
-              `Automatically completed habit ${habit.id} ("${habit.title}") for user ${userId} via action ${actionType}`,
+              `Automatically completed habit ${habit.id.value} ("${habit.title}") for user ${userId} via action ${actionType}`,
             );
           }
         }

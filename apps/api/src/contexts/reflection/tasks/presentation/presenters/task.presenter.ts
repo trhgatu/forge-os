@@ -1,36 +1,26 @@
 import { Injectable } from '@nestjs/common';
+import { Task } from '../../domain/task.entity';
 
 @Injectable()
 export class TaskPresenter {
-  toResponse(task: {
-    id: string;
-    userId: string;
-    title: string;
-    description: string | null;
-    priority: string;
-    status: string;
-    xpReward: number;
-    dueDate: Date | string | null;
-    completedAt: Date | string | null;
-    createdAt: Date | string;
-    updatedAt: Date | string;
-  }) {
+  toResponse(task: Task) {
+    const primitives = task.toPrimitives();
     return {
-      id: task.id,
-      userId: task.userId,
-      title: task.title,
-      description: task.description,
-      priority: task.priority,
-      status: task.status,
-      xpReward: task.xpReward,
-      dueDate: task.dueDate ? new Date(task.dueDate).toISOString() : null,
-      completedAt: task.completedAt ? new Date(task.completedAt).toISOString() : null,
-      createdAt: new Date(task.createdAt).toISOString(),
-      updatedAt: new Date(task.updatedAt).toISOString(),
+      id: primitives.id,
+      userId: primitives.userId,
+      title: primitives.title,
+      description: primitives.description,
+      priority: primitives.priority,
+      status: primitives.status,
+      xpReward: primitives.xpReward,
+      dueDate: primitives.dueDate ? new Date(primitives.dueDate).toISOString() : null,
+      completedAt: primitives.completedAt ? new Date(primitives.completedAt).toISOString() : null,
+      createdAt: new Date(primitives.createdAt).toISOString(),
+      updatedAt: new Date(primitives.updatedAt).toISOString(),
     };
   }
 
-  toResponseArray(tasks: any[]) {
+  toResponseArray(tasks: Task[]) {
     return tasks.map((task) => this.toResponse(task));
   }
 }

@@ -6,10 +6,14 @@ import { MoodFilter } from '../../application/queries/mood-filter';
 import { PaginatedResult } from '@shared/types/paginated-result';
 import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
 import { MoodMapper } from './mood.mapper';
+import { EventBus } from '@nestjs/cqrs';
 
 @Injectable()
 export class PrismaMoodRepository implements MoodRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly eventBus: EventBus,
+  ) {}
 
   async save(mood: MoodEntity): Promise<void> {
     const id = mood.toPrimitives().id;
@@ -39,6 +43,11 @@ export class PrismaMoodRepository implements MoodRepository {
         deletedAt: persistence.deletedAt,
       },
     });
+
+    if (mood.domainEvents.length > 0) {
+      mood.domainEvents.forEach((event) => this.eventBus.publish(event));
+      mood.clearDomainEvents();
+    }
   }
 
   async findAll(filter: MoodFilter): Promise<PaginatedResult<MoodEntity>> {

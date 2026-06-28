@@ -1,54 +1,42 @@
-import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UpdateTaskCommand } from './update-task.command';
-import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
-import { NotFoundException } from '@nestjs/common';
-import { TaskCompletedEvent } from '../../events/task-completed.event';
+import { TasksRepository } from '../../../domain/tasks.repository';
+import { NotFoundException, Inject } from '@nestjs/common';
+import { TaskId } from '../../../domain/value-objects/task-id.vo';
 
 @CommandHandler(UpdateTaskCommand)
 export class UpdateTaskHandler implements ICommandHandler<UpdateTaskCommand> {
   constructor(
-    private readonly prisma: PrismaService,
-    private readonly eventBus: EventBus,
+    @Inject('TasksRepository')
+    private readonly repository: TasksRepository,
   ) {}
 
   async execute(command: UpdateTaskCommand) {
     const { userId, id, dto } = command;
+    const tId = TaskId.fromString(id);
 
-    const task = await this.prisma.task.findFirst({
-      where: {
-        id,
-        userId,
-        isDeleted: false,
-      },
-    });
-
+    const task = await this.repository.findById(tId, userId);
     if (!task) {
       throw new NotFoundException('Task not found');
     }
 
     const isMarkingCompleted = dto.status === 'done' && task.status !== 'done';
-    const isMarkingUncompleted =
-      dto.status !== undefined && dto.status !== 'done' && task.status === 'done';
-    const completedAt = isMarkingCompleted ? new Date() : isMarkingUncompleted ? null : undefined;
 
-    const updatedTask = await this.prisma.task.update({
-      where: { id },
-      data: {
-        title: dto.title !== undefined ? dto.title : undefined,
-        description: dto.description !== undefined ? dto.description : undefined,
-        priority: dto.priority !== undefined ? dto.priority : undefined,
-        status: dto.status !== undefined ? dto.status : undefined,
-        xpReward: dto.xpReward !== undefined ? dto.xpReward : undefined,
-        dueDate:
-          dto.dueDate !== undefined ? (dto.dueDate ? new Date(dto.dueDate) : null) : undefined,
-        completedAt: completedAt !== undefined ? completedAt : undefined,
-      },
-    });
+    const updateData: any = {};
+    if (dto.title !== undefined) updateData.title = dto.title;
+    if (dto.description !== undefined) updateData.description = dto.description;
+    if (dto.priority !== undefined) updateData.priority = dto.priority;
+    if (dto.status !== undefined) updateData.status = dto.status;
+    if (dto.xpReward !== undefined) updateData.xpReward = dto.xpReward;
+    if (dto.dueDate !== undefined) updateData.dueDate = dto.dueDate ? new Date(dto.dueDate) : null;
+
+    task.update(updateData);
 
     if (isMarkingCompleted) {
-      this.eventBus.publish(new TaskCompletedEvent(userId, updatedTask.id));
+      task.complete();
     }
 
-    return updatedTask;
+    await this.repository.save(task);
+    return task;
   }
 }

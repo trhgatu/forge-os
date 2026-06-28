@@ -1,21 +1,17 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { GetTasksQuery } from './get-tasks.query';
-import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
+import { TasksRepository } from '../../../domain/tasks.repository';
+import { Inject } from '@nestjs/common';
 
 @QueryHandler(GetTasksQuery)
 export class GetTasksHandler implements IQueryHandler<GetTasksQuery> {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('TasksRepository')
+    private readonly repository: TasksRepository,
+  ) {}
 
   async execute(query: GetTasksQuery) {
     const { userId } = query;
-    return this.prisma.task.findMany({
-      where: {
-        userId,
-        isDeleted: false,
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
+    return this.repository.findAll(userId);
   }
 }

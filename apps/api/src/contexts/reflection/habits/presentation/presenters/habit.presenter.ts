@@ -5,7 +5,7 @@ import { Habit } from '../../domain/habit.entity';
 export class HabitPresenter {
   toResponse(habit: Habit) {
     return {
-      id: habit.id,
+      id: habit.id.value,
       userId: habit.userId,
       title: habit.title,
       description: habit.description,

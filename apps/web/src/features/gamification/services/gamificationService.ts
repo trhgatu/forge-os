@@ -12,6 +12,9 @@ export const gamificationService = {
       lastActivityDate: new Date(res.data.data.lastActivityDate),
     };
   },
+
+  getActiveEffects: async (): Promise<any[]> => {
+    const res = await apiClient.get<BackendResponse<any[]>>('/gamification/active-effects');
+    return res.data.data;
+  },
 };
-
-

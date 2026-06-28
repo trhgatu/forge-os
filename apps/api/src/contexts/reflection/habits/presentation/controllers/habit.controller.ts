@@ -77,7 +77,7 @@ export class HabitController {
       const resp = this.presenter.toResponse(habit);
       return {
         ...resp,
-        isCompletedToday: completedHabitIds.has(habit.id),
+        isCompletedToday: completedHabitIds.has(habit.id.value),
       };
     });
   }

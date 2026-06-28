@@ -1,40 +1,43 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
 import { RoutinesRepository } from '../domain/routines.repository';
-import { Routine, RoutineStep } from '../domain/routine.entity';
+import { Routine } from '../domain/routine.entity';
+import { RoutineMapper } from './routine.mapper';
+import { RoutineId } from '../domain/value-objects/routine-id.vo';
 
 @Injectable()
 export class PrismaRoutinesRepository implements RoutinesRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async save(routine: Routine): Promise<void> {
+    const persistence = RoutineMapper.toPersistence(routine);
     await this.prisma.routine.upsert({
-      where: { id: routine.id },
+      where: { id: persistence.id },
       update: {
-        title: routine.title,
-        comboXp: routine.comboXp,
-        isActive: routine.isActive,
-        targetTime: routine.targetTime,
-        frequency: routine.frequency ?? undefined,
-        streak: routine.streak,
-        maxStreak: routine.maxStreak,
+        title: persistence.title,
+        comboXp: persistence.comboXp,
+        isActive: persistence.isActive,
+        targetTime: persistence.targetTime,
+        frequency: persistence.frequency ?? undefined,
+        streak: persistence.streak,
+        maxStreak: persistence.maxStreak,
       },
       create: {
-        id: routine.id,
-        userId: routine.userId,
-        title: routine.title,
-        comboXp: routine.comboXp,
-        isActive: routine.isActive,
-        targetTime: routine.targetTime,
-        frequency: routine.frequency ?? undefined,
-        streak: routine.streak,
-        maxStreak: routine.maxStreak,
+        id: persistence.id,
+        userId: persistence.userId,
+        title: persistence.title,
+        comboXp: persistence.comboXp,
+        isActive: persistence.isActive,
+        targetTime: persistence.targetTime,
+        frequency: persistence.frequency ?? undefined,
+        streak: persistence.streak,
+        maxStreak: persistence.maxStreak,
       },
     });
   }
 
-  async findById(id: string, userId?: string): Promise<Routine | null> {
-    const where: any = { id };
+  async findById(id: RoutineId, userId?: string): Promise<Routine | null> {
+    const where: any = { id: id.value };
     if (userId) where.userId = userId;
 
     const doc = await this.prisma.routine.findFirst({
@@ -52,27 +55,7 @@ export class PrismaRoutinesRepository implements RoutinesRepository {
       },
     });
 
-    if (!doc) return null;
-
-    const steps = doc.habits.map(
-      (rh) => new RoutineStep(rh.habitId, rh.habit.title, rh.habit.xpReward, rh.order),
-    );
-
-    return Routine.create({
-      id: doc.id,
-      userId: doc.userId,
-      title: doc.title,
-      comboXp: doc.comboXp,
-      isActive: doc.isActive,
-      targetTime: doc.targetTime,
-      frequency: doc.frequency,
-      steps,
-      streak: doc.streak,
-      maxStreak: doc.maxStreak,
-      createdAt: doc.createdAt,
-      updatedAt: doc.updatedAt,
-      completions: doc.completions.map((c) => c.completedAt),
-    });
+    return RoutineMapper.toDomain(doc);
   }
 
   async findAll(userId: string): Promise<Routine[]> {
@@ -92,27 +75,7 @@ export class PrismaRoutinesRepository implements RoutinesRepository {
       orderBy: { createdAt: 'desc' },
     });
 
-    return docs.map((doc) => {
-      const steps = doc.habits.map(
-        (rh) => new RoutineStep(rh.habitId, rh.habit.title, rh.habit.xpReward, rh.order),
-      );
-
-      return Routine.create({
-        id: doc.id,
-        userId: doc.userId,
-        title: doc.title,
-        comboXp: doc.comboXp,
-        isActive: doc.isActive,
-        targetTime: doc.targetTime,
-        frequency: doc.frequency,
-        steps,
-        streak: doc.streak,
-        maxStreak: doc.maxStreak,
-        createdAt: doc.createdAt,
-        updatedAt: doc.updatedAt,
-        completions: doc.completions.map((c) => c.completedAt),
-      });
-    });
+    return docs.map((doc) => RoutineMapper.toDomain(doc)).filter((r): r is Routine => r !== null);
   }
 
   async addHabitToRoutine(routineId: string, habitId: string, order: number): Promise<void> {
@@ -145,9 +108,9 @@ export class PrismaRoutinesRepository implements RoutinesRepository {
     });
   }
 
-  async delete(id: string, userId: string): Promise<void> {
+  async delete(id: RoutineId, userId: string): Promise<void> {
     await this.prisma.routine.updateMany({
-      where: { id, userId },
+      where: { id: id.value, userId },
       data: { isActive: false },
     });
   }

@@ -17,6 +17,7 @@ import { RoleModule } from 'src/contexts/iam/roles';
 import { UserModule } from 'src/contexts/iam/users';
 import { PermissionModule } from 'src/contexts/iam/permissions';
 import { AuditLogModule } from 'src/contexts/system/audit-log';
+import { SystemConfigModule } from 'src/contexts/system/config';
 import { CreateAuditLogMiddleware } from '@shared/middlewares';
 
 import { MemoryModule } from '@root/contexts/reflection/memory/memory.module';
@@ -39,6 +40,7 @@ import { TasksModule } from '@root/contexts/reflection/tasks/tasks.module';
 import { EchoesModule } from '@root/contexts/reflection/echoes/echoes.module';
 import { KnowledgeModule } from '@root/contexts/knowledge/knowledge.module';
 import { WealthModule } from '@root/contexts/wealth/wealth.module';
+import { VitalityModule } from '@root/contexts/vitality/vitality.module';
 import { RequestContextModule } from './shared/infrastructure/request-context/request-context.module';
 import { RequestContextMiddleware } from './shared/infrastructure/request-context/request-context.middleware';
 import { AuditInterceptor } from './shared/infrastructure/request-context/audit.interceptor';
@@ -77,6 +79,7 @@ import { AuditInterceptor } from './shared/infrastructure/request-context/audit.
     UserModule,
     PermissionModule,
     AuditLogModule,
+    SystemConfigModule,
     MemoryModule,
     QuoteModule,
     JournalModule,
@@ -95,6 +98,7 @@ import { AuditInterceptor } from './shared/infrastructure/request-context/audit.
     EchoesModule,
     KnowledgeModule,
     WealthModule,
+    VitalityModule,
 
     CacheModule,
     RequestContextModule,

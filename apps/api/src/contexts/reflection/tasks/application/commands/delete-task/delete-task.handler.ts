@@ -1,33 +1,27 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { DeleteTaskCommand } from './delete-task.command';
-import { PrismaService } from '@shared/infrastructure/prisma/prisma.service';
-import { NotFoundException } from '@nestjs/common';
+import { TasksRepository } from '../../../domain/tasks.repository';
+import { NotFoundException, Inject } from '@nestjs/common';
+import { TaskId } from '../../../domain/value-objects/task-id.vo';
 
 @CommandHandler(DeleteTaskCommand)
 export class DeleteTaskHandler implements ICommandHandler<DeleteTaskCommand> {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('TasksRepository')
+    private readonly repository: TasksRepository,
+  ) {}
 
   async execute(command: DeleteTaskCommand) {
     const { userId, id } = command;
+    const tId = TaskId.fromString(id);
 
-    const task = await this.prisma.task.findFirst({
-      where: {
-        id,
-        userId,
-        isDeleted: false,
-      },
-    });
-
+    const task = await this.repository.findById(tId, userId);
     if (!task) {
       throw new NotFoundException('Task not found');
     }
 
-    return this.prisma.task.update({
-      where: { id },
-      data: {
-        isDeleted: true,
-        deletedAt: new Date(),
-      },
-    });
+    task.softDelete();
+    await this.repository.save(task);
+    return task;
   }
 }
