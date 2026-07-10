@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IXpStrategy, XpStrategy, IXpRateLimitConfig } from '../xp-strategy.decorator';
+import { ConfigService } from '../../../../system/config/application/services/config.service';
 
 export interface HabitCompletedPayload {
   title: string;
@@ -10,9 +11,16 @@ export interface HabitCompletedPayload {
 @Injectable()
 @XpStrategy('reflection.habit.completed')
 export class HabitCompletedXpStrategy implements IXpStrategy<HabitCompletedPayload> {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  calculate(_payload: HabitCompletedPayload) {
-    return 0; // Habits yield 0 raw level-up XP directly to prevent farming. XP is concentrated in Quests!
+  constructor(private readonly configService: ConfigService) {}
+
+  private getRule() {
+    const rules = this.configService.get<Record<string, any>>('gamification_xp_rules', {});
+    return rules['reflection.habit.completed'] || { xp: 0, cooldownMinutes: 1, dailyCap: 15 };
+  }
+
+  calculate(payload: HabitCompletedPayload) {
+    const rule = this.getRule();
+    return rule.xp === -1 ? payload.xpReward || 25 : rule.xp;
   }
 
   getDescription(payload: HabitCompletedPayload) {
@@ -20,9 +28,10 @@ export class HabitCompletedXpStrategy implements IXpStrategy<HabitCompletedPaylo
   }
 
   getRateLimitConfig(): IXpRateLimitConfig {
+    const rule = this.getRule();
     return {
-      cooldownMinutes: 1, // 1 minute cooldown per habit to prevent multi-click exploits
-      dailyCap: 15,
+      cooldownMinutes: rule.cooldownMinutes,
+      dailyCap: rule.dailyCap,
     };
   }
 }

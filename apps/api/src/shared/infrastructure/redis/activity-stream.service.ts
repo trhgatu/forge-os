@@ -3,11 +3,14 @@ import { Injectable, Inject, Logger } from '@nestjs/common';
 import { Redis } from 'ioredis';
 import { IActivityStreamPort } from '../../ports/activity-stream.port';
 
+import { contextStorage } from '../../utils/context.storage';
+
 export interface IntegrationEvent {
   pattern: string;
   userId: string;
   payload: any;
   timestamp: number;
+  correlationId?: string;
 }
 
 @Injectable()
@@ -18,11 +21,13 @@ export class ActivityStreamService implements IActivityStreamPort {
   constructor(@Inject('REDIS_CLIENT') private readonly redis: Redis) {}
 
   async emit(pattern: string, userId: string, payload: any): Promise<string> {
+    const store = contextStorage.getStore();
     const event: IntegrationEvent = {
       pattern,
       userId,
       payload,
       timestamp: Date.now(),
+      correlationId: store?.correlationId,
     };
 
     try {

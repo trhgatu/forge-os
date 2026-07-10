@@ -20,10 +20,29 @@ export const useJournals = (filter?: JournalFilter) => {
 };
 
 export const useJournal = (id: string) => {
+  const queryClient = useQueryClient();
+
   return useQuery({
     queryKey: ['journal', id],
     queryFn: () => journalService.getById(id),
     enabled: !!id,
+    placeholderData: () => {
+      const queries = queryClient.getQueriesData<PaginatedResponse<JournalEntry>>({
+        queryKey: ['journals'],
+      });
+      for (const [, response] of queries) {
+        if (response?.data) {
+          const entry = response.data.find((e) => e.id === id);
+          if (entry) {
+            return {
+              ...entry,
+              content: '',
+            };
+          }
+        }
+      }
+      return undefined;
+    },
   });
 };
 

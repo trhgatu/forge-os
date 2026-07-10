@@ -27,7 +27,10 @@ export class HabitCompletedEvent implements GamifiedEvent, NotificationEvent {
     return {
       type: 'HABIT_COMPLETED',
       title: 'Habit Completed! ⚡',
-      description: `You've checked off "${this.habitTitle}" and earned ${this.xpReward} XP!`,
+      description:
+        this.xpReward > 0
+          ? `You've checked off "${this.habitTitle}" and earned ${this.xpReward} XP!`
+          : `You've checked off "${this.habitTitle}"!`,
       xp: this.xpReward,
       metadata: {
         habitId: this.habitId,

@@ -67,6 +67,78 @@ export class PrismaWealthRepository implements WealthRepository {
     });
   }
 
+  async saveTransactionWithAllocations(
+    transaction: FinancialTransaction,
+    account: FinancialAccount,
+    allocations: {
+      targetAccount: FinancialAccount;
+      transferTx: FinancialTransaction;
+      incomeTx: FinancialTransaction;
+    }[],
+  ): Promise<void> {
+    const mainTxData = WealthMapper.toTransactionPersistence(transaction);
+    const accountData = WealthMapper.toAccountPersistence(account);
+
+    await this.prisma.$transaction(async (tx) => {
+      // 1. Save main transaction
+      await tx.financialTransaction.upsert({
+        where: { id: mainTxData.id },
+        update: {
+          reflection: mainTxData.reflection,
+          isApprovedByWill: mainTxData.isApprovedByWill,
+        },
+        create: mainTxData,
+      });
+
+      // 2. Save main account state (updated balance)
+      await tx.financialAccount.upsert({
+        where: { id: accountData.id },
+        update: {
+          balance: accountData.balance,
+          updatedAt: accountData.updatedAt,
+        },
+        create: accountData,
+      });
+
+      // 3. Save allocations
+      for (const allocation of allocations) {
+        const targetAccountData = WealthMapper.toAccountPersistence(allocation.targetAccount);
+        const transferTxData = WealthMapper.toTransactionPersistence(allocation.transferTx);
+        const incomeTxData = WealthMapper.toTransactionPersistence(allocation.incomeTx);
+
+        // Save target account state
+        await tx.financialAccount.upsert({
+          where: { id: targetAccountData.id },
+          update: {
+            balance: targetAccountData.balance,
+            updatedAt: targetAccountData.updatedAt,
+          },
+          create: targetAccountData,
+        });
+
+        // Save transfer tx
+        await tx.financialTransaction.upsert({
+          where: { id: transferTxData.id },
+          update: {
+            reflection: transferTxData.reflection,
+            isApprovedByWill: transferTxData.isApprovedByWill,
+          },
+          create: transferTxData,
+        });
+
+        // Save income tx
+        await tx.financialTransaction.upsert({
+          where: { id: incomeTxData.id },
+          update: {
+            reflection: incomeTxData.reflection,
+            isApprovedByWill: incomeTxData.isApprovedByWill,
+          },
+          create: incomeTxData,
+        });
+      }
+    });
+  }
+
   async findTransactionById(
     id: TransactionId,
     userId: string,

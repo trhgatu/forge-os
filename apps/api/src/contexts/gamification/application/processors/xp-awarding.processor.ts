@@ -10,6 +10,8 @@ import { StreamEventPayload } from '@shared/domain/events/stream-event.interface
 import { JobResult } from '@shared/domain/dtos/job-result.dto';
 import { XpRateLimitService } from '../services/xp-rate-limit.service';
 
+import { contextStorage } from '@shared/utils/context.storage';
+
 @Processor('xp_awarding')
 export class XpAwardingProcessor extends WorkerHost implements OnModuleInit {
   private readonly logger = new Logger(XpAwardingProcessor.name);
@@ -41,7 +43,7 @@ export class XpAwardingProcessor extends WorkerHost implements OnModuleInit {
   }
   async process(job: Job<StreamEventPayload>): Promise<JobResult> {
     const startTime = Date.now();
-    const { pattern, userId, payload } = job.data;
+    const { pattern, userId, payload, correlationId } = job.data;
     const strategy = this.strategyMap.get(pattern);
 
     const getMeta = () => ({
@@ -59,62 +61,66 @@ export class XpAwardingProcessor extends WorkerHost implements OnModuleInit {
       return { status: 'failed', reason: 'MISSING_USER_ID', metadata: getMeta() };
     }
 
-    let checkSucceeded = false;
-    try {
-      const xpAmount = strategy.calculate(payload);
-      const description = strategy.getDescription(payload);
+    return contextStorage.run({ correlationId: correlationId || '' }, async () => {
+      let checkSucceeded = false;
+      try {
+        const xpAmount = strategy.calculate(payload);
+        const description = strategy.getDescription(payload);
 
-      if (xpAmount <= 0) {
-        return {
-          status: 'skipped',
-          reason: 'ZERO_XP',
-          data: { userId: targetUserId },
-          metadata: getMeta(),
-        };
-      }
-
-      const config = strategy.getRateLimitConfig(payload);
-      const { allowed, reason } = await this.rateLimitService.checkAndRecord(
-        targetUserId,
-        pattern,
-        config,
-        xpAmount,
-      );
-
-      if (!allowed) {
-        this.logger.debug(`[XP-RateLimit] Blocked ${pattern} for ${targetUserId}: ${reason}`);
-        return {
-          status: 'skipped',
-          reason: `RATE_LIMIT_${reason?.toUpperCase() || 'EXCEEDED'}`,
-          data: { userId: targetUserId },
-          metadata: getMeta(),
-        };
-      }
-
-      checkSucceeded = true;
-      await this.commandBus.execute(new AwardXpCommand(targetUserId, xpAmount, description));
-      return {
-        status: 'completed',
-        data: {
-          awardedXp: xpAmount,
-          user: targetUserId,
-          description,
-        },
-        metadata: getMeta(),
-      };
-    } catch (error) {
-      if (checkSucceeded && strategy && targetUserId) {
-        try {
-          const config = strategy.getRateLimitConfig();
-          const xpAmount = strategy.calculate(payload);
-          await this.rateLimitService.refund(targetUserId, pattern, config, xpAmount);
-          this.logger.debug(`[XP-RateLimit] Refunded quota for ${pattern} due to error`);
-        } catch (refundError) {
-          this.logger.error(`[XP-RateLimit] Failed to refund quota: ${refundError}`);
+        if (xpAmount <= 0) {
+          return {
+            status: 'skipped',
+            reason: 'ZERO_XP',
+            data: { userId: targetUserId },
+            metadata: getMeta(),
+          };
         }
+
+        const config = strategy.getRateLimitConfig(payload);
+        const { allowed, reason } = await this.rateLimitService.checkAndRecord(
+          targetUserId,
+          pattern,
+          config,
+          xpAmount,
+        );
+
+        if (!allowed) {
+          this.logger.debug(`[XP-RateLimit] Blocked ${pattern} for ${targetUserId}: ${reason}`);
+          return {
+            status: 'skipped',
+            reason: `RATE_LIMIT_${reason?.toUpperCase() || 'EXCEEDED'}`,
+            data: { userId: targetUserId },
+            metadata: getMeta(),
+          };
+        }
+
+        checkSucceeded = true;
+        await this.commandBus.execute(
+          new AwardXpCommand(targetUserId, xpAmount, pattern, description),
+        );
+        return {
+          status: 'completed',
+          data: {
+            awardedXp: xpAmount,
+            user: targetUserId,
+            description,
+          },
+          metadata: getMeta(),
+        };
+      } catch (error) {
+        if (checkSucceeded && strategy && targetUserId) {
+          try {
+            const config = strategy.getRateLimitConfig();
+            const xpAmount = strategy.calculate(payload);
+            await this.rateLimitService.refund(targetUserId, pattern, config, xpAmount);
+            this.logger.debug(`[XP-RateLimit] Refunded quota for ${pattern} due to error`);
+          } catch (refundError) {
+            this.logger.error(`[XP-RateLimit] Failed to refund quota: ${refundError}`);
+          }
+        }
+        this.logger.error(`[Processor Error] ${pattern}: ${error}`);
+        throw error;
       }
-      this.logger.error(`[Processor Error] ${pattern}: ${error}`);
-      throw error;
-    }
+    });
   }
 }

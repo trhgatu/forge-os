@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IXpStrategy, XpStrategy, IXpRateLimitConfig } from '../xp-strategy.decorator';
+import { ConfigService } from '../../../../system/config/application/services/config.service';
 
 export interface QuestCompletedPayload {
   title: string;
@@ -11,8 +12,24 @@ export interface QuestCompletedPayload {
 @Injectable()
 @XpStrategy('gamification.quest.completed')
 export class QuestCompletedXpStrategy implements IXpStrategy<QuestCompletedPayload> {
+  constructor(private readonly configService: ConfigService) {}
+
+  private getRule() {
+    const rules = this.configService.get<Record<string, any>>('gamification_xp_rules', {});
+    return (
+      rules['gamification.quest.completed'] || {
+        xp: -1,
+        cooldownMinutes: 0,
+        dailyCap: 20,
+        customCooldownMinutes: 60,
+        customDailyCap: 2,
+      }
+    );
+  }
+
   calculate(payload: QuestCompletedPayload) {
-    return payload.xpReward || 50;
+    const rule = this.getRule();
+    return rule.xp === -1 ? payload.xpReward || 50 : rule.xp;
   }
 
   getDescription(payload: QuestCompletedPayload) {
@@ -20,15 +37,16 @@ export class QuestCompletedXpStrategy implements IXpStrategy<QuestCompletedPaylo
   }
 
   getRateLimitConfig(payload?: QuestCompletedPayload): IXpRateLimitConfig {
+    const rule = this.getRule();
     if (payload?.isCustom) {
       return {
-        cooldownMinutes: 60,
-        dailyCap: 2,
+        cooldownMinutes: rule.customCooldownMinutes ?? 60,
+        dailyCap: rule.customDailyCap ?? 2,
       };
     }
     return {
-      cooldownMinutes: 0,
-      dailyCap: 20,
+      cooldownMinutes: rule.cooldownMinutes,
+      dailyCap: rule.dailyCap,
     };
   }
 }

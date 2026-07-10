@@ -1,4 +1,4 @@
-import { Module, OnModuleInit } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { PrismaModule } from '@shared/infrastructure/prisma/prisma.module';
 import { SharedModule } from '@shared/shared.module';
@@ -10,6 +10,7 @@ import { CommandHandlers } from './application/commands';
 import { QueryHandlers } from './application/queries';
 import { HabitPresenter } from './presentation/presenters/habit.presenter';
 import { HabitsAutomationDispatcher } from './application/events/habits-automation.dispatcher';
+import { HabitCompletedHandler } from './application/events/habit-completed.handler';
 
 @Module({
   imports: [CqrsModule, PrismaModule, SharedModule, AuthModule],
@@ -25,15 +26,10 @@ import { HabitsAutomationDispatcher } from './application/events/habits-automati
     },
     HabitPresenter,
     HabitsAutomationDispatcher,
+    HabitCompletedHandler,
     ...CommandHandlers,
     ...QueryHandlers,
   ],
   exports: [HabitsRepository, 'HabitsRepository'],
 })
-export class HabitsModule implements OnModuleInit {
-  constructor(private readonly dispatcher: HabitsAutomationDispatcher) {}
-
-  onModuleInit() {
-    this.dispatcher.onModuleInit();
-  }
-}
+export class HabitsModule {}

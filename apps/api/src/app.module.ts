@@ -1,5 +1,5 @@
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { CacheInvalidationInterceptor } from '@shared/interceptors';
+import { CacheInvalidationInterceptor, CorrelationInterceptor } from '@shared/interceptors';
 import { CacheModule } from '@shared/services/cache.module';
 
 import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
@@ -104,6 +104,10 @@ import { AuditInterceptor } from './shared/infrastructure/request-context/audit.
     RequestContextModule,
   ],
   providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CorrelationInterceptor,
+    },
     {
       provide: APP_INTERCEPTOR,
       useClass: CacheInvalidationInterceptor,

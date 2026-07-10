@@ -18,6 +18,15 @@ export abstract class WealthRepository {
 
   // Transactions
   abstract saveTransaction(transaction: FinancialTransaction): Promise<void>;
+  abstract saveTransactionWithAllocations(
+    transaction: FinancialTransaction,
+    account: FinancialAccount,
+    allocations: {
+      targetAccount: FinancialAccount;
+      transferTx: FinancialTransaction;
+      incomeTx: FinancialTransaction;
+    }[],
+  ): Promise<void>;
   abstract findTransactionById(
     id: TransactionId,
     userId: string,

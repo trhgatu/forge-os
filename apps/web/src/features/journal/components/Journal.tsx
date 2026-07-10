@@ -10,6 +10,7 @@ import { useDebounce } from '@/shared/hooks/useDebounce';
 
 import {
   useJournals,
+  useJournal,
   useCreateJournal,
   useUpdateJournal,
   useDeleteJournal,
@@ -22,6 +23,7 @@ export function Journal() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [localEntry, setLocalEntry] = useState<JournalEntry | null>(null);
   const [isFocusMode, setIsFocusMode] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
   const debouncedSearch = useDebounce(searchQuery, 300);
@@ -33,6 +35,14 @@ export function Journal() {
   });
 
   const entries = useMemo(() => data?.data || [], [data]);
+
+  const { 
+    data: journalDetail, 
+    isLoading: isDetailLoading, 
+    isPlaceholderData,
+    isError: isDetailError,
+    refetch: refetchDetail 
+  } = useJournal(selectedId || '');
 
   const createMutation = useCreateJournal();
   const updateMutation = useUpdateJournal();
@@ -55,34 +65,50 @@ export function Journal() {
 
   const debouncedEntry = useDebounce(localEntry, 1000);
   const lastSavedRef = useRef<string>('');
+  const lastSelectedIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!selectedId && entries.length > 0) {
       setSelectedId(entries[0].id);
     }
   }, [entries, selectedId]);
+
   useEffect(() => {
     if (!selectedId) {
       setLocalEntry(null);
+      setIsEditing(false);
+      lastSelectedIdRef.current = null;
       return;
     }
-    const remote = entries.find((e: JournalEntry) => e.id === selectedId);
-    if (remote) {
-      setLocalEntry((prev: JournalEntry | null) => (prev?.id === remote.id ? prev : remote));
+    if (journalDetail) {
+      setLocalEntry((prev: JournalEntry | null) => 
+        prev?.id === journalDetail.id ? { ...journalDetail, ...prev } : journalDetail
+      );
+      
+      // Only reset isEditing when the user actually switches to a different entry
+      if (selectedId !== lastSelectedIdRef.current) {
+        setIsEditing(false);
+        lastSelectedIdRef.current = selectedId;
+      }
+
       lastSavedRef.current = JSON.stringify({
-        title: remote.title,
-        content: remote.content,
-        mood: remote.mood,
-        tags: remote.tags,
-        status: remote.status,
+        title: journalDetail.title,
+        content: journalDetail.content,
+        mood: journalDetail.mood,
+        tags: journalDetail.tags,
+        status: journalDetail.status,
       });
     } else {
       setLocalEntry(null);
+      setIsEditing(false);
+      lastSelectedIdRef.current = null;
     }
-  }, [selectedId, entries]);
+  }, [selectedId, journalDetail]);
+
+  const isContentLoading = isDetailLoading || isPlaceholderData;
 
   useEffect(() => {
-    if (!debouncedEntry || !selectedId) return;
+    if (!isEditing || !debouncedEntry || !selectedId || debouncedEntry.id !== selectedId) return;
 
     const currentData = {
       title: debouncedEntry.title || '',
@@ -102,7 +128,7 @@ export function Journal() {
       id: debouncedEntry.id,
       data: currentData,
     });
-  }, [debouncedEntry, selectedId]);
+  }, [debouncedEntry, selectedId, isEditing]);
 
 
   const handleCreate = async () => {
@@ -116,6 +142,7 @@ export function Journal() {
         tags: [],
       });
       setSelectedId(newEntry.id);
+      setIsEditing(true);
     } catch (error) {
       console.error('Failed to create entry', error);
     }
@@ -164,6 +191,40 @@ export function Journal() {
     setLocalEntry((prev: JournalEntry | null) => (prev ? { ...prev, ...patch } : null));
   };
 
+  const flushChanges = () => {
+    if (localEntry && selectedId) {
+      const currentData = {
+        title: localEntry.title || '',
+        content: localEntry.content || '',
+        mood: localEntry.mood,
+        tags: localEntry.tags || [],
+        status: localEntry.status,
+      };
+      const currentState = JSON.stringify(currentData);
+      if (currentState !== lastSavedRef.current) {
+        lastSavedRef.current = currentState;
+        updateMutation.mutate({
+          id: selectedId,
+          data: currentData,
+        });
+      }
+    }
+  };
+
+  const handleSeal = async (id: string) => {
+    flushChanges();
+    try {
+      await updateMutation.mutateAsync({
+        id,
+        data: { status: JournalStatus.PUBLISHED },
+      });
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Failed to seal entry', error);
+      toast.error('Failed to seal reflection');
+    }
+  };
+
   if (isLoading && !localEntry && !createMutation.isPending) {
     return (
       <div className="flex-1 h-full flex flex-col items-center justify-center p-6 md:p-10 bg-transparent text-white font-sans animate-pulse">
@@ -201,7 +262,10 @@ export function Journal() {
         <JournalSidebar
           entries={entries}
           selectedId={selectedId}
-          onSelect={setSelectedId}
+          onSelect={(id) => {
+            flushChanges();
+            setSelectedId(id);
+          }}
           onNew={handleCreate}
           onDelete={handleDelete}
           searchQuery={searchQuery}
@@ -209,13 +273,33 @@ export function Journal() {
         />
       )}
 
-      {localEntry ? (
+      {isDetailError ? (
+        <div className="flex-1 flex flex-col items-center justify-center gap-4 text-center p-8 bg-forge-bg">
+          <p className="text-red-400 font-mono text-sm">Không thể tải nội dung bản ghi.</p>
+          <Button
+            onClick={() => refetchDetail()}
+            variant="outline"
+            className="hover:border-red-500/50 text-xs font-mono"
+          >
+            Thử tải lại (Retry)
+          </Button>
+        </div>
+      ) : localEntry ? (
         <JournalEditor
           entry={localEntry}
           onChange={handleUpdateLocal}
           isFocusMode={isFocusMode}
           toggleFocusMode={() => setIsFocusMode((v) => !v)}
           saveStatus={visualSaveStatus}
+          isEditing={isEditing}
+          setIsEditing={(editing) => {
+            if (!editing) {
+              flushChanges();
+            }
+            setIsEditing(editing);
+          }}
+          isContentLoading={isContentLoading}
+          onSeal={() => handleSeal(localEntry.id)}
         />
       ) : (
         <div className="flex-1 flex items-center justify-center">
