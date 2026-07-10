@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@bull-board/api": "^6.20.3",
-    "@bull-board/express": "^6.20.3",
+    "@bull-board/express": "^7.1.5",
     "@bull-board/nestjs": "^6.20.3",
     "@forge/auth": "workspace:*",
     "@forge/core": "workspace:*",
