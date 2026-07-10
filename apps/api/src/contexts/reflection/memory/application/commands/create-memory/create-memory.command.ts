@@ -7,6 +7,8 @@ export interface CreateMemoryPayload {
   tags?: string[];
   status?: MemoryStatus;
   userId?: string;
+  imageUrl?: string;
+  type?: string;
 }
 
 export class CreateMemoryCommand {

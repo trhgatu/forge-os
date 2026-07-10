@@ -11,4 +11,6 @@ export interface MemoryResponse {
   updatedAt: string;
   isDeleted: boolean;
   userId?: string;
+  imageUrl?: string;
+  type?: string;
 }

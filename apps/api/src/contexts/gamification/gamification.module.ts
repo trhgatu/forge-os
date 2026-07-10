@@ -5,10 +5,17 @@ import { GamificationController } from './presentation/gamification.controller';
 import { GamificationGateway } from './presentation/gamification.gateway';
 import { PrismaUserStatsRepository } from './infrastructure/prisma-user-stats.repository';
 import { UserStatsRepository } from './domain/ports/user-stats.repository';
+import { StatusEffectRepository } from './domain/ports/status-effect.repository';
+import { PrismaStatusEffectRepository } from './infrastructure/repositories/prisma-status-effect.repository';
 import { GetUserStatsHandler } from './application/queries/get-user-stats.query';
 import { AwardXpHandler } from './application/handlers/award-xp.handler';
+import { ApplyStatusEffectHandler } from './application/commands/apply-status-effect/apply-status-effect.handler';
+import { RemoveStatusEffectHandler } from './application/commands/remove-status-effect/remove-status-effect.handler';
+import { GetActiveEffectsHandler } from './application/queries/get-active-effects/get-active-effects.handler';
 import { SharedModule } from '@shared/shared.module';
 import { AuthModule } from '../iam/auth/auth.module';
+import { VitalityActionLoggedListener } from './application/listeners/vitality-action-logged.listener';
+import { TransactionCreatedListener } from './application/listeners/transaction-created.listener';
 
 import { XpAwardingProcessor } from './application/processors/xp-awarding.processor';
 import { XpRateLimitService } from './application/services/xp-rate-limit.service';
@@ -18,14 +25,28 @@ import { ProjectCreatedXpStrategy } from './application/strategies/engineering/p
 import { QuestCompletedXpStrategy } from './application/strategies/gamification/quest-completed.strategy';
 import { HabitCompletedXpStrategy } from './application/strategies/reflection/habit-completed.strategy';
 import { JournalCreatedXpStrategy } from './application/strategies/reflection/journal-created.strategy';
+import { RoutineCompletedXpStrategy } from './application/strategies/reflection/routine-completed.strategy';
+import { MoodLoggedXpStrategy } from './application/strategies/reflection/mood-logged.strategy';
+import { MemoryCreatedXpStrategy } from './application/strategies/reflection/memory-created.strategy';
 
-const Handlers = [GetUserStatsHandler, AwardXpHandler];
+const Handlers = [
+  GetUserStatsHandler,
+  AwardXpHandler,
+  ApplyStatusEffectHandler,
+  RemoveStatusEffectHandler,
+  GetActiveEffectsHandler,
+  VitalityActionLoggedListener,
+  TransactionCreatedListener,
+];
 const Strategies = [
   GithubSyncXpStrategy,
   ProjectCreatedXpStrategy,
   QuestCompletedXpStrategy,
   HabitCompletedXpStrategy,
   JournalCreatedXpStrategy,
+  RoutineCompletedXpStrategy,
+  MoodLoggedXpStrategy,
+  MemoryCreatedXpStrategy,
 ];
 
 @Module({
@@ -41,11 +62,25 @@ const Strategies = [
       provide: 'UserStatsRepository',
       useClass: PrismaUserStatsRepository,
     },
+    {
+      provide: StatusEffectRepository,
+      useClass: PrismaStatusEffectRepository,
+    },
+    {
+      provide: 'StatusEffectRepository',
+      useClass: PrismaStatusEffectRepository,
+    },
     XpAwardingProcessor,
     XpRateLimitService,
     ...Handlers,
     ...Strategies,
   ],
-  exports: [UserStatsRepository, 'UserStatsRepository', GamificationGateway],
+  exports: [
+    UserStatsRepository,
+    'UserStatsRepository',
+    StatusEffectRepository,
+    'StatusEffectRepository',
+    GamificationGateway,
+  ],
 })
 export class GamificationModule {}

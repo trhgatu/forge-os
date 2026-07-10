@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button, Modal, Label } from '@/shared/components/ui';
+
 import { useLanguage } from '@/contexts/LanguageContext';
-import { FinancialTransactionDto } from '../services/wealthService';
+import { Button, Modal, Label } from '@/shared/components/ui';
+
+import type { FinancialTransactionDto } from '../services/wealthService';
 
 interface ReflectionModalProps {
   isOpen: boolean;

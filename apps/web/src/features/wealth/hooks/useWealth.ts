@@ -1,7 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+
 import { useLanguage } from '@/contexts/LanguageContext';
 import { forgeToast } from '@/shared/lib/toast';
+
 import { wealthService } from '../services/wealthService';
 
 export const useWealthAccounts = () => {
@@ -57,6 +59,50 @@ export const useCreateWealthAccount = () => {
   });
 };
 
+export const useDeleteWealthAccount = () => {
+  const queryClient = useQueryClient();
+  const { t } = useLanguage();
+
+  return useMutation({
+    mutationFn: (id: string) => wealthService.deleteAccount(id),
+    onSuccess: () => {
+      toast.success(t('wealth.toast_acc_delete_success') || 'Bể chứa đã được giải trừ');
+      queryClient.invalidateQueries({ queryKey: ['wealth-accounts'] });
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error(t('wealth.toast_acc_delete_error') || 'Không thể giải trừ bể chứa');
+    },
+  });
+};
+
+export const useUpdateWealthAccount = () => {
+  const queryClient = useQueryClient();
+  const { t } = useLanguage();
+
+  return useMutation({
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: {
+        name?: string;
+        type?: 'CASH' | 'BANK_ACCOUNT' | 'INVESTMENT' | 'EMERGENCY_FUND';
+        balance?: number;
+      };
+    }) => wealthService.updateAccount(id, data),
+    onSuccess: () => {
+      toast.success(t('wealth.toast_acc_update_success') || 'Bể chứa đã được hiệu chuẩn');
+      queryClient.invalidateQueries({ queryKey: ['wealth-accounts'] });
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error(t('wealth.toast_acc_update_error') || 'Không thể hiệu chuẩn bể chứa');
+    },
+  });
+};
+
 export const useCreateWealthTransaction = () => {
   const queryClient = useQueryClient();
   const { t } = useLanguage();
@@ -77,27 +123,6 @@ export const useCreateWealthTransaction = () => {
       queryClient.invalidateQueries({ queryKey: ['wealth-transactions'] });
       queryClient.invalidateQueries({ queryKey: ['wealth-accounts'] });
       queryClient.invalidateQueries({ queryKey: ['wealth-budgets'] });
-
-      // Sensory feedback delay
-      setTimeout(() => {
-        if (variables.type === 'INCOME') {
-          forgeToast.calibration('Discipline', 1, 'Inflow logged safely');
-        } else if (variables.type === 'EXPENSE') {
-          if (variables.categoryType === 'ESSENTIAL') {
-            forgeToast.calibration('Discipline', 2, 'Core life needs managed');
-          } else if (variables.categoryType === 'COMFORT') {
-            forgeToast.calibration('Discipline', 1, 'Balanced comfort recorded');
-          } else if (variables.categoryType === 'INDULGENCE') {
-            if (variables.isApprovedByWill) {
-              forgeToast.calibration('Willpower', 2, 'Pre-approved Stoic indulgence');
-            }
-            if (variables.reflection && variables.reflection.trim().length > 0) {
-              forgeToast.calibration('Awareness', 4, 'Impulse examined under reason');
-              forgeToast.calibration('Willpower', 2, 'Temperance exercised');
-            }
-          }
-        }
-      }, 800);
     },
     onError: (error) => {
       console.error(error);
@@ -135,11 +160,6 @@ export const useUpdateWealthTransactionReflection = () => {
     onSuccess: () => {
       toast.success(t('wealth.toast_reflect_success'));
       queryClient.invalidateQueries({ queryKey: ['wealth-transactions'] });
-
-      setTimeout(() => {
-        forgeToast.calibration('Awareness', 5, 'Stoic self-examination logged');
-        forgeToast.calibration('Willpower', 2, 'Impulse calibrated to Reason');
-      }, 800);
     },
     onError: (error) => {
       console.error(error);
@@ -147,3 +167,111 @@ export const useUpdateWealthTransactionReflection = () => {
     },
   });
 };
+
+// Recurring Transactions Hooks
+export const useWealthRecurring = () => {
+  return useQuery({
+    queryKey: ['wealth-recurring'],
+    queryFn: () => wealthService.getRecurringTransactions(),
+    staleTime: 0,
+    refetchOnMount: 'always',
+  });
+};
+
+export const useCreateRecurringTransaction = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: {
+      accountId: string;
+      type: 'INCOME' | 'EXPENSE';
+      amount: number;
+      category: string;
+      categoryType: 'ESSENTIAL' | 'COMFORT' | 'INDULGENCE';
+      description?: string;
+      dayOfMonth: number;
+    }) => wealthService.createRecurringTransaction(data),
+    onSuccess: () => {
+      toast.success('Đã lưu thiết lập giao dịch định kỳ thành công.');
+      queryClient.invalidateQueries({ queryKey: ['wealth-recurring'] });
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error('Không thể tạo thiết lập giao dịch định kỳ.');
+    },
+  });
+};
+
+export const useDeleteRecurringTransaction = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => wealthService.deleteRecurringTransaction(id),
+    onSuccess: () => {
+      toast.success('Đã xóa thiết lập giao dịch định kỳ.');
+      queryClient.invalidateQueries({ queryKey: ['wealth-recurring'] });
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error('Lỗi khi xóa giao dịch định kỳ.');
+    },
+  });
+};
+
+export const useUpdateRecurringTransaction = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: {
+        accountId?: string;
+        type?: 'INCOME' | 'EXPENSE';
+        amount?: number;
+        category?: string;
+        categoryType?: 'ESSENTIAL' | 'COMFORT' | 'INDULGENCE';
+        description?: string;
+        dayOfMonth?: number;
+        isActive?: boolean;
+      };
+    }) => wealthService.updateRecurringTransaction(id, data),
+    onSuccess: () => {
+      toast.success('Đã cập nhật thiết lập giao dịch định kỳ thành công.');
+      queryClient.invalidateQueries({ queryKey: ['wealth-recurring'] });
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error('Không thể cập nhật thiết lập giao dịch định kỳ.');
+    },
+  });
+};
+
+// Auto-Allocation Rules Hooks
+export const useWealthAllocationRules = () => {
+  return useQuery({
+    queryKey: ['wealth-allocation-rules'],
+    queryFn: () => wealthService.getAllocationRules(),
+    staleTime: 0,
+    refetchOnMount: 'always',
+  });
+};
+
+export const useUpdateAllocationRules = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: {
+      sourceAccountId: string;
+      rules: { targetAccountId: string; percentage: number }[];
+    }) => wealthService.updateAllocationRules(data),
+    onSuccess: () => {
+      toast.success('Đã cập nhật quy tắc phân bổ dòng tiền tự động.');
+      queryClient.invalidateQueries({ queryKey: ['wealth-allocation-rules'] });
+      queryClient.invalidateQueries({ queryKey: ['wealth-accounts'] });
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error('Lỗi khi lưu quy tắc phân bổ tự động.');
+    },
+  });
+};
+

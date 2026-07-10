@@ -6,5 +6,6 @@ export class CreateHabitCommand {
     public readonly xpReward: number | undefined,
     public readonly difficulty: string | undefined,
     public readonly frequency: any,
+    public readonly actionType?: string,
   ) {}
 }

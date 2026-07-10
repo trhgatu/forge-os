@@ -5,7 +5,7 @@ import { Habit } from '../../domain/habit.entity';
 export class HabitPresenter {
   toResponse(habit: Habit) {
     return {
-      id: habit.id,
+      id: habit.id.value,
       userId: habit.userId,
       title: habit.title,
       description: habit.description,
@@ -16,6 +16,7 @@ export class HabitPresenter {
       maxStreak: habit.maxStreak,
       habitStrength: habit.habitStrength,
       isActive: habit.isActive,
+      actionType: habit.actionType,
       createdAt: habit.createdAt.toISOString(),
       updatedAt: habit.updatedAt.toISOString(),
     };

@@ -160,7 +160,7 @@ export function QuestCard({ quest, onEdit, onDelete }: QuestCardProps) {
                   </span>
                 </div>
                 <span className="font-mono text-gray-500 text-[10px]">
-                  {obj.currentCount} / {obj.targetCount}
+                  {quest.isCompleted ? obj.targetCount : obj.currentCount} / {obj.targetCount}
                 </span>
               </div>
 
@@ -169,13 +169,14 @@ export function QuestCard({ quest, onEdit, onDelete }: QuestCardProps) {
                 <div
                   className={cn(
                     'h-full transition-all duration-700 rounded-full',
-                    obj.isCompleted ? 'bg-emerald-500' : 'bg-forge-cyan'
+                    (quest.isCompleted || obj.isCompleted) ? 'bg-emerald-500' : 'bg-forge-cyan'
                   )}
                   style={{
-                    width: `${Math.min(
-                      100,
-                      (obj.currentCount / obj.targetCount) * 100
-                    )}%`,
+                    width: `${
+                      quest.isCompleted
+                        ? 100
+                        : Math.min(100, (obj.currentCount / obj.targetCount) * 100)
+                    }%`,
                   }}
                 />
               </div>

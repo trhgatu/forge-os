@@ -1,8 +1,10 @@
 import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
 import { GetUserStatsQuery } from '../application/queries/get-user-stats.query';
+import { GetActiveEffectsQuery } from '../application/queries/get-active-effects/get-active-effects.query';
 import { JwtAuthGuard } from '../../iam/auth/application/guards/jwt-auth.guard'; // Check path
 import { UserStatsDto } from '@forge/auth';
+import { AUTOMATABLE_ACTIONS_REGISTRY } from '../domain/actions.registry';
 
 @Controller('gamification')
 @UseGuards(JwtAuthGuard)
@@ -29,5 +31,22 @@ export class GamificationController {
       } as any;
     }
     return stats;
+  }
+
+  @Get('actions')
+  async getAutomatableActions() {
+    return {
+      success: true,
+      data: AUTOMATABLE_ACTIONS_REGISTRY,
+    };
+  }
+
+  @Get('active-effects')
+  async getActiveEffects(@Req() req: any) {
+    const effects = await this.queryBus.execute(new GetActiveEffectsQuery(String(req.user.id)));
+    return {
+      success: true,
+      data: effects.map((e) => e.toPrimitives()),
+    };
   }
 }

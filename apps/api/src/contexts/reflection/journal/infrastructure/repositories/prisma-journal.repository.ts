@@ -35,6 +35,8 @@ export class PrismaJournalRepository implements JournalRepository {
         isDeleted: data.isDeleted,
         deletedAt: data.deletedAt,
         userId: data.userId,
+        createdBy: data.createdBy,
+        updatedBy: data.updatedBy,
       },
       create: {
         id,
@@ -50,6 +52,8 @@ export class PrismaJournalRepository implements JournalRepository {
         isDeleted: data.isDeleted,
         deletedAt: data.deletedAt,
         userId: data.userId,
+        createdBy: data.createdBy,
+        updatedBy: data.updatedBy,
       },
     });
 
@@ -85,6 +89,24 @@ export class PrismaJournalRepository implements JournalRepository {
         where,
         skip,
         take: limit,
+        select: {
+          id: true,
+          title: true,
+          mood: true,
+          tags: true,
+          type: true,
+          status: true,
+          source: true,
+          relations: true,
+          analysis: true,
+          userId: true,
+          createdBy: true,
+          updatedBy: true,
+          createdAt: true,
+          updatedAt: true,
+          isDeleted: true,
+          deletedAt: true,
+        },
         orderBy: { createdAt: 'desc' },
       }),
     ]);

@@ -5,7 +5,7 @@ import { Routine } from '../../domain/routine.entity';
 export class RoutinePresenter {
   toResponse(routine: Routine) {
     return {
-      id: routine.id,
+      id: routine.id.value,
       userId: routine.userId,
       title: routine.title,
       comboXp: routine.comboXp,

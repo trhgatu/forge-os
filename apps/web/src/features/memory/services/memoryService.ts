@@ -11,10 +11,10 @@ const mapDtoToMemory = (dto: MemoryDto): Memory => ({
   mood: dto.mood,
   tags: dto.tags,
   date: new Date(dto.createdAt),
-  type: 'moment',
+  type: (dto.type as any) || 'moment',
   reflectionDepth: 0,
-  analysis: undefined, // Analysis is not part of DTO yet
-  imageUrl: undefined, // Image URL is not part of DTO yet
+  analysis: undefined,
+  imageUrl: dto.imageUrl,
 });
 
 export const getMemories = async (
@@ -42,17 +42,24 @@ export const updateMemory = async (
   payload: Partial<CreateMemoryPayload>,
   language: string,
 ): Promise<Memory> => {
-  // Backend expects i18n structure for updates too, similar to create
   const formattedPayload = {
     ...payload,
-    // If title is being updated, wrap it in i18n object
     ...(payload.title !== undefined && { title: { [language]: payload.title } }),
-    // If content is being updated
     ...(payload.content !== undefined && { content: { [language]: payload.content } }),
   };
 
   const res = await apiClient.put<BackendResponse<MemoryDto>>(`/memories/${id}`, formattedPayload);
   return mapDtoToMemory(res.data.data);
+};
+
+export const uploadMemoryImage = async (file: File): Promise<string> => {
+  const formData = new FormData();
+  formData.append('file', file);
+  const res = await apiClient.post<{ data: { url: string } } | { url: string }>('/memories/upload', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  const data = res.data as any;
+  return data.data?.url || data.url;
 };
 
 

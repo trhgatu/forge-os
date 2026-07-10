@@ -5,25 +5,26 @@ import { apiClient } from '@/services/apiClient';
 import type { Quest, Habit, Routine } from '../types';
 
 export const gamificationApi = {
-  // Quests API
   async getDailyQuests(): Promise<Quest[]> {
     const res = await apiClient.get<BackendResponse<Quest[]>>('/quests/daily');
     return res.data.data;
   },
 
-  // Goals API
   async getUserGoals(): Promise<any[]> {
     const res = await apiClient.get<BackendResponse<any[]>>('/quests/goals');
     return res.data.data;
   },
 
-  // Stats API
   async getUserStats(): Promise<any> {
     const res = await apiClient.get<BackendResponse<any>>('/gamification/stats');
     return res.data.data;
   },
 
-  // Habits API
+  async getAutomatableActions(): Promise<{ type: string; label: string; sublabel: string; module: string }[]> {
+    const res = await apiClient.get<BackendResponse<{ type: string; label: string; sublabel: string; module: string }[]>>('/gamification/actions');
+    return res.data.data;
+  },
+
   async getHabits(): Promise<Habit[]> {
     const res = await apiClient.get<BackendResponse<Habit[]>>('/habits');
     return res.data.data;
@@ -35,6 +36,7 @@ export const gamificationApi = {
     xpReward?: number;
     difficulty?: string;
     frequency?: any;
+    actionType?: string;
   }): Promise<Habit> {
     const res = await apiClient.post<BackendResponse<Habit>>('/habits', dto);
     return res.data.data;
@@ -49,6 +51,7 @@ export const gamificationApi = {
     description?: string;
     difficulty?: string;
     xpReward?: number;
+    actionType?: string;
   }): Promise<Habit> {
     const res = await apiClient.patch<BackendResponse<Habit>>(`/habits/${id}`, dto);
     return res.data.data;
@@ -58,7 +61,6 @@ export const gamificationApi = {
     await apiClient.delete(`/habits/${id}`);
   },
 
-  // Routines API
   async getRoutines(): Promise<Routine[]> {
     const res = await apiClient.get<BackendResponse<Routine[]>>('/routines');
     return res.data.data;

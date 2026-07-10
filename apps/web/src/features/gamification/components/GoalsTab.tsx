@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
 import { Award, Star, Sparkles, CheckCircle2, Target, HelpCircle } from 'lucide-react';
+import React from 'react';
+
 import { cn } from '@/shared/lib/utils';
 
 interface GoalObjectiveDto {

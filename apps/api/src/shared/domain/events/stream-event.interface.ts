@@ -3,4 +3,5 @@ export interface StreamEventPayload<T = unknown> {
   userId: string | { value: string };
   payload: T;
   timestamp?: number;
+  correlationId?: string;
 }

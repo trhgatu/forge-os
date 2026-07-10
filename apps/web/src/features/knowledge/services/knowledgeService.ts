@@ -313,6 +313,7 @@ export async function getRandomConcepts(
 }
 
 import { apiClient } from '@/services/apiClient';
+
 import type { BackendResponse } from '@forge/core';
 
 export async function saveConceptToDb(data: {
@@ -389,6 +390,33 @@ export async function deleteConceptFromDb(id: string): Promise<void> {
 export async function scrapeUrl(url: string): Promise<{ title: string; content: string; summary: string }> {
   const res = await apiClient.post<BackendResponse<{ title: string; content: string; summary: string }>>('/knowledge/scrape', { url });
   return res.data.data;
+}
+
+export async function updateConceptInDb(
+  id: string,
+  data: {
+    title?: string;
+    content?: string;
+    summary?: string;
+  },
+): Promise<KnowledgeConcept> {
+  const res = await apiClient.patch<BackendResponse<any>>(`/knowledge/${id}`, data);
+  const dbConcept = res.data.data;
+  return {
+    id: dbConcept.id,
+    title: dbConcept.title,
+    content: dbConcept.content,
+    summary: dbConcept.summary,
+    url: dbConcept.sourceUrl,
+    language: 'en',
+    createdAt: dbConcept.createdAt,
+    insights: dbConcept.insights,
+    reflection: dbConcept.reflection,
+    metadata: {
+      categories: [],
+      keywords: [],
+    },
+  };
 }
 
 

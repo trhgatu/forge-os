@@ -12,5 +12,9 @@ export * from './Link';
 export * from './Modal';
 export * from './Pagination';
 export * from './Calendar';
+export * from './TimeInput';
+export * from './ActiveDaysSelector';
+export * from './FloatingDock';
+
 
 

@@ -10,6 +10,8 @@ export interface MemoryDto {
   isDeleted: boolean;
   createdAt: string;
   updatedAt: string;
+  imageUrl?: string;
+  type?: string;
 }
 
 

@@ -5,8 +5,12 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { OnModuleInit } from '@nestjs/common';
+import { EventBus } from '@nestjs/cqrs';
 import { AuthService } from '../../iam/auth/application/services/auth.service';
 import { LoggerService } from '@shared/logging/logger.service';
+import { NotificationEvent } from '@shared/interfaces';
+import { contextStorage } from '@shared/utils/context.storage';
 
 @WebSocketGateway({
   cors: {
@@ -14,11 +18,48 @@ import { LoggerService } from '@shared/logging/logger.service';
   },
   namespace: 'gamification',
 })
-export class GamificationGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class GamificationGateway implements OnGatewayConnection, OnGatewayDisconnect, OnModuleInit {
   constructor(
     private readonly authService: AuthService,
     private readonly logger: LoggerService,
+    private readonly eventBus: EventBus,
   ) {}
+
+  onModuleInit() {
+    this.eventBus.subject$.subscribe({
+      next: (event: any) => {
+        if (this.isNotificationEvent(event)) {
+          const userId = event.getUserId();
+          const payload = event.getNotificationPayload();
+          const store = contextStorage.getStore();
+          const correlationId = store?.correlationId;
+          this.logger.log(
+            `[Realtime-Broadcaster] Emitted notification ${payload.type} to user ${userId} with correlationId ${correlationId}`,
+            'GamificationGateway',
+          );
+          this.server.to(`user:${userId}`).emit('system_notification', {
+            ...payload,
+            correlationId,
+          });
+        }
+      },
+      error: (err) => {
+        this.logger.error(
+          'Error in GamificationGateway EventBus subscription',
+          err,
+          'GamificationGateway',
+        );
+      },
+    });
+  }
+
+  private isNotificationEvent(event: any): event is NotificationEvent {
+    return (
+      event &&
+      typeof event.getUserId === 'function' &&
+      typeof event.getNotificationPayload === 'function'
+    );
+  }
 
   @WebSocketServer()
   server!: Server;
@@ -70,6 +111,12 @@ export class GamificationGateway implements OnGatewayConnection, OnGatewayDiscon
   }
 
   emitXpAwarded(userId: string, data: { xp: number; newLevel: number; reason: string }) {
-    this.server.to(`user:${String(userId)}`).emit('xp_awarded', { userId, ...data });
+    const store = contextStorage.getStore();
+    const correlationId = store?.correlationId;
+    this.server.to(`user:${String(userId)}`).emit('xp_awarded', {
+      userId,
+      ...data,
+      correlationId,
+    });
   }
 }

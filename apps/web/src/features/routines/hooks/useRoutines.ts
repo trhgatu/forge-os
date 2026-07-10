@@ -129,6 +129,8 @@ export const useCompleteRoutine = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['routines'] });
       queryClient.invalidateQueries({ queryKey: ['stats'] });
+      queryClient.invalidateQueries({ queryKey: ['userStats'] });
+      queryClient.invalidateQueries({ queryKey: ['vitality-stats'] });
     },
     onError: (error) => {
       console.error(error);

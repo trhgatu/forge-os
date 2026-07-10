@@ -7,9 +7,11 @@ import React, { useState } from 'react';
 import { cn } from '@/shared/lib/utils';
 import type { KnowledgeConcept } from '@/shared/types';
 
-import { AnvilTab } from './detail/tabs/AnvilTab';
-import { NexusTab } from './detail/tabs/NexusTab';
-import { SourceTab } from './detail/tabs/SourceTab';
+import { useConcepts, useSaveConcept, useDeleteConcept } from '../hooks/useKnowledge';
+
+import { AnvilTab } from './AnvilTab';
+import { NexusTab } from './NexusTab';
+import { SourceTab } from './SourceTab';
 
 interface KnowledgeDetailProps {
   concept: KnowledgeConcept;
@@ -18,7 +20,6 @@ interface KnowledgeDetailProps {
 
 type Tab = 'source' | 'anvil' | 'nexus';
 
-import { useConcepts, useSaveConcept, useDeleteConcept } from '../hooks/useKnowledge';
 
 export const KnowledgeDetail: React.FC<KnowledgeDetailProps> = ({ concept, onClose }) => {
   const router = useRouter();
@@ -43,6 +44,7 @@ export const KnowledgeDetail: React.FC<KnowledgeDetailProps> = ({ concept, onClo
   const handleToggleSave = async () => {
     if (isSaved && dbConcept) {
       await deleteConceptMutation.mutateAsync(dbConcept.id);
+      onClose();
     } else {
       let sourceEnum: 'WIKIPEDIA' | 'WEB_ARTICLE' | 'CODEX_BOOK' | 'PERSONAL_NOTE' = 'WIKIPEDIA';
       if (concept.id && concept.id.startsWith('custom-')) {

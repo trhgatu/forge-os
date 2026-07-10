@@ -2,8 +2,8 @@
 
 import { Activity, Sparkles } from 'lucide-react';
 
-import type { MoodAnalysis } from '@/shared/types/mood';
 import { Skeleton, Label, EmptyState, Tag } from '@/shared/components/ui';
+import type { MoodAnalysis } from '@/shared/types/mood';
 
 interface InsightPanelProps {
   analysis: MoodAnalysis | null;

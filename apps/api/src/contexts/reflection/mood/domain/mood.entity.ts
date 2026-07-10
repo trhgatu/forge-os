@@ -1,4 +1,6 @@
 import { MoodId } from './value-objects/mood-id.vo';
+import { AggregateRoot } from '../../../../shared/domain/aggregate-root.base';
+import { MoodLoggedEvent } from '../application/events/mood-logged.event';
 
 export type MoodProps = {
   mood: string;
@@ -13,40 +15,42 @@ export type MoodProps = {
   updatedAt?: Date;
 };
 
-export class Mood {
+export class Mood extends AggregateRoot<MoodId> {
   private constructor(
+    id: MoodId,
     private props: MoodProps,
-    private readonly _id: MoodId,
-  ) {}
-
-  public get id(): MoodId {
-    return this._id;
-  }
-  public get userId(): string | undefined {
-    return this.props.userId;
+  ) {
+    super(id);
   }
 
   static create(props: Partial<MoodProps>, id: MoodId): Mood {
     const now = new Date();
-    return new Mood(
-      {
-        mood: props.mood ?? '',
-        note: props.note,
-        intensity: props.intensity,
-        tags: props.tags ?? [],
-        loggedAt: props.loggedAt ?? now,
-        isDeleted: props.isDeleted ?? false,
-        deletedAt: props.deletedAt,
-        userId: props.userId,
-        createdAt: props.createdAt ?? now,
-        updatedAt: props.updatedAt ?? now,
-      },
-      id,
-    );
+    const mood = new Mood(id, {
+      mood: props.mood ?? '',
+      note: props.note,
+      intensity: props.intensity,
+      tags: props.tags ?? [],
+      loggedAt: props.loggedAt ?? now,
+      isDeleted: props.isDeleted ?? false,
+      deletedAt: props.deletedAt,
+      userId: props.userId,
+      createdAt: props.createdAt ?? now,
+      updatedAt: props.updatedAt ?? now,
+    });
+
+    if (props.userId) {
+      mood.addDomainEvent(new MoodLoggedEvent(id, props.userId, props.mood ?? ''));
+    }
+    return mood;
   }
 
   static createFromPersistence(props: MoodProps, id: string): Mood {
-    return new Mood(props, MoodId.create(id));
+    return new Mood(MoodId.create(id), props);
+  }
+
+  // Getters
+  public get userId(): string | undefined {
+    return this.props.userId;
   }
 
   update(data: Partial<MoodProps>) {
@@ -75,7 +79,7 @@ export class Mood {
 
   toPrimitives() {
     return {
-      id: this._id.toString(),
+      id: this.id.toString(),
       ...this.props,
     };
   }

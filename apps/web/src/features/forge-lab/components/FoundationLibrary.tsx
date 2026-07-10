@@ -1,8 +1,8 @@
 import { Book, Search, ArrowRight, Bookmark, Plus, Users } from 'lucide-react';
 import React from 'react';
 
-import { GlassCard } from '@/shared/components/ui/GlassCard';
 import { Button, Input, Label, Tag } from '@/shared/components/ui';
+import { GlassCard } from '@/shared/components/ui/GlassCard';
 import { cn } from '@/shared/lib/utils';
 
 import type { Foundation } from '../types';

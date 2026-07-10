@@ -4,10 +4,10 @@ import { Plus, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-import { useAuthStore } from '@/shared/store/authStore';
-import type { MoodAnalysis, MoodEntry } from '@/shared/types/mood';
 import { Label, Button, Link, Skeleton } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
+import { useAuthStore } from '@/shared/store/authStore';
+import type { MoodAnalysis, MoodEntry } from '@/shared/types/mood';
 
 import { useMoods, useCreateMood, useUpdateMood, useDeleteMood } from '../hooks/useMood';
 import type { CreateMoodDto } from '../services/moodService';
@@ -18,8 +18,7 @@ import { MoodHistoryList } from './MoodHistoryList';
 import { MoodModal } from './MoodModal';
 
 export function Mood() {
-  // Real Data Hook
-  const { data: moodData, isLoading } = useMoods({ limit: 100 }); // Fetch last 100 for charts
+  const { data: moodData, isLoading } = useMoods({ limit: 100 });
   const history = moodData?.data || [];
 
   const createMood = useCreateMood();
@@ -40,15 +39,15 @@ export function Mood() {
         <div className="relative flex flex-col items-center gap-4 w-full max-w-[1600px] mx-auto">
           {/* Header Skeleton */}
           <Skeleton variant="glowing" className="w-full h-[100px] rounded-xl" />
-          
+
           {/* Content Layout Skeleton */}
           <div className="grid grid-cols-1 xl:grid-cols-4 gap-6 w-full mt-4">
             <Skeleton variant="glowing" className="h-[280px] rounded-xl col-span-1 xl:col-span-3" />
             <Skeleton variant="glowing" className="h-[280px] rounded-xl col-span-1" />
           </div>
-          
+
           <Skeleton variant="default" className="w-full h-[150px] rounded-xl mt-4" />
-          
+
           {/* Status message */}
           <span className="text-xs uppercase tracking-[0.25em] text-forge-cyan/60 animate-pulse mt-6 font-mono">
             Calibrating Emotional Resonance Telemetry...
@@ -180,8 +179,6 @@ export function Mood() {
                 <Sparkles size={16} className={cn(isAnalyzing ? 'animate-spin mr-2' : 'text-forge-accent mr-2', 'inline')} />
                 Analyze Cycles
               </Button>
-
-              {/* Only show Log Mood if authenticated */}
               {isAuthenticated ? (
                 <Button
                   onClick={() => {

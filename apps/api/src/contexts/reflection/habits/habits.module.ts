@@ -9,6 +9,8 @@ import { PrismaHabitsRepository } from './infrastructure/prisma-habits.repositor
 import { CommandHandlers } from './application/commands';
 import { QueryHandlers } from './application/queries';
 import { HabitPresenter } from './presentation/presenters/habit.presenter';
+import { HabitsAutomationDispatcher } from './application/events/habits-automation.dispatcher';
+import { HabitCompletedHandler } from './application/events/habit-completed.handler';
 
 @Module({
   imports: [CqrsModule, PrismaModule, SharedModule, AuthModule],
@@ -23,6 +25,8 @@ import { HabitPresenter } from './presentation/presenters/habit.presenter';
       useClass: PrismaHabitsRepository,
     },
     HabitPresenter,
+    HabitsAutomationDispatcher,
+    HabitCompletedHandler,
     ...CommandHandlers,
     ...QueryHandlers,
   ],

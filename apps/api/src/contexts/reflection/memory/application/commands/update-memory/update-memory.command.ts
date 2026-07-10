@@ -8,6 +8,8 @@ export interface UpdateMemoryPayload {
   tags?: string[];
   status?: MemoryStatus;
   userId?: string;
+  imageUrl?: string;
+  type?: string;
 }
 
 export class UpdateMemoryCommand {

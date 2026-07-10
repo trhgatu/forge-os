@@ -1,5 +1,24 @@
 'use client';
 
+import type {
+  DragEndEvent} from '@dnd-kit/core';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { motion } from 'framer-motion';
 import {
   Plus,
   Zap,
@@ -18,34 +37,16 @@ import Link from 'next/link';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 
-import { motion } from 'framer-motion';
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 
 import { useLanguage, useSound } from '@/contexts';
 import { useHabits, useCompleteHabit } from '@/features/habits/hooks/useHabits';
 import { Button, Label, EmptyState, Skeleton, Input, Pagination, Calendar } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 
-import { useRoutines, useDeleteRoutine, useReorderRoutineHabits, useCompleteRoutine } from '../hooks/useRoutines';
+import { useRoutines, useDeleteRoutine, useReorderRoutineHabits } from '../hooks/useRoutines';
 
-import { RoutineModal } from './RoutineModal';
 import { AddStepModal } from './AddStepModal';
+import { RoutineModal } from './RoutineModal';
 
 export const Routines: React.FC = () => {
   const { playSound } = useSound();
@@ -54,7 +55,6 @@ export const Routines: React.FC = () => {
   const completeHabitMutation = useCompleteHabit();
   const deleteRoutineMutation = useDeleteRoutine();
   const reorderHabitsMutation = useReorderRoutineHabits();
-  const completeRoutineMutation = useCompleteRoutine();
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -217,21 +217,6 @@ export const Routines: React.FC = () => {
 
     try {
       await completeHabitMutation.mutateAsync(habitId);
-
-      // Check if this was the last remaining step of the routine
-      const newlyCompletedCount = steps.filter((step) => {
-        const stepKey = `${routineId}_${step.habitId}`;
-        return completedHabitIds.has(step.habitId) || !!completedSteps[stepKey] || step.habitId === habitId;
-      }).length;
-
-      if (newlyCompletedCount === steps.length) {
-        // Combo success!
-        playSound('success');
-        toast.success(`Ritual Combo Completed!`, {
-          icon: <Sparkles className="text-yellow-400" />,
-        });
-        await completeRoutineMutation.mutateAsync(routineId);
-      }
     } catch (err) {
       console.error(err);
       // Rollback checkbox
@@ -447,17 +432,17 @@ export const Routines: React.FC = () => {
                                 <div className="flex flex-wrap gap-1.5 items-center text-[10px] text-gray-500 font-mono">
                                   {routine.targetTime && (
                                     <span className="bg-white/5 px-2 py-0.5 rounded border border-white/5 text-forge-cyan">
-                                      ⏰ {routine.targetTime}
+                                      {routine.targetTime}
                                     </span>
                                   )}
                                   {routine.frequency?.days && routine.frequency.days.length < 7 && (
                                     <span className="bg-white/5 px-2 py-0.5 rounded border border-white/5">
-                                      📅 {routine.frequency.days.map((d: number) => ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][d - 1]).join(', ')}
+                                      {routine.frequency.days.map((d: number) => ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][d - 1]).join(', ')}
                                     </span>
                                   )}
                                   {routine.frequency?.days && routine.frequency.days.length === 7 && (
                                     <span className="bg-white/5 px-2 py-0.5 rounded border border-white/5">
-                                      📅 Everyday
+                                      Everyday
                                     </span>
                                   )}
                                 </div>
@@ -665,8 +650,8 @@ const SortableStepItem: React.FC<SortableStepItemProps> = ({
         isChecked
           ? 'bg-forge-cyan/5 border-forge-cyan/10 text-forge-cyan opacity-60'
           : isDragging
-          ? 'bg-white/10 border-white/20 shadow-[0_5px_15px_rgba(0,0,0,0.3)] scale-[1.02]'
-          : 'bg-white/[0.01] hover:bg-white/5'
+            ? 'bg-white/10 border-white/20 shadow-[0_5px_15px_rgba(0,0,0,0.3)] scale-[1.02]'
+            : 'bg-white/[0.01] hover:bg-white/5'
       )}
     >
       <div className="flex items-center gap-3 w-full">
@@ -688,8 +673,8 @@ const SortableStepItem: React.FC<SortableStepItemProps> = ({
             isChecked
               ? 'bg-forge-cyan border-forge-cyan shadow-[0_0_10px_rgba(34,211,238,0.3)]'
               : disabled
-              ? 'border-gray-800 cursor-not-allowed'
-              : 'border-gray-700 hover:border-forge-cyan/50 cursor-pointer'
+                ? 'border-gray-800 cursor-not-allowed'
+                : 'border-gray-700 hover:border-forge-cyan/50 cursor-pointer'
           )}
         >
           {isChecked && <Check size={11} className="text-slate-950 font-bold" />}
@@ -701,8 +686,8 @@ const SortableStepItem: React.FC<SortableStepItemProps> = ({
             isChecked
               ? 'line-through opacity-70 cursor-default'
               : disabled
-              ? 'text-gray-500 cursor-not-allowed'
-              : 'text-gray-300 hover:text-white cursor-pointer'
+                ? 'text-gray-500 cursor-not-allowed'
+                : 'text-gray-300 hover:text-white cursor-pointer'
           )}
         >
           {step.title}

@@ -2,9 +2,9 @@
 
 import Image from 'next/image';
 
+import { Tag } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 import type { Memory } from '@/shared/types/memory';
-import { Tag } from '@/shared/components/ui';
 
 import { SEASON_CONFIG, getSeasonFromMood } from '../config';
 

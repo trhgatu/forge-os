@@ -6,9 +6,9 @@ import { useState, useRef } from 'react';
 import { toast } from 'sonner';
 
 import { SeasonalAmbience } from '@/shared/components/effects';
+import { Tag, Label, EmptyState, Button } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 import type { Memory } from '@/shared/types/memory';
-import { Tag, Label, EmptyState, Button } from '@/shared/components/ui';
 
 import { SEASON_CONFIG, getSeasonFromMood } from '../config';
 import { useDeleteMemory, useUpdateMemory } from '../hooks/useMemories';
@@ -25,8 +25,6 @@ interface MemoryDetailPanelProps {
 export function MemoryDetailPanel({
   memory,
   onClose,
-  onAnalyze,
-  isAnalyzing,
 }: MemoryDetailPanelProps) {
   const [isEditing, setIsEditing] = useState(false);
   const deleteMemory = useDeleteMemory();
@@ -224,21 +222,6 @@ export function MemoryDetailPanel({
                   <Sparkles size={14} className="text-forge-cyan" />
                   Neural Reflection
                 </Label>
-
-                {!memory.analysis && (
-                  <Button
-                    onClick={() => onAnalyze(memory.id)}
-                    disabled={isAnalyzing}
-                    className="border-forge-cyan/20 text-forge-cyan hover:border-forge-cyan/40 px-3 py-1.5 text-xs shadow-[0_0_15px_rgba(34,211,238,0.1)]"
-                  >
-                    {isAnalyzing ? (
-                      <Sparkles size={12} className="animate-spin" />
-                    ) : (
-                      <Mic size={12} />
-                    )}
-                    {isAnalyzing ? 'Analyzing...' : 'Analyze Node'}
-                  </Button>
-                )}
               </div>
 
               {memory.analysis ? (

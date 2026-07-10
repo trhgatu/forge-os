@@ -12,6 +12,14 @@ export const useHabits = () => {
   });
 };
 
+export const useAutomatableActions = () => {
+  return useQuery({
+    queryKey: ['automatable-actions'],
+    queryFn: () => gamificationApi.getAutomatableActions(),
+    staleTime: 5 * 60 * 1000, // cache for 5 minutes
+  });
+};
+
 export const useCreateHabit = () => {
   const queryClient = useQueryClient();
 
@@ -22,6 +30,7 @@ export const useCreateHabit = () => {
       difficulty: string;
       xpReward: number;
       frequency?: any;
+      actionType?: string;
     }) => gamificationApi.createHabit(data),
     onSuccess: () => {
       toast.success('Habit ritual established successfully');
@@ -46,6 +55,7 @@ export const useCompleteHabit = () => {
       queryClient.invalidateQueries({ queryKey: ['userStats'] });
       // Invalidate active quests so they update in real-time on completing a habit
       queryClient.invalidateQueries({ queryKey: ['activeQuests'] });
+      queryClient.invalidateQueries({ queryKey: ['vitality-stats'] });
       // Dispatches a global custom event in case XPBar or sidebar components need to know to refresh locally
       window.dispatchEvent(new CustomEvent('xp-gained'));
     },
@@ -65,7 +75,7 @@ export const useUpdateHabit = () => {
       data,
     }: {
       id: string;
-      data: { title: string; description?: string; difficulty?: string; xpReward?: number };
+      data: { title: string; description?: string; difficulty?: string; xpReward?: number; actionType?: string };
     }) => gamificationApi.updateHabit(id, data),
     onSuccess: () => {
       toast.success('Habit ritual updated successfully');

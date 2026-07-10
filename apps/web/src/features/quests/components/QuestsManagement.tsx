@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { useSound, useNovaView } from '@/contexts';
 import { gamificationApi } from '@/features/gamification/services/gamificationApi';
 import type { Habit } from '@/features/gamification/types';
+import { useRoutines } from '@/features/routines/hooks/useRoutines';
 import { Button, Label, EmptyState, Skeleton, Pagination } from '@/shared/components/ui';
 import { View } from '@/shared/types/os';
 
@@ -18,6 +19,7 @@ import {
 } from '../hooks/useQuests';
 import type { Quest } from '../types';
 
+
 import { QuestCard } from './QuestCard';
 import { QuestModal } from './QuestModal';
 import { QuestSidebar } from './QuestSidebar';
@@ -26,6 +28,7 @@ type CategoryType = 'all' | 'daily' | 'weekly' | 'main' | 'side';
 
 export function QuestsManagement() {
   const { data: quests = [], isLoading } = useQuests();
+  const { data: routines = [] } = useRoutines();
   const { setCurrentView } = useNovaView();
 
   useEffect(() => {
@@ -233,6 +236,7 @@ export function QuestsManagement() {
         onSubmit={handleModalSubmit}
         quest={editingQuest}
         habits={habits}
+        routines={routines}
         isPending={createQuestMutation.isPending || updateQuestMutation.isPending}
       />
     </div>

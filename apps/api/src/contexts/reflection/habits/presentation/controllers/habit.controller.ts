@@ -39,6 +39,7 @@ export class HabitController {
         dto.xpReward,
         dto.difficulty,
         dto.frequency,
+        dto.actionType,
       ),
     );
     const resp = this.presenter.toResponse(habit);
@@ -76,7 +77,7 @@ export class HabitController {
       const resp = this.presenter.toResponse(habit);
       return {
         ...resp,
-        isCompletedToday: completedHabitIds.has(habit.id),
+        isCompletedToday: completedHabitIds.has(habit.id.value),
       };
     });
   }
@@ -91,7 +92,15 @@ export class HabitController {
   @ApiOperation({ summary: 'Update an existing habit' })
   async update(@Param('id') id: string, @Body() dto: UpdateHabitDto, @User('id') userId: string) {
     const habit = await this.commandBus.execute<UpdateHabitCommand, Habit>(
-      new UpdateHabitCommand(userId, id, dto.title, dto.description, dto.difficulty, dto.xpReward),
+      new UpdateHabitCommand(
+        userId,
+        id,
+        dto.title,
+        dto.description,
+        dto.difficulty,
+        dto.xpReward,
+        dto.actionType,
+      ),
     );
     return this.presenter.toResponse(habit);
   }

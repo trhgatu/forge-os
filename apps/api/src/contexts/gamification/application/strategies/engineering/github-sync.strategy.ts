@@ -1,12 +1,21 @@
-// apps/api/src/contexts/gamification/application/strategies/github-sync.strategy.ts
+import { Injectable } from '@nestjs/common';
 import { IXpStrategy, XpStrategy, IXpRateLimitConfig } from '../xp-strategy.decorator';
 import { GithubSyncPayload } from '../contracts/xp-payloads';
+import { ConfigService } from '../../../../system/config/application/services/config.service';
 
+@Injectable()
 @XpStrategy('engineering.project.synced')
 export class GithubSyncXpStrategy implements IXpStrategy<GithubSyncPayload> {
+  constructor(private readonly configService: ConfigService) {}
+
+  private getRule() {
+    const rules = this.configService.get<Record<string, any>>('gamification_xp_rules', {});
+    return rules['engineering.project.synced'] || { xp: 0, cooldownMinutes: 30, dailyCap: 10 };
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   calculate(payload: GithubSyncPayload) {
-    return 0; // Disabled direct XP to prevent inflation; Git Sync is now a Quest.
+    return this.getRule().xp;
   }
 
   getDescription(payload: GithubSyncPayload) {
@@ -16,9 +25,10 @@ export class GithubSyncXpStrategy implements IXpStrategy<GithubSyncPayload> {
   }
 
   getRateLimitConfig(): IXpRateLimitConfig {
+    const rule = this.getRule();
     return {
-      cooldownMinutes: 30, // 30 minutes cooldown to prevent spamming syncs
-      dailyCap: 10,
+      cooldownMinutes: rule.cooldownMinutes,
+      dailyCap: rule.dailyCap,
     };
   }
 }

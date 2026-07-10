@@ -67,6 +67,18 @@ export const wealthService = {
     await apiClient.delete(`/wealth/accounts/${id}`);
   },
 
+  updateAccount: async (
+    id: string,
+    data: {
+      name?: string;
+      type?: 'CASH' | 'BANK_ACCOUNT' | 'INVESTMENT' | 'EMERGENCY_FUND';
+      balance?: number;
+    },
+  ): Promise<FinancialAccountDto> => {
+    const res = await apiClient.patch<BackendResponse<FinancialAccountDto>>(`/wealth/accounts/${id}`, data);
+    return res.data.data;
+  },
+
   // Transactions
   getTransactions: async (filters?: {
     accountId?: string;
@@ -126,4 +138,85 @@ export const wealthService = {
   deleteBudget: async (id: string): Promise<void> => {
     await apiClient.delete(`/wealth/budgets/${id}`);
   },
+
+  // Recurring Transactions
+  getRecurringTransactions: async (): Promise<RecurringTransactionDto[]> => {
+    const res = await apiClient.get<BackendResponse<RecurringTransactionDto[]>>('/wealth/recurring');
+    return res.data.data;
+  },
+
+  createRecurringTransaction: async (data: {
+    accountId: string;
+    type: 'INCOME' | 'EXPENSE';
+    amount: number;
+    category: string;
+    categoryType: 'ESSENTIAL' | 'COMFORT' | 'INDULGENCE';
+    description?: string;
+    dayOfMonth: number;
+  }): Promise<RecurringTransactionDto> => {
+    const res = await apiClient.post<BackendResponse<RecurringTransactionDto>>('/wealth/recurring', data);
+    return res.data.data;
+  },
+
+  deleteRecurringTransaction: async (id: string): Promise<void> => {
+    await apiClient.delete(`/wealth/recurring/${id}`);
+  },
+
+  updateRecurringTransaction: async (
+    id: string,
+    data: {
+      accountId?: string;
+      type?: 'INCOME' | 'EXPENSE';
+      amount?: number;
+      category?: string;
+      categoryType?: 'ESSENTIAL' | 'COMFORT' | 'INDULGENCE';
+      description?: string;
+      dayOfMonth?: number;
+      isActive?: boolean;
+    },
+  ): Promise<RecurringTransactionDto> => {
+    const res = await apiClient.patch<BackendResponse<RecurringTransactionDto>>(`/wealth/recurring/${id}`, data);
+    return res.data.data;
+  },
+
+  // Auto-Allocation Rules
+  getAllocationRules: async (): Promise<AutoAllocationRuleDto[]> => {
+    const res = await apiClient.get<BackendResponse<AutoAllocationRuleDto[]>>('/wealth/allocation-rules');
+    return res.data.data;
+  },
+
+  updateAllocationRules: async (data: {
+    sourceAccountId: string;
+    rules: { targetAccountId: string; percentage: number }[];
+  }): Promise<AutoAllocationRuleDto[]> => {
+    const res = await apiClient.put<BackendResponse<AutoAllocationRuleDto[]>>('/wealth/allocation-rules', data);
+    return res.data.data;
+  },
 };
+
+export interface RecurringTransactionDto {
+  id: string;
+  accountId: string;
+  type: 'INCOME' | 'EXPENSE';
+  amount: number;
+  category: string;
+  categoryType: 'ESSENTIAL' | 'COMFORT' | 'INDULGENCE';
+  description?: string;
+  dayOfMonth: number;
+  isActive: boolean;
+  createdAt: string;
+  account?: {
+    name: string;
+    type: string;
+  };
+}
+
+export interface AutoAllocationRuleDto {
+  id: string;
+  sourceAccountId: string;
+  targetAccountId: string;
+  percentage: number;
+  isActive: boolean;
+  createdAt: string;
+}
+

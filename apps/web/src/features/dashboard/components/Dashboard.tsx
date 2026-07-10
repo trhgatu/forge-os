@@ -19,8 +19,9 @@ import { AGENTS } from '@/features/chamber/components/AgentDock';
 import { WidgetShell, Label, Tag, Skeleton } from '@/shared/components/ui';
 import { cn } from '@/shared/lib/utils';
 
-import { QuoteOfTheDayWidget } from './QuoteOfTheDayWidget';
 import { DisciplineResonanceWidget } from './DisciplineResonanceWidget';
+import { QuoteOfTheDayWidget } from './QuoteOfTheDayWidget';
+import { BioReactorWidget } from '@/features/vitality';
 
 const MOOD_DATA = [
   { day: 'Mon', value: 6, mood: 'Neutral' },
@@ -330,6 +331,9 @@ export const Dashboard: React.FC = () => {
             )}
           </WidgetShell>
 
+
+          {/* VITALITY BIO-REACTOR */}
+          <BioReactorWidget />
 
           {/* DISCIPLINE HEATMAP */}
           <DisciplineResonanceWidget />

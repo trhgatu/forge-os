@@ -1,15 +1,14 @@
-import { Journal as PrismaJournal } from '@prisma/client';
 import { Journal } from '../../domain/journal.entity';
 import { JournalSource } from '../../domain/enums';
 
 export class JournalMapper {
-  static toDomain(doc: PrismaJournal): Journal | null {
+  static toDomain(doc: any): Journal | null {
     if (!doc) return null;
 
     return Journal.createFromPersistence(
       {
         title: doc.title || '',
-        content: doc.content,
+        content: (doc as any).content || '',
         mood: doc.mood as any,
         tags: (doc.tags as string[]) || [],
         type: doc.type as any,
@@ -18,6 +17,8 @@ export class JournalMapper {
         relations: (doc.relations as any) || [],
         analysis: doc.analysis || null,
         userId: doc.userId || '',
+        createdBy: doc.createdBy || undefined,
+        updatedBy: doc.updatedBy || undefined,
         createdAt: doc.createdAt,
         updatedAt: doc.updatedAt,
       },
@@ -41,6 +42,8 @@ export class JournalMapper {
       relations: props.relations,
       analysis: props.analysis,
       userId: props.userId.toString(),
+      createdBy: props.createdBy || null,
+      updatedBy: props.updatedBy || null,
       isDeleted: props.isDeleted,
       deletedAt: props.deletedAt,
     };

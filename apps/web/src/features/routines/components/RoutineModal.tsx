@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 
 import { useSound } from '@/contexts';
-import { Button, Label, Input, Modal } from '@/shared/components/ui';
+import { Button, Label, Input, Modal, TimeInput, ActiveDaysSelector } from '@/shared/components/ui';
+
 import { useCreateRoutine, useUpdateRoutine } from '../hooks/useRoutines';
 
 interface Routine {
@@ -20,16 +21,6 @@ interface RoutineModalProps {
   onClose: () => void;
   routine?: Routine | null;
 }
-
-const DAYS_OF_WEEK = [
-  { value: 1, label: 'Mon' },
-  { value: 2, label: 'Tue' },
-  { value: 3, label: 'Wed' },
-  { value: 4, label: 'Thu' },
-  { value: 5, label: 'Fri' },
-  { value: 6, label: 'Sat' },
-  { value: 7, label: 'Sun' },
-];
 
 export const RoutineModal: React.FC<RoutineModalProps> = ({ isOpen, onClose, routine }) => {
   const { playSound } = useSound();
@@ -58,11 +49,6 @@ export const RoutineModal: React.FC<RoutineModalProps> = ({ isOpen, onClose, rou
     }
   }, [routine, isOpen]);
 
-  const toggleDay = (day: number) => {
-    setSelectedDays((prev) =>
-      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day].sort()
-    );
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -133,7 +119,6 @@ export const RoutineModal: React.FC<RoutineModalProps> = ({ isOpen, onClose, rou
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="e.g. Morning Focus, Evening Wind-Down..."
-            className="bg-white/5 border-white/10 text-white rounded-xl placeholder-gray-600 focus:border-white/20"
           />
         </div>
 
@@ -141,11 +126,9 @@ export const RoutineModal: React.FC<RoutineModalProps> = ({ isOpen, onClose, rou
           <Label variant="dim" className="text-[10px] font-mono uppercase tracking-widest block">
             Target Time (Optional)
           </Label>
-          <Input
-            type="time"
+          <TimeInput
             value={targetTime}
-            onChange={(e) => setTargetTime(e.target.value)}
-            className="bg-white/5 border-white/10 text-white rounded-xl focus:border-white/20 w-44"
+            onChange={setTargetTime}
           />
         </div>
 
@@ -153,40 +136,24 @@ export const RoutineModal: React.FC<RoutineModalProps> = ({ isOpen, onClose, rou
           <Label variant="dim" className="text-[10px] font-mono uppercase tracking-widest block mb-1">
             Active Days
           </Label>
-          <div className="flex flex-wrap gap-2">
-            {DAYS_OF_WEEK.map((day) => {
-              const active = selectedDays.includes(day.value);
-              return (
-                <button
-                  type="button"
-                  key={day.value}
-                  onClick={() => toggleDay(day.value)}
-                  className={`px-3 py-1.5 rounded-xl border text-xs font-mono transition-all cursor-pointer ${
-                    active
-                      ? 'bg-forge-cyan/15 border-forge-cyan text-forge-cyan shadow-[0_0_10px_rgba(34,211,238,0.1)]'
-                      : 'bg-white/5 border-white/10 text-gray-400 hover:border-white/20'
-                  }`}
-                >
-                  {day.label}
-                </button>
-              );
-            })}
-          </div>
+          <ActiveDaysSelector
+            selectedDays={selectedDays}
+            onChange={setSelectedDays}
+          />
         </div>
 
         <div className="flex items-center justify-end gap-3 pt-2">
           <Button
             type="button"
-            variant="ghost"
+            variant="outline"
             onClick={onClose}
-            className="rounded-xl border border-white/5 text-gray-400 hover:text-white"
           >
             Cancel
           </Button>
           <Button
             type="submit"
+            variant="default"
             disabled={isEditMode ? updateRoutineMutation.isPending : createRoutineMutation.isPending}
-            className="rounded-xl bg-white text-black hover:bg-white/90 disabled:opacity-50"
           >
             {isEditMode
               ? (updateRoutineMutation.isPending ? 'Updating...' : 'Update Chain')
