@@ -1,4 +1,4 @@
-import { Module, OnModuleInit } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { PrismaModule } from '@shared/infrastructure/prisma/prisma.module';
 import { AuthModule } from '@root/contexts/iam/auth/auth.module';
@@ -16,6 +16,9 @@ import { WorkoutStrategy } from './application/commands/log-vitality-action/stra
 import { MaktubAlignStrategy } from './application/commands/log-vitality-action/strategies/maktub-align.strategy';
 import { DefaultStrategy } from './application/commands/log-vitality-action/strategies/default.strategy';
 import { VitalityStrategyRegistry } from './application/commands/log-vitality-action/strategies/vitality-strategy.registry';
+import { BiometricEffectEngine } from './application/listeners/biometric-effect.engine';
+import { ConsumeStaminaProcessor } from './application/listeners/processors/consume-stamina.processor';
+import { LogVitalityActionProcessor } from './application/listeners/processors/log-vitality-action.processor';
 
 @Module({
   imports: [CqrsModule, PrismaModule, AuthModule],
@@ -36,13 +39,15 @@ import { VitalityStrategyRegistry } from './application/commands/log-vitality-ac
     MaktubAlignStrategy,
     DefaultStrategy,
     VitalityStrategyRegistry,
+    BiometricEffectEngine,
+    ConsumeStaminaProcessor,
+    LogVitalityActionProcessor,
+    {
+      provide: 'BiometricProcessor',
+      useFactory: (p1: ConsumeStaminaProcessor, p2: LogVitalityActionProcessor) => [p1, p2],
+      inject: [ConsumeStaminaProcessor, LogVitalityActionProcessor],
+    },
   ],
   exports: [VitalityRepository],
 })
-export class VitalityModule implements OnModuleInit {
-  constructor(private readonly dispatcher: VitalityEventDispatcher) {}
-
-  onModuleInit() {
-    this.dispatcher.onModuleInit();
-  }
-}
+export class VitalityModule {}

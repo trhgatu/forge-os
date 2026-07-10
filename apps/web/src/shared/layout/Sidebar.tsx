@@ -48,6 +48,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import type { SoundType } from '@/contexts';
 import { useLanguage, useSound } from '@/contexts';
 import XPBar from '@/features/gamification/components/XPBar';
+import { StaminaBar } from '@/features/vitality';
 import { cn } from '@/shared/lib/utils';
 import { useAuthStore } from '@/shared/store';
 import { View } from '@/shared/types/os';
@@ -346,10 +347,11 @@ export const Sidebar: React.FC = () => {
       <div className="mt-auto border-t border-white/5 bg-black/20">
         <div
           className={cn(
-            'py-4 transition-all duration-300',
-            isExpanded ? 'px-6' : 'px-2 flex justify-center',
+            'py-4 space-y-3 transition-all duration-300',
+            isExpanded ? 'px-6' : 'px-2 flex flex-col items-center gap-3',
           )}
         >
+          <StaminaBar compact={!isExpanded} />
           <XPBar compact={!isExpanded} />
         </div>
 

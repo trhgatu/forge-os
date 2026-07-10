@@ -46,6 +46,7 @@ export const useUpdateTask = () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
       queryClient.invalidateQueries({ queryKey: ['userStats'] });
       queryClient.invalidateQueries({ queryKey: ['activeQuests'] });
+      queryClient.invalidateQueries({ queryKey: ['vitality-stats'] });
     },
     onError: (error) => {
       console.error(error);

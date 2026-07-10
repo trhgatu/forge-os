@@ -55,4 +55,19 @@ export class UserStats extends AggregateRoot {
     }
     this.lastActivityDate = now;
   }
+
+  addAttributes(props: {
+    discipline?: number;
+    consistency?: number;
+    willpower?: number;
+    awareness?: number;
+    presence?: number;
+  }): void {
+    if (props.discipline) this.discipline += props.discipline;
+    if (props.consistency) this.consistency += props.consistency;
+    if (props.willpower) this.willpower += props.willpower;
+    if (props.awareness) this.awareness += props.awareness;
+    if (props.presence) this.presence += props.presence;
+    this.lastActivityDate = new Date();
+  }
 }

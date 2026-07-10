@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IXpStrategy, XpStrategy, IXpRateLimitConfig } from '../xp-strategy.decorator';
+import { ConfigService } from '../../../../system/config/application/services/config.service';
 
 export interface MoodLoggedPayload {
   moodId: string;
@@ -9,8 +10,15 @@ export interface MoodLoggedPayload {
 @Injectable()
 @XpStrategy('reflection.mood.logged')
 export class MoodLoggedXpStrategy implements IXpStrategy<MoodLoggedPayload> {
+  constructor(private readonly configService: ConfigService) {}
+
+  private getRule() {
+    const rules = this.configService.get<Record<string, any>>('gamification_xp_rules', {});
+    return rules['reflection.mood.logged'] || { xp: 0, cooldownMinutes: 15, dailyCap: 2 };
+  }
+
   calculate() {
-    return 0; // Mood logging yields 0 raw level-up XP directly to prevent farming. XP is concentrated in Quests!
+    return this.getRule().xp;
   }
 
   getDescription(payload: MoodLoggedPayload) {
@@ -18,9 +26,10 @@ export class MoodLoggedXpStrategy implements IXpStrategy<MoodLoggedPayload> {
   }
 
   getRateLimitConfig(): IXpRateLimitConfig {
+    const rule = this.getRule();
     return {
-      cooldownMinutes: 15, // Cooldown to prevent spamming emotional state logs
-      dailyCap: 2, // Max 2 rewarded logs per day
+      cooldownMinutes: rule.cooldownMinutes,
+      dailyCap: rule.dailyCap,
     };
   }
 }

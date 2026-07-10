@@ -25,7 +25,7 @@ export class JournalCreatedEvent implements GamifiedEvent, NotificationEvent {
   getNotificationPayload() {
     return {
       type: 'JOURNAL_CREATED',
-      title: 'Reflection Sealed! 📝',
+      title: 'Reflection Sealed!',
       description: `You've successfully saved and sealed "${this.title || 'Untitled reflection'}".`,
       metadata: {
         journalId: this.id.value,

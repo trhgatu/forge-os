@@ -32,6 +32,33 @@ const configs = [
   {
     key: 'ai_prompt_archivist',
     value: 'You are the Archivist. Focus on facts, context, linking current ideas to historical thoughts or previous logs, and maintaining a structured mind palace.'
+  },
+  {
+    key: 'biometric_impact_rules',
+    value: {
+      CREATE_JOURNAL: [
+        { type: 'CONSUME_STAMINA', amount: 15 }
+      ],
+      COMPLETE_TASK: [
+        { type: 'CONSUME_STAMINA', amount: 10 }
+      ],
+      WS_PRESENCE: [
+        { type: 'LOG_VITALITY_ACTION', actionType: 'MAKTUB_ALIGN', value: 1, metadata: { source: 'echoes_sync' } }
+      ]
+    }
+  },
+  {
+    key: 'gamification_xp_rules',
+    value: {
+      'reflection.journal.created': { xp: 25, cooldownMinutes: 0, dailyCap: 1 },
+      'reflection.habit.completed': { xp: 0, cooldownMinutes: 1, dailyCap: 15 },
+      'reflection.routine.completed': { xp: -1, cooldownMinutes: 5, dailyCap: 5 },
+      'reflection.memory.created': { xp: 0, cooldownMinutes: 10, dailyCap: 2 },
+      'reflection.mood.logged': { xp: 0, cooldownMinutes: 15, dailyCap: 2 },
+      'engineering.project.created': { xp: 100, cooldownMinutes: 0, dailyCap: 5 },
+      'engineering.project.synced': { xp: 0, cooldownMinutes: 30, dailyCap: 10 },
+      'gamification.quest.completed': { xp: -1, cooldownMinutes: 0, dailyCap: 20, customCooldownMinutes: 60, customDailyCap: 2 }
+    }
   }
 ];
 

@@ -10,6 +10,7 @@ import { EventBus } from '@nestjs/cqrs';
 import { AuthService } from '../../iam/auth/application/services/auth.service';
 import { LoggerService } from '@shared/logging/logger.service';
 import { NotificationEvent } from '@shared/interfaces';
+import { contextStorage } from '@shared/utils/context.storage';
 
 @WebSocketGateway({
   cors: {
@@ -30,11 +31,16 @@ export class GamificationGateway implements OnGatewayConnection, OnGatewayDiscon
         if (this.isNotificationEvent(event)) {
           const userId = event.getUserId();
           const payload = event.getNotificationPayload();
+          const store = contextStorage.getStore();
+          const correlationId = store?.correlationId;
           this.logger.log(
-            `[Realtime-Broadcaster] Emitted notification ${payload.type} to user ${userId}`,
+            `[Realtime-Broadcaster] Emitted notification ${payload.type} to user ${userId} with correlationId ${correlationId}`,
             'GamificationGateway',
           );
-          this.server.to(`user:${userId}`).emit('system_notification', payload);
+          this.server.to(`user:${userId}`).emit('system_notification', {
+            ...payload,
+            correlationId,
+          });
         }
       },
       error: (err) => {
@@ -105,6 +111,12 @@ export class GamificationGateway implements OnGatewayConnection, OnGatewayDiscon
   }
 
   emitXpAwarded(userId: string, data: { xp: number; newLevel: number; reason: string }) {
-    this.server.to(`user:${String(userId)}`).emit('xp_awarded', { userId, ...data });
+    const store = contextStorage.getStore();
+    const correlationId = store?.correlationId;
+    this.server.to(`user:${String(userId)}`).emit('xp_awarded', {
+      userId,
+      ...data,
+      correlationId,
+    });
   }
 }

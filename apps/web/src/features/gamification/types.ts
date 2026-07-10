@@ -70,3 +70,36 @@ export interface Goal {
   completedAt?: string | null;
   objectives: GoalObjective[];
 }
+
+export interface XpAwardedData {
+  userId: string;
+  xp: number;
+  newLevel: number;
+  reason: string;
+  correlationId?: string;
+}
+
+export interface AchievementUnlockedData {
+  userId: string;
+  goalId: string;
+  title: string;
+  badgeIcon: string;
+  xpReward: number;
+}
+
+export interface SystemNotificationData {
+  type: string;
+  title: string;
+  description: string;
+  xp?: number;
+  metadata?: any;
+  correlationId?: string;
+}
+
+export interface QueuedToast {
+  title: string;
+  description: string;
+  type: string;
+  duration: number;
+  confettiColors?: string[];
+}

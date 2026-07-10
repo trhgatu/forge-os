@@ -4,6 +4,9 @@ export class TransactionCreatedEvent implements GamifiedEvent {
   constructor(
     public readonly id: string,
     public readonly userId: string,
+    public readonly type: string,
+    public readonly categoryType: string,
+    public readonly isApprovedByWill: boolean,
     public readonly hasReflection: boolean,
   ) {}
 

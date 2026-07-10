@@ -175,7 +175,7 @@ model Journal {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
-  @@index([userId])
+  @@index([userId, isDeleted, createdAt])
   @@map("journals")
 }
 

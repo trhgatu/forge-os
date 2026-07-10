@@ -55,6 +55,7 @@ export const useCompleteHabit = () => {
       queryClient.invalidateQueries({ queryKey: ['userStats'] });
       // Invalidate active quests so they update in real-time on completing a habit
       queryClient.invalidateQueries({ queryKey: ['activeQuests'] });
+      queryClient.invalidateQueries({ queryKey: ['vitality-stats'] });
       // Dispatches a global custom event in case XPBar or sidebar components need to know to refresh locally
       window.dispatchEvent(new CustomEvent('xp-gained'));
     },

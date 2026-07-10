@@ -15,6 +15,7 @@ import { GetActiveEffectsHandler } from './application/queries/get-active-effect
 import { SharedModule } from '@shared/shared.module';
 import { AuthModule } from '../iam/auth/auth.module';
 import { VitalityActionLoggedListener } from './application/listeners/vitality-action-logged.listener';
+import { TransactionCreatedListener } from './application/listeners/transaction-created.listener';
 
 import { XpAwardingProcessor } from './application/processors/xp-awarding.processor';
 import { XpRateLimitService } from './application/services/xp-rate-limit.service';
@@ -35,6 +36,7 @@ const Handlers = [
   RemoveStatusEffectHandler,
   GetActiveEffectsHandler,
   VitalityActionLoggedListener,
+  TransactionCreatedListener,
 ];
 const Strategies = [
   GithubSyncXpStrategy,
